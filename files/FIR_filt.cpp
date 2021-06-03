@@ -360,8 +360,8 @@ int FIR_filt::CoeffCalc()
 		    for (int n = 0; n <= ceil(m_order / 2); n++)
 		    {
 				k = fabs(n - m_order / 2);
-				m_BUFF_WIND_CX.m_buff[k] = pow(-1 , n) * 2 * (0.5-m_Fstop) * sin((n + rem) * PI2 * (0.5-m_Fstop) ) / ((n + rem) * PI2 * (0.5 - m_Fstop) )* m_WIND_FCN.m_BUFF_WIND[k];
-				m_BUFF_WIND_CX.m_buff[m_order - k] = m_BUFF_WIND_CX.m_buff[k];
+				m_BUFF_WIND_CX.m_buff[k]           = -pow(-1 , n) * 2 * (0.5-m_Fstop) * sin((n + rem) * PI2 * (0.5-m_Fstop) ) / ((n + rem) * PI2 * (0.5 - m_Fstop) )* m_WIND_FCN.m_BUFF_WIND[k];
+				m_BUFF_WIND_CX.m_buff[m_order - k] = -m_BUFF_WIND_CX.m_buff[k];
 		    }
 		}
 
@@ -454,7 +454,11 @@ int FIR_filt::CoeffCalc()
 		if (m_filt_type == 2) // считаем нормирующий коэффициент для ФВЧ
 		{
 			m_in_F = m_Fs / 2;
-			FreqCharacteristics(); 
+			FreqCharacteristics();
+
+			std::cout << " m_in_F = " << m_in_F << "\n";
+			std::cout << "m_Km    = " << m_Km   << "\n";
+			std::cout << "m_pH    = " << m_pH   << "\n";
 		}
 
 		if (m_filt_type == 3) // считаем нормирующий коэффициент для ПФ
