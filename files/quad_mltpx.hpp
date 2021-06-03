@@ -10,7 +10,6 @@
 // функциональные блоки:
 #include "cplx_operations.hpp"
 #include "mirror_ring_buff_x32.hpp"
-#include "special_functions.hpp"
 
 // ВЫЧИСЛИТЕЛЬ РЗиА НА БАЗЕ КВАДРАТУРНОГО УМНОЖИТЕЛЯ
 
@@ -50,12 +49,8 @@ private:
 	// переменные опорных сигналов:
 	int      m_cnt;      // счетчик отсчетов опорных сигналов
 	int      m_ElemNum; // число отсчетов на период опорного сигнала минус 1 отсчет (см. cpp файл )
-	
-	int      m_order_eq;
 
 public:
-
-	special_functions SPEC_FCN;
 
 	// указатели на массивы с опорным синусом и косинусом:
 	float *m_BUFF_COS;
@@ -64,9 +59,6 @@ public:
 	// буфферы:
 	mirror_ring_buff m_BUFF_Re;
 	mirror_ring_buff m_BUFF_Im;
-
-	mirror_ring_buff m_BUFF_out1;
-	mirror_ring_buff m_BUFF_out2;
 	
 	// фильтры:
 	aperiodic_filt m_APFILT; // фильтр апериодической слагающей
