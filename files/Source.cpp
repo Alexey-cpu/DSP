@@ -5,6 +5,7 @@
 #include <cassert>
 #include <math.h>
 #include <cmath>
+#include "QElapsedTimer"
 
 // Генератор тестовых сигналов:
 
@@ -29,6 +30,7 @@
 // ортогональные преобразования:
 #include "orto_transformations_3ph.hpp"
 #include "orto_transformations_1ph.hpp"
+#include "recursive_fourier.hpp"
 
 // интеграторы:
 #include "integrators.hpp"
@@ -145,19 +147,19 @@ int test2()
 	FIR_filt CH1;
 
 	// инициализация фильтра:
-	 CH1.LP_Init(4000, 50, 0.1 , 95, true);          // инициализация ФНЧ
+	// CH1.LP_Init( 4000 , 50 , 0.1 , 95, true );          // инициализация ФНЧ
 	// CH1.HP_Init(4000, 50, 100, 95, true);        // инициализация ФВЧ
-	// CH1.BP_Init(4000, 50, 100, 200, 11, true);   // инициализация ПФ
-	// CH1.BS_Init(4000, 50, 100, 200, 13, true);   // инициализация РФ
+	 CH1.BP_Init(4000, 50, 80, 300 , 160 , true);   // инициализация ПФ
+	// CH1.BS_Init(4000, 50, 100, 200, 200, true);   // инициализация РФ
 	// CH1.CF_Init(4000, 50, 80);
 	// CH1.SF_Init(4000, 50, 80);
 	// CH1.HF_Init(4000, 50, 90 , 80);
 
 	// проектирование сглаживающей оконной функции:
-	CH1.m_WIND_FCN.Chebyshev(60);
+	CH1.m_WIND_FCN.Chebyshev(30);
 
 	// выделение памяти с расчетом коэффициентов:
-	CH1.allocate();
+	CH1.allocate( 14 , 14 );
 
 	// Смотрим спецификацию фильтра:
 	CH1.ShowFiltSpec();
@@ -184,54 +186,69 @@ int test2()
 	std::ofstream file_out3;
 	std::ofstream file_out4;
 	std::ofstream file_out5;
+	std::ofstream file_out6;
 
 	// потоки для записи в файл:
-	file_out1.open("E:\\coding\\SIGNAL_NOT_FILT.txt");
-	file_out2.open("E:\\coding\\SIGNAL_FILT.txt");
-	file_out3.open("E:\\coding\\F.txt");
-	file_out4.open("E:\\coding\\Km.txt");
-	file_out5.open("E:\\coding\\pH.txt");
+	file_out1.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\x_t.txt");
+	file_out2.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\y_t.txt");
+	file_out3.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\f.txt");
+	file_out4.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\amp_resp.txt");
+	file_out5.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\ph_resp.txt");
+	file_out6.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\coeffs.txt");
 
 	file_out1.clear();
 	file_out2.clear();
 	file_out3.clear();
 	file_out4.clear();
 	file_out5.clear();
+	file_out6.clear();
 
-	for (int n = 0; n < 20; n++)
+	QElapsedTimer timer;
+
+	for (int n = 0; n < 80; n++)
 	{
 		// Генерирование основного сигнала:
-		GEN_MAIN.sin_gen(100, 0, 1);
+		if( n < 50 )
+		{
+		 GEN_MAIN.sin_gen( 50 , 0 , 1 );
+		}
+		else
+		  {
+		    GEN_MAIN.sin_gen( 50 , 0 , 0 );
+		  }
 
+		//timer.start();
 		// Эмуляция прохода по сигналу фильтом:
+
 		for (int cnt1 = 0; cnt1 < 16; cnt1++)
 		{
 			// запись в файл нефильтрованного сигнала:
 			file_out1 << GEN_MAIN.m_buff[cnt1] << "\n";
 			// фильтрация сигнала:
-			CH1.filt(&GEN_MAIN.m_buff[cnt1]);
+			CH1.filt_eff( &GEN_MAIN.m_buff[cnt1] );
+			//CH1.filt( &GEN_MAIN.m_buff[cnt1] );
 			// запись в файл отфильтрованного сигнала:
 			file_out2 << CH1.m_out << "\n";
 		}
+
+		//std::cout << timer.nsecsElapsed() * 0.001 << "\n";
 	}
 
 	// Построение АЧХ и ФЧХ с выгрузкой в файлы:
 	for (int n = 0; n < 2000; n++)
 	{
 		file_out3 << n << "\n";
-		CH1.m_in_F = n;
-		CH1.FreqCharacteristics();
+		CH1.m_in_F = (double)n;
+		CH1.FreqCharacteristics(true);
 
 		file_out4 << CH1.m_Km << "\n";
-		//file_out5 << CH1.m_pH << "\n";
+		file_out5 << CH1.m_pH << "\n";
 	}
 
-	/*for (int n = 0; n < CH1.m_BUFF_WIND_CX.getBuffSize(); n++)
+	for (int n = 0; n < CH1.get_flt_order(); n++)
 	{
-	   file_out5 << CH1.m_BUFF_WIND_CX.m_buff[n] << "\n";
-
-	   //std::cout<<"c["<<n<<"] = "<< CH1.m_BUFF_WIND_CX.m_buff[n] << "\n";
-	}*/
+	   file_out6 << CH1.get_coeff(n) << "\n";
+	}
 
 	// Освобождение памяти:
 	CH1     .deallocate();
@@ -243,6 +260,7 @@ int test2()
 	file_out3.close();
 	file_out4.close();
 	file_out5.close();
+	file_out6.close();
 
 	return 0;
 }
@@ -473,10 +491,10 @@ int test6()
 	// фильтр ортогональных составляющих:
 	orto_transformations_1ph TRANSFORMATION_1PH_MAIN;
 	orto_transformations_1ph TRANSFORMATION_1PH_REFF;
-	TRANSFORMATION_1PH_MAIN.DFT_Init(4000 , 50 , 120 );
-	TRANSFORMATION_1PH_REFF.DFT_Init(4000 , 50 );
+	TRANSFORMATION_1PH_MAIN.DFT_Init(4000 , 50 , 80 );
+	TRANSFORMATION_1PH_REFF.DFT_Init(4000 , 100 );
 	// проектирование оконной функции:
-	TRANSFORMATION_1PH_MAIN.m_WIND_FCN.Chebyshev(60);
+	TRANSFORMATION_1PH_MAIN.m_WIND_FCN.Hann();
 	TRANSFORMATION_1PH_MAIN.allocate();
 	TRANSFORMATION_1PH_REFF.allocate();
 
@@ -501,13 +519,13 @@ int test6()
 	std::ofstream file_out7;
 
 	// потоки для записи в файл:
-	file_out1.open("E:\\coding\\SIGNAL_MAIN.txt");
-	file_out2.open("E:\\coding\\SIGNAL_REFF.txt");
-	file_out3.open("E:\\coding\\RE.txt");
-	file_out4.open("E:\\coding\\IM.txt");
-	file_out5.open("E:\\coding\\Km.txt");
-	file_out6.open("E:\\coding\\pH.txt");
-	file_out7.open("E:\\coding\\F.txt");
+	file_out1.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\SIGNAL_MAIN.txt");
+	file_out2.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\SIGNAL_REFF.txt");
+	file_out3.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\RE.txt");
+	file_out4.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\IM.txt");
+	file_out5.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\Km.txt");
+	file_out6.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\pH.txt");
+	file_out7.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\F.txt");
 
 
 	//--------------------------------------------------------
@@ -553,7 +571,7 @@ int test6()
 	for (int n = 0; n < 2000; n++)
 	{
 		// подача на вход функционального блока текущей частоты:
-		TRANSFORMATION_1PH_MAIN.m_in_F = n;
+		TRANSFORMATION_1PH_MAIN.m_in_F = (float)n;
 		// вызов функции расчета коэффициентов АЧХ и ФЧХ:
 		TRANSFORMATION_1PH_MAIN.FreqCharacteristics();
 
@@ -665,7 +683,7 @@ int test9()
 
 	// фильтр апериодической слагающей:
 	aperiodic_filt_eq F3;
-	F3.filtInit(4000 , 50 , 5 , 0);
+	F3.filtInit(4000 , 50 , 10 , 10);
 	F3.allocate();
 
 	//
@@ -678,13 +696,16 @@ int test9()
 	std::ofstream file_out3;
 	std::ofstream file_out4;
 	std::ofstream file_out5;
+	std::ofstream file_out6;
 
-	// потоки для записи в файл:
-	file_out1.open("E:\\coding\\SIGNAL_NOT_FILT.txt");
-	file_out2.open("E:\\coding\\SIGNAL_FILT.txt");
-	file_out3.open("E:\\coding\\F.txt");
-	file_out4.open("E:\\coding\\Km.txt");
-	file_out5.open("E:\\coding\\pH.txt");
+        // write file streams:
+        std::string directoty = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+        file_out1.open( directoty + "\\signal.txt" );
+        file_out2.open( directoty + "\\re.txt");
+        file_out3.open( directoty + "\\im.txt");
+        file_out4.open( directoty + "\\abs.txt");
+        file_out5.open( directoty + "\\ph.txt");
+        file_out6.open( directoty + "\\f.txt");
 
 	// Построение АЧХ и ФЧХ каскада цифровых фильтров:
 	for (int n = 0; n < 2000; n++)
@@ -697,20 +718,20 @@ int test9()
 		// расчет АЧХ и ФЧХ всех фильтров каскада:
 		F1.FreqCharacteristics();
 		F2.FreqCharacteristics();
-		F3.FreqCharacteristics();
+		F3.FreqCharacteristics(true);
 
 		// Расчет коэффициентов АЧХ и ФЧХ:
 		//Km = F1.m_Km * F3.m_Km;
 		//pH = F1.m_pH + F3.m_pH;
 
-		Km = F1.m_Km;
-		pH = F1.m_pH;
+		Km = F3.m_Km;
+		pH = F3.m_pH;
 
 		// выгрузка АЧХ и ФЧХ каскада в файл:
-		file_out3 << n << "\n";
+		file_out6 << n << "\n";
 		file_out4 << Km << "\n";
 		file_out5 << pH << "\n";
-		file_out5 << "Calculation is completed !!!" << "\n";
+		//file_out5 << "Calculation is completed !!!" << "\n";
 	}
 
 
@@ -722,7 +743,7 @@ int test9()
 int test10() 
 {
 	int HBuffSize  = 20;
-	int NumOfSteps = 100;
+	int NumOfSteps = 10;
 
 	//-------------------------------------------------------
 	// Создаем фильтры Фурье для токов фаз А , В , С:
@@ -783,20 +804,21 @@ int test10()
 	std::ofstream file_out14;
 
 	// инициализация:
-	file_out1.open ("E:\\coding\\Ia.txt");
-	file_out2.open ("E:\\coding\\Ib.txt");
-	file_out3.open ("E:\\coding\\Ic.txt");
-	file_out4.open ("E:\\coding\\Re_Ia.txt");
-	file_out5.open ("E:\\coding\\Im_Ia.txt");
-	file_out6.open ("E:\\coding\\Re_Ib.txt");
-	file_out7.open ("E:\\coding\\Im_Ib.txt");
-	file_out8.open ("E:\\coding\\Re_Ic.txt");
-	file_out9.open ("E:\\coding\\Im_Ic.txt");
-	file_out10.open("E:\\coding\\Re_I1.txt");
-	file_out11.open("E:\\coding\\Im_I1.txt");
-	file_out12.open("E:\\coding\\Re_I2.txt");
-	file_out13.open("E:\\coding\\Im_I2.txt");
-	file_out14.open("E:\\coding\\Iman.txt");
+	std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs\\";
+	file_out1.open (directory + "Ia.txt");
+	file_out2.open (directory + "Ib.txt");
+	file_out3.open (directory + "Ic.txt");
+	file_out4.open (directory + "Re_Ia.txt");
+	file_out5.open (directory + "Im_Ia.txt");
+	file_out6.open (directory + "Re_Ib.txt");
+	file_out7.open (directory + "Im_Ib.txt");
+	file_out8.open (directory + "Re_Ic.txt");
+	file_out9.open (directory + "Im_Ic.txt");
+	file_out10.open(directory + "Re_I1.txt");
+	file_out11.open(directory + "Im_I1.txt");
+	file_out12.open(directory + "Re_I2.txt");
+	file_out13.open(directory + "Im_I2.txt");
+	file_out14.open(directory + "Iman.txt");
 
 	// ПРомежуточне переменные:
 	double I1;
@@ -1213,11 +1235,261 @@ int test14()
     return 0;
 }
 
+// пример работы с вычислителем РЗиА:
+int test15()
+{
+
+    QElapsedTimer timer;
+
+    // relay protection procesor initialization:
+     double Fs = 4000;
+    // double Fs             = 4800;
+    // double Fs             = 12400;
+    // double Fs             = 14400;
+
+    // processor configuring:
+    double Fn             = 50;                        // nominal frequency
+    double SideAlobeAtten = 60;                        // side lobe attenuation
+    int    order          = ceil(95 * Fs / 4000);      // filter order
+    int    CycleWidth     = 5;                         // cycle width
+    int    HBuffSize      = Fs * CycleWidth / 1000;    // halh buffer size
+
+    // processor initialization:
+    quad_mltpx PROCESSOR;
+    PROCESSOR.procInit( Fs , Fn , SideAlobeAtten , order , CycleWidth );
+
+    // processor memory allocation:
+    PROCESSOR.allocate();
+
+
+    int    NumOfSteps     = 5 * (Fs / Fn) / HBuffSize; //
+
+    // test sinus generator initialization:
+    signal_gen GENERATOR;
+    GENERATOR.GenInit( Fs , HBuffSize );
+
+    // memory allocation:
+    GENERATOR.allocate();
+
+    // Потоки для записи в файл
+    std::ofstream file_out1;
+    std::ofstream file_out2;
+    std::ofstream file_out3;
+    std::ofstream file_out4;
+    std::ofstream file_out5;
+    std::ofstream file_out6;
+
+    // write file streams:
+    std::string directoty = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+    file_out1.open( directoty + "\\signal.txt" );
+    file_out2.open( directoty + "\\re.txt");
+    file_out3.open( directoty + "\\im.txt");
+    file_out4.open( directoty + "\\abs.txt");
+    file_out5.open( directoty + "\\ph.txt");
+    file_out6.open( directoty + "\\f.txt");
+
+    for (int n = 0; n < NumOfSteps; n++)
+    {
+        // reference frame generation:
+        GENERATOR.sin_gen(50, 0, 1);
+
+        timer.start();
+        // processing:
+        PROCESSOR.process( GENERATOR.m_buff ,  0);
+        std::cout << timer.nsecsElapsed()<< "\n";
+
+        // data recording:
+        file_out2 << PROCESSOR.m_Re << "\n";
+        file_out3 << PROCESSOR.m_Im << "\n";
+        file_out4 << sqrt( PROCESSOR.m_Re * PROCESSOR.m_Re + PROCESSOR.m_Im * PROCESSOR.m_Im ) << "\n";
+        file_out5 << atan2( PROCESSOR.m_Im , PROCESSOR.m_Re ) * 180 / PI0 << "\n";
+        file_out6 << PROCESSOR.m_F << "\n";
+
+        // reference frame recording:
+        for (int cnt1 = 0; cnt1 < HBuffSize; cnt1++) file_out1 << GENERATOR.m_buff[cnt1] << "\n";
+    }
+
+
+    // closing file streams:
+    file_out1.close();
+    file_out2.close();
+    file_out3.close();
+    file_out4.close();
+    file_out5.close();
+    file_out6.close();
+
+    // memory deallocation:
+    PROCESSOR.deallocate();
+    GENERATOR.deallocate();
+
+    return 0;
+}
+
+// пример работы с рекурсивным фильтром Фурье:
+int test16()
+{
+
+    double Fs         = 4000;
+    int    HBuffSize  = 20;
+    int    NumOfSteps = 40;
+
+    // recursive Fourier filter
+    recursive_fourier RFF;
+
+    RFF.filtInit( 50 , Fs , 1);
+    RFF.allocate();
+
+
+    // test sinus generator initialization:
+    signal_gen GENERATOR;
+    GENERATOR.GenInit( Fs , HBuffSize );
+
+    // memory allocation:
+    GENERATOR.allocate();
+
+    // Потоки для записи в файл
+    std::ofstream file_out1;
+    std::ofstream file_out2;
+    std::ofstream file_out3;
+    std::ofstream file_out4;
+    std::ofstream file_out5;
+    std::ofstream file_out6;
+
+    // write file streams:
+    std::string directoty = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+    file_out1.open( directoty + "\\signal.txt" );
+    file_out2.open( directoty + "\\re.txt");
+    file_out3.open( directoty + "\\im.txt");
+    file_out4.open( directoty + "\\abs.txt");
+    file_out5.open( directoty + "\\ph.txt");
+    file_out6.open( directoty + "\\f.txt");
+
+    //-------------------------------------------------------------------
+
+    double ABS = 0 , Re = 0 , Im = 0 , ARG = 0;
+
+    for (int n = 0; n < NumOfSteps; n++)
+    {
+        // reference frame generation:
+        GENERATOR.sin_gen( 50 , 0, 1);
+
+        // signal filtering and reference frame recording:
+        for (int cnt1 = 0; cnt1 < HBuffSize; cnt1++)
+        {
+            // filtering
+            RFF.filt(  &GENERATOR.m_buff[cnt1] );
+
+            // parameters calculation:
+
+            //RFF.m_BUFF_WIND_SX.fill_buff( &GENERATOR.m_buff[cnt1] );
+            Re = RFF.m_a;
+            Im = RFF.m_b;
+            ABS = sqrt( Re * Re + Im * Im );
+            ARG = atan2( Im , Re ) * 180 / PI0;
+
+            // parameters recording:
+            file_out1 << GENERATOR.m_buff[cnt1] << "\n";
+
+            // parameters recording:
+            file_out2 << Re  << "\n";
+            file_out3 << Im  << "\n";
+            file_out4 << ABS << "\n";
+            file_out5 << ARG << "\n";
+        }
+
+        // filtering:
+        //RFF.filt_step ( GENERATOR.m_buff , HBuffSize );
+
+        //Re = RFF.m_a;
+        //Im = RFF.m_b;
+        //ABS = sqrt( Re * Re + Im * Im );
+        //ARG = atan2( Im , Re ) * 180 / PI0;
+
+
+    }
+    //-------------------------------------------------------------------
+
+    // построение АЧХ и ФЧХ рекурсивного фильтра Фурье:
+    /*for( int n = 0 ; n < Fs * 0.5 ; n++ )
+    {
+        RFF.m_in_F = n;
+        RFF.FreqCharacteristics();
+        file_out3 << n        << "\n";
+        file_out4 << RFF.m_Km << "\n";
+        file_out5 << RFF.m_pH << "\n";
+    }*/
+
+    // closing file streams:
+    file_out1.close();
+    file_out2.close();
+    file_out3.close();
+    file_out4.close();
+    file_out5.close();
+    file_out6.close();
+
+    // memory deallocation:
+    GENERATOR.deallocate();
+    RFF.deallocate();
+
+  return 0;
+}
+
+
+int test17()
+{
+	// создание нужных объектов:
+
+	// дискретное преобразование Фурье:
+	FIR_filt F1;
+	F1.LP_Init(4000 , 50 , 0.1 , 95 , true );
+	F1.m_WIND_FCN.Chebyshev(60);
+	F1.allocate();
+
+	// потоки для записи в файл:
+	std::ofstream file_out1;
+	std::ofstream file_out2;
+	std::ofstream file_out3;
+	std::ofstream file_out4;
+	std::ofstream file_out5;
+	std::ofstream file_out6;
+
+        // write file streams:
+        std::string directoty = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+        file_out1.open( directoty + "\\signal.txt" );
+        file_out2.open( directoty + "\\re.txt");
+        file_out3.open( directoty + "\\im.txt");
+        file_out4.open( directoty + "\\abs.txt");
+        file_out5.open( directoty + "\\ph.txt");
+        file_out6.open( directoty + "\\f.txt");
+
+	// Построение АЧХ и ФЧХ каскада цифровых фильтров:
+	for (int n = 0; n < 2000; n++)
+	{
+	    F1.m_in_F = n;
+	    F1.FreqCharacteristics( true );
+	    file_out4 << F1.m_Km << "\n";
+	    file_out5 << F1.m_pH << "\n";
+	    file_out6 << n	 << "\n";
+	}
+
+        file_out1.close();
+        file_out2.close();
+        file_out3.close();
+        file_out4.close();
+        file_out5.close();
+        file_out6.close();
+
+        F1.deallocate();
+
+        return 0;
+}
+
+
 // Запуск нужного примера:
 int main()
 {
   // test1();  // Пример работы с классом классических БИХ - фильтров
-   test2();  // Пример работы с классом классических КИХ - фильтров
+  // test2();  // Пример работы с классом классических КИХ - фильтров
   // test3();  // Пример работы с классом простейших   БИХ - фильтров
   // test4();  // Пример работы с классом специальных математических функций
   // test5();  // Пример работы с классом трехфазных ортогональных преобразований
@@ -1225,9 +1497,13 @@ int main()
   // test7();  // Пример работы с классом кольцевого буффера
   // test8();  // Пример работы с классом оконных функций
   // test9();  // Пример построения АЧХ и ФЧХ каскада цифровых фильтров
-  // test10(); // орган манипуляции ДФЗ на ДПФ
+   test10(); // орган манипуляции ДФЗ на ДПФ
   // test11(); // орган манипуляции ДФЗ по методике ABB
   // test12(); // орган манипуляции ДФЗ на фазосдвигающих звеньях
+  // test14();
+  // test15();
+  // test16();
+  // test17();
 
   return 0;
 }

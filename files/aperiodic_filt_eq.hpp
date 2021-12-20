@@ -55,17 +55,33 @@ public:
 	~aperiodic_filt_eq();
 	
 	// функци¤ расчета ј„’ и ‘„’:
-	int FreqCharacteristics();
+	int FreqCharacteristics(bool mode = false);
 	
-	// ¬—“–ќ≈ЌЌџ≈ ‘”Ќ ÷»»:
 	//-----------------------------------------------------------------------------------------------------------------------------------------------
 	// функция фильтрации:
-	inline int filt(double *input)
+	/*inline int filt(double *input)
 	{	
 		// прогон сигнала через фильтр:
 		m_MBUFF1.fill_buff(input , 1);
 		m_out = *input * m_K1 - m_MBUFF1.m_ptr_fill_down[m_ElemNum1] - m_MBUFF1.m_ptr_fill_down[m_ElemNum2] * m_K2 ;
 		
+		return 0;
+	}*/
+
+	inline int filt( double *input , bool odd = true )
+	{
+		// прогон сигнала через фильтр:
+		m_MBUFF1.fill_buff(input );
+
+		if( odd ) // нечетный фильтр
+		{
+		    m_out = *input * m_K1 - m_MBUFF1.m_ptr_fill_down[m_ElemNum1] - m_MBUFF1.m_ptr_fill_down[m_ElemNum2] * m_K2 ;
+		}
+		else
+		{
+		    m_out = *input * m_K1 + m_MBUFF1.m_ptr_fill_down[m_ElemNum1] - m_MBUFF1.m_ptr_fill_down[m_ElemNum2] * m_K2 ;
+		}
+
 		return 0;
 	}
 	//-----------------------------------------------------------------------------------------------------------------------------------------------

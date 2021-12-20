@@ -16,7 +16,6 @@ SOURCES += \
         files/Source.cpp \
         files/aperiodic_filt.cpp \
         files/aperiodic_filt_eq.cpp \
-        files/cplx_num.cpp \
         files/cplx_operations.cpp \
         files/integrators.cpp \
         files/math_const.cpp \
@@ -25,6 +24,7 @@ SOURCES += \
         files/orto_transformations_1ph.cpp \
         files/orto_transformations_3ph.cpp \
         files/quad_mltpx.cpp \
+        files/recursive_fourier.cpp \
         files/signal_gen.cpp \
         files/simple_IIR.cpp \
         files/special_functions.cpp \
@@ -45,7 +45,6 @@ HEADERS += \
     files/FIR_filt.hpp \
     files/aperiodic_filt.hpp \
     files/aperiodic_filt_eq.hpp \
-    files/cplx_num.hpp \
     files/cplx_operations.hpp \
     files/integrators.hpp \
     files/math_const.hpp \
@@ -54,6 +53,7 @@ HEADERS += \
     files/orto_transformations_1ph.hpp \
     files/orto_transformations_3ph.hpp \
     files/quad_mltpx.hpp \
+    files/recursive_fourier.hpp \
     files/signal_gen.hpp \
     files/simple_IIR.hpp \
     files/special_functions.hpp \

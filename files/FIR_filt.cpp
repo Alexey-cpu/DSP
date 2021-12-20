@@ -19,7 +19,7 @@
 // 3. Умножение коэффициентов оконной функции на коэффициенты идеального ФНЧ, ФВЧ, ПФ или РФ.
 
 //------------------------------------------------------------------------------
-//Конструктор:
+//Конструктор ( по умолчанию ):
 FIR_filt::FIR_filt()
 {
 	// Заполнение полей:
@@ -42,6 +42,19 @@ FIR_filt::FIR_filt()
 	m_BUFF_WIND_SX.BuffInit(m_order + 2);  // буффер под выборку (+2 из-за особенности зеркального буффера)
 	m_BUFF_WIND_CX.BuffInit(m_order + 1); // буффер под коэффициенты
 
+	//=====================================================================================================
+	m_y_re	  = NULL;
+	m_y_im	  = NULL;
+	m_Wnum	  = NULL;
+	m_Wden	  = NULL;
+	m_a	  = 0;
+	m_b	  = 0;
+	m_a0	  = 0;
+	m_b0	  = 0;
+	m_dx      = 0;
+	m_ElemNum = m_order + 2;
+	m_Gain    = 1.0 / ( (double)m_order + 2 );
+	//=====================================================================================================
 }
 //------------------------------------------------------------------------------
 //Деструктор:
@@ -493,24 +506,81 @@ int FIR_filt::CoeffCalc()
 //функция расчета АЧХ и ФЧХ фильтра:
 int FIR_filt::FreqCharacteristics()
 {
+	// Расчет комплексного коэффициента передачи:
+	m_W_re = 0;
+	m_W_im = 0;
 
-	//Компенсация АЧХ и ФЧХ КИХ фильтра:
-	double Re = 0;
-	double Im = 0;
-
-	//Надо рассчитать коэффициент ослабления спектра:
 	for (int n = 0; n < m_order + 1; n++)
 	{
 		//Для частоты m_in_F Гц:
-		Re = Re + cos(-PI2 * n * m_in_F * m_Ts) * m_BUFF_WIND_CX.m_buff[n];
-		Im = Im + sin(-PI2 * n * m_in_F * m_Ts) * m_BUFF_WIND_CX.m_buff[n];
+		m_W_re = m_W_re + cos(-PI2 * n * m_in_F * m_Ts) * m_BUFF_WIND_CX.m_buff[n];
+		m_W_im = m_W_im + sin(-PI2 * n * m_in_F * m_Ts) * m_BUFF_WIND_CX.m_buff[n];
 	}
 
-	m_pH = atan2(Im, Re);
-	m_Km = sqrt(Re * Re + Im * Im);
+	m_pH   = atan2( m_W_im , m_W_im );
+	m_Km   = sqrt (m_W_re * m_W_re + m_W_im * m_W_im);
 
 	return 0;
-};
+}
+
+int FIR_filt::FreqCharacteristics( bool mode )
+{
+    if( !mode ) // расчет АЧХ и ФЧХ обычного КИХ - фильтра
+    {
+        // Расчет комплексного коэффициента передачи:
+        m_W_re = 0;
+        m_W_im = 0;
+
+	for (int n = 0; n < m_order + 1; n++)
+	{
+		//Для частоты m_in_F Гц:
+		m_W_re = m_W_re + cos(-PI2 * n * m_in_F * m_Ts) * m_BUFF_WIND_CX.m_buff[n];
+		m_W_im = m_W_im + sin(-PI2 * n * m_in_F * m_Ts) * m_BUFF_WIND_CX.m_buff[n];
+	}
+
+	m_pH   = atan2( m_W_im , m_W_im );
+	m_Km   = sqrt (m_W_re * m_W_re + m_W_im * m_W_im);
+    }
+    else // расчет АЧХ и ФЧХ эффективного КИХ - фильтра
+    {
+        // Расчет комплексного коэффициента передачи:
+        m_W_re     = 0;
+        m_W_im     = 0;
+        int N      = m_Ncplx_coeff;
+        int NN     = m_ElemNum;
+        double Re1 = 0 , Im1 = 0 , Re2 = 0 , Im2 = 0 , Re_num = 0 , Im_num = 0 , Re_den = 0 , Im_den = 0;
+
+        m_W_re = m_W_im = 0;
+
+        for (int n = 0; n < N; n++)
+        {
+            // расчет числителя ПФ фильтра:
+            Re1    = 1 - cos(-PI2*m_in_F*NN*m_Ts);
+            Im1    = 0 - sin(-PI2*m_in_F*NN*m_Ts);
+            Re2    = m_Wnum[n].re;
+            Im2    = m_Wnum[n].im;
+            Re_num = Re1 * Re2 - Im1 * Im2;
+            Im_num = Re1 * Im2 + Im1 * Re2;
+
+            // расчет знаменателя ПФ фильтра:
+            Re1    = cos(-PI2 * m_in_F * m_Ts);
+            Im1    = sin(-PI2 * m_in_F * m_Ts);
+            Re2    = m_Wden[n].re;
+            Im2    = m_Wden[n].im;
+            Re_den = 1 - ( Re1 * Re2 - Im1 * Im2 );
+            Im_den = 0 - ( Re1 * Im2 + Im1 * Re2 );
+
+            // расчет комплексного коэффициента передачи:
+            m_W_re += ( Re_num * Re_den + Im_num * Im_den ) / ( Re_den * Re_den + Im_den * Im_den );
+            m_W_im += ( Im_num * Re_den - Re_num * Im_den ) / ( Re_den * Re_den + Im_den * Im_den );
+        }
+
+        m_Km = sqrt( m_W_re * m_W_re + m_W_im * m_W_im );
+        m_pH = atan2( m_W_im , m_W_im );
+    }
+
+    return 0;
+}
 //------------------------------------------------------------------------------
 // Выделение памяти:
 int FIR_filt::allocate()
@@ -521,15 +591,192 @@ int FIR_filt::allocate()
 
 	// расчет коэффициентов фильтра:
 	CoeffCalc();
+
+	// расчет коэффициентов эффективного КИХ - фильтра с комплексными коэффициентами:
+
+	// инициализация системных переменных:
+	//=====================================================================================================
+	m_a	  = 0;
+	m_b	  = 0;
+	m_a0	  = 0;
+	m_b0	  = 0;
+	m_dx      = 0;
+	m_ElemNum = m_BUFF_WIND_SX.getBuffSize();
+	m_Gain    = 1.0 / ( (double)m_order + 2 );
+	//=====================================================================================================
+
+	// разложение в ряд Фурье импульсной характеристики КИХ - фильтра:
+	int N      = m_BUFF_WIND_CX.getBuffSize();
+	double *re = new double[N];
+	double *im = new double[N];
+
+	//std::cout << N << "\n"; // это для отладки
+
+	for( int i = 0 ; i < N ; i++ )
+	{
+	    re[i] = 0;
+	    im[i] = 0;
+
+	    for( int j = 0 ; j < N ; j++ )
+	    {
+		re[i] += cos( -PI2 * i * j / N ) * m_BUFF_WIND_CX.m_buff[j];
+		im[i] += sin( -PI2 * i * j / N ) * m_BUFF_WIND_CX.m_buff[j];
+	    }
+
+	    re[i] *= 1.0 / (double)N;
+	    im[i] *= 1.0 / (double)N;
+
+
+	    // std::cout << "Wre = " << re[i] << "\t" << "Wim = " << im[i] << "\n"; // это для отладки
+	}
+
+	// оптимизационная процедура:
+	//-----------------------------------------
+	int Ntop      = 3;
+	int Nbot      = 2;
+	m_Ncplx_coeff = Ntop + Nbot;
+	m_ElemNum     = m_BUFF_WIND_CX.getBuffSize();
+	m_a	      = 0;
+	m_b	      = 0;
+	m_a0	      = 0;
+	m_b0	      = 0;
+	m_y_re	      = new float [m_Ncplx_coeff];
+	m_y_im	      = new float [m_Ncplx_coeff];
+	m_Wnum	      = new vector[m_Ncplx_coeff];
+	m_Wden	      = new vector[m_Ncplx_coeff];
+	//-----------------------------------------
+
+	int k = 0;
+	for( int i = 0 ; i < N ; i++ )
+	{
+	    if( i < Nbot || i > N - Ntop - 1 )
+	    {
+
+		m_y_re[k] = 0;
+		m_y_im[k] = 0;
+		m_Wnum[k].re = re[i];
+		m_Wnum[k].im = im[i];
+		m_Wden[k].re = cos( +PI2 * i / N );
+		m_Wden[k].im = sin( +PI2 * i / N );
+		k++;
+	    }
+	}
+
+	delete [] re;
+	delete [] im;
+	re = NULL;
+	im = NULL;
 	
 	return 0;
 }
+
+int FIR_filt::allocate( int Nbot , int Ntop )
+{
+
+    // выделение памяти под коэффициенты КИХ фильтра:
+    m_BUFF_WIND_SX.allocate(true );
+    m_BUFF_WIND_CX.allocate(false);
+
+    // расчет коэффициентов фильтра:
+    CoeffCalc();
+
+    // расчет коэффициентов эффективного КИХ - фильтра с комплексными коэффициентами:
+
+    // инициализация системных переменных:
+    m_a	  = 0;
+    m_b	  = 0;
+    m_a0  = 0;
+    m_b0  = 0;
+    m_dx  = 0;
+    m_ElemNum = m_BUFF_WIND_SX.getBuffSize();
+    m_Gain    = 1.0 / ( (double)m_order + 2 );
+
+    // разложение в ряд Фурье импульсной характеристики КИХ - фильтра:
+    int N      = m_BUFF_WIND_CX.getBuffSize();
+    double *re = new double[N];
+    double *im = new double[N];
+
+    //std::cout << N << "\n"; // это для отладки
+
+    for( int i = 0 ; i < N ; i++ )
+    {
+        re[i] = 0;
+        im[i] = 0;
+
+        for( int j = 0 ; j < N ; j++ )
+        {
+            re[i] += cos( -PI2 * i * j / N ) * m_BUFF_WIND_CX.m_buff[j];
+            im[i] += sin( -PI2 * i * j / N ) * m_BUFF_WIND_CX.m_buff[j];
+        }
+
+        re[i] *= 1.0 / (double)N;
+        im[i] *= 1.0 / (double)N;
+
+
+        // std::cout << "Wre = " << re[i] << "\t" << "Wim = " << im[i] << "\n"; // это для отладки
+    }
+
+    // оптимизационная процедура:
+    m_Ncplx_coeff = Ntop + Nbot;
+    m_ElemNum     = m_BUFF_WIND_CX.getBuffSize();
+    m_y_re = new float [m_Ncplx_coeff];
+    m_y_im = new float [m_Ncplx_coeff];
+    m_Wnum = new vector[m_Ncplx_coeff];
+    m_Wden = new vector[m_Ncplx_coeff];
+
+    // инициализация выхода эффективного КИХ фильтра:
+    m_a	      = 0;
+    m_b	      = 0;
+    m_a0      = 0;
+    m_b0      = 0;
+
+    int k = 0;
+    for( int i = 0 ; i < N ; i++ )
+    {
+        if( i < Nbot || i > N - Ntop - 1 )
+        {
+
+            m_y_re[k] = 0;
+            m_y_im[k] = 0;
+            m_Wnum[k].re = re[i];
+            m_Wnum[k].im = im[i];
+            m_Wden[k].re = cos( +PI2 * i / N );
+            m_Wden[k].im = sin( +PI2 * i / N );
+            k++;
+        }
+    }
+
+    delete [] re;
+    delete [] im;
+    re = NULL;
+    im = NULL;
+
+  return 0;
+}
+
 //------------------------------------------------------------------------------
 // Освобождение памяти:
 int FIR_filt::deallocate()
 {
-	m_BUFF_WIND_SX.deallocate();   // буффер под выборку
-	m_BUFF_WIND_CX.deallocate();  // буффер под коэффициенты
+	// буфферы с коэффициентами обычного КИХ фильтра:
+	m_BUFF_WIND_SX.deallocate();
+	m_BUFF_WIND_CX.deallocate();
+
+	if( m_y_re != NULL && m_y_im != NULL )
+	{
+	    delete [] m_y_re;
+	    delete [] m_y_im;
+	    m_y_re = NULL;
+	    m_y_im = NULL;
+	}
+
+	if( m_Wden != NULL && m_Wnum != NULL )
+	{
+		delete [] m_Wden;
+	    delete [] m_Wnum;
+	    m_Wden = NULL;
+	    m_Wnum = NULL;
+	}
 
 	return 0;
 }

@@ -16,6 +16,7 @@
 #include "wind_fcn.hpp"
 #include "math_const.hpp"
 #include "special_functions.hpp"
+#include "recursive_fourier.hpp"
 
 // ФНЧ - фильтр нижних  частот
 // ФВЧ - фильтр верхних частот
@@ -42,16 +43,34 @@ protected:
 	bool   m_scale;     // нормировать или ненормироать коэффициенты фильтра (true - да, нормировать, false - нет, не нормировать )
 
 	// значения, которые может принимать переменная m_filt_type:
-	// 1 - фильтр нижних  частот       (  ФНЧ  )
-	// 2 - фильтр высоких частот       (  ФВЧ  ) 
-	// 3 - полосовой фильтр			   (  ПФ   ) 
-	// 4 - режекторный фильтр          (  РФ   )
-	// 5 - синусный фильтр			   ( СФ/КФ )
-	// 6 - косинусный фильтр  		   ( СФ/КФ )
-	// 7 - фильтр Хартли               (  ХФ   )
+	// 1  - фильтр нижних  частот      (  ФНЧ  )
+	// 2  - фильтр высоких частот      (  ФВЧ  )
+	// 3  - полосовой фильтр           (  ПФ   )
+	// 4  - режекторный фильтр         (  РФ   )
+	// 5  - синусный фильтр	           ( СФ/КФ )
+	// 6  - косинусный фильтр  	   ( СФ/КФ )
+	// 7  - фильтр Хартли              (  ХФ   )
+	// 8* - эффективная реализация
 
 	// Буффер под коэффициенты фильтра: 
-	mirror_ring_buff m_BUFF_WIND_CX;   // массив под коэффициенты числителя ПФ фильтра
+	mirror_ring_buff m_BUFF_WIND_CX;  // массив под коэффициенты числителя ПФ фильтра
+
+
+	//=========================================================
+	// Параметры для эффективного рекурсивного КИХ фильтра:
+	//=========================================================
+	struct vector
+	{
+		float re;
+		float im;
+	};
+	
+	vector *m_Wnum , *m_Wden;
+	
+	int   m_ElemNum , m_Ncplx_coeff;
+	float m_a , m_a0 , m_b , m_b0, m_dx , m_Gain;
+	float *m_y_re , *m_y_im;
+	// =========================================================
 
 public:
 
@@ -62,9 +81,9 @@ public:
 	wind_fcn  m_WIND_FCN;
 
 	// входы фильтра:
-	double    m_Km;         // Коэффициент компенсации искажения амплитуды
-	double    m_pH;        // Коэффициент компенсации искажения фазы
-	double    m_in_F;     // текущее значение частоты
+	double    m_Km   , m_pH;  // коэффициенты АЧХ и ФЧХ
+	double    m_W_re , m_W_im; // комплексный коэффициент передачиы
+	double    m_in_F;         // текущее значение частоты
 
 	// выход фильтра:
 	double    m_out;
@@ -77,6 +96,7 @@ public:
 
 	// функция расчета АЧХ и ФЧХ фильтра:
 	int FreqCharacteristics();
+	int FreqCharacteristics( bool mode );
 
 	// функция расчета коэффициентов фильтра:
 	int CoeffCalc();
@@ -92,6 +112,7 @@ public:
 
 	// функция выделения памяти под окно фильтра
 	int allocate();
+	int allocate( int Nbot , int Ntop );
 
 	// функция освобождения памяти
 	int deallocate();
@@ -119,14 +140,13 @@ public:
 		// фильтрация:
 		for (int n = m_order; n >= 0; n--)
 		{
-			m_out += m_BUFF_WIND_SX.m_ptr_fill_down[n + 1] * m_BUFF_WIND_CX.m_buff[n];
+		      m_out += m_BUFF_WIND_SX.m_ptr_fill_down[n + 1] * m_BUFF_WIND_CX.m_buff[n];
 		} 
 
 		return 0;
 
 	}
-	// встроенные функции ( для ускорения их вызова ):
-	//------------------------------------------------------------------------------
+
 	// Функция фильтрации ( фильтрация мгновенных значений ):
 	inline int filt(float *in)
 	{
@@ -145,8 +165,8 @@ public:
 		return 0;
 
 	}
-	//------------------------------------------------------------------------------
-	// Функция фильтрации:
+
+	// Функция для фильтрации выборки 1 раз за такт:
 	inline int filt()
 	{
 		// функция предполагает, что буффер заполняется внешне (см. hpp - файл !!!)
@@ -162,6 +182,51 @@ public:
 		
 		return 0;
 	}
+
+
+	// функции с использованием эффективной КИХ - фильтрации:
+	inline int filt_eff( double *input )
+	{
+
+	    // заполнение буффера:
+	    m_BUFF_WIND_SX.fill_buff( input );
+
+	    // фильтрация:
+	    m_dx  = *input - m_BUFF_WIND_SX.m_ptr_fill_down[ m_ElemNum ];
+	    m_out = 0;
+
+	    for( int i = 0 ; i < m_Ncplx_coeff ; i++ )
+	    {
+		m_a0      = m_dx * m_Wnum[i].re + ( m_y_re[i] * m_Wden[i].re - m_y_im[i] * m_Wden[i].im );
+		m_y_im[i] = m_dx * m_Wnum[i].im + ( m_y_im[i] * m_Wden[i].re + m_y_re[i] * m_Wden[i].im );
+		m_y_re[i] = m_a0;
+		m_out    += m_a0;
+	    }
+
+	    return 0;
+	}
+
+	inline int filt_eff( float *input )
+	{
+	    // заполнение буффера:
+	    m_BUFF_WIND_SX.fill_buff( input );
+
+	    // фильтрация:
+	    m_dx  = *input - m_BUFF_WIND_SX.m_ptr_fill_down[m_ElemNum];
+	    m_out = 0;
+
+	    for( int i = 0 ; i < m_Ncplx_coeff ; i++ )
+	    {			
+		m_a0      = m_dx * m_Wnum[i].re + ( m_y_re[i] * m_Wden[i].re - m_y_im[i] * m_Wden[i].im );
+		m_y_im[i] = m_dx * m_Wnum[i].im + ( m_y_im[i] * m_Wden[i].re + m_y_re[i] * m_Wden[i].im );
+		m_y_re[i] = m_a0;
+		m_out    += m_a0;
+	    }
+		
+	    return 0;
+	}
+
+
 	//------------------------------------------------------------------------------
 	// Функция получения коэффициентов фильтра:
 	inline float get_coeff( int n )
@@ -172,7 +237,7 @@ public:
 	// функция получения порядка фильтра:
 	inline int get_flt_order()
 	{
-	  return m_order + 1;
+		return m_order + 1;
 	}
 
 	

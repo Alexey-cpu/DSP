@@ -92,7 +92,6 @@ int aperiodic_filt_eq::allocate()
 	double Discr  = b * b - 4 * a * c;
 	double K1     = 0;
 	double K2     = 0;
-//	double K      = 0;
 
 	if (Discr > 0 ) // на вс¤кий случай провер¤ем, что дискриминант не равен нулю 
 	{
@@ -110,9 +109,6 @@ int aperiodic_filt_eq::allocate()
 		m_K2 = 0;
 	}
 
-	std::cout << K1 << "\n";
-	std::cout << K2 << "\n";
-
 	return 0;	
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -125,15 +121,23 @@ int aperiodic_filt_eq::deallocate()
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 //функция расчета ј„’ и ‘„’ фильтра:
-int aperiodic_filt_eq::FreqCharacteristics()
+int aperiodic_filt_eq::FreqCharacteristics( bool mode )
 {
 
 	// –асчет ј„’ и ‘„’ фильтра:
 	double Re  = 0;
 	double Im  = 0;
 
-	Re = m_K1 - cos(-6.283185307179586476925286766559 * (double)m_order * m_in_F * m_Ts) - m_K2 * cos(-6.283185307179586476925286766559 * 2 * (double)m_order * m_in_F * m_Ts);
-	Im = 0    - sin(-6.283185307179586476925286766559 * (double)m_order * m_in_F * m_Ts) - m_K2 * sin(-6.283185307179586476925286766559 * 2 * (double)m_order * m_in_F * m_Ts);
+	if( !mode )
+	{
+	    Re = m_K1 - cos(-6.283185307179586476925286766559 * (double)m_order * m_in_F * m_Ts) - m_K2 * cos(-6.283185307179586476925286766559 * 2 * (double)m_order * m_in_F * m_Ts);
+	    Im = 0    - sin(-6.283185307179586476925286766559 * (double)m_order * m_in_F * m_Ts) - m_K2 * sin(-6.283185307179586476925286766559 * 2 * (double)m_order * m_in_F * m_Ts);
+	}
+	else
+	{
+	    Re = m_K1 + cos(-6.283185307179586476925286766559 * (double)m_order * m_in_F * m_Ts) - m_K2 * cos(-6.283185307179586476925286766559 * 2 * (double)m_order * m_in_F * m_Ts);
+	    Im = 0    + sin(-6.283185307179586476925286766559 * (double)m_order * m_in_F * m_Ts) - m_K2 * sin(-6.283185307179586476925286766559 * 2 * (double)m_order * m_in_F * m_Ts);
+	}
 
 	m_pH = atan2(Im, Re);
 	m_Km = sqrt(Re * Re + Im * Im);

@@ -13,7 +13,7 @@ orto_transformations_1ph::orto_transformations_1ph()
 	m_Fs        = 4000;
 	m_Fn        = 50;
 	m_Ts        = 1 / m_Fs;
-	m_order     = m_Fs / m_Fn;
+	m_order     = m_Fs / m_Fn-1;
 	m_Ns        = m_order;
 	m_filt_type = 1;
 	m_Gain      = 1;
@@ -245,8 +245,8 @@ int orto_transformations_1ph::CoeffCalc()
 
 		for (int n = 0; n < m_order; n++)
 		{
-			m_BUFF_WIND_CX.m_buff[n] = m_Gain * cos(-PI2 * (float)n / (float)m_Ns) * m_WIND_FCN.m_BUFF_WIND[n]; // коэффициенты косинусного фильтра
-			m_BUFF_WIND_CY.m_buff[n] = m_Gain * sin(-PI2 * (float)n / (float)m_Ns) * m_WIND_FCN.m_BUFF_WIND[n]; // коэффициенты синусного фильтра
+			m_BUFF_WIND_CX.m_buff[n] = m_Gain * cos(-PI2 * (double)n / (double)m_Ns) * m_WIND_FCN.m_BUFF_WIND[n]; // коэффициенты косинусного фильтра
+			m_BUFF_WIND_CY.m_buff[n] = m_Gain * sin(-PI2 * (double)n / (double)m_Ns) * m_WIND_FCN.m_BUFF_WIND[n]; // коэффициенты синусного фильтра
 		}
 
 		break;
@@ -286,19 +286,19 @@ int orto_transformations_1ph::CoeffCalc()
 int orto_transformations_1ph::FreqCharacteristics()
 {
 	// Начальные значения комплекного коэффициента передачи:
-	float Re1 = 0;
-	float Im1 = 0;
-	float Re2 = 0;
-	float Im2 = 0;
+	double Re1 = 0;
+	double Im1 = 0;
+	double Re2 = 0;
+	double Im2 = 0;
 
 	//Расчет комплексного коэффициента передачи:
 	for (int n = 0; n < m_order; n++)
 	{
 		//Для частоты m_in_F Гц:
-		Re1 = Re1 + cos(-PI2 * n * m_in_F * m_Ts) * m_BUFF_WIND_CX.m_buff[n];
-		Im1 = Im1 + sin(-PI2 * n * m_in_F * m_Ts) * m_BUFF_WIND_CX.m_buff[n];
-		Re2 = Re2 + cos(-PI2 * n * m_in_F * m_Ts) * m_BUFF_WIND_CY.m_buff[n];
-		Im2 = Im2 + sin(-PI2 * n * m_in_F * m_Ts) * m_BUFF_WIND_CY.m_buff[n];
+		Re1 = Re1 + cos(-PI2 * (double)n * m_in_F * m_Ts) * m_BUFF_WIND_CX.m_buff[n];
+		Im1 = Im1 + sin(-PI2 * (double)n * m_in_F * m_Ts) * m_BUFF_WIND_CX.m_buff[n];
+		Re2 = Re2 + cos(-PI2 * (double)n * m_in_F * m_Ts) * m_BUFF_WIND_CY.m_buff[n];
+		Im2 = Im2 + sin(-PI2 * (double)n * m_in_F * m_Ts) * m_BUFF_WIND_CY.m_buff[n];
 	}
 	
 	// Расчет ФЧХ:
@@ -307,7 +307,7 @@ int orto_transformations_1ph::FreqCharacteristics()
 
 	// Расчет АЧХ:
 	// ( в качестве Re берется сигнал на выходе косинусного фильтра, а в качестве Im - сигнал на выходе синусного фильтра )
-	m_Km = sqrt (Re1 * Re1 + Im1 * Im1 + Re2 * Re2 + Im2 * Im2) * m_Gain * 0.5;
+	m_Km = sqrt (Re1 * Re1 + Im1 * Im1 + Re2 * Re2 + Im2 * Im2);
 
 	return 0;
 };
