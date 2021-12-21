@@ -1,8 +1,13 @@
+//--------------------------------------------------------------------------------
+//A.M.Tykvinsky, 21.12.2021
+//--------------------------------------------------------------------------------
+// TEMPLATE RECURSIVE MEAN CLASS
+//--------------------------------------------------------------------------------
+
 #ifndef RECURSIVE_MEAN_H
 #define RECURSIVE_MEAN_H
 
-// identify if the compilation is for ProsoftSystems IDE
-#ifndef __ALG_PLATFORM
+#ifndef __ALG_PLATFORM // identify if the compilation is for ProsoftSystems IDE
 #include "cmath"
 #endif
 
@@ -50,7 +55,8 @@
 #define PI2 6.283185307179586476925286766559
 #endif
 
-template< typename T > class recursive_mean;    // recursive mean
+// recursive mean
+template< typename T > class recursive_mean;
 
 // Recursive mean implementation:
 

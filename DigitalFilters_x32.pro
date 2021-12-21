@@ -8,8 +8,6 @@ CONFIG -= app_bundle
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        include/math_const.cpp \
-        include/special_functions.cpp \
         source/main.cpp
 
 # Default rules for deployment.
@@ -18,15 +16,17 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    include/Clarke_filter.h \
     include/buffer.h \
     include/complex.h \
-    include/math_const.hpp \
+    include/fir.h \
     include/recursive_fourier.h \
     include/recursive_mean.h \
     include/recursive_rms.h \
-    include/special_fcn.h \
-    include/special_functions.hpp
+    include/sgen.h \
+    include/special_functions.h \
+    include/timers.hpp \
+    include/triggers.hpp \
+    include/clarke_filter.h \
 
 DISTFILES += \
     .gitignore

@@ -1,8 +1,11 @@
+//--------------------------------------------------------------------------------
+//A.M.Tykvinsky, 21.12.2021
+//--------------------------------------------------------------------------------
+// TEMPLATE FORWARD / BACKWARD CLARKE TRANSFORM CLASS
+//--------------------------------------------------------------------------------
 
-// Template class Clarke transform implements Clarke toward and backward transformation for the input signal of the float 32 and 64 bit
-
-#ifndef CLARKE_FILTER_H
-#define CLARKE_FILTER_H
+#ifndef СLARKE_FILTER_H
+#define СLARKE_FILTER_H
 
 // customized C data types:
 #ifndef __ix16
@@ -142,4 +145,4 @@ public:
 #undef __fx32
 #undef __fx64
 
-#endif // CLARKE_FILTER_H
+#endif // СLARKE_FILTER_H

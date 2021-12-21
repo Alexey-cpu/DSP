@@ -1,4 +1,8 @@
-// template recursive Fourier class
+//--------------------------------------------------------------------------------
+//A.M.Tykvinsky, 21.12.2021
+//--------------------------------------------------------------------------------
+// TEMPLATE RECURSIVE FOURIER CLASS
+//--------------------------------------------------------------------------------
 
 #ifndef RECURSIVE_FOURIER_H
 #define RECURSIVE_FOURIER_H
@@ -52,7 +56,8 @@
 #define PI2 6.283185307179586476925286766559
 #endif
 
-template< typename T > class recursive_fourier; // recursive Fourier
+// recursive Fourier
+template< typename T > class recursive_fourier;
 
 // Recursive Fourier implementations:
 

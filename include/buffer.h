@@ -1,3 +1,9 @@
+//--------------------------------------------------------------------------------
+//A.M.Tykvinsky, 21.12.2021
+//--------------------------------------------------------------------------------
+// TEMPLATE BUFFER CLASS
+//--------------------------------------------------------------------------------
+
 #ifndef BUFFER_H
 #define BUFFER_H
 
@@ -139,10 +145,13 @@ public:
     }
 
     // operators:
-    inline __type operator [] ( __ix32 n ) 
-	{ 
-		return *( m_upper - n - 1 ); 
-	}
+
+    // get the value:
+    inline __type operator [] ( __ix32 n ) { return *( m_upper - n - 1 ); }
+
+    // put the value:
+    inline void operator () ( __type *input ){ fill_buff( input ); }
+    inline void operator () ( __fx64 *input ){ fill_buff( input ); }
 };
 
 // float 64 bit:
@@ -217,10 +226,12 @@ public:
     }
 
     // operators:
-    inline __type operator [] ( __ix32 n )
-    {
-        return *( m_upper - n - 1 );
-    }
+
+    // get the value:
+    inline __type operator [] ( __ix32 n ) { return *( m_upper - n - 1 ); }
+
+    // put the value:
+    inline void operator () ( __type *input ){ fill_buff( input ); }
 };
 
 // int 16 bit:
@@ -335,10 +346,14 @@ public:
     }
 
     // operators:
-    inline __type operator [] ( __ix32 n ) 
-	{ 
-		return *( m_upper - n - 1 ); 
-	}
+
+    // get the value:
+    inline __type operator [] ( __ix32 n ) { return *( m_upper - n - 1 ); }
+
+    // put the value:
+    inline void operator () ( __type *input ){ fill_buff( input ); }
+    inline void operator () ( __ix32 *input ){ fill_buff( input ); }
+    inline void operator () ( __ix64 *input ){ fill_buff( input ); }
 };
 
 // int 32 bit:
@@ -433,10 +448,13 @@ public:
     }
 
     // operators:
-    inline __type operator [] ( __ix32 n ) 
-	{ 
-		return *( m_upper - n - 1 ); 
-	}
+
+    // get the value:
+    inline __type operator [] ( __ix32 n ) { return *( m_upper - n - 1 ); }
+
+    // put the value:
+    inline void operator () ( __type *input ){ fill_buff( input ); }
+    inline void operator () ( __ix64 *input ){ fill_buff( input ); }
 };
 
 // int 64 bit:
@@ -511,10 +529,12 @@ public:
     }
 
     // operators:
-    inline __type operator [] ( __ix32 n )
-    {
-        return *( m_upper - n - 1 );
-    }
+
+    // get the value:
+    inline __type operator [] ( __ix32 n ) { return *( m_upper - n - 1 ); }
+
+    // put the value:
+    inline void operator () ( __type *input ){ fill_buff( input ); }
 };
 
 
@@ -602,7 +622,13 @@ public:
     }
 
     // operators:
+
+    // get the value:
     inline __type operator [] ( __ix32 n ) { return m_data[n]; }
+
+    // put the value:
+    inline void operator() ( __type *input ) { fill_buff( input ); }
+    inline void operator() ( __fx64 *input ) { fill_buff( input ); }
 };
 
 // float 64 bit:
@@ -670,7 +696,12 @@ public:
     }
 
     // operators:
+
+    // get the value:
     inline __type operator [] ( __ix32 n ) { return m_data[n]; }
+
+    // put the value:
+    inline void operator() ( __type *input ) { fill_buff( input ); }
 };
 
 // int 16 bit:
@@ -768,7 +799,14 @@ public:
     }
 
     // operators:
+
+    // get the value:
     inline __type operator [] ( __ix32 n ) { return m_data[n]; }
+
+    // put the value:
+    inline void operator() ( __type *input ) { fill_buff( input ); }
+    inline void operator() ( __ix32 *input ) { fill_buff( input ); }
+    inline void operator() ( __ix64 *input ) { fill_buff( input ); }
 };
 
 // int 32 bit:
@@ -851,7 +889,13 @@ public:
     }
 
     // operators:
+
+    // get the value:
     inline __type operator [] ( __ix32 n ) { return m_data[n]; }
+
+    // put the value:
+    inline void operator() ( __type *input ) { fill_buff( input ); }
+    inline void operator() ( __ix64 *input ) { fill_buff( input ); }
 };
 
 // int 64 bit:
@@ -919,7 +963,12 @@ public:
     }
 
     // operators:
+
+    // get the value:
     inline __type operator [] ( __ix32 n ) { return m_data[n]; }
+
+    // put the value:
+    inline void operator() ( __type *input ) { fill_buff( input ); }
 };
 
 // customized C data typed exclusion to avoid aliases:

@@ -1,8 +1,13 @@
+//--------------------------------------------------------------------------------
+//A.M.Tykvinsky, 21.12.2021
+//--------------------------------------------------------------------------------
+// TEMPLATE RECURSIVE RMS CLASS
+//--------------------------------------------------------------------------------
+
 #ifndef RECURSIVE_RMS_H
 #define RECURSIVE_RMS_H
 
-// identify if the compilation is for ProsoftSystems IDE
-#ifndef __ALG_PLATFORM
+#ifndef __ALG_PLATFORM // identify if the compilation is for ProsoftSystems IDE
 #include "cmath"
 #endif
 
@@ -50,7 +55,8 @@
 #define PI2 6.283185307179586476925286766559
 #endif
 
-template< typename T > class recursive_rms; // recursive root mean square
+// recursive root mean square
+template< typename T > class recursive_rms;
 
 // Recursive RMS implementation:
 

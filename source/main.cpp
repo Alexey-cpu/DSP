@@ -1,70 +1,149 @@
-
 #include <iostream>
-#include "include/special_fcn.h"
-#include "include/special_functions.hpp"
+#include <fstream>
+#include <QElapsedTimer>
+#include "include/special_functions.h"
 #include "include/buffer.h"
+#include "include/FIR.h"
 
+// special functions check:
 int test0()
 {
-    special_functions f_ellip;
+    // timer:
+    QElapsedTimer timer;
 
-    // arguments:
-    double u = 0.25;
-    double k = 0.5;
+    // Matlab elliptic functions use M = k * k parameter. Be carefull !!!
 
-    // elliptic functions:
-    std::cout << " arguments : " << "\n";
-    std::cout << "u = " << u << "\t" << "k = " << k << "\n" << "\n";
-    std::cout << " elliptic functions: " << "\n";
-    std::cout << " CN = " << f_ellip.cn( u , k ) <<  "\t" << __cn__( u , k ) << "\n";
-    std::cout << " SN = " << f_ellip.sn( u , k ) <<  "\t" << __sn__( u , k )  << "\n";
-    std::cout << " DN = " << f_ellip.dn( u , k ) <<  "\t" << __dn__( u , k )  << "\n";
-    std::cout << " CD = " << f_ellip.cd( u , k ) <<  "\t" << __cd__( u , k )  << "\n";
-    std::cout << " SD = " << f_ellip.sd( u , k ) <<  "\t" << __sd__( u , k )  << "\n";
-    std::cout << " ND = " << f_ellip.nd( u , k ) <<  "\t" << __nd__( u , k )  << "\n";
-    std::cout << " DC = " << f_ellip.dc( u , k ) <<  "\t" << __dc__( u , k )  << "\n";
-    std::cout << " NC = " << f_ellip.nc( u , k ) <<  "\t" << __nc__( u , k )  << "\n";
-    std::cout << " SC = " << f_ellip.sc( u , k ) <<  "\t" << __sc__( u , k )  << "\n";
-    std::cout << " NS = " << f_ellip.ns( u , k ) <<  "\t" << __ns__( u , k )  << "\n";
-    std::cout << " DS = " << f_ellip.ds( u , k ) <<  "\t" << __ds__( u , k )  << "\n";
-    std::cout << " CS = " << f_ellip.cs( u , k ) <<  "\t" << __cs__( u , k )  << "\n";
-    std::cout << "\n";
+    double M = 0.7;
+    double k = sqrt(M);
+    int N = 100;
+    double step = 1.0 / (double)N;
+    double upper = +5;
+    double lower = -5;
+    int NN = (upper - lower) / step+2;
+    double *u = ( double* ) calloc( NN , sizeof ( double ) );
+    for( int i = 0 ; i < NN ; i++ )
+    {
+        u[i] = lower;
+        lower += step;
+    }
 
-    // inverse elliptic functions:
-    std::cout << " inverse elliptic functions: " << "\n";
-    std::cout << " inv_CN = " << f_ellip.inv_cn(f_ellip.cn( u , k ) , k ) << "\t" << __icn__( __cn__( u , k ) , k ) <<  "\n";
-    std::cout << " inv_SN = " << f_ellip.inv_sn(f_ellip.sn( u , k ) , k ) << "\t" << __isn__( __sn__( u , k ) , k ) << "\n";
-    std::cout << " inv_DN = " << f_ellip.inv_dn(f_ellip.dn( u , k ) , k ) << "\t" << __idn__( __dn__( u , k ) , k ) << "\n";
-    std::cout << " inv_CD = " << f_ellip.inv_cd(f_ellip.cd( u , k ) , k ) << "\t" << __icd__( __cd__( u , k ) , k ) << "\n";
-    std::cout << " inv_SD = " << f_ellip.inv_sd(f_ellip.sd( u , k ) , k ) << "\t" << __isd__( __sd__( u , k ) , k ) << "\n";
-    std::cout << " inv_ND = " << f_ellip.inv_nd(f_ellip.nd( u , k ) , k ) << "\t" << __ind__( __nd__( u , k ) , k ) << "\n";
-    std::cout << " inv_DC = " << f_ellip.inv_dc(f_ellip.dc( u , k ) , k ) << "\t" << __idc__( __dc__( u , k ) , k ) << "\n";
-    std::cout << " inv_NC = " << f_ellip.inv_nc(f_ellip.nc( u , k ) , k ) << "\t" << __inc__( __nc__( u , k ) , k ) << "\n";
-    std::cout << " inv_SC = " << f_ellip.inv_sc(f_ellip.sc( u , k ) , k ) << "\t" << __isc__( __sc__( u , k ) , k ) << "\n";
-    std::cout << " inv_NS = " << f_ellip.inv_ns(f_ellip.ns( u , k ) , k ) << "\t" << __ins__( __ns__( u , k ) , k ) << "\n";
-    std::cout << " inv_DS = " << f_ellip.inv_ds(f_ellip.ds( u , k ) , k ) << "\t" << __ids__( __ds__( u , k ) , k ) << "\n";
-    std::cout << " inv_CS = " << f_ellip.inv_cs(f_ellip.cs( u , k ) , k ) << "\t" << __ics__( __cs__( u , k ) , k ) << "\n";
-    std::cout << "\n";
+    timer.start();
+    for( int i = 0 ; i < NN ; i++ )
+    {
+        __sn__( u[i] , k );
+        __cn__( u[i] , k );
+        __dn__( u[i] , k );
+    }
+    std::cout << "dt = " << timer.nsecsElapsed()/1e9 << "\n";
 
-    // elliptic integrals:
-    std::cout << " elliptic integrals: " << "\n";
-    std::cout << " K = " << f_ellip.ellip_K( u ) << "\t" << __ellip_k__( u ) << "\n";
-    std::cout << " E = " << f_ellip.ellip_E( u ) << "\t" << __ellip_e__( u ) << "\n";
-    std::cout << "\n";
+    // logs directory:
+    std::string logs = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
 
-    // Bessel functions:
-    double ba = 10;
-    int    nn = 5;
-    std::cout << " bessel_I0          = " << f_ellip.bessel_I0( ba ) << "\t" << __bessel_i0__( ba ) << "\n";
-    std::cout << " bessel_I1          = " << f_ellip.bessel_I1( ba ) << "\t" << __bessel_i1__( ba ) << "\n";
-    std::cout << " bessel_In          = " << f_ellip.bessel_In( ba , nn ) << "\t" << __bessel_in__( ba , nn ) << "\n";
-    std::cout << " modified_bessel_In = " << f_ellip.mod_bessel_In( ba , nn ) << "\t" << __modified_bessel_in__( ba , nn ) << "\n";
-    std::cout << "\n";
+    // files:
+    std::ofstream sn;
+    std::ofstream cn;
+    std::ofstream dn;
+    std::ofstream cd;
+    std::ofstream sd;
+    std::ofstream nd;
+    std::ofstream dc;
+    std::ofstream nc;
+    std::ofstream sc;
+    std::ofstream ns;
+    std::ofstream ds;
+    std::ofstream cs;
+    std::ofstream uu;
+
+    // open files:
+    sn.open( logs + "\\sn.txt" );
+    cn.open( logs + "\\cn.txt" );
+    dn.open( logs + "\\dn.txt" );
+    cd.open( logs + "\\cd.txt" );
+    sd.open( logs + "\\sd.txt" );
+    nd.open( logs + "\\nd.txt" );
+    dc.open( logs + "\\dc.txt" );
+    nc.open( logs + "\\nc.txt" );
+    sc.open( logs + "\\sc.txt" );
+    ns.open( logs + "\\ns.txt" );
+    ds.open( logs + "\\ds.txt" );
+    cs.open( logs + "\\cs.txt" );
+    uu.open( logs + "\\uu.txt" );
+
+    // write files:
+    for( int i = 0 ; i < NN ; i++ )
+    {
+        sn << __sn__( u[i] , k ) << "\n";
+        cn << __cn__( u[i] , k ) << "\n";
+        dn << __dn__( u[i] , k ) << "\n";
+        cd << __cd__( u[i] , k ) << "\n";
+        sd << __sd__( u[i] , k ) << "\n";
+        nd << __nd__( u[i] , k ) << "\n";
+        dc << __dc__( u[i] , k ) << "\n";
+        nc << __nc__( u[i] , k ) << "\n";
+        sc << __sc__( u[i] , k ) << "\n";
+        ns << __ns__( u[i] , k ) << "\n";
+        ds << __ds__( u[i] , k ) << "\n";
+        cs << __cs__( u[i] , k ) << "\n";
+        uu << u[i] << "\n";
+    }
+
+    // close files:
+    sn.close();
+    cn.close();
+    dn.close();
+    cd.close();
+    sd.close();
+    nd.close();
+    dc.close();
+    nc.close();
+    sc.close();
+    ns.close();
+    ds.close();
+    cs.close();
+    uu.close();
+
+    // memory deallocation:
+    free(u);
 
     return 0;
 }
 
+// complex arithmetic check:
 int test1()
+{
+    complex<double> z0( 1.0 , 2.0 );
+    complex<double> z1( 2.0 , 0.5 );
+    complex<double> z2( 3.5 , 4.5 );
+
+    std::cout << " complex math functions check: " << "\n\n";
+    std::cout << "z0 = " << z0.m_re << "\t" << z0.m_im << "\n";
+    std::cout << "z1 = " << z1.m_re << "\t" << z1.m_im << "\n";
+    std::cout << "z2 = " << z2.m_re << "\t" << z2.m_im << "\n\n";
+
+    std::cout << "arithmetics: " << "\n\n";
+    std::cout << " z0 + z1 + z2    =  " << ( z0 + z1 + z2 ).m_re << "\t\t" << ( z0 + z1 + z2 ).m_im << "\n";
+    std::cout << " z0 - z1 - z2    =  " << ( z0 - z1 - z2 ).m_re << "\t\t" << ( z0 - z1 - z2 ).m_im << "\n";
+    std::cout << " z0 * z1 / z2    =  " << ( z0 * z1 / z2 ).m_re << "\t\t" << ( z0 * z1 / z2 ).m_im << "\n";
+    std::cout << " (z1-z2)/(z1+z2) =  " << ( ( z1 - z2 ) / ( z1 + z2 ) ).m_re << "\t" << ( ( z1 - z2 ) / ( z1 + z2 ) ).m_im << "\n";
+    std::cout << " z0 = z0 + z2    =  " << ( z0 += z2 ).m_re << "\t\t" << z0.m_im << "\n";
+    std::cout << " z1 = z1 * z2    =  " << ( z1 *= z2 ).m_re << "\t\t" << z1.m_im << "\n";
+    std::cout << " z2 = z2 / z1    =  " << ( z2 /= z1 ).m_re << "\t\t" << z2.m_im << "\n";
+
+    std::cout << "functions: " << "\n\n";
+    std::cout << " sinh( z0 )    =  " << __sinhf__(z0).m_re << "\t" << __sinhf__(z0).m_im  << "\n";
+    std::cout << " cosh( z0 )    =  " << __coshf__(z0).m_re << "\t" << __coshf__(z0).m_im  << "\n";
+    std::cout << " tanh( z0 )    =  " << __tanhf__(z0).m_re << "\t" << __tanhf__(z0).m_im  << "\n";
+    std::cout << " ctnh( z0 )    =  " << __ctnhf__(z0).m_re << "\t" << __ctnhf__(z0).m_im  << "\n";
+    std::cout << " abs( z0 )    =  " << __absf__(z0) << "\n";
+    std::cout << " arg( z0 )    =  " << __argf__(z0) * 180 / 3.14 << "\n";
+    std::cout << " conj( z0 )    =  " << __conjf__(z0).m_re << "\t\t" << __conjf__(z0).m_im << "\n";
+    std::cout << " norm( z0 )    =  " << __normf__(z0).m_re << "\t\t" << __normf__(z0).m_im << "\n";
+    std::cout << " z0*rot( 60 , 1 )    =  " << ( z0 *=__rotf__( 60.0 , 1) ).m_re << "\t\t" << (  z0 ).m_im << "\n";
+    return 0;
+}
+
+// buffer class example:
+int test2()
 {
     typedef double __type;
     int N0 = 15;
@@ -78,10 +157,7 @@ int test1()
     for( int i = 0 ; i < N0 ; i++ ) std::cout << ( a[i] = i ) << "\t";
     std::cout << "\n";
 
-    for( int i = 0 ; i < N0 ; i++ )
-    {
-        buff.fill_buff( &a[i] );
-    }
+    for( int i = 0 ; i < N0 ; i++ ) { buff.fill_buff( &a[i] ); }
 
     std::cout << "buffer: " << "\n";
     for( int i = 0 ; i < N1 ; i++ ) std::cout <<  buff[i] << "\t";
@@ -89,13 +165,65 @@ int test1()
 
     buff.deallocate();
     delete [] a;
-    a= nullptr;
+    a = nullptr;
 
+    return 0;
+}
+
+// fir lowpass test:
+int test3()
+{
+    fir_lp<float> FLP;
+    FLP.init( 4000 , 50 , 100 , 80 , 1 );
+    FLP.m_wind_fcn.Hamming();
+    FLP.allocate();
+    FLP.freq_rp( "C:\\Qt_projects\\DigitalFilters_x32\\logs" );
+    FLP.deallocate();
+    return 0;
+}
+
+// fir highpass test:
+int test4()
+{
+    fir_hp<float> FHP;
+    FHP.init( 4000 , 50 , 100 , 80 , 1 );
+    FHP.m_wind_fcn.Hamming();
+    FHP.allocate();
+    FHP.freq_rp( "C:\\Qt_projects\\DigitalFilters_x32\\logs" );
+    FHP.deallocate();
+    return 0;
+}
+
+// fir bandpass test:
+int test5()
+{
+    fir_bp<float> FBP;
+    FBP.init( 4000 , 50 , 100 , 100 , 80 , 1 );
+    FBP.m_wind_fcn.Hamming();
+    FBP.allocate();
+    FBP.freq_rp( "C:\\Qt_projects\\DigitalFilters_x32\\logs" );
+    FBP.deallocate();
+    return 0;
+}
+
+// fir bandstop test:
+int test6()
+{
+    fir_bs<float> FBP;
+    FBP.init( 4000 , 50 , 100 , 100 , 80 , 1 );
+    FBP.m_wind_fcn.Hamming();
+    FBP.allocate();
+    FBP.freq_rp( "C:\\Qt_projects\\DigitalFilters_x32\\logs" );
+    FBP.deallocate();
     return 0;
 }
 
 int main()
 {
-    test1();
+    // test3(); // fir lowpass test
+    // test4(); // fir highpass test
+    // test5(); // fir bandpass test
+    // test6(); // fir bandstop test
+
     return 0;
 }
