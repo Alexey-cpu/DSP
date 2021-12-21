@@ -7,8 +7,8 @@
 #ifndef RECURSIVE_FOURIER_H
 #define RECURSIVE_FOURIER_H
 
-// identify if the compilation is for ProsoftSystems IDE
-#ifndef __ALG_PLATFORM
+
+#ifndef __ALG_PLATFORM // identify if the compilation is for ProsoftSystems IDE
 #include "cmath"
 #endif
 
@@ -88,7 +88,7 @@ public:
     void deallocate() { m_buffer_sx.deallocate(); }
 
     // initialization function:
-    void filtInit( __type Fn , __type Fs , __ix32 hnum )
+    void init( __type Fn , __type Fs , __ix32 hnum )
     {
         // system variables initialization:
         m_Fn      = Fn;
@@ -132,7 +132,7 @@ public:
     };
 
     // constructor with initiallization:
-    recursive_fourier( __type Fn , __type Fs , __ix32 hnum ) { filtInit( Fn , Fs , hnum ); }
+    recursive_fourier( __type Fn , __type Fs , __ix32 hnum ) { init( Fn , Fs , hnum ); }
 
     // default destructor:
     ~recursive_fourier(){ deallocate(); }
@@ -219,7 +219,7 @@ public:
     void deallocate() { m_buffer_sx.deallocate(); }
 
     // initialization function:
-    void filtInit( __type Fn , __type Fs , __ix32 hnum )
+    void init( __type Fn , __type Fs , __ix32 hnum )
     {
         // system variables initialization:
         m_Fn      = Fn;
@@ -263,7 +263,7 @@ public:
     };
 
     // constructor with initiallization:
-    recursive_fourier( __type Fn , __type Fs , __ix32 hnum ) { filtInit( Fn , Fs , hnum ); }
+    recursive_fourier( __type Fn , __type Fs , __ix32 hnum ) { init( Fn , Fs , hnum ); }
 
     // default destructor:
     ~recursive_fourier(){ deallocate(); }

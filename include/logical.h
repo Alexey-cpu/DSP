@@ -1,11 +1,5 @@
-// --------------------------------------------------------------------------------------------------------------
-// A.M. Tykvinsky , 04.02.2021
-// --------------------------------------------------------------------------------------------------------------
-// TIMERS CLASS
-// --------------------------------------------------------------------------------------------------------------
-
-#ifndef _TIMERS_HPP
-#define _TIMERS_HPP
+#ifndef LOGICAL_H
+#define LOGICAL_H
 
 #ifndef __fx32
 #define __fx32 float
@@ -23,6 +17,7 @@
 #define __ix32 int
 #endif
 
+// timers class:
 class timers
 {
     typedef bool __bool ;
@@ -30,7 +25,7 @@ class timers
     __fx64 m_Time , m_Fs , m_Ts;
     __ix32 m_FramesPerCycle;
     __bool m_Q , m_CC , m_QQ;
-	
+
 public:
 
     // constructor:
@@ -46,7 +41,7 @@ public:
     }
 
     // destructor:
-	~timers();
+    ~timers();
 
     // timer initialization function:
     __void init( __fx64 Fs, __ix32 FramesPerCycle )
@@ -149,11 +144,99 @@ public:
 
 };
 
+// triggers class:
+class triggers
+{
+    typedef bool __bool ;
+
+private:
+    __bool m_CC;
+    __bool m_QQ;
+    __bool m_Q;
+
+public:
+
+    // constructor:
+    triggers()
+    {
+        m_Q    = false;
+        m_CC   = false;
+        m_QQ   = false;
+    }
+
+    // destructor:
+    ~triggers();
+
+    // get trigger state function:
+    __bool get_State() { return m_Q; }
+
+    // rising edge detector
+    __bool rr_trig( __bool CLK )
+    {
+        m_Q  = ( (CLK == true) && (m_CC == false) ) ? true : false;
+        m_CC = CLK;
+        return m_Q;
+    }
+
+    // falling edge detector
+    __bool ff_trig( __bool CLK )
+    {
+        m_Q  = ( (CLK == false) && (m_CC == true) ) ? true : false;
+        m_CC = CLK;
+        return m_Q;
+    }
+
+    // bstable RS-trigger
+    __bool rs_trig( __bool S , __bool R )
+    {
+        if ( ( (S == true) && (R == false) ) || ( (m_QQ == true) && (R == false) ) )
+        {
+            m_QQ = true;
+            m_Q  = m_QQ;
+        }
+        else
+        {
+            m_QQ = false;
+            m_Q  = m_QQ;
+        }
+
+        return m_Q;
+    }
+
+    // bstable SR-trigger
+    __bool sr_trig( __bool S , __bool R )
+    {
+        if ( (S == true) || ( (m_QQ == true) && (R == false) ) )
+        {
+            m_QQ = true;
+            m_Q  = m_QQ;
+        }
+        else
+        {
+            m_QQ = false;
+            m_Q  = m_QQ;
+        }
+
+        return m_Q;
+    }
+
+    // Hit crossing template function:
+    template< typename T > __bool hit_crossing( T input , T offset , __bool falling )
+    {
+        if (falling == false)
+        {
+            return rr_trig( ( input > offset ) );
+        }
+        else
+        {
+            return ff_trig( ( input > offset ) );
+        }
+    }
+};
+
 #undef __fx32
 #undef __fx64
 #undef __ix32
 #undef __ix16
 
-#endif 
-
-
+#endif

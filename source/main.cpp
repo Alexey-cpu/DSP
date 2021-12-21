@@ -4,6 +4,8 @@
 #include "include/special_functions.h"
 #include "include/buffer.h"
 #include "include/FIR.h"
+#include "include/sgen.h"
+#include "include/butterworth.h"
 
 // special functions check:
 int test0()
@@ -173,11 +175,58 @@ int test2()
 // fir lowpass test:
 int test3()
 {
+    QElapsedTimer timer;
+
+    // log directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // files:
+    std::ofstream yt;
+    std::ofstream ft;
+    yt.open( directory + "\\yt.txt" );
+    ft.open( directory + "\\ft.txt" );
+
+    // signal generator:
+    sgen<double> gen;
+
+    // filter configuration:
     fir_lp<float> FLP;
     FLP.init( 4000 , 50 , 100 , 80 , 1 );
-    FLP.m_wind_fcn.Hamming();
+    FLP.m_wind_fcn.Chebyshev(60);
     FLP.allocate();
-    FLP.freq_rp( "C:\\Qt_projects\\DigitalFilters_x32\\logs" );
+    FLP.freq_rp( directory );
+
+    // emulation:
+    int cycles_num       = 10;
+    int frames_per_cycle = 20;
+    int cnt = 0;
+    double dt = 0;
+
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            // signal generation and filtering:
+            gen( 1 , 50 , 0 , 4000 );
+
+            timer.start();
+            FLP( &gen.m_out );
+            cnt++;
+            dt += timer.nsecsElapsed()/1e9;
+
+            // store signal and filter output:
+            yt << gen.m_out << "\n";
+            ft << FLP.m_out << "\n";
+        }
+    }
+
+    std::cout << "dt_av = " << dt / (double)cnt << "\n";
+
+    // close files:
+    yt.close();
+    ft.close();
+
+    // memory deallocation:
     FLP.deallocate();
     return 0;
 }
@@ -185,41 +234,199 @@ int test3()
 // fir highpass test:
 int test4()
 {
-    fir_hp<float> FHP;
-    FHP.init( 4000 , 50 , 100 , 80 , 1 );
-    FHP.m_wind_fcn.Hamming();
-    FHP.allocate();
-    FHP.freq_rp( "C:\\Qt_projects\\DigitalFilters_x32\\logs" );
-    FHP.deallocate();
+    QElapsedTimer timer;
+
+    // log directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // files:
+    std::ofstream yt;
+    std::ofstream ft;
+    yt.open( directory + "\\yt.txt" );
+    ft.open( directory + "\\ft.txt" );
+
+    // signal generator:
+    sgen<double> gen;
+
+    // filter configuration:
+    fir_hp<float> FLP;
+    FLP.init( 4000 , 50 , 100 , 80 , 1 );
+    FLP.m_wind_fcn.Chebyshev(60);
+    FLP.allocate();
+    FLP.freq_rp( directory );
+
+    // emulation:
+    int cycles_num       = 10;
+    int frames_per_cycle = 20;
+    int cnt = 0;
+    double dt = 0;
+
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            // signal generation and filtering:
+            gen( 1 , 50 , 0 , 4000 );
+
+            timer.start();
+            FLP( &gen.m_out );
+            cnt++;
+            dt += timer.nsecsElapsed()/1e9;
+
+            // store signal and filter output:
+            yt << gen.m_out << "\n";
+            ft << FLP.m_out << "\n";
+        }
+    }
+
+    std::cout << "dt_av = " << dt / (double)cnt << "\n";
+
+    // close files:
+    yt.close();
+    ft.close();
+
+    // memory deallocation:
+    FLP.deallocate();
     return 0;
 }
 
 // fir bandpass test:
 int test5()
 {
-    fir_bp<float> FBP;
-    FBP.init( 4000 , 50 , 100 , 100 , 80 , 1 );
-    FBP.m_wind_fcn.Hamming();
-    FBP.allocate();
-    FBP.freq_rp( "C:\\Qt_projects\\DigitalFilters_x32\\logs" );
-    FBP.deallocate();
+    QElapsedTimer timer;
+
+    // log directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // files:
+    std::ofstream yt;
+    std::ofstream ft;
+    yt.open( directory + "\\yt.txt" );
+    ft.open( directory + "\\ft.txt" );
+
+    // signal generator:
+    sgen<double> gen;
+
+    // filter configuration:
+    fir_bp<float> FLP;
+    FLP.init( 4000 , 50 , 100 , 100 , 80 , 1 );
+    FLP.m_wind_fcn.Chebyshev(60);
+    FLP.allocate();
+    FLP.freq_rp( directory );
+
+    // emulation:
+    int cycles_num       = 10;
+    int frames_per_cycle = 20;
+    int cnt = 0;
+    double dt = 0;
+
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            // signal generation and filtering:
+            gen( 1 , 50 , 0 , 4000 );
+
+            timer.start();
+            FLP( &gen.m_out );
+            cnt++;
+            dt += timer.nsecsElapsed()/1e9;
+
+            // store signal and filter output:
+            yt << gen.m_out << "\n";
+            ft << FLP.m_out << "\n";
+        }
+    }
+
+    std::cout << "dt_av = " << dt / (double)cnt << "\n";
+
+    // close files:
+    yt.close();
+    ft.close();
+
+    // memory deallocation:
+    FLP.deallocate();
     return 0;
 }
 
 // fir bandstop test:
 int test6()
 {
-    fir_bs<float> FBP;
-    FBP.init( 4000 , 50 , 100 , 100 , 80 , 1 );
-    FBP.m_wind_fcn.Hamming();
-    FBP.allocate();
-    FBP.freq_rp( "C:\\Qt_projects\\DigitalFilters_x32\\logs" );
-    FBP.deallocate();
+    QElapsedTimer timer;
+
+    // log directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // files:
+    std::ofstream yt;
+    std::ofstream ft;
+    yt.open( directory + "\\yt.txt" );
+    ft.open( directory + "\\ft.txt" );
+
+    // signal generator:
+    sgen<double> gen;
+
+    // filter configuration:
+    fir_bs<float> FLP;
+    FLP.init( 4000 , 50 , 100 , 100 , 80 , 1 );
+    FLP.m_wind_fcn.Chebyshev(60);
+    FLP.allocate();
+    FLP.freq_rp( directory );
+
+    // emulation:
+    int cycles_num       = 10;
+    int frames_per_cycle = 20;
+    int cnt = 0;
+    double dt = 0;
+
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            // signal generation and filtering:
+            gen( 1 , 50 , 0 , 4000 );
+
+            timer.start();
+            FLP( &gen.m_out );
+            cnt++;
+            dt += timer.nsecsElapsed()/1e9;
+
+            // store signal and filter output:
+            yt << gen.m_out << "\n";
+            ft << FLP.m_out << "\n";
+        }
+    }
+
+    std::cout << "dt_av = " << dt / (double)cnt << "\n";
+
+    // close files:
+    yt.close();
+    ft.close();
+
+    // memory deallocation:
+    FLP.deallocate();
+    return 0;
+}
+
+// window function example:
+int test7()
+{
     return 0;
 }
 
 int main()
 {
+
+    // digital butterworth lowpass computation
+    double *coeffs_num = nullptr , *coeffs_den = nullptr;
+    butterworth_digital_hp( 4000 , 500 , 5 , coeffs_num , coeffs_den );
+
+    // memory free:
+    free( coeffs_num );
+    free( coeffs_den );
+
+    //pow()
+
     // test3(); // fir lowpass test
     // test4(); // fir highpass test
     // test5(); // fir bandpass test

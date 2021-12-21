@@ -17,15 +17,15 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     include/buffer.h \
+    include/butterworth.h \
     include/complex.h \
     include/fir.h \
+    include/logical.h \
     include/recursive_fourier.h \
     include/recursive_mean.h \
     include/recursive_rms.h \
     include/sgen.h \
     include/special_functions.h \
-    include/timers.hpp \
-    include/triggers.hpp \
     include/clarke_filter.h \
 
 DISTFILES += \

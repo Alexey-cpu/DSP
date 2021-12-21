@@ -71,6 +71,7 @@ template<> class recursive_rms<__fx32>
     __type m_Gain;
     __type m_Ns;
     __type m_auxv;
+	__type m_y;
     __ix32 m_order;
 
     // buffer:
@@ -85,7 +86,7 @@ public:
     void deallocate() { m_buffer_sx.deallocate(); }
 
     // initialization function:
-    void filtInit( __type Fn , __type Fs , __ix32 order )
+    void init( __type Fn , __type Fs , __ix32 order )
     {
         m_Fs      = Fs;
         m_Fn      = Fn;
@@ -93,6 +94,8 @@ public:
         m_Ns      = m_order;
         m_Ts      = 1 / m_Fs;
         m_Gain    = 1 / m_Ns;
+		m_y		  = 0;
+		m_out     = 0;
     }
 
     // default constructor:
@@ -104,10 +107,12 @@ public:
         m_Ns      = m_order;
         m_Ts      = 1 / m_Fs;
         m_Gain    = 1 / m_Ns;
+		m_y		  = 0;
+		m_out     = 0;
     };
 
     // constructor with initiallization:
-    recursive_rms( __type Fn , __type Fs , __ix32 order ) { filtInit( Fn , Fs , order ); }
+    recursive_rms( __type Fn , __type Fs , __ix32 order ) { init( Fn , Fs , order ); }
 
     // default destructor:
     ~recursive_rms(){ deallocate(); }
@@ -134,8 +139,8 @@ public:
     {
         m_auxv = ( *input ) * ( *input );
         m_buffer_sx.fill_buff( &m_auxv );
-        m_out = m_Gain * ( m_auxv - m_buffer_sx[ m_order ] ) + m_out;
-        m_out = sqrtf( m_out );
+        m_y = m_Gain * ( m_auxv - m_buffer_sx[ m_order ] ) + m_y;
+        m_out =  ( m_y <= 0 ) ? 0 : sqrtf( m_y );
     }
 
     // float x64 input ( CAUTION !!! ROUNDING ERROR OCCURS !!! ):
@@ -143,8 +148,8 @@ public:
     {
         m_auxv = ( *input ) * ( *input );
         m_buffer_sx.fill_buff( &m_auxv );
-        m_out = m_Gain * ( m_auxv - m_buffer_sx[ m_order ] ) + m_out;
-        m_out = ( m_out <= 0 ) ? 0 : sqrtf( m_out );
+        m_y = m_Gain * ( m_auxv - m_buffer_sx[ m_order ] ) + m_y;
+        m_out =  ( m_y <= 0 ) ? 0 : sqrtf( m_y );
     }
 
     // operators:
@@ -157,7 +162,7 @@ public:
 // float x64:
 template<> class recursive_rms<__fx64>
 {
-    typedef __fx32 __type;
+    typedef __fx64 __type;
     // system variables:
     __type m_Fn;
     __type m_Fs;
@@ -165,6 +170,7 @@ template<> class recursive_rms<__fx64>
     __type m_Gain;
     __type m_Ns;
     __type m_auxv;
+	__type m_y;
     __ix32 m_order;
 
     // buffer:
@@ -179,7 +185,7 @@ public:
     void deallocate() { m_buffer_sx.deallocate(); }
 
     // initialization function:
-    void filtInit( __type Fn , __type Fs , __ix32 order )
+    void init( __type Fn , __type Fs , __ix32 order )
     {
         m_Fs      = Fs;
         m_Fn      = Fn;
@@ -187,6 +193,8 @@ public:
         m_Ns      = m_order;
         m_Ts      = 1 / m_Fs;
         m_Gain    = 1 / m_Ns;
+		m_y		  = 0;
+		m_out     = 0;
     }
 
     // default constructor:
@@ -198,10 +206,12 @@ public:
         m_Ns      = m_order;
         m_Ts      = 1 / m_Fs;
         m_Gain    = 1 / m_Ns;
+		m_y		  = 0;
+		m_out     = 0;
     };
 
     // constructor with initiallization:
-    recursive_rms( __type Fn , __type Fs , __ix32 order ) { filtInit( Fn , Fs , order ); }
+    recursive_rms( __type Fn , __type Fs , __ix32 order ) { init( Fn , Fs , order ); }
 
     // default destructor:
     ~recursive_rms(){ deallocate(); }
@@ -228,17 +238,8 @@ public:
     {
         m_auxv = ( *input ) * ( *input );
         m_buffer_sx.fill_buff( &m_auxv );
-        m_out = m_Gain * ( m_auxv - m_buffer_sx[ m_order ] ) + m_out;
-        m_out = ( m_out <= 0 ) ? 0 : sqrtf( m_out );
-    }
-
-    // float x64 input ( CAUTION !!! ROUNDING ERROR OCCURS !!! ):
-    inline void filt ( __fx64 *input )
-    {
-        m_auxv = ( *input ) * ( *input );
-        m_buffer_sx.fill_buff( &m_auxv );
-        m_out = m_Gain * ( m_auxv - m_buffer_sx[ m_order ] ) + m_out;
-        m_out = sqrtf( m_out );
+        m_y = m_Gain * ( m_auxv - m_buffer_sx[ m_order ] ) + m_y;
+        m_out =  ( m_y <= 0 ) ? 0 : sqrtf( m_y );
     }
 
     // operators:

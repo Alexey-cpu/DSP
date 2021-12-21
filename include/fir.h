@@ -48,9 +48,6 @@ template<> class fir_lp<__fx32>
     __type m_Fn;
     __type m_Fstop;
     __type m_Ns;
-    __type m_pH;
-    __type m_Km;
-    __type m_out;
     __ix32 m_order;
     __bool m_scale;
 
@@ -58,6 +55,10 @@ template<> class fir_lp<__fx32>
     __type *m_buff_cx;
 
 public:
+
+    __type m_pH;
+    __type m_Km;
+    __type m_out;
 
     // buffers:
     mirror_ring_buffer< __type > m_buff_sx;
@@ -120,7 +121,7 @@ public:
     {
         __type m_W_re = 0;
         __type m_W_im = 0;
-        for ( __ix32 n = 0; n <= m_order ; n++)
+        for ( __ix32 n = 0; n <= m_order; n++)
         {
             m_W_re = m_W_re + cos(-PI2 * n * F * m_Ts) * m_buff_cx[n];
             m_W_im = m_W_im + sin(-PI2 * n * F * m_Ts) * m_buff_cx[n];
@@ -235,7 +236,7 @@ public:
         return m_out;
     }
 
-    // x64 input ( CAUTION !!! ROUNDING ERROR OCCURS !!! )
+    // x64:
     inline __type filt( __fx64 *input )
     {
         m_buff_sx( input );
@@ -270,9 +271,6 @@ template<> class fir_lp<__fx64>
     __type m_Fn;
     __type m_Fstop;
     __type m_Ns;
-    __type m_pH;
-    __type m_Km;
-    __type m_out;
     __ix32 m_order;
     __bool m_scale;
 
@@ -280,6 +278,10 @@ template<> class fir_lp<__fx64>
     __type *m_buff_cx;
 
 public:
+
+    __type m_pH;
+    __type m_Km;
+    __type m_out;
 
     // buffers:
     mirror_ring_buffer< __type > m_buff_sx;
@@ -484,9 +486,6 @@ template<> class fir_hp<__fx32>
     __type m_Fn;
     __type m_Fstop;
     __type m_Ns;
-    __type m_pH;
-    __type m_Km;
-    __type m_out;
     __ix32 m_order;
     __bool m_scale;
 
@@ -494,6 +493,10 @@ template<> class fir_hp<__fx32>
     __type *m_buff_cx;
 
 public:
+
+    __type m_pH;
+    __type m_Km;
+    __type m_out;
 
     // buffers:
     mirror_ring_buffer< __type > m_buff_sx;
@@ -921,9 +924,6 @@ template<> class fir_bp<__fx32>
     __type m_Fstop1;
     __type m_Fstop2;
     __type m_Ns;
-    __type m_pH;
-    __type m_Km;
-    __type m_out;
     __ix32 m_order;
     __bool m_scale;
 
@@ -931,6 +931,10 @@ template<> class fir_bp<__fx32>
     __type *m_buff_cx;
 
 public:
+
+    __type m_pH;
+    __type m_Km;
+    __type m_out;
 
     // buffers:
     mirror_ring_buffer< __type > m_buff_sx;
@@ -1147,9 +1151,6 @@ template<> class fir_bp<__fx64>
     __type m_Fstop1;
     __type m_Fstop2;
     __type m_Ns;
-    __type m_pH;
-    __type m_Km;
-    __type m_out;
     __ix32 m_order;
     __bool m_scale;
 
@@ -1157,6 +1158,10 @@ template<> class fir_bp<__fx64>
     __type *m_buff_cx;
 
 public:
+
+    __type m_pH;
+    __type m_Km;
+    __type m_out;
 
     // buffers:
     mirror_ring_buffer< __type > m_buff_sx;
@@ -1365,9 +1370,6 @@ template<> class fir_bs<__fx32>
     __type m_Fstop1;
     __type m_Fstop2;
     __type m_Ns;
-    __type m_pH;
-    __type m_Km;
-    __type m_out;
     __ix32 m_order;
     __bool m_scale;
 
@@ -1375,6 +1377,10 @@ template<> class fir_bs<__fx32>
     __type *m_buff_cx;
 
 public:
+
+    __type m_pH;
+    __type m_Km;
+    __type m_out;
 
     // buffers:
     mirror_ring_buffer< __type > m_buff_sx;
@@ -1578,9 +1584,6 @@ template<> class fir_bs<__fx64>
     __type m_Fstop1;
     __type m_Fstop2;
     __type m_Ns;
-    __type m_pH;
-    __type m_Km;
-    __type m_out;
     __ix32 m_order;
     __bool m_scale;
 
@@ -1588,6 +1591,10 @@ template<> class fir_bs<__fx64>
     __type *m_buff_cx;
 
 public:
+
+    __type m_pH;
+    __type m_Km;
+    __type m_out;
 
     // buffers:
     mirror_ring_buffer< __type > m_buff_sx;
@@ -1751,14 +1758,14 @@ public:
     {
         m_buff_sx( input );
         m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
+        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[n] * m_buff_cx[n];
         return m_out;
     }
 
     inline __type filt()
     {
         m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
+        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[n] * m_buff_cx[n];
         return m_out;
     }
 

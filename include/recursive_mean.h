@@ -84,7 +84,7 @@ public:
     void deallocate() { m_buffer_sx.deallocate(); }
 
     // initialization function:
-    void filtInit( __type Fn , __type Fs , __ix32 order )
+    void init( __type Fn , __type Fs , __ix32 order )
     {
         m_Fs      = Fs;
         m_Fn      = Fn;
@@ -106,7 +106,7 @@ public:
     };
 
     // constructor with initiallization:
-    recursive_mean( __type Fn , __type Fs , __ix32 order ) { filtInit( Fn , Fs , order ); }
+    recursive_mean( __type Fn , __type Fs , __ix32 order ) { init( Fn , Fs , order ); }
 
     // default destructor:
     ~recursive_mean(){ deallocate(); }
@@ -174,7 +174,7 @@ public:
     void deallocate() { m_buffer_sx.deallocate(); }
 
     // initialization function:
-    void filtInit( __type Fn , __type Fs , __ix32 order )
+    void init( __type Fn , __type Fs , __ix32 order )
     {
         m_Fs      = Fs;
         m_Fn      = Fn;
@@ -196,7 +196,7 @@ public:
     };
 
     // constructor with initiallization:
-    recursive_mean( __type Fn , __type Fs , __ix32 order ) { filtInit( Fn , Fs , order ); }
+    recursive_mean( __type Fn , __type Fs , __ix32 order ) { init( Fn , Fs , order ); }
 
     // default destructor:
     ~recursive_mean(){ deallocate(); }

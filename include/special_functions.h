@@ -271,12 +271,8 @@ extern __fx64 __isn__( __fx64 sn , __fx64 x )
         g[n + 1] = sqrt(a[n] * g[n]);
     }
 
-    // РЎР‚Р В°РЎРѓРЎвЂЎР ВµРЎвЂљ Р Р…РЎС“Р В»Р ВµР Р†Р С•Р С–Р С• Р В·Р Р…Р В°РЎвЂЎР ВµР Р…Р С‘РЎРЏ РЎС“Р С–Р В»Р В°:
-
+    // backward substitution:
     phi = asin(sn);
-
-    // РЎР‚Р В°РЎРѓРЎвЂЎР ВµРЎвЂљ Р С”Р С•Р Р…Р ВµРЎвЂЎР Р…Р С•Р С–Р С• Р В·Р Р…Р В°РЎвЂЎР ВµР Р…Р С‘РЎРЏ РЎС“Р С–Р В»Р В°:
-
     for (n = 1 ; n < __ITERATIONS_NUMBER__ ; n++)
     {
 
@@ -1306,6 +1302,8 @@ template<> complex<__ix16> __ctnhf__( complex<__ix16> _complex ) { return __cosh
 
 #undef __TO_DEGREES
 #undef __TO_RADIANS
+
+// customized pi undef:
 
 // customized variables exclusion to avloid aliasing during compilation:
 #undef __ITERATIONS_NUMBER__

@@ -1,0 +1,24 @@
+// recursive FIR filters :
+recursive_fourier
+recursive_mean
+recursive_rms
+recursive_qmltpx
+
+// comb FIR filters:
+aperiodic_filter
+aperiodic_filter_eq
+
+// recursive classic filters:
+butterworth
+chebyshev1
+chebyshev2
+elliptic
+
+// non-recursive filters:
+fir
+window_fourier
+window_qmltpx
+
+// 3-phase filters:
+clarke_filter
+park_filter
