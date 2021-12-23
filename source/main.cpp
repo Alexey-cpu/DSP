@@ -5,7 +5,7 @@
 #include "include/buffer.h"
 #include "include/FIR.h"
 #include "include/sgen.h"
-#include "include/butterworth.h"
+#include "include/iir.h"
 
 // special functions check:
 int test0()
@@ -123,6 +123,7 @@ int test1()
     std::cout << "z2 = " << z2.m_re << "\t" << z2.m_im << "\n\n";
 
     std::cout << "arithmetics: " << "\n\n";
+    std::cout << " sqrt( z0 )    =  " << __sqrtf__(z0).m_re << "\t" << __sqrtf__(z0).m_im  << "\n";
     std::cout << " z0 + z1 + z2    =  " << ( z0 + z1 + z2 ).m_re << "\t\t" << ( z0 + z1 + z2 ).m_im << "\n";
     std::cout << " z0 - z1 - z2    =  " << ( z0 - z1 - z2 ).m_re << "\t\t" << ( z0 - z1 - z2 ).m_im << "\n";
     std::cout << " z0 * z1 / z2    =  " << ( z0 * z1 / z2 ).m_re << "\t\t" << ( z0 * z1 / z2 ).m_im << "\n";
@@ -418,15 +419,17 @@ int main()
 {
 
     // digital butterworth lowpass computation
-    double *coeffs_num = nullptr , *coeffs_den = nullptr;
-    butterworth_digital_hp( 4000 , 500 , 5 , coeffs_num , coeffs_den );
-
-    // memory free:
+    double *coeffs_num = nullptr , *coeffs_den = nullptr , *gains = nullptr;
+    //__butt_cheb1_digital_lp__( 4000 , 100 , 6 , coeffs_num , coeffs_den , gains , 1 );
+    //__butt_cheb1_digital_hp__( 4000 , 100 , 6 , coeffs_num , coeffs_den , gains , 0 );
+    //__butt_cheb1_digital_bp__( 4000 , 100 , 700 , 8 , coeffs_num , coeffs_den , gains , 1 );
+    __butt_cheb1_digital_bs__( 4000 , 100 , 700 , 6 , coeffs_num , coeffs_den , gains , 1 );
     free( coeffs_num );
     free( coeffs_den );
+    free( gains );
 
-    //pow()
 
+    // test1(); // comlex arithmetic test
     // test3(); // fir lowpass test
     // test4(); // fir highpass test
     // test5(); // fir bandpass test

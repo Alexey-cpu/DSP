@@ -17,9 +17,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     include/buffer.h \
-    include/butterworth.h \
     include/complex.h \
     include/fir.h \
+    include/iir.h \
     include/logical.h \
     include/recursive_fourier.h \
     include/recursive_mean.h \

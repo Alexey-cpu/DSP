@@ -1071,6 +1071,9 @@ public:
     inline __fx64 operator [] ( __ix32 n ) { return m_buff[n]; }
 };
 
+// template sign function:
+template< typename T > __ix32 __sign__( T input ) { return ( input > 0 ) ? 1 : -1 ; }
+
 // functions to work with complex numbers:
 
 #ifdef COMPLEX_H
@@ -1100,6 +1103,44 @@ template<> __ix64 __argf__( complex<__ix64> _complex ) { return atan2( _complex.
 template<> __ix32 __argf__( complex<__ix32> _complex ) { return atan2( _complex.m_im , _complex.m_re ); }
 // int x16:
 template<> __ix16 __argf__( complex<__ix16> _complex ) { return atan2( _complex.m_im , _complex.m_re ); }
+
+// __sqrtf__
+template<typename T> complex<T> __sqrtf__( complex<T> _complex );
+// float x64:
+template<> complex<__fx64> __sqrtf__( complex<__fx64> _complex )
+{
+    __fx64 abs = sqrt ( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
+    __fx64 arg = atan2( _complex.m_im , _complex.m_re );
+    return complex<__fx64>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
+}
+// float x32:
+template<> complex<__fx32> __sqrtf__( complex<__fx32> _complex )
+{
+    __fx32 abs = sqrt ( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
+    __fx32 arg = atan2( _complex.m_im , _complex.m_re );
+    return complex<__fx32>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
+}
+// int x64:
+template<> complex<__ix64> __sqrtf__( complex<__ix64> _complex )
+{
+    __ix64 abs = sqrt ( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
+    __ix64 arg = atan2( _complex.m_im , _complex.m_re );
+    return complex<__ix64>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
+}
+// int x32:
+template<> complex<__ix32> __sqrtf__( complex<__ix32> _complex )
+{
+    __ix32 abs = sqrt ( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
+    __ix32 arg = atan2( _complex.m_im , _complex.m_re );
+    return complex<__ix32>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
+}
+// int x16:
+template<> complex<__ix16> __sqrtf__( complex<__ix16> _complex )
+{
+    __ix16 abs = sqrt ( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
+    __ix16 arg = atan2( _complex.m_im , _complex.m_re );
+    return complex<__ix16>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
+}
 
 // __conjf__ :
 template<typename T> complex<T> __conjf__( complex<T> _complex );
@@ -1304,6 +1345,10 @@ template<> complex<__ix16> __ctnhf__( complex<__ix16> _complex ) { return __cosh
 #undef __TO_RADIANS
 
 // customized pi undef:
+#undef PI0
+#undef PI2
+#undef PI_2
+#undef PI_4
 
 // customized variables exclusion to avloid aliasing during compilation:
 #undef __ITERATIONS_NUMBER__
