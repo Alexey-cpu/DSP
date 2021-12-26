@@ -412,28 +412,121 @@ int test6()
 // window function example:
 int test7()
 {
+    double Fs = 4000;
+
+    // digital Butterworth or Chebyshev type I filters computation:
+    iir_cf coeffs{ 0 , 0 , 0 , -1 , -1 , -1 };
+    // iir coefficients computation:
+     coeffs = __butt_cheb1_digital_lp__( Fs , 100 , 5 , 1 , 1 ); // it works !!!
+    // coeffs = __butt_cheb1_digital_hp__( Fs , 800 , 6 , 1 , 1 ); // it works !!!
+    // coeffs = __butt_cheb1_digital_bp__( Fs , 100 , 500 , 8 , 1 , 1 ); // it works !!!
+    // coeffs = __butt_cheb1_digital_bs__( Fs , 100 , 700 , 6 , 1 , 1 );
+
+     // digital Chebyshev type II or Elliptic filters computation:
+     // coeffs = __cheb2_ellip_digital_lp__( Fs , 100 , 5 , 0 , 1 , 80 );
+     // coeffs = __cheb2_ellip_digital_hp__( Fs , 100 , 6 , 0 , 1 , 80 );
+     // coeffs = __cheb2_ellip_digital_bp__( Fs , 100 , 700 , 6 , 1 , 1 , 80 );
+     // coeffs = __cheb2_ellip_digital_bs__( Fs , 100 , 700 , 6 , 0 , 1 , 80 );
+
+    // show iir coefficients:
+    __show_coeffs__( coeffs );
+
+    // filter input and output buffers:
+    mirror_ring_buffer<double> *buff_sx = ( mirror_ring_buffer<double>* )calloc( coeffs.N , sizeof ( mirror_ring_buffer<double> ) );
+    mirror_ring_buffer<double> *buff_sy = ( mirror_ring_buffer<double>* )calloc( coeffs.N , sizeof ( mirror_ring_buffer<double> ) );
+    for( int i = 0 ; i < coeffs.N ; i++ )
+    {
+        buff_sx[i].allocate(4);
+        buff_sy[i].allocate(3);
+    }
+
+    // signal generator:
+    sgen<double> gen;
+
+    // emulation:
+    int cycles_num       = 10;
+    int frames_per_cycle = 20;
+
+    double _yt = 0;
+    double _ft = 0;
+    double time = 0;
+
+    std::ofstream Km;
+    std::ofstream pH;
+    std::ofstream FF;
+    std::ofstream yt;
+    std::ofstream ft;
+    std::ofstream tt;
+
+    Km.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\Km.txt");
+    pH.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\pH.txt");
+    FF.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\FF.txt");
+    yt.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\yt.txt");
+    ft.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\ft.txt");
+    tt.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\tt.txt");
+
+
+    butterworth_lp_fx64 butt_x64;
+    butt_x64.init( 4000.0 , 50.0 , 100.0 , 5 , 1.0 );
+
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            // signal generation and filtering:
+            _yt = gen( 1 , 50 , 0 , 4000 );
+            _ft = __filt__( &_yt  , coeffs.cfnum , coeffs.cfden , coeffs.gains , coeffs.N , buff_sx , buff_sy );
+
+            yt << _yt << "\n";
+            ft << _ft << "\n";
+            tt <<  (time+=1/Fs)  << "\n";
+        }
+    }
+
+    // frequency response computation :
+    for( int i = 0 ; i < Fs / 2 ; i++ )
+    {
+        iir_fr fr = __freq_resp__( coeffs.cfnum , coeffs.cfden , coeffs.gains , coeffs.N , Fs , i );
+        Km << fr.Km << "\n";
+        pH << fr.pH << "\n";
+        FF << i     << "\n";
+    }
+
+    // emulation:
+
+    // close files:
+    Km.close();
+    pH.close();
+    FF.close();
+    yt.close();
+    ft.close();
+    tt.close();
+
+    // memory deallocation:
+    if( coeffs.cfnum != 0 ) free( coeffs.cfnum );
+    if( coeffs.cfden != 0 ) free( coeffs.cfden );
+    if( coeffs.gains != 0 ) free( coeffs.gains );
+
+    for( int i = 0 ; i < coeffs.N ; i++ )
+    {
+        buff_sx[i].deallocate();
+        buff_sy[i].deallocate();
+    }
+    free( buff_sx );
+    free( buff_sy );
+
     return 0;
 }
 
 int main()
 {
-
-    // digital butterworth lowpass computation
-    double *coeffs_num = nullptr , *coeffs_den = nullptr , *gains = nullptr;
-    //__butt_cheb1_digital_lp__( 4000 , 100 , 6 , coeffs_num , coeffs_den , gains , 1 );
-    //__butt_cheb1_digital_hp__( 4000 , 100 , 6 , coeffs_num , coeffs_den , gains , 0 );
-    //__butt_cheb1_digital_bp__( 4000 , 100 , 700 , 8 , coeffs_num , coeffs_den , gains , 1 );
-    __butt_cheb1_digital_bs__( 4000 , 100 , 700 , 6 , coeffs_num , coeffs_den , gains , 1 );
-    free( coeffs_num );
-    free( coeffs_den );
-    free( gains );
-
-
     // test1(); // comlex arithmetic test
     // test3(); // fir lowpass test
     // test4(); // fir highpass test
     // test5(); // fir bandpass test
     // test6(); // fir bandstop test
+
+    test7();
 
     return 0;
 }
