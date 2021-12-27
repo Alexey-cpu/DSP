@@ -40,6 +40,10 @@
 #define __fx64 double
 #endif
 
+#ifndef __fxx64
+#define __fxx64 long double
+#endif
+
 #ifndef __ix32
 #define __ix32 int
 #endif
@@ -53,119 +57,103 @@
 #define PI2 6.283185307179586476925286766559
 #endif
 
-// IIR zeros/poles container:
-struct iir_zp
-{
-    // plp - lowpass normalized analogue poles
-    // zlp - lowpass normalized analogue zeros
-    // glp - lowpass normalized analogue gains
-    // L   - lowpass normalized analogue poles number
-    // R   - lowpass normalized analogue odd poles
-    // N   - lowpass normalized analogue order
-    complex<__fx64> *plp;
-    complex<__fx64> *zlp;
-    complex<__fx64> *glp;
-    __ix32 L;
-    __ix32 R;
-    __ix32 N;
-};
+// IIR template zeros / poles data structure:
+template < typename T > struct iir_zp;
+template<> struct iir_zp< __fx32  > { complex< __fx32  > *plp , *zlp , *glp; __ix32 L , R , N; };
+template<> struct iir_zp< __fx64  > { complex< __fx64  > *plp , *zlp , *glp; __ix32 L , R , N; };
+template<> struct iir_zp< __fxx64 > { complex< __fxx64 > *plp , *zlp , *glp; __ix32 L , R , N; };
 
-struct iir_cf
-{
-    // cfnum - lowpass analogue normalized quadratic sections numerator coeffs
-    // cfden - lowpass analogue normalized quadratic sections denominator coeffs
-    // gains - lowpass analogue normalized quadratic sections gains
-    // L     - lowpass analogue normalized poles number
-    // R     - lowpass analogue normalized odd poles
-    // N     - lowpass analogue normalized order
-    __fx64 *cfnum;
-    __fx64 *cfden;
-    __fx64 *gains;
-    __ix32 L;
-    __ix32 R;
-    __ix32 N;
-};
+// IIR template coefficients and gains data structure:
+template < typename T > struct iir_cf;
+template<> struct iir_cf< __fx32  > { __fx32  *cfnum , *cfden , *gains; __ix32 L , R , N; };
+template<> struct iir_cf< __fx64  > { __fx64  *cfnum , *cfden , *gains; __ix32 L , R , N; };
+template<> struct iir_cf< __fxx64 > { __fxx64 *cfnum , *cfden , *gains; __ix32 L , R , N; };
 
-struct iir_fr
-{
-    // Km - amplitude frequency response
-    // pH - phase frequency response
-    __fx64 Km;
-    __fx64 pH;
-};
+// IIR template buffers data structure:
+template< typename T > struct iir_bf;
+template<> struct iir_bf< __fx32  >{ mirror_ring_buffer< __fx32  > *bx , *by; __ix32 N; };
+template<> struct iir_bf< __fx64  >{ mirror_ring_buffer< __fx64  > *bx , *by; __ix32 N; };
+template<> struct iir_bf< __fxx64 >{ mirror_ring_buffer< __fxx64 > *bx , *by; __ix32 N; };
 
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// IIR template frequency response data structure:
+template < typename T > struct iir_fr;
+template<> struct iir_fr< __fx32  > { __fx32  Km , pH; };
+template<> struct iir_fr< __fx64  > { __fx64  Km , pH; };
+template<> struct iir_fr< __fxx64 > { __fxx64 Km , pH; };
+
+// IIR specification data structure:
+struct iir_sp { __fx64 Fs , Ts , Fn , Fc , BW , Gs , Gp; __ix32 order , type; };
 
 // IIR ZEROS / POLES PLAIN COMPUTATION FUNCTIONS:
 
 // Butterworth lowpass analogue normalized zeros/poles plain computation:
-extern iir_zp __butt_zeros_poles_plain__ ( __ix32 order , __fx64 g_stop )
+template< typename T > iir_zp< T > __butt_zeros_poles_plain__ ( __ix32 order , __fx64 g_stop )
 {
     // number of zeros, poles, coeffs:
     __ix32 L = trunc( order / 2 ) , R = order - 2 * L , N = L + R;
 
     // stopband attenuation:
-    __fx64 epsilon_stop = sqrt(pow(10, g_stop / 10) - 1);
+    T epsilon_stop = sqrt(pow(10, g_stop / 10) - 1);
 
     // memory allocation for the lowpass analogue prototype poles, zeros and gains:
-    complex<__fx64> *plp = ( complex<__fx64>* ) calloc( N+0 , sizeof ( complex<__fx64> ) );
-    complex<__fx64> *zlp = ( complex<__fx64>* ) calloc( N+0 , sizeof ( complex<__fx64> ) );
-    complex<__fx64> *glp = ( complex<__fx64>* ) calloc( N+1 , sizeof ( complex<__fx64> ) );
+    complex<T> *plp = ( complex<T>* ) calloc( N+0 , sizeof ( complex<T> ) );
+    complex<T> *zlp = ( complex<T>* ) calloc( N+0 , sizeof ( complex<T> ) );
+    complex<T> *glp = ( complex<T>* ) calloc( N+1 , sizeof ( complex<T> ) );
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_zp{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_zp<T>{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // complex-conjugate pairs:
-    __fx64 alpha = 0 , betta = 1 / sqrt( pow( epsilon_stop , 1 / order ) );
+    T alpha = 0 , betta = 1 / sqrt( pow( epsilon_stop , 1 / order ) );
 
     for( __ix32 i = 0 ; i < L ; i++ )
     {
         alpha = (2 * (i + 1) - 1) * PI0 / (2 * order);
-        plp[i] = complex<__fx64>( ( -1 / betta * sin(alpha) ) , ( +1 / betta * cos(alpha) ) );
+        plp[i] = complex<T>( ( -1 / betta * sin(alpha) ) , ( +1 / betta * cos(alpha) ) );
         glp[i] = plp[i] * __conjf__( plp[i] ) ;
     }
 
     // real odd pole:
     if( R == 1 )
     {
-        plp[ N - 1 ] = complex<__fx64>( ( -1 / betta ) , 0 );
+        plp[ N - 1 ] = complex< T >( ( -1 / betta ) , 0 );
         glp[ N - 1 ] = -plp[ N - 1 ].m_re;
     }
 
     // setting the output gain:
     glp[ N ] = 1;
 
-    return iir_zp{ plp , zlp , glp , L , R , N };
+    return iir_zp< T > { plp , zlp , glp , L , R , N };
 }
 
 // Chebyshev type I lowpass analogue normalized zeros/poles plain computation:
-extern iir_zp __cheb1_zeros_poles_plain__( __ix32 order , __fx64 g_stop )
+template< typename T > iir_zp< T > __cheb1_zeros_poles_plain__( __ix32 order , __fx64 g_stop )
 {
     // number of zeros, poles, coeffs:
     __ix32 L = trunc( order / 2 ) , R = order - 2 * L , N = L + R;
 
     // stopband attenuation:
-    __fx64 epsilon_stop = sqrt(pow(10, g_stop / 10) - 1);
+    T epsilon_stop = sqrt(pow(10, g_stop / 10) - 1);
 
     // memory allocation for the lowpass analogue prototype poles, zeros and gains:
-    complex<__fx64>  *plp = ( complex<__fx64>* ) calloc( N   , sizeof ( complex<__fx64> ) );
-    complex<__fx64>  *zlp = ( complex<__fx64>* ) calloc( N   , sizeof ( complex<__fx64> ) );
-    complex<__fx64>  *glp = ( complex<__fx64>* ) calloc( N+1 , sizeof ( complex<__fx64> ) );
+    complex< T >  *plp = ( complex<T>* ) calloc( N   , sizeof ( complex< T > ) );
+    complex< T >  *zlp = ( complex<T>* ) calloc( N   , sizeof ( complex< T > ) );
+    complex< T >  *glp = ( complex<T>* ) calloc( N+1 , sizeof ( complex< T > ) );
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_zp{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_zp< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // complex conjugate pairs:
-    __fx64 alpha = 0 , betta = asinh( 1 / epsilon_stop ) / order;
+    T alpha = 0 , betta = asinh( 1 / epsilon_stop ) / order;
     for ( __ix32 i = 0; i < L; i++)
     {
         alpha = (2 * (i + 1) - 1) * PI0 / (2 * order);
-        plp[i] = complex<__fx64>( -sin( alpha ) * sinh( betta ) , +cos( alpha ) * cosh( betta ) );
+        plp[i] = complex< T >( -sin( alpha ) * sinh( betta ) , +cos( alpha ) * cosh( betta ) );
         glp[i] = plp[i] * __conjf__( plp[i] );
     }
 
     // real odd pole:
     if ( R == 1 )
     {
-        plp[ N - 1 ] = complex<__fx64>( -sinh( betta ) , 0 );
+        plp[ N - 1 ] = complex< T >( -sinh( betta ) , 0 );
         glp[ N - 1 ] = -plp[ N - 1 ].m_re;
     }
 
@@ -173,11 +161,11 @@ extern iir_zp __cheb1_zeros_poles_plain__( __ix32 order , __fx64 g_stop )
     glp[N] = ( R < 1 ) ? ( sqrt(1 / (1 + epsilon_stop * epsilon_stop) ) ) : 1;
 
     // end the computation and return the filter info:
-    return iir_zp{ plp , zlp , glp , L , R , N };
+    return iir_zp< T >{ plp , zlp , glp , L , R , N };
 }
 
 // Chebyshev type II lowpass analogue normalized zeros/poles plain computation:
-extern iir_zp __cheb2_zeros_poles_plain__( __ix32 order , __fx64 g_stop )
+template< typename T > iir_zp< T > __cheb2_zeros_poles_plain__( __ix32 order , __fx64 g_stop )
 {
     // INITIALIZATION:
 
@@ -188,18 +176,18 @@ extern iir_zp __cheb2_zeros_poles_plain__( __ix32 order , __fx64 g_stop )
     __ix32 L = trunc( order / 2 ) , R = order - 2 * L , N = L + R;
 
     // allocate zeros and poles arrays:
-    complex<__fx64> *plp = ( complex<__fx64>* ) calloc( N   , sizeof ( complex<__fx64> ) );
-    complex<__fx64> *zlp = ( complex<__fx64>* ) calloc( N   , sizeof ( complex<__fx64> ) );
-    complex<__fx64> *glp = ( complex<__fx64>* ) calloc( N+1 , sizeof ( complex<__fx64> ) );
+    complex< T > *plp = ( complex< T >* ) calloc( N   , sizeof ( complex< T > ) );
+    complex< T > *zlp = ( complex< T >* ) calloc( N   , sizeof ( complex< T > ) );
+    complex< T > *glp = ( complex< T >* ) calloc( N+1 , sizeof ( complex< T > ) );
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_zp{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_zp< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // ZEROS AND POLES COMPUTATION:
 
     // complex conjugate pairs:
 
     // auxiliary variables:
-    __fx64 alpha , betta = asinh( epsilon_stop ) / order , re , im;
+    T alpha , betta = asinh( epsilon_stop ) / order , re , im;
 
     // zeros , poles, gains computation:
     for ( __ix32 i = 0 ; i < L ; i++ )
@@ -207,33 +195,33 @@ extern iir_zp __cheb2_zeros_poles_plain__( __ix32 order , __fx64 g_stop )
         alpha = (2 * ( i + 1 ) - 1) * PI0 / ( 2 * order );
 
         // zeros:
-        zlp[i] = complex<__fx64>( 0 , 1 / cos( alpha ) );
+        zlp[i] = complex< T >( 0 , 1 / cos( alpha ) );
 
         // poles:
         re = -( sin( alpha ) * sinh( betta ) ) / ( cos( alpha ) * cos( alpha ) * cosh( betta ) * cosh( betta ) + sin( alpha ) * sin( alpha ) * sinh( betta ) * sinh( betta ) );
         im = +( cos( alpha ) * cosh( betta ) ) / ( cos( alpha ) * cos( alpha ) * cosh( betta ) * cosh( betta ) + sin( alpha ) * sin( alpha ) * sinh( betta ) * sinh( betta ) );
-        plp[i] = complex<__fx64>( re , im );
+        plp[i] = complex< T >( re , im );
 
         // gains:
         glp[i] = ( zlp[i] * __conjf__( zlp[i] ) ) / ( plp[i] * __conjf__( plp[i] ) );
-        glp[i] = complex<__fx64>( 1 , 0 ) / glp[i];
+        glp[i] = complex< T >( 1 , 0 ) / glp[i];
     }
 
     // real odd pole:
     if( R >= 1 )
     {
-        plp[ N - 1 ] = complex<__fx64>( -1 / sinh( betta ) , 0 );
+        plp[ N - 1 ] = complex< T >( -1 / sinh( betta ) , 0 );
         glp[ N - 1 ] = -plp[N-1].m_re;
     }
 
     // set the output gain:
     glp[N] = 1;
 
-    return iir_zp{ plp , zlp , glp , L , R , N };
+    return iir_zp< T >{ plp , zlp , glp , L , R , N };
 }
 
 // Elliptic lowpass analogue normalized zeros/poles plain computation:
-extern iir_zp __ellip_zeros_poles_plain__( __ix32 order ,  __fx64 g_pass , __fx64 g_stop )
+template< typename T > iir_zp< T > __ellip_zeros_poles_plain__( __ix32 order ,  __fx64 g_pass , __fx64 g_stop )
 {
     // INITIALIZATION:
 
@@ -245,23 +233,23 @@ extern iir_zp __ellip_zeros_poles_plain__( __ix32 order ,  __fx64 g_pass , __fx6
     __ix32 L = trunc( order / 2 ) , R = order - 2 * L , N = L + R;
 
     // allocate zeros and poles arrays:
-    complex<__fx64> *plp = ( complex<__fx64>* ) calloc( N   , sizeof ( complex<__fx64> ) );
-    complex<__fx64> *zlp = ( complex<__fx64>* ) calloc( N   , sizeof ( complex<__fx64> ) );
-    complex<__fx64> *glp = ( complex<__fx64>* ) calloc( N+1 , sizeof ( complex<__fx64> ) );
+    complex< T > *plp = ( complex< T >* ) calloc( N   , sizeof ( complex< T > ) );
+    complex< T > *zlp = ( complex< T >* ) calloc( N   , sizeof ( complex< T > ) );
+    complex< T > *glp = ( complex< T >* ) calloc( N+1 , sizeof ( complex< T > ) );
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_zp{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_zp< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // TRANSIENT SUPPRESSION FACTORS COMPUTATION:
 
     // auxiliary variables:
-    __fx64 SN , KE;
-    __fx64 Ke = epsilon_pass / epsilon_stop , Kp = 1;
-    __fx64 m = sqrt( 1 - Ke * Ke ) , alpha , Kw;
+    T SN , KE;
+    T Ke = epsilon_pass / epsilon_stop , Kp = 1;
+    T m = sqrt( 1 - Ke * Ke ) , alpha , Kw;
 
     // transient suppression factors computation:
     for ( __ix32 i = 0; i < L; i++ )
     {
-        alpha = (2 * ( i + 1 ) - 1) / ( (__fx64)order);
+        alpha = (2 * ( i + 1 ) - 1) / ( ( T )order);
         KE = __ellip_k__( m );
         SN = __sn__( alpha * KE , m );
         Kp = Kp * SN*SN*SN*SN;
@@ -277,24 +265,24 @@ extern iir_zp __ellip_zeros_poles_plain__( __ix32 order ,  __fx64 g_pass , __fx6
     {
         for ( __ix32 i = 0; i < L; i++)
         {
-            alpha = (2 * i + 1) / ( ( __fx64 )order) * KE;
+            alpha = (2 * i + 1) / ( ( T )order) * KE;
             SN = __sn__( alpha , Kw );
-            zlp[i] = complex<__fx64>( 0 , 1 /( Kw * SN ) );
+            zlp[i] = complex< T >( 0 , 1 /( Kw * SN ) );
         }
     }
     else if( order % 2 != 0 ) // odd order filter
     {
         for ( __ix32 i = 0; i < L; i++)
         {
-            alpha = (2 * i + 2) / ( ( __fx64 )order) * KE;
+            alpha = (2 * i + 2) / ( ( T )order) * KE;
             SN = __sn__( alpha , Kw );
-            zlp[i] = complex<__fx64>( 0 , 1 /( Kw * SN ) );
+            zlp[i] = complex< T >( 0 , 1 /( Kw * SN ) );
         }
     }
 
     // POLES COMPUTATION:
-    __fx64 V0 = 0 , A = 0 , B = 0 , C = 0 , D = 0 , E = 0 , F = 0;
-    V0 = -__ellip_k__( Kw ) * __isc__(1 / epsilon_pass, sqrt(1 - Ke * Ke)) / ( __ellip_k__( Ke ) * ( ( __fx64 ) order ) );
+    T V0 = 0 , A = 0 , B = 0 , C = 0 , D = 0 , E = 0 , F = 0;
+    V0 = -__ellip_k__( Kw ) * __isc__(1 / epsilon_pass, sqrt(1 - Ke * Ke)) / ( __ellip_k__( Ke ) * ( ( T ) order ) );
     KE =  __ellip_k__( Kw );
 
     // complex conjugate pairs:
@@ -302,11 +290,11 @@ extern iir_zp __ellip_zeros_poles_plain__( __ix32 order ,  __fx64 g_pass , __fx6
     {
         if( order % 2 == 0 ) // even order filter
         {
-            alpha = (2 * i + 1) / ( ( __fx64 ) order ) * KE;
+            alpha = (2 * i + 1) / ( ( T ) order ) * KE;
         }
         else // odd order filter
         {
-            alpha = (2 * i + 2) / ( ( __fx64 ) order ) * KE;
+            alpha = (2 * i + 2) / ( ( T ) order ) * KE;
         }
 
         // compute auxiliary variables:
@@ -341,7 +329,7 @@ extern iir_zp __ellip_zeros_poles_plain__( __ix32 order ,  __fx64 g_pass , __fx6
         C = A * A;
 
         // compute the real odd pole:
-        plp[ N - 1 ] = complex<__fx64>( A * B / ( 1 - C )  , 0 );
+        plp[ N - 1 ] = complex< T >( A * B / ( 1 - C )  , 0 );
     }
 
     // GAINS COMPUTATION:
@@ -353,7 +341,7 @@ extern iir_zp __ellip_zeros_poles_plain__( __ix32 order ,  __fx64 g_pass , __fx6
         for ( __ix32 i = 0; i < L; i++)
         {
             glp[i] = ( zlp[i] * __conjf__( zlp[i] ) ) / ( plp[i] * __conjf__( plp[i] ) );
-            glp[i] = complex<__fx64>( 1 , 0 ) / glp[i];
+            glp[i] = complex< T >( 1 , 0 ) / glp[i];
         }
 
         // real odd pole:
@@ -364,18 +352,18 @@ extern iir_zp __ellip_zeros_poles_plain__( __ix32 order ,  __fx64 g_pass , __fx6
     }
     else
     {
-        __fx64 a = sqrt( 1 / (1 + epsilon_stop * epsilon_stop) );
-        glp[N] = pow ( a , 1 / ( (__fx64) L ) );
+        T a = sqrt( 1 / (1 + epsilon_stop * epsilon_stop) );
+        glp[N] = pow ( a , 1 / ( ( T ) L ) );
         for ( __ix32 i = 0; i < L; i++) glp[i] = glp[N];
     }
 
-    return iir_zp{ plp , zlp , glp , L , R , N };
+    return iir_zp< T >{ plp , zlp , glp , L , R , N };
 }
 
 // UNIT NUMERATOR IIR COEFFICIENTS COMPUTATION:
 
 // Butterworth or Chebyshev I digital lowpass coefficients computation:
-extern iir_cf __butt_cheb1_digital_lp__( __fx64 Fs , __fx64 Fc , __ix32 order , __ix32 type = 0 , __fx64 g_stop = 1 )
+template < typename T > iir_cf< T > __butt_cheb1_digital_lp__( __fx64 Fs , __fx64 Fc , __ix32 order , __ix32 type = 0 , __fx64 g_stop = 1 )
 {
     // Fs           - sampling frequency
     // Fstop        - cutoff frequency
@@ -387,25 +375,25 @@ extern iir_cf __butt_cheb1_digital_lp__( __fx64 Fs , __fx64 Fc , __ix32 order , 
     // g_stop       - stopband attenuation in Db
 
     // COMPUTE LOWPASS ANALOGUE PROTOTYPE ZEROS, POLES AND GAINS:
-    iir_zp zp = ( !type ) ? __butt_zeros_poles_plain__( order , g_stop ) : __cheb1_zeros_poles_plain__( order , g_stop );
+    iir_zp< T > zp = ( !type ) ? __butt_zeros_poles_plain__< T >( order , g_stop ) : __cheb1_zeros_poles_plain__< T >( order , g_stop );
 
     // allocate zeros and poles arrays:
-    complex<__fx64> *plp = zp.plp;
-    complex<__fx64> *zlp = zp.zlp;
-    complex<__fx64> *glp = zp.glp;
+    complex< T > *plp = zp.plp;
+    complex< T > *zlp = zp.zlp;
+    complex< T > *glp = zp.glp;
     __ix32 L = zp.L , R = zp.R , N = L + R;
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // frequency deformation coefficient:
-    __fx64 K = tan( PI2 * Fc / 2 / Fs );
+    T K = tan( PI2 * Fc / 2 / Fs );
 
     // coefficients matrix computation:
-    __fx64 *cfnum = (__fx64* )calloc( 3 * N , sizeof ( __fx64 ) );
-    __fx64 *cfden = (__fx64* )calloc( 3 * N , sizeof ( __fx64 ) );
-    __fx64 *gains = (__fx64* )calloc( N + 1 , sizeof ( __fx64 ) );
+    T *cfnum = ( T* )calloc( 3 * N , sizeof ( T ) );
+    T *cfden = ( T* )calloc( 3 * N , sizeof ( T ) );
+    T *gains = ( T* )calloc( N + 1 , sizeof ( T ) );
 
-    if( cfnum == 0 || cfden == 0 || gains == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( cfnum == 0 || cfden == 0 || gains == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // BILLINEAR LP-LP TRANSFORM:
 
@@ -413,14 +401,14 @@ extern iir_cf __butt_cheb1_digital_lp__( __fx64 Fs , __fx64 Fc , __ix32 order , 
     for( __ix32 i = 0 ; i < L ; i++ )
     {
         // quadratic section gain:
-        complex<__fx64> gain0 = glp[i];
-        complex<__fx64> gain1 = complex<__fx64>( K * K , 0 );
-        complex<__fx64> gain2 = ( complex<__fx64>( 1 , 0 ) - plp[i] * K ) * ( complex<__fx64>( 1 , 0 ) - __conjf__( plp[i] ) * K );
+        complex< T > gain0 = glp[i];
+        complex< T > gain1 = complex< T >( K * K , 0 );
+        complex< T > gain2 = ( complex< T >( 1 , 0 ) - plp[i] * K ) * ( complex< T >( 1 , 0 ) - __conjf__( plp[i] ) * K );
         gains[i] = ( gain0 * gain1 / gain2 ).m_re;
 
         // zeros and poles transformation:
-        zlp[i] = complex<__fx64>( -1 , 0 );
-        plp[i] = ( complex<__fx64>( 1 , 0 ) + plp[i] * K ) / ( complex<__fx64>( 1 , 0 ) - plp[i] * K );
+        zlp[i] = complex< T >( -1 , 0 );
+        plp[i] = ( complex< T >( 1 , 0 ) + plp[i] * K ) / ( complex< T >( 1 , 0 ) - plp[i] * K );
 
         // quadratic section numerator coefficients:
         cfnum[ 3 * i + 0 ] = +1;
@@ -437,14 +425,14 @@ extern iir_cf __butt_cheb1_digital_lp__( __fx64 Fs , __fx64 Fc , __ix32 order , 
     if ( R == 1 )
     {
         // quadratic section gain:
-        complex<__fx64> gain0 = glp[N-1];
-        complex<__fx64> gain1 = complex<__fx64>( K , 0 );
-        complex<__fx64> gain2 = ( complex<__fx64>( 1 , 0 ) - plp[N-1] * K );
+        complex< T > gain0 = glp[N-1];
+        complex< T > gain1 = complex< T >( K , 0 );
+        complex< T > gain2 = ( complex< T >( 1 , 0 ) - plp[N-1] * K );
         gains[N-1] = ( gain0 * gain1 / gain2 ).m_re;
 
         // zeros and poles transformation:
-        zlp[ N - 1 ] = complex<__fx64>( -1 , 0 );
-        plp[ N - 1 ] = ( complex<__fx64>( 1 , 0 ) + plp[N-1] * K ) / ( complex<__fx64>( 1 , 0 ) - plp[N-1] * K );
+        zlp[ N - 1 ] = complex< T >( -1 , 0 );
+        plp[ N - 1 ] = ( complex< T >( 1 , 0 ) + plp[N-1] * K ) / ( complex< T >( 1 , 0 ) - plp[N-1] * K );
 
         // real odd pole section coefficients computation:
 
@@ -468,11 +456,11 @@ extern iir_cf __butt_cheb1_digital_lp__( __fx64 Fs , __fx64 Fc , __ix32 order , 
     free( zlp  );
     free( glp  );
 
-    return iir_cf{ cfnum , cfden , gains , L , R , N };
+    return iir_cf< T >{ cfnum , cfden , gains , L , R , N };
 }
 
 // Butterworth or Chebyshev I digital highpass coefficients computation:
-extern iir_cf __butt_cheb1_digital_hp__( __fx64 Fs , __fx64 Fp , __ix32 order , __ix32 type = 0 , __fx64 g_stop = 1 )
+template < typename T > iir_cf< T > __butt_cheb1_digital_hp__( __fx64 Fs , __fx64 Fp , __ix32 order , __ix32 type = 0 , __fx64 g_stop = 1 )
 {
     // Fs           - sampling frequency
     // Fpass        - cutoff frequency
@@ -484,23 +472,23 @@ extern iir_cf __butt_cheb1_digital_hp__( __fx64 Fs , __fx64 Fp , __ix32 order , 
     // g_stop       - stopband attenuation in Db
 
     // INITIALIZATION:
-    iir_zp zp = ( !type ) ? __butt_zeros_poles_plain__( order , g_stop ) : __cheb1_zeros_poles_plain__( order , g_stop );
-    complex<__fx64> *plp = zp.plp;
-    complex<__fx64> *zlp = zp.zlp;
-    complex<__fx64> *glp = zp.glp;
+    iir_zp < T > zp = ( !type ) ? __butt_zeros_poles_plain__< T >( order , g_stop ) : __cheb1_zeros_poles_plain__< T >( order , g_stop );
+    complex< T > *plp = zp.plp;
+    complex< T > *zlp = zp.zlp;
+    complex< T > *glp = zp.glp;
     __ix32 L = zp.L , R = zp.R , N = L + R;
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // frequency deformation coefficient:
-    __fx32 w = tan( PI2 * Fp / 2 / Fs );
+    T w = tan( PI2 * Fp / 2 / Fs );
 
     // coefficients matrix computation:
-    __fx64 *cfnum = (__fx64* )calloc( 3 * N , sizeof ( __fx64 ) );
-    __fx64 *cfden = (__fx64* )calloc( 3 * N , sizeof ( __fx64 ) );
-    __fx64 *gains = (__fx64* )calloc( N + 1 , sizeof ( __fx64 ) );
+    T *cfnum = ( T* )calloc( 3 * N , sizeof ( T ) );
+    T *cfden = ( T* )calloc( 3 * N , sizeof ( T ) );
+    T *gains = ( T* )calloc( N + 1 , sizeof ( T ) );
 
-    if( cfnum == 0 || cfden == 0 || gains == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( cfnum == 0 || cfden == 0 || gains == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // BILLINEAR LP-HP TRANSFORM:
 
@@ -508,14 +496,14 @@ extern iir_cf __butt_cheb1_digital_hp__( __fx64 Fs , __fx64 Fp , __ix32 order , 
     for ( __ix32 i = 0; i < L; i++)
     {
         // gains compputation:
-        complex<__fx64> gain0 = glp[i];
-        complex<__fx64> gain1 = ( complex<__fx64>( 1 , 0 ) - plp[i] / w ) * ( complex<__fx64>( 1 , 0 ) - __conjf__( plp[i] ) / w );
+        complex< T > gain0 = glp[i];
+        complex< T > gain1 = ( complex< T >( 1 , 0 ) - plp[i] / w ) * ( complex< T >( 1 , 0 ) - __conjf__( plp[i] ) / w );
         gains[i] = ( gain0 / gain1 / w / w).m_re;
         //gains[i] = ( gain0 * gain0 / gain1 / w / w).m_re;
 
         // zeros and poles transformation:
-        zlp[i] = complex<__fx64>( 1 , 0 );
-        plp[i] = ( complex<__fx64>( 1 , 0 ) + plp[i] / w ) / ( complex<__fx64>( 1 , 0 ) - plp[i] / w ) * (-1);
+        zlp[i] = complex< T >( 1 , 0 );
+        plp[i] = ( complex< T >( 1 , 0 ) + plp[i] / w ) / ( complex< T >( 1 , 0 ) - plp[i] / w ) * (-1);
 
         // digital highpass coefficients computation:
 
@@ -534,13 +522,13 @@ extern iir_cf __butt_cheb1_digital_hp__( __fx64 Fs , __fx64 Fp , __ix32 order , 
     if ( R == 1 )
     {
         // gains compputation:
-        complex<__fx64> gain0 = glp[N-1];
-        complex<__fx64> gain1 = ( complex<__fx64>( 1 , 0 ) - plp[N-1] / w );
+        complex< T > gain0 = glp[N-1];
+        complex< T > gain1 = ( complex< T >( 1 , 0 ) - plp[N-1] / w );
         gains[N-1] = ( gain0 / gain1 / w ).m_re;
 
         // zeros and poles transformation:
-        zlp[ N - 1 ] = complex<__fx64>( 1 , 0 );
-        plp[ N - 1 ] = ( complex<__fx64>( 1 , 0 ) + plp[ N - 1 ] / w ) / ( complex<__fx64>( 1 , 0 ) - plp[ N - 1 ] / w ) * (-1);
+        zlp[ N - 1 ] = complex< T >( 1 , 0 );
+        plp[ N - 1 ] = ( complex< T >( 1 , 0 ) + plp[ N - 1 ] / w ) / ( complex< T >( 1 , 0 ) - plp[ N - 1 ] / w ) * (-1);
 
         // digital highpass coefficients computation:
 
@@ -563,11 +551,11 @@ extern iir_cf __butt_cheb1_digital_hp__( __fx64 Fs , __fx64 Fp , __ix32 order , 
     free( zlp  );
     free( glp  );
 
-    return iir_cf{ cfnum , cfden , gains , L , R , N };
+    return iir_cf< T >{ cfnum , cfden , gains , L , R , N };
 }
 
 // Butterworth or Chebyshev I digital bandpass coefficients computation:
-extern iir_cf __butt_cheb1_digital_bp__( __fx64 Fs , __fx64 Fp , __fx64 BandWidth , __ix32 order , __ix32 type = 0 , __fx64 g_stop = 1 )
+template < typename T > iir_cf<T> __butt_cheb1_digital_bp__( __fx64 Fs , __fx64 Fp , __fx64 BandWidth , __ix32 order , __ix32 type = 0 , __fx64 g_stop = 1 )
 {
     // Fs           - sampling frequency
     // Fpass        - passband frequency
@@ -582,55 +570,55 @@ extern iir_cf __butt_cheb1_digital_bp__( __fx64 Fs , __fx64 Fp , __fx64 BandWidt
      order /= 2;
 
     // frequency deformation coefficient:
-    __fx64 w1 = tan( PI2 * Fp / 2 / Fs ) , w2 = tan( PI2 * ( Fp + BandWidth ) / 2 / Fs );
+    T w1 = tan( PI2 * Fp / 2 / Fs ) , w2 = tan( PI2 * ( Fp + BandWidth ) / 2 / Fs );
 
     // allocate zeros and poles arrays:
 
     // lowpass analogue prototype poles, zeros and gains:
-    iir_zp zp = ( !type ) ? __butt_zeros_poles_plain__( order , g_stop ) : __cheb1_zeros_poles_plain__( order , g_stop );
-    complex<__fx64> *plp = zp.plp;
-    complex<__fx64> *glp = zp.glp;
-    complex<__fx64> *zlp = zp.zlp;
+    iir_zp < T > zp = ( !type ) ? __butt_zeros_poles_plain__< T >( order , g_stop ) : __cheb1_zeros_poles_plain__< T >( order , g_stop );
+    complex< T > *plp = zp.plp;
+    complex< T > *glp = zp.glp;
+    complex< T > *zlp = zp.zlp;
     __ix32 L = zp.L , R = zp.R , N = L + R;
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // bandpass digital prototype poles, zeros and gains:
-    complex<__fx64> *pbp = ( complex<__fx64>* ) calloc( 2*N , sizeof ( complex<__fx64> ) );
-    complex<__fx64> *zbp = ( complex<__fx64>* ) calloc( 2*N , sizeof ( complex<__fx64> ) );
-    complex<__fx64> *gbp = ( complex<__fx64>* ) calloc( 2*N , sizeof ( complex<__fx64> ) );
+    complex< T > *pbp = ( complex< T >* ) calloc( 2*N , sizeof ( complex< T > ) );
+    complex< T > *zbp = ( complex< T >* ) calloc( 2*N , sizeof ( complex< T > ) );
+    complex< T > *gbp = ( complex< T >* ) calloc( 2*N , sizeof ( complex< T > ) );
 
     // coefficients matrix computation:
-    __fx64 *cfnum = (__fx64* )calloc( 3 * (2*L+R) , sizeof ( __fx64 ) );
-    __fx64 *cfden = (__fx64* )calloc( 3 * (2*L+R) , sizeof ( __fx64 ) );
-    __fx64 *gains = (__fx64* )calloc( (2*L+R + 1) , sizeof ( __fx64 ) );
+    T *cfnum = ( T* )calloc( 3 * (2*L+R) , sizeof ( T ) );
+    T *cfden = ( T* )calloc( 3 * (2*L+R) , sizeof ( T ) );
+    T *gains = ( T* )calloc( (2*L+R + 1) , sizeof ( T ) );
 
-    if( pbp   == 0 || zbp   == 0 || gbp   == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
-    if( cfnum == 0 || cfden == 0 || gains == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( pbp   == 0 || zbp   == 0 || gbp   == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( cfnum == 0 || cfden == 0 || gains == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // LP-BP BILLINEAR TRANSFORM:
 
     // poles transformation:
-    __fx64 w0 = w1 * w2;
-    __fx64 dW = w2 - w1;
+    T w0 = w1 * w2;
+    T dW = w2 - w1;
 
     // complex conjugate pairs:
     __ix32 j = 0;
     for( __ix32 i = 0 ; i < L ; i++ , j+=2 )
     {
         // poles transformation by means of square equation solve:
-        complex<__fx64> a( 1 / w0 , 0 );
-        complex<__fx64> b( -plp[i].m_re * dW / w0 , -plp[i].m_im * dW / w0 );
-        complex<__fx64> c( 1 , 0 );
-        complex<__fx64> D = b * b - a * c * 4;
-        complex<__fx64> p1 = ( b*(-1) - __sqrtf__( D ) ) / 2 / a;
-        complex<__fx64> p2 = ( b*(-1) + __sqrtf__( D ) ) / 2 / a;
+        complex< T > a( 1 / w0 , 0 );
+        complex< T > b( -plp[i].m_re * dW / w0 , -plp[i].m_im * dW / w0 );
+        complex< T > c( 1 , 0 );
+        complex< T > D = b * b - a * c * 4;
+        complex< T > p1 = ( b*(-1) - __sqrtf__( D ) ) / 2 / a;
+        complex< T > p2 = ( b*(-1) + __sqrtf__( D ) ) / 2 / a;
 
         // zeros and poles bilinear transform:
-        zbp[ j + 0 ] = complex<__fx64>( +1 , 0 );
-        zbp[ j + 1 ] = complex<__fx64>( -1 , 0 );
-        pbp[ j + 0 ] = ( complex<__fx64>( 1 , 0 ) + p1 ) / ( complex<__fx64>( 1 , 0 ) - p1 );
-        pbp[ j + 1 ] = ( complex<__fx64>( 1 , 0 ) + p2 ) / ( complex<__fx64>( 1 , 0 ) - p2 );
+        zbp[ j + 0 ] = complex< T >( +1 , 0 );
+        zbp[ j + 1 ] = complex< T >( -1 , 0 );
+        pbp[ j + 0 ] = ( complex< T >( 1 , 0 ) + p1 ) / ( complex< T >( 1 , 0 ) - p1 );
+        pbp[ j + 1 ] = ( complex< T >( 1 , 0 ) + p2 ) / ( complex< T >( 1 , 0 ) - p2 );
 
         // digital filter coefficients computation:
 
@@ -651,12 +639,12 @@ extern iir_cf __butt_cheb1_digital_bp__( __fx64 Fs , __fx64 Fp , __fx64 BandWidt
         cfden[ 3 * ( j + 1 ) + 2 ] = +( pbp[j+1] * __conjf__( pbp[j+1] ) ).m_re;
 
         // complex conjugate quadratic sections gains computation:
-        complex<__fx64> gain0 = glp[i];
-        complex<__fx64> gain1 = p1 * __conjf__( p1 );
-        complex<__fx64> gain2 = p2 * __conjf__( p2 );
-        complex<__fx64> gain3 = (complex<__fx64>(1,0) - p1)*(complex<__fx64>(1,0) - __conjf__(p1));
-        complex<__fx64> gain4 = (complex<__fx64>(1,0) - p2)*(complex<__fx64>(1,0) - __conjf__(p2));
-        complex<__fx64> gain5 = gain0 * gain1 * gain2 / gain3 / gain4 * dW * dW / w0 / w0;
+        complex< T > gain0 = glp[i];
+        complex< T > gain1 = p1 * __conjf__( p1 );
+        complex< T > gain2 = p2 * __conjf__( p2 );
+        complex< T > gain3 = (complex< T >(1,0) - p1)*(complex< T >(1,0) - __conjf__(p1));
+        complex< T > gain4 = (complex< T >(1,0) - p2)*(complex< T >(1,0) - __conjf__(p2));
+        complex< T > gain5 = gain0 * gain1 * gain2 / gain3 / gain4 * dW * dW / w0 / w0;
         gain5 = __sqrtf__( gain5 );
         gains[j+0] = gain5.m_re;
         gains[j+1] = gain5.m_re;
@@ -666,18 +654,18 @@ extern iir_cf __butt_cheb1_digital_bp__( __fx64 Fs , __fx64 Fp , __fx64 BandWidt
     if( R == 1 )
     {
         // pole transformation by means of square equation solve:
-        complex<__fx64> a( 1 / w0 , 0 );
-        complex<__fx64> b( -plp[ N - 1 ].m_re * dW / w0 , -plp[ N - 1 ].m_im * dW / w0 );
-        complex<__fx64> c( 1 , 0 );
-        complex<__fx64> D = b * b - a * c * 4;
-        complex<__fx64> p1 = ( b*(-1) - __sqrtf__( D ) ) / 2 / a;
-        complex<__fx64> p2 = ( b*(-1) + __sqrtf__( D ) ) / 2 / a;
+        complex< T > a( 1 / w0 , 0 );
+        complex< T > b( -plp[ N - 1 ].m_re * dW / w0 , -plp[ N - 1 ].m_im * dW / w0 );
+        complex< T > c( 1 , 0 );
+        complex< T > D = b * b - a * c * 4;
+        complex< T > p1 = ( b*(-1) - __sqrtf__( D ) ) / 2 / a;
+        complex< T > p2 = ( b*(-1) + __sqrtf__( D ) ) / 2 / a;
 
         // zeros and poles bilinear transform:
-        zbp[ j + 0 ] = complex<__fx64>( +1 , 0 );
-        zbp[ j + 1 ] = complex<__fx64>( -1 , 0 );
-        pbp[ j + 0 ] = ( complex<__fx64>( 1 , 0 ) + p1 ) / ( complex<__fx64>( 1 , 0 ) - p1 );
-        pbp[ j + 1 ] = ( complex<__fx64>( 1 , 0 ) + p2 ) / ( complex<__fx64>( 1 , 0 ) - p2 );
+        zbp[ j + 0 ] = complex< T >( +1 , 0 );
+        zbp[ j + 1 ] = complex< T >( -1 , 0 );
+        pbp[ j + 0 ] = ( complex< T >( 1 , 0 ) + p1 ) / ( complex< T >( 1 , 0 ) - p1 );
+        pbp[ j + 1 ] = ( complex< T >( 1 , 0 ) + p2 ) / ( complex< T >( 1 , 0 ) - p2 );
 
         // digital filter coefficients computation:
 
@@ -692,10 +680,10 @@ extern iir_cf __butt_cheb1_digital_bp__( __fx64 Fs , __fx64 Fp , __fx64 BandWidt
         cfden[ 3 * ( j + 0 ) + 2 ] = +( pbp[j] * pbp[j+1] ).m_re;
 
         // complex conjugate quadratic sections gains computation:
-        complex<__fx64> gain0 = glp[N-1];
-        complex<__fx64> gain1 = p1 * p2;
-        complex<__fx64> gain2 = (complex<__fx64>(1,0) - p1)*(complex<__fx64>(1,0) - p2);
-        complex<__fx64> gain3 = gain0 * gain1 / gain2 * dW / w0;
+        complex< T > gain0 = glp[N-1];
+        complex< T > gain1 = p1 * p2;
+        complex< T > gain2 = (complex< T >(1,0) - p1)*(complex< T >(1,0) - p2);
+        complex< T > gain3 = gain0 * gain1 / gain2 * dW / w0;
         gains[j+0] = gain3.m_re;
     }
 
@@ -710,11 +698,11 @@ extern iir_cf __butt_cheb1_digital_bp__( __fx64 Fs , __fx64 Fp , __fx64 BandWidt
     free( zbp );
     free( gbp );
 
-    return iir_cf{ cfnum , cfden , gains , 2*L , R , 2*L+R  };
+    return iir_cf<  T  >{ cfnum , cfden , gains , 2*L , R , 2*L+R  };
 }
 
 //  Butterworth or Chebyshev type I digital bandstop computation:
-extern iir_cf __butt_cheb1_digital_bs__( __fx64 Fs , __fx64 Fc , __fx64 BandWidth , __ix32 order , __fx32 type = 0 , __fx64 g_stop = 1 )
+template < typename T > iir_cf<T> __butt_cheb1_digital_bs__( __fx64 Fs , __fx64 Fc , __fx64 BandWidth , __ix32 order , __fx32 type = 0 , __fx64 g_stop = 1 )
 {
     // Fs           - sampling frequency
     // Fstop        - stopband frequency
@@ -731,55 +719,55 @@ extern iir_cf __butt_cheb1_digital_bs__( __fx64 Fs , __fx64 Fc , __fx64 BandWidt
     order /= 2;
 
    // frequency deformation coefficient:
-   __fx64 w1 = tan( PI2 * Fc / 2 / Fs ) , w2 = tan( PI2 * ( Fc + BandWidth ) / 2 / Fs );
+   T w1 = tan( PI2 * Fc / 2 / Fs ) , w2 = tan( PI2 * ( Fc + BandWidth ) / 2 / Fs );
 
    // allocate zeros and poles arrays:
 
    // lowpass analogue prototype poles, zeros and gains:
-   iir_zp zp = ( !type ) ? __butt_zeros_poles_plain__( order , g_stop ) : __cheb1_zeros_poles_plain__( order , g_stop );
-   complex<__fx64> *plp = zp.plp;
-   complex<__fx64> *glp = zp.glp;
-   complex<__fx64> *zlp = zp.zlp;
+   iir_zp < T > zp = ( !type ) ? __butt_zeros_poles_plain__< T >( order , g_stop ) : __cheb1_zeros_poles_plain__< T >( order , g_stop );
+   complex< T > *plp = zp.plp;
+   complex< T > *glp = zp.glp;
+   complex< T > *zlp = zp.zlp;
    __ix32 L = zp.L , R = zp.R , N = L + R;
 
-   if( plp == 0 || zlp == 0 || glp == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+   if( plp == 0 || zlp == 0 || glp == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // bandpass digital prototype poles, zeros and gains:
-    complex<__fx64> *pbs = ( complex<__fx64>* ) calloc( 2*N , sizeof ( complex<__fx64> ) );
-    complex<__fx64> *zbs = ( complex<__fx64>* ) calloc( 2*N , sizeof ( complex<__fx64> ) );
-    complex<__fx64> *gbs = ( complex<__fx64>* ) calloc( 2*N , sizeof ( complex<__fx64> ) );
+    complex< T > *pbs = ( complex< T >* ) calloc( 2*N , sizeof ( complex< T > ) );
+    complex< T > *zbs = ( complex< T >* ) calloc( 2*N , sizeof ( complex< T > ) );
+    complex< T > *gbs = ( complex< T >* ) calloc( 2*N , sizeof ( complex< T > ) );
 
     // coefficients matrix computation:
-    __fx64 *cfnum = (__fx64* )calloc( 3 * (2*L+R) , sizeof ( __fx64 ) );
-    __fx64 *cfden = (__fx64* )calloc( 3 * (2*L+R) , sizeof ( __fx64 ) );
-    __fx64 *gains = (__fx64* )calloc( (2*L+R+1)   , sizeof ( __fx64 ) );
+    T *cfnum = (T* )calloc( 3 * (2*L+R) , sizeof ( T ) );
+    T *cfden = (T* )calloc( 3 * (2*L+R) , sizeof ( T ) );
+    T *gains = (T* )calloc( (2*L+R+1)   , sizeof ( T ) );
 
-    if( pbs   == 0 || pbs   == 0 || pbs   == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
-    if( cfnum == 0 || cfden == 0 || gains == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( pbs   == 0 || pbs   == 0 || pbs   == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( cfnum == 0 || cfden == 0 || gains == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // LP-BS BILLINEAR TRANSFORM:
 
     // poles transformation:
-    __fx64 w0 = w1 * w2;
-    __fx64 dW = w2 - w1;
+    T w0 = w1 * w2;
+    T dW = w2 - w1;
 
     // complex conjugate pairs:
     __ix32 j = 0;
     for( __ix32 i = 0 ; i < L ; i++ , j+=2 )
     {
         // poles transformation by means of square equation solve:
-        complex<__fx64> a = complex<__fx64>( -1 / w0 , 0 );
-        complex<__fx64> b = complex<__fx64>( dW , 0 ) / plp[i] / w0;
-        complex<__fx64> c = complex<__fx64>( -1 , 0 );
-        complex<__fx64> D = b * b - a * c * 4;
-        complex<__fx64> p1 = ( b*(-1) - __sqrtf__( D ) ) / 2 / a;
-        complex<__fx64> p2 = ( b*(-1) + __sqrtf__( D ) ) / 2 / a;
+        complex< T > a = complex< T >( -1 / w0 , 0 );
+        complex< T > b = complex< T >( dW , 0 ) / plp[i] / w0;
+        complex< T > c = complex< T >( -1 , 0 );
+        complex< T > D = b * b - a * c * 4;
+        complex< T > p1 = ( b*(-1) - __sqrtf__( D ) ) / 2 / a;
+        complex< T > p2 = ( b*(-1) + __sqrtf__( D ) ) / 2 / a;
 
         // zeros and poles bilinear transform:
-        zbs[ j + 0 ] = complex<__fx64>( +1 , 0 );
-        zbs[ j + 1 ] = complex<__fx64>( -1 , 0 );
-        pbs[ j + 0 ] = ( complex<__fx64>( 1 , 0 ) + p1 ) / ( complex<__fx64>( 1 , 0 ) - p1 );
-        pbs[ j + 1 ] = ( complex<__fx64>( 1 , 0 ) + p2 ) / ( complex<__fx64>( 1 , 0 ) - p2 );
+        zbs[ j + 0 ] = complex< T >( +1 , 0 );
+        zbs[ j + 1 ] = complex< T >( -1 , 0 );
+        pbs[ j + 0 ] = ( complex< T >( 1 , 0 ) + p1 ) / ( complex< T >( 1 , 0 ) - p1 );
+        pbs[ j + 1 ] = ( complex< T >( 1 , 0 ) + p2 ) / ( complex< T >( 1 , 0 ) - p2 );
 
         // digital filter coefficients computation:
 
@@ -801,12 +789,12 @@ extern iir_cf __butt_cheb1_digital_bs__( __fx64 Fs , __fx64 Fc , __fx64 BandWidt
 
         // complex conjugate quadratic sections gains computation:
         //complex<__fx64> gain0 = glp[i];
-        complex<__fx64> gain0 = complex<__fx64>(1,0);
-        complex<__fx64> gain1 = p1 * __conjf__( p1 );
-        complex<__fx64> gain2 = p2 * __conjf__( p2 );
-        complex<__fx64> gain3 = (complex<__fx64>(1,0) - p1)*(complex<__fx64>(1,0) - __conjf__(p1));
-        complex<__fx64> gain4 = (complex<__fx64>(1,0) - p2)*(complex<__fx64>(1,0) - __conjf__(p2));
-        complex<__fx64> gain5 = gain0 * gain1 * gain2 / gain3 / gain4 / w0 / w0 * ( 1 + w0 ) * ( 1 + w0 );
+        complex< T > gain0 = complex< T >(1,0);
+        complex< T > gain1 = p1 * __conjf__( p1 );
+        complex< T > gain2 = p2 * __conjf__( p2 );
+        complex< T > gain3 = (complex< T >(1,0) - p1)*(complex< T >(1,0) - __conjf__(p1));
+        complex< T > gain4 = (complex< T >(1,0) - p2)*(complex< T >(1,0) - __conjf__(p2));
+        complex< T > gain5 = gain0 * gain1 * gain2 / gain3 / gain4 / w0 / w0 * ( 1 + w0 ) * ( 1 + w0 );
         gain5 = __sqrtf__( gain5 );
         gains[j+0] = gain5.m_re;
         gains[j+1] = gains[j+0];
@@ -816,18 +804,18 @@ extern iir_cf __butt_cheb1_digital_bs__( __fx64 Fs , __fx64 Fc , __fx64 BandWidt
     if( R == 1 )
     {
         // poles transformation by means of square equation solve:
-        complex<__fx64> a = complex<__fx64>( -1 / w0 , 0 );
-        complex<__fx64> b = complex<__fx64>( dW , 0 ) / plp[N-1] / w0;
-        complex<__fx64> c = complex<__fx64>( -1 , 0 );
-        complex<__fx64> D = b * b - a * c * 4;
-        complex<__fx64> p1 = ( b*(-1) - __sqrtf__( D ) ) / 2 / a;
-        complex<__fx64> p2 = ( b*(-1) + __sqrtf__( D ) ) / 2 / a;
+        complex< T > a = complex< T >( -1 / w0 , 0 );
+        complex< T > b = complex< T >( dW , 0 ) / plp[N-1] / w0;
+        complex< T > c = complex< T >( -1 , 0 );
+        complex< T > D = b * b - a * c * 4;
+        complex< T > p1 = ( b*(-1) - __sqrtf__( D ) ) / 2 / a;
+        complex< T > p2 = ( b*(-1) + __sqrtf__( D ) ) / 2 / a;
 
         // zeros and poles bilinear transform:
-        zbs[ j + 0 ] = complex<__fx64>( +1 , 0 );
-        zbs[ j + 1 ] = complex<__fx64>( -1 , 0 );
-        pbs[ j + 0 ] = ( complex<__fx64>( 1 , 0 ) + p1 ) / ( complex<__fx64>( 1 , 0 ) - p1 );
-        pbs[ j + 1 ] = ( complex<__fx64>( 1 , 0 ) + p2 ) / ( complex<__fx64>( 1 , 0 ) - p2 );
+        zbs[ j + 0 ] = complex< T >( +1 , 0 );
+        zbs[ j + 1 ] = complex< T >( -1 , 0 );
+        pbs[ j + 0 ] = ( complex< T >( 1 , 0 ) + p1 ) / ( complex< T >( 1 , 0 ) - p1 );
+        pbs[ j + 1 ] = ( complex< T >( 1 , 0 ) + p2 ) / ( complex< T >( 1 , 0 ) - p2 );
 
         // digital filter coefficients computation:
 
@@ -842,11 +830,11 @@ extern iir_cf __butt_cheb1_digital_bs__( __fx64 Fs , __fx64 Fc , __fx64 BandWidt
         cfden[ 3 * ( j + 0 ) + 2 ] = +( pbs[j]*pbs[j+1] ).m_re;
 
         // complex conjugate quadratic sections gains computation:
-        complex<__fx64> gain0 = glp[N-1];
-        complex<__fx64> gain1 = p1 * p2;
-        complex<__fx64> gain2 = complex<__fx64>(1,0) / plp[N-1] / (-1);
-        complex<__fx64> gain3 = (complex<__fx64>(1,0) - p1)*(complex<__fx64>(1,0) - p2);
-        complex<__fx64> gain4 = gain0 * gain1 * gain2 / gain3 / w0 * ( 1 + w0 );
+        complex< T > gain0 = glp[N-1];
+        complex< T > gain1 = p1 * p2;
+        complex< T > gain2 = complex< T >(1,0) / plp[N-1] / (-1);
+        complex< T > gain3 = (complex< T >(1,0) - p1)*(complex< T >(1,0) - p2);
+        complex< T > gain4 = gain0 * gain1 * gain2 / gain3 / w0 * ( 1 + w0 );
         gains[j+0] = gain4.m_re;
     }
 
@@ -861,13 +849,13 @@ extern iir_cf __butt_cheb1_digital_bs__( __fx64 Fs , __fx64 Fc , __fx64 BandWidt
     free( zbs );
     free( gbs );
 
-    return iir_cf{ cfnum , cfden , gains , 2 * L , R , 2 * L + R };
+    return iir_cf< T >{ cfnum , cfden , gains , 2 * L , R , 2 * L + R };
 }
 
 // NON-UNIT NUMERATOR IIR COEFFICIENTS COMPUTATION:
 
 // Elliptic or Chebyshev type II digital lowpass computation function:
-extern iir_cf __cheb2_ellip_digital_lp__( __fx64 Fs , __fx64 Fc , __ix32 order , __ix32 type = 0 , __fx64 g_pass = 1 , __fx64 g_stop = 80 )
+template < typename T > iir_cf<T> __cheb2_ellip_digital_lp__( __fx64 Fs , __fx64 Fc , __ix32 order , __ix32 type = 0 , __fx64 g_pass = 1 , __fx64 g_stop = 80 )
 {
     // Fs           - sampling frequency
     // Fstop        - cutoff frequency
@@ -875,13 +863,13 @@ extern iir_cf __cheb2_ellip_digital_lp__( __fx64 Fs , __fx64 Fc , __ix32 order ,
     // coeffs_num   - quadratic sections numerator coefficients
     // coeffs_den   - quadratic sections denominator coefficients
     // gains        - quadratic sections gains
-    // type         - filter type ( 0 - Butterworth , 1 - Chebyshev )
+    // type         - filter type ( 0 - Chebyshev type II , 1 - Elliptic )
     // g_stop       - stopband attenuation in Db
 
-    __fx64 w = tan( PI2 * Fc / 2 / Fs );
+    T w = tan( PI2 * Fc / 2 / Fs );
 
     // digital lowpass coefficients computation:
-    iir_zp zp = ( !type ) ? __cheb2_zeros_poles_plain__( order , g_stop ) : __ellip_zeros_poles_plain__( order , g_pass , g_stop );
+    iir_zp< T > zp = ( !type ) ? __cheb2_zeros_poles_plain__< T >( order , g_stop ) : __ellip_zeros_poles_plain__< T >( order , g_pass , g_stop );
 
     // zeros/poles and coefficients number:
     __ix32 L = zp.L;
@@ -889,31 +877,31 @@ extern iir_cf __cheb2_ellip_digital_lp__( __fx64 Fs , __fx64 Fc , __ix32 order ,
     __ix32 N = zp.N;
 
     // zeros / poles plain initialization:
-    complex<__fx64> *plp = zp.plp;
-    complex<__fx64> *zlp = zp.zlp;
-    complex<__fx64> *glp = zp.glp;
+    complex< T > *plp = zp.plp;
+    complex< T > *zlp = zp.zlp;
+    complex< T > *glp = zp.glp;
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // coefficients matrix computation:
-    __fx64 *cfnum = (__fx64* )calloc( 3 * N , sizeof ( __fx64 ) );
-    __fx64 *cfden = (__fx64* )calloc( 3 * N , sizeof ( __fx64 ) );
-    __fx64 *gains = (__fx64* )calloc( N + 1 , sizeof ( __fx64 ) );
+     T  *cfnum = ( T * )calloc( 3 * N , sizeof ( T ) );
+     T  *cfden = ( T * )calloc( 3 * N , sizeof ( T ) );
+     T  *gains = ( T * )calloc( N + 1 , sizeof ( T ) );
 
-    if( cfnum == 0 || cfden == 0 || gains == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( cfnum == 0 || cfden == 0 || gains == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // complex conjugate pairs:
     for ( __ix32 i = 0 ; i < L ; i++)
     {
         // quadratic sections gains computation:
-        complex<__fx64> gain0 = glp[i];
-        complex<__fx64> gain1 = ( complex<__fx64>( 1 , 0 ) - zlp[i] * w ) * ( complex<__fx64>( 1 , 0 ) - __conjf__( zlp[i] ) * w );
-        complex<__fx64> gain2 = ( complex<__fx64>( 1 , 0 ) - plp[i] * w ) * ( complex<__fx64>( 1 , 0 ) - __conjf__( plp[i] ) * w );
+        complex< T > gain0 = glp[i];
+        complex< T > gain1 = ( complex< T >( 1 , 0 ) - zlp[i] * w ) * ( complex< T >( 1 , 0 ) - __conjf__( zlp[i] ) * w );
+        complex< T > gain2 = ( complex< T >( 1 , 0 ) - plp[i] * w ) * ( complex< T >( 1 , 0 ) - __conjf__( plp[i] ) * w );
         gains[ i ] = ( gain0 * gain1 / gain2 ).m_re;
 
         // zeros and poles transformation:
-        zlp[i] = ( complex<__fx64>( 1 , 0 ) + zlp[i] * w ) / ( complex<__fx64>( 1 , 0 ) - zlp[i] * w );
-        plp[i] = ( complex<__fx64>( 1 , 0 ) + plp[i] * w ) / ( complex<__fx64>( 1 , 0 ) - plp[i] * w );
+        zlp[i] = ( complex< T >( 1 , 0 ) + zlp[i] * w ) / ( complex< T >( 1 , 0 ) - zlp[i] * w );
+        plp[i] = ( complex< T >( 1 , 0 ) + plp[i] * w ) / ( complex< T >( 1 , 0 ) - plp[i] * w );
 
         // quadratic sections coefficients computation:
 
@@ -932,14 +920,14 @@ extern iir_cf __cheb2_ellip_digital_lp__( __fx64 Fs , __fx64 Fc , __ix32 order ,
     if( R >= 1 )
     {
         // quadratic sections gains computation:
-        complex<__fx64> gain0 = glp[ N - 1 ];
-        complex<__fx64> gain1 = complex<__fx64>( w , 0 );
-        complex<__fx64> gain2 = ( complex<__fx64>( 1 , 0 ) - plp[ N - 1 ] * w );
+        complex< T > gain0 = glp[ N - 1 ];
+        complex< T > gain1 = complex< T >( w , 0 );
+        complex< T > gain2 = ( complex< T >( 1 , 0 ) - plp[ N - 1 ] * w );
         gains[ N - 1 ] = ( gain0 * gain1 / gain2 ).m_re;
 
         // zeros and poles transformation:
-        zlp[ N - 1 ] = complex<__fx64>( -1 , 0 );
-        plp[ N - 1 ] = ( complex<__fx64>( 1 , 0 ) + plp[ N - 1 ] * w ) / ( complex<__fx64>( 1 , 0 ) - plp[ N - 1 ] * w );
+        zlp[ N - 1 ] = complex< T >( -1 , 0 );
+        plp[ N - 1 ] = ( complex< T >( 1 , 0 ) + plp[ N - 1 ] * w ) / ( complex< T >( 1 , 0 ) - plp[ N - 1 ] * w );
 
         // quadratic sections coefficients computation:
 
@@ -962,11 +950,11 @@ extern iir_cf __cheb2_ellip_digital_lp__( __fx64 Fs , __fx64 Fc , __ix32 order ,
     free( zlp );
     free( glp );
 
-    return iir_cf{ cfnum , cfden , gains , L , R , N };
+    return iir_cf< T >{ cfnum , cfden , gains , L , R , N };
 }
 
 // Elliptic or Chebyshev type II digital highpass computation function:
-extern iir_cf __cheb2_ellip_digital_hp__( __fx64 Fs , __fx64 Fc , __ix32 order , __ix32 type = 0 , __fx64 g_pass = 1 , __fx64 g_stop = 80 )
+template < typename T > iir_cf<T> __cheb2_ellip_digital_hp__( __fx64 Fs , __fx64 Fc , __ix32 order , __ix32 type = 0 , __fx64 g_pass = 1 , __fx64 g_stop = 80 )
 {
     // Fs           - sampling frequency
     // Fstop        - cutoff frequency
@@ -977,10 +965,10 @@ extern iir_cf __cheb2_ellip_digital_hp__( __fx64 Fs , __fx64 Fc , __ix32 order ,
     // type         - filter type ( 0 - Chebyshev II , 1 - Elliptic )
     // g_stop       - stopband attenuation in Db
 
-    __fx64 w = tan( PI2 * Fc / 2 / Fs );
+     T  w = tan( PI2 * Fc / 2 / Fs );
 
     // digital lowpass coefficients computation:
-    iir_zp zp = ( !type ) ? __cheb2_zeros_poles_plain__( order , g_stop ) : __ellip_zeros_poles_plain__( order , g_pass , g_stop );
+    iir_zp< T > zp = ( !type ) ? __cheb2_zeros_poles_plain__< T >( order , g_stop ) : __ellip_zeros_poles_plain__< T >( order , g_pass , g_stop );
 
     // zeros/poles and coefficients number:
     __ix32 L = zp.L;
@@ -988,18 +976,18 @@ extern iir_cf __cheb2_ellip_digital_hp__( __fx64 Fs , __fx64 Fc , __ix32 order ,
     __ix32 N = zp.N;
 
     // zeros / poles plain initialization:
-    complex<__fx64> *plp = zp.plp;
-    complex<__fx64> *zlp = zp.zlp;
-    complex<__fx64> *glp = zp.glp;
+    complex< T > *plp = zp.plp;
+    complex< T > *zlp = zp.zlp;
+    complex< T > *glp = zp.glp;
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // coefficients matrix memory allocation:
-    __fx64 *cfnum = (__fx64* )calloc( 3 * N , sizeof ( __fx64 ) );
-    __fx64 *cfden = (__fx64* )calloc( 3 * N , sizeof ( __fx64 ) );
-    __fx64 *gains = (__fx64* )calloc( N + 1 , sizeof ( __fx64 ) );
+     T *cfnum = (T* )calloc( 3 * N , sizeof ( T ) );
+     T *cfden = (T* )calloc( 3 * N , sizeof ( T ) );
+     T *gains = (T* )calloc( N + 1 , sizeof ( T ) );
 
-    if( cfnum == 0 || cfden == 0 || gains == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( cfnum == 0 || cfden == 0 || gains == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // coefficients matrix computation:
 
@@ -1007,14 +995,14 @@ extern iir_cf __cheb2_ellip_digital_hp__( __fx64 Fs , __fx64 Fc , __ix32 order ,
     for ( __ix32 i = 0 ; i < L ; i++)
     {
         // quadratic sections gains computation:
-        complex<__fx64> gain0 = glp[i];
-        complex<__fx64> gain1 = ( complex<__fx64>( 1 , 0 ) - zlp[i] / w ) * ( complex<__fx64>( 1 , 0 ) - __conjf__( zlp[i] ) / w );
-        complex<__fx64> gain2 = ( complex<__fx64>( 1 , 0 ) - plp[i] / w ) * ( complex<__fx64>( 1 , 0 ) - __conjf__( plp[i] ) / w );
+        complex< T > gain0 = glp[i];
+        complex< T > gain1 = ( complex< T >( 1 , 0 ) - zlp[i] / w ) * ( complex< T >( 1 , 0 ) - __conjf__( zlp[i] ) / w );
+        complex< T > gain2 = ( complex< T >( 1 , 0 ) - plp[i] / w ) * ( complex< T >( 1 , 0 ) - __conjf__( plp[i] ) / w );
         gains[ i ] = ( gain0 * gain1 / gain2 ).m_re;
 
         // zeros and poles transformation:
-        zlp[i] = ( complex<__fx64>( 1 , 0 ) + zlp[i] / w ) / ( complex<__fx64>( 1 , 0 ) - zlp[i] / w );
-        plp[i] = ( complex<__fx64>( 1 , 0 ) + plp[i] / w ) / ( complex<__fx64>( 1 , 0 ) - plp[i] / w );
+        zlp[i] = ( complex< T >( 1 , 0 ) + zlp[i] / w ) / ( complex< T >( 1 , 0 ) - zlp[i] / w );
+        plp[i] = ( complex< T >( 1 , 0 ) + plp[i] / w ) / ( complex< T >( 1 , 0 ) - plp[i] / w );
 
         // quadratic sections coefficients computation:
 
@@ -1033,14 +1021,14 @@ extern iir_cf __cheb2_ellip_digital_hp__( __fx64 Fs , __fx64 Fc , __ix32 order ,
     if( R >= 1 )
     {
         // quadratic sections gains computation:
-        complex<__fx64> gain0 = glp[ N - 1 ];
-        complex<__fx64> gain1 = complex<__fx64>( 1 / w , 0 );
-        complex<__fx64> gain2 = ( complex<__fx64>( 1 , 0 ) - plp[ N - 1 ] / w );
+        complex< T > gain0 = glp[ N - 1 ];
+        complex< T > gain1 = complex< T >( 1 / w , 0 );
+        complex< T > gain2 = ( complex< T >( 1 , 0 ) - plp[ N - 1 ] / w );
         gains[ N - 1 ] = ( gain0 * gain1 / gain2 ).m_re;
 
         // zeros and poles transformation:
-        zlp[ N - 1 ] = complex<__fx64>( -1 , 0 );
-        plp[ N - 1 ] = ( complex<__fx64>( 1 , 0 ) + plp[ N - 1 ] / w ) / ( complex<__fx64>( 1 , 0 ) - plp[ N - 1 ] / w );
+        zlp[ N - 1 ] = complex< T >( -1 , 0 );
+        plp[ N - 1 ] = ( complex< T >( 1 , 0 ) + plp[ N - 1 ] / w ) / ( complex< T >( 1 , 0 ) - plp[ N - 1 ] / w );
 
         // quadratic sections coefficients computation:
 
@@ -1063,11 +1051,11 @@ extern iir_cf __cheb2_ellip_digital_hp__( __fx64 Fs , __fx64 Fc , __ix32 order ,
     free( zlp );
     free( glp );
 
-    return iir_cf{ cfnum , cfden , gains , L , R , N };
+    return iir_cf< T >{ cfnum , cfden , gains , L , R , N };
 }
 
 // Elliptic or Chebyshev II digital bandpass computation function:
-extern iir_cf __cheb2_ellip_digital_bp__( __fx64 Fs , __fx64 Fp , __fx64 BandWidth , __ix32 order , __ix32 type = 0 , __fx64 g_pass = 1 , __fx64 g_stop = 80 )
+template < typename T > iir_cf<T> __cheb2_ellip_digital_bp__( __fx64 Fs , __fx64 Fp , __fx64 BandWidth , __ix32 order , __ix32 type = 0 , __fx64 g_pass = 1 , __fx64 g_stop = 80 )
 {
     // Fs           - sampling frequency
     // Fpass        - passband frequency
@@ -1082,43 +1070,43 @@ extern iir_cf __cheb2_ellip_digital_bp__( __fx64 Fs , __fx64 Fp , __fx64 BandWid
      order /= 2;
 
     // frequency deformation coefficient:
-    __fx64 w1 = tan( PI2 * Fp / 2 / Fs ) , w2 = tan( PI2 * ( Fp + BandWidth ) / 2 / Fs );
+     T w1 = tan( PI2 * Fp / 2 / Fs ) , w2 = tan( PI2 * ( Fp + BandWidth ) / 2 / Fs );
 
     // allocate zeros and poles arrays:
 
     // lowpass analogue prototype poles, zeros and gains:
-    iir_zp zp = ( !type ) ? __cheb2_zeros_poles_plain__( order , g_stop ) : __ellip_zeros_poles_plain__( order , g_pass , g_stop );
-    complex<__fx64> *plp = zp.plp;
-    complex<__fx64> *glp = zp.glp;
-    complex<__fx64> *zlp = zp.zlp;
+    iir_zp< T > zp = ( !type ) ? __cheb2_zeros_poles_plain__< T >( order , g_stop ) : __ellip_zeros_poles_plain__< T >( order , g_pass , g_stop );
+    complex< T > *plp = zp.plp;
+    complex< T > *glp = zp.glp;
+    complex< T > *zlp = zp.zlp;
     __ix32 L = zp.L , R = zp.R , N = L + R;
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // bandpass digital prototype poles, zeros and gains:
-    complex<__fx64> *pbp = ( complex<__fx64>* ) calloc( 2*N , sizeof ( complex<__fx64> ) );
-    complex<__fx64> *zbp = ( complex<__fx64>* ) calloc( 2*N , sizeof ( complex<__fx64> ) );
-    complex<__fx64> *gbp = ( complex<__fx64>* ) calloc( 2*N , sizeof ( complex<__fx64> ) );
+    complex< T > *pbp = ( complex< T >* ) calloc( 2*N , sizeof ( complex< T > ) );
+    complex< T > *zbp = ( complex< T >* ) calloc( 2*N , sizeof ( complex< T > ) );
+    complex< T > *gbp = ( complex< T >* ) calloc( 2*N , sizeof ( complex< T > ) );
 
     // coefficients matrix computation:
-    __fx64 *cfnum = (__fx64* )calloc( 3 * (2*L+R) , sizeof ( __fx64 ) );
-    __fx64 *cfden = (__fx64* )calloc( 3 * (2*L+R) , sizeof ( __fx64 ) );
-    __fx64 *gains = (__fx64* )calloc( (2*L+R + 1) , sizeof ( __fx64 ) );
+     T  *cfnum = ( T * )calloc( 3 * (2*L+R) , sizeof (  T  ) );
+     T  *cfden = ( T * )calloc( 3 * (2*L+R) , sizeof (  T  ) );
+     T  *gains = ( T * )calloc( (2*L+R + 1) , sizeof (  T  ) );
 
-    if( pbp   == 0 || zbp   == 0 || gbp   == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
-    if( cfnum == 0 || cfden == 0 || gains == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( pbp   == 0 || zbp   == 0 || gbp   == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( cfnum == 0 || cfden == 0 || gains == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // LP-BP BILLINEAR TRANSFORM:
 
     // poles transformation:
-    __fx64 w0 = w1 * w2;
-    __fx64 dW = w2 - w1;
+     T w0 = w1 * w2;
+     T dW = w2 - w1;
 
     // complex conjugate pairs:
     __ix32 j = 0;
 
     // auxiliary variables:
-    complex<__fx64> a , b , c , D , z1 , z2 , p1 , p2;
+    complex< T > a , b , c , D , z1 , z2 , p1 , p2;
 
     for( __ix32 i = 0 ; i < L ; i++ , j+=2 )
     {
@@ -1139,13 +1127,10 @@ extern iir_cf __cheb2_ellip_digital_bp__( __fx64 Fs , __fx64 Fp , __fx64 BandWid
         p2 = ( b*(-1) + __sqrtf__( D ) ) / 2 / a;
 
         // zeros and poles bilinear transform:
-        zbp[ j + 0 ] = ( complex<__fx64>( 1 , 0 ) + z1 ) / ( complex<__fx64>( 1 , 0 ) - z1 );
-        zbp[ j + 1 ] = ( complex<__fx64>( 1 , 0 ) + z2 ) / ( complex<__fx64>( 1 , 0 ) - z2 );
-        pbp[ j + 0 ] = ( complex<__fx64>( 1 , 0 ) + p1 ) / ( complex<__fx64>( 1 , 0 ) - p1 );
-        pbp[ j + 1 ] = ( complex<__fx64>( 1 , 0 ) + p2 ) / ( complex<__fx64>( 1 , 0 ) - p2 );
-
-        printf( " z1 = %.4f %.4f \t  z2 = %.4f %.4f \n" , zbp[j+0].m_re , zbp[j+0].m_im , zbp[j+1].m_re , zbp[j+1].m_im );
-        printf( " p1 = %.4f %.4f \t  p2 = %.4f %.4f \n" , pbp[j+0].m_re , pbp[j+0].m_im , pbp[j+1].m_re , pbp[j+1].m_im );
+        zbp[ j + 0 ] = ( complex< T >( 1 , 0 ) + z1 ) / ( complex< T >( 1 , 0 ) - z1 );
+        zbp[ j + 1 ] = ( complex< T >( 1 , 0 ) + z2 ) / ( complex< T >( 1 , 0 ) - z2 );
+        pbp[ j + 0 ] = ( complex< T >( 1 , 0 ) + p1 ) / ( complex< T >( 1 , 0 ) - p1 );
+        pbp[ j + 1 ] = ( complex< T >( 1 , 0 ) + p2 ) / ( complex< T >( 1 , 0 ) - p2 );
 
         // filter coefficients computation:
 
@@ -1166,17 +1151,17 @@ extern iir_cf __cheb2_ellip_digital_bp__( __fx64 Fs , __fx64 Fp , __fx64 BandWid
         cfden[ 3 * ( j + 1 ) + 2 ] = +( pbp[j+1] * __conjf__( pbp[j+1] ) ).m_re;
 
         // complex conjugate quadratic sections gains computation:
-        complex<__fx64> gain0 = glp[i];
-        complex<__fx64> gain1 = p1 * __conjf__( p1 );
-        complex<__fx64> gain2 = p2 * __conjf__( p2 );
-        complex<__fx64> gain3 = z1 * __conjf__( z1 );
-        complex<__fx64> gain4 = z2 * __conjf__( z2 );
-        complex<__fx64> gain5 = ( complex<__fx64>(1,0) - z1)*(complex<__fx64>(1,0) - __conjf__(z1) );
-        complex<__fx64> gain6 = ( complex<__fx64>(1,0) - z2)*(complex<__fx64>(1,0) - __conjf__(z2) );
-        complex<__fx64> gain7 = ( complex<__fx64>(1,0) - p1)*(complex<__fx64>(1,0) - __conjf__(p1) );
-        complex<__fx64> gain8 = ( complex<__fx64>(1,0) - p2)*(complex<__fx64>(1,0) - __conjf__(p2) );
+        complex< T > gain0 = glp[i];
+        complex< T > gain1 = p1 * __conjf__( p1 );
+        complex< T > gain2 = p2 * __conjf__( p2 );
+        complex< T > gain3 = z1 * __conjf__( z1 );
+        complex< T > gain4 = z2 * __conjf__( z2 );
+        complex< T > gain5 = ( complex< T >(1,0) - z1)*(complex< T >(1,0) - __conjf__(z1) );
+        complex< T > gain6 = ( complex< T >(1,0) - z2)*(complex< T >(1,0) - __conjf__(z2) );
+        complex< T > gain7 = ( complex< T >(1,0) - p1)*(complex< T >(1,0) - __conjf__(p1) );
+        complex< T > gain8 = ( complex< T >(1,0) - p2)*(complex< T >(1,0) - __conjf__(p2) );
 
-        complex<__fx64> gain9 = gain0 * gain1 * gain2 / ( gain3 * gain4 ) * ( gain5 * gain6 ) / ( gain7 * gain8 );
+        complex< T > gain9 = gain0 * gain1 * gain2 / ( gain3 * gain4 ) * ( gain5 * gain6 ) / ( gain7 * gain8 );
         gain9 = __sqrtf__( gain9 );
         gains[j+0] = gain9.m_re;
         gains[j+1] = gains[j+0];
@@ -1186,18 +1171,18 @@ extern iir_cf __cheb2_ellip_digital_bp__( __fx64 Fs , __fx64 Fp , __fx64 BandWid
     if( R == 1 )
     {
         // pole transformation by means of square equation solve:
-        complex<__fx64> a( 1 / w0 , 0 );
-        complex<__fx64> b( -plp[ N - 1 ].m_re * dW / w0 , -plp[ N - 1 ].m_im * dW / w0 );
-        complex<__fx64> c( 1 , 0 );
-        complex<__fx64> D = b * b - a * c * 4;
-        complex<__fx64> p1 = ( b*(-1) - __sqrtf__( D ) ) / 2 / a;
-        complex<__fx64> p2 = ( b*(-1) + __sqrtf__( D ) ) / 2 / a;
+        complex< T > a( 1 / w0 , 0 );
+        complex< T > b( -plp[ N - 1 ].m_re * dW / w0 , -plp[ N - 1 ].m_im * dW / w0 );
+        complex< T > c( 1 , 0 );
+        complex< T > D = b * b - a * c * 4;
+        complex< T > p1 = ( b*(-1) - __sqrtf__( D ) ) / 2 / a;
+        complex< T > p2 = ( b*(-1) + __sqrtf__( D ) ) / 2 / a;
 
         // zeros and poles bilinear transform:
-        zbp[ j + 0 ] = complex<__fx64>( +1 , 0 );
-        zbp[ j + 1 ] = complex<__fx64>( -1 , 0 );
-        pbp[ j + 0 ] = ( complex<__fx64>( 1 , 0 ) + p1 ) / ( complex<__fx64>( 1 , 0 ) - p1 );
-        pbp[ j + 1 ] = ( complex<__fx64>( 1 , 0 ) + p2 ) / ( complex<__fx64>( 1 , 0 ) - p2 );
+        zbp[ j + 0 ] = complex< T >( +1 , 0 );
+        zbp[ j + 1 ] = complex< T >( -1 , 0 );
+        pbp[ j + 0 ] = ( complex< T >( 1 , 0 ) + p1 ) / ( complex< T >( 1 , 0 ) - p1 );
+        pbp[ j + 1 ] = ( complex< T >( 1 , 0 ) + p2 ) / ( complex< T >( 1 , 0 ) - p2 );
 
         // digital filter coefficients computation:
 
@@ -1212,10 +1197,10 @@ extern iir_cf __cheb2_ellip_digital_bp__( __fx64 Fs , __fx64 Fp , __fx64 BandWid
         cfden[ 3 * ( j + 0 ) + 2 ] = +( pbp[j] * pbp[j+1] ).m_re;
 
         // complex conjugate quadratic sections gains computation:
-        complex<__fx64> gain0 = glp[N-1];
-        complex<__fx64> gain1 = p1 * p2;
-        complex<__fx64> gain2 = (complex<__fx64>(1,0) - p1)*(complex<__fx64>(1,0) - p2);
-        complex<__fx64> gain3 = gain0 * gain1 / gain2 * dW / w0;
+        complex< T > gain0 = glp[N-1];
+        complex< T > gain1 = p1 * p2;
+        complex< T > gain2 = (complex< T >(1,0) - p1)*(complex< T >(1,0) - p2);
+        complex< T > gain3 = gain0 * gain1 / gain2 * dW / w0;
         gains[j+0] = gain3.m_re;
     }
 
@@ -1230,11 +1215,11 @@ extern iir_cf __cheb2_ellip_digital_bp__( __fx64 Fs , __fx64 Fp , __fx64 BandWid
     free( zbp );
     free( gbp );
 
-    return iir_cf{ cfnum , cfden , gains , 2*L , R , 2*L+R  };
+    return iir_cf< T >{ cfnum , cfden , gains , 2*L , R , 2*L+R  };
 }
 
 // Elliptic or Chebyshev II digital bandstop computation function:
-extern iir_cf __cheb2_ellip_digital_bs__( __fx64 Fs , __fx64 Fp , __fx64 BandWidth , __ix32 order , __ix32 type = 0 , __fx64 g_pass = 1 , __fx64 g_stop = 80 )
+template < typename T > iir_cf<T> __cheb2_ellip_digital_bs__( __fx64 Fs , __fx64 Fp , __fx64 BandWidth , __ix32 order , __ix32 type = 0 , __fx64 g_pass = 1 , __fx64 g_stop = 80 )
 {
     // Fs           - sampling frequency
     // Fpass        - passband frequency
@@ -1249,49 +1234,49 @@ extern iir_cf __cheb2_ellip_digital_bs__( __fx64 Fs , __fx64 Fp , __fx64 BandWid
      order /= 2;
 
     // frequency deformation coefficient:
-    __fx64 w1 = tan( PI2 * Fp / 2 / Fs ) , w2 = tan( PI2 * ( Fp + BandWidth ) / 2 / Fs );
+    T w1 = tan( PI2 * Fp / 2 / Fs ) , w2 = tan( PI2 * ( Fp + BandWidth ) / 2 / Fs );
 
     // allocate zeros and poles arrays:
 
     // lowpass analogue prototype poles, zeros and gains:
-    iir_zp zp = ( !type ) ? __cheb2_zeros_poles_plain__( order , g_stop ) : __ellip_zeros_poles_plain__( order , g_pass , g_stop );
-    complex<__fx64> *plp = zp.plp;
-    complex<__fx64> *glp = zp.glp;
-    complex<__fx64> *zlp = zp.zlp;
+    iir_zp < T > zp = ( !type ) ? __cheb2_zeros_poles_plain__< T >( order , g_stop ) : __ellip_zeros_poles_plain__< T >( order , g_pass , g_stop );
+    complex< T > *plp = zp.plp;
+    complex< T > *glp = zp.glp;
+    complex< T > *zlp = zp.zlp;
     __ix32 L = zp.L , R = zp.R , N = L + R;
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( plp == 0 || zlp == 0 || glp == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // bandpass digital prototype poles, zeros and gains:
-    complex<__fx64> *pbs = ( complex<__fx64>* ) calloc( 2*N , sizeof ( complex<__fx64> ) );
-    complex<__fx64> *zbs = ( complex<__fx64>* ) calloc( 2*N , sizeof ( complex<__fx64> ) );
-    complex<__fx64> *gbs = ( complex<__fx64>* ) calloc( 2*N , sizeof ( complex<__fx64> ) );
+    complex< T > *pbs = ( complex< T >* ) calloc( 2*N , sizeof ( complex< T > ) );
+    complex< T > *zbs = ( complex< T >* ) calloc( 2*N , sizeof ( complex< T > ) );
+    complex< T > *gbs = ( complex< T >* ) calloc( 2*N , sizeof ( complex< T > ) );
 
     // coefficients matrix computation:
-    __fx64 *cfnum = (__fx64* )calloc( 3 * (2*L+R) , sizeof ( __fx64 ) );
-    __fx64 *cfden = (__fx64* )calloc( 3 * (2*L+R) , sizeof ( __fx64 ) );
-    __fx64 *gains = (__fx64* )calloc( (2*L+R + 1) , sizeof ( __fx64 ) );
+     T  *cfnum = ( T * )calloc( 3 * (2*L+R) , sizeof ( T ) );
+     T  *cfden = ( T * )calloc( 3 * (2*L+R) , sizeof ( T ) );
+     T  *gains = ( T * )calloc( (2*L+R + 1) , sizeof ( T ) );
 
-    if( pbs   == 0 || zbs   == 0 || gbs   == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
-    if( cfnum == 0 || cfden == 0 || gains == 0 ) return iir_cf{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( pbs   == 0 || zbs   == 0 || gbs   == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( cfnum == 0 || cfden == 0 || gains == 0 ) return iir_cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
 
     // LP-BP BILLINEAR TRANSFORM:
 
     // poles transformation:
-    __fx64 w0 = w1 * w2;
-    __fx64 dW = w2 - w1;
+     T  w0 = w1 * w2;
+     T  dW = w2 - w1;
 
     // complex conjugate pairs:
     __ix32 j = 0;
 
     // auxiliary variables:
-    complex<__fx64> a , b , c , D , z1 , z2 , p1 , p2;
+    complex< T > a , b , c , D , z1 , z2 , p1 , p2;
 
     for( __ix32 i = 0 ; i < L ; i++ , j+=2 )
     {
         // zeros frequency transformation by means of square equation solve:
         a = -1 / w0;
-        b = complex<__fx64>( 1 , 0 ) / zlp[i] * dW / w0;
+        b = complex< T >( 1 , 0 ) / zlp[i] * dW / w0;
         c = -1;
         D = b * b - a * c * 4;
         z1 = ( b*(-1) - __sqrtf__( D ) ) / 2 / a;
@@ -1299,17 +1284,17 @@ extern iir_cf __cheb2_ellip_digital_bs__( __fx64 Fs , __fx64 Fp , __fx64 BandWid
 
         // poles frequency transformation by means of square equation solve:
         a = -1 / w0;
-        b = complex<__fx64>( 1 , 0 ) / plp[i] * dW / w0;
+        b = complex< T >( 1 , 0 ) / plp[i] * dW / w0;
         c = -1;
         D = b * b - a * c * 4;
         p1 = ( b*(-1) - __sqrtf__( D ) ) / 2 / a;
         p2 = ( b*(-1) + __sqrtf__( D ) ) / 2 / a;
 
         // zeros and poles bilinear transform:
-        zbs[ j + 0 ] = ( complex<__fx64>( 1 , 0 ) + z1 ) / ( complex<__fx64>( 1 , 0 ) - z1 );
-        zbs[ j + 1 ] = ( complex<__fx64>( 1 , 0 ) + z2 ) / ( complex<__fx64>( 1 , 0 ) - z2 );
-        pbs[ j + 0 ] = ( complex<__fx64>( 1 , 0 ) + p1 ) / ( complex<__fx64>( 1 , 0 ) - p1 );
-        pbs[ j + 1 ] = ( complex<__fx64>( 1 , 0 ) + p2 ) / ( complex<__fx64>( 1 , 0 ) - p2 );
+        zbs[ j + 0 ] = ( complex< T >( 1 , 0 ) + z1 ) / ( complex< T >( 1 , 0 ) - z1 );
+        zbs[ j + 1 ] = ( complex< T >( 1 , 0 ) + z2 ) / ( complex< T >( 1 , 0 ) - z2 );
+        pbs[ j + 0 ] = ( complex< T >( 1 , 0 ) + p1 ) / ( complex< T >( 1 , 0 ) - p1 );
+        pbs[ j + 1 ] = ( complex< T >( 1 , 0 ) + p2 ) / ( complex< T >( 1 , 0 ) - p2 );
 
         // filter coefficients computation:
 
@@ -1330,15 +1315,15 @@ extern iir_cf __cheb2_ellip_digital_bs__( __fx64 Fs , __fx64 Fp , __fx64 BandWid
         cfden[ 3 * ( j + 1 ) + 2 ] = +( pbs[j+1] * __conjf__( pbs[j+1] ) ).m_re;
 
         // complex conjugate quadratic sections gains computation:
-        complex<__fx64> gain0 = p1 * __conjf__( p1 );
-        complex<__fx64> gain1 = p2 * __conjf__( p2 );
-        complex<__fx64> gain2 = z1 * __conjf__( z1 );
-        complex<__fx64> gain3 = z2 * __conjf__( z2 );
-        complex<__fx64> gain4 = ( complex<__fx64>(1,0) - z1)*(complex<__fx64>(1,0) - __conjf__(z1) );
-        complex<__fx64> gain5 = ( complex<__fx64>(1,0) - z2)*(complex<__fx64>(1,0) - __conjf__(z2) );
-        complex<__fx64> gain6 = ( complex<__fx64>(1,0) - p1)*(complex<__fx64>(1,0) - __conjf__(p1) );
-        complex<__fx64> gain7 = ( complex<__fx64>(1,0) - p2)*(complex<__fx64>(1,0) - __conjf__(p2) );
-        complex<__fx64> gain8 = ( gain0 * gain1 ) / ( gain2 * gain3 ) * ( gain4 * gain5 ) / ( gain6 * gain7 );
+        complex< T > gain0 = p1 * __conjf__( p1 );
+        complex< T > gain1 = p2 * __conjf__( p2 );
+        complex< T > gain2 = z1 * __conjf__( z1 );
+        complex< T > gain3 = z2 * __conjf__( z2 );
+        complex< T > gain4 = ( complex< T >(1,0) - z1)*(complex< T >(1,0) - __conjf__(z1) );
+        complex< T > gain5 = ( complex< T >(1,0) - z2)*(complex< T >(1,0) - __conjf__(z2) );
+        complex< T > gain6 = ( complex< T >(1,0) - p1)*(complex< T >(1,0) - __conjf__(p1) );
+        complex< T > gain7 = ( complex< T >(1,0) - p2)*(complex< T >(1,0) - __conjf__(p2) );
+        complex< T > gain8 = ( gain0 * gain1 ) / ( gain2 * gain3 ) * ( gain4 * gain5 ) / ( gain6 * gain7 );
         gain8 = __sqrtf__( gain8 );
         gains[j+0] = gain8.m_re;
         gains[j+1] = gains[j+0];
@@ -1348,18 +1333,18 @@ extern iir_cf __cheb2_ellip_digital_bs__( __fx64 Fs , __fx64 Fp , __fx64 BandWid
     if( R == 1 )
     {
         // poles transformation by means of square equation solve:
-        complex<__fx64> a = complex<__fx64>( -1 / w0 , 0 );
-        complex<__fx64> b = complex<__fx64>( dW , 0 ) / plp[N-1] / w0;
-        complex<__fx64> c = complex<__fx64>( -1 , 0 );
-        complex<__fx64> D = b * b - a * c * 4;
-        complex<__fx64> p1 = ( b*(-1) - __sqrtf__( D ) ) / 2 / a;
-        complex<__fx64> p2 = ( b*(-1) + __sqrtf__( D ) ) / 2 / a;
+        complex< T > a = complex< T >( -1 / w0 , 0 );
+        complex< T > b = complex< T >( dW , 0 ) / plp[N-1] / w0;
+        complex< T > c = complex< T >( -1 , 0 );
+        complex< T > D = b * b - a * c * 4;
+        complex< T > p1 = ( b*(-1) - __sqrtf__( D ) ) / 2 / a;
+        complex< T > p2 = ( b*(-1) + __sqrtf__( D ) ) / 2 / a;
 
         // zeros and poles bilinear transform:
-        zbs[ j + 0 ] = complex<__fx64>( +1 , 0 );
-        zbs[ j + 1 ] = complex<__fx64>( -1 , 0 );
-        pbs[ j + 0 ] = ( complex<__fx64>( 1 , 0 ) + p1 ) / ( complex<__fx64>( 1 , 0 ) - p1 );
-        pbs[ j + 1 ] = ( complex<__fx64>( 1 , 0 ) + p2 ) / ( complex<__fx64>( 1 , 0 ) - p2 );
+        zbs[ j + 0 ] = complex< T >( +1 , 0 );
+        zbs[ j + 1 ] = complex< T >( -1 , 0 );
+        pbs[ j + 0 ] = ( complex< T >( 1 , 0 ) + p1 ) / ( complex< T >( 1 , 0 ) - p1 );
+        pbs[ j + 1 ] = ( complex< T >( 1 , 0 ) + p2 ) / ( complex< T >( 1 , 0 ) - p2 );
 
         // digital filter coefficients computation:
 
@@ -1374,11 +1359,11 @@ extern iir_cf __cheb2_ellip_digital_bs__( __fx64 Fs , __fx64 Fp , __fx64 BandWid
         cfden[ 3 * ( j + 0 ) + 2 ] = +( pbs[j]*pbs[j+1] ).m_re;
 
         // complex conjugate quadratic sections gains computation:
-        complex<__fx64> gain0 = glp[N-1];
-        complex<__fx64> gain1 = p1 * p2;
-        complex<__fx64> gain2 = complex<__fx64>(1,0) / plp[N-1] / (-1);
-        complex<__fx64> gain3 = (complex<__fx64>(1,0) - p1)*(complex<__fx64>(1,0) - p2);
-        complex<__fx64> gain4 = gain0 * gain1 * gain2 / gain3 / w0 * ( 1 + w0 );
+        complex< T > gain0 = glp[N-1];
+        complex< T > gain1 = p1 * p2;
+        complex< T > gain2 = complex< T >(1,0) / plp[N-1] / (-1);
+        complex< T > gain3 = (complex< T >(1,0) - p1)*(complex< T >(1,0) - p2);
+        complex< T > gain4 = gain0 * gain1 * gain2 / gain3 / w0 * ( 1 + w0 );
         gains[j+0] = gain4.m_re;
     }
 
@@ -1393,13 +1378,117 @@ extern iir_cf __cheb2_ellip_digital_bs__( __fx64 Fs , __fx64 Fp , __fx64 BandWid
     free( zbs );
     free( gbs );
 
-    return iir_cf{ cfnum , cfden , gains , 2*L , R , 2*L+R  };
+    return iir_cf< T >{ cfnum , cfden , gains , 2*L , R , 2*L+R  };
+}
+
+// iir buffers memory allocation function:
+template< typename T > iir_bf<T> __iir_bf_alloc__( __ix32 N )
+{
+    mirror_ring_buffer<T> *bx = ( mirror_ring_buffer<T>* ) calloc( N , sizeof ( mirror_ring_buffer<T> ) );
+    mirror_ring_buffer<T> *by = ( mirror_ring_buffer<T>* ) calloc( N , sizeof ( mirror_ring_buffer<T> ) );
+    for( __ix32 i = 0 ; i < N ; i++ )
+    {
+        bx[i].allocate( 4 );
+        by[i].allocate( 3 );
+    }
+
+    return iir_bf< T >{ bx , by , N };
+}
+
+// iir buffers memory deallocation function:
+template< typename T > void __iir_bf_free__( iir_bf<T> bf )
+{
+    mirror_ring_buffer<T> *bx = bf.bx , *by = bf.by;
+    __ix32 N = bf.N;
+
+    if( bx != 0 )
+    {
+        for( __ix32 i = 0 ; i < N ; i++ ) bx[i].deallocate();
+        free( bx );
+        bf.bx = 0;
+    }
+
+    if( by != 0 )
+    {
+        for( __ix32 i = 0 ; i < N ; i++ ) by[i].deallocate();
+        free( by );
+        bf.by = 0;
+    }
+    bf.N = -1;
+}
+
+// iir zeros / poles plain memory deallocation function:
+template< typename T > void __iir_zp_free__( iir_zp< T > zp )
+{
+    if( zp.glp != 0 ) { free( zp.glp ); zp.glp = 0; }
+    if( zp.zlp != 0 ) { free( zp.zlp ); zp.zlp = 0; }
+    if( zp.plp != 0 ) { free( zp.plp ); zp.plp = 0; }
+    zp.N = zp.L = zp.R = -1;
+}
+
+// iir coefficients memory deallocation function:
+template< typename T > void __iir_cf_free__( iir_cf< T > cf )
+{
+    if( cf.cfnum != 0 ) { free( cf.cfnum ); cf.cfnum = 0; }
+    if( cf.cfden != 0 ) { free( cf.cfden ); cf.cfden = 0; }
+    if( cf.gains != 0 ) { free( cf.gains ); cf.gains = 0; }
+    cf.N = cf.L = cf.R = -1;
+}
+
+// filtering template function:
+template< typename T > extern T __filt__( T *input , T *cfnum , T *cfden , T *gains  , __ix32 N ,  mirror_ring_buffer< T > *buff_sx , mirror_ring_buffer< T > *buff_sy )
+{
+    // initialization:
+    T sum_num = 0 , sum_den = 0 , out = 0;
+
+    // filtering:
+    buff_sx[0].fill_buff( input );
+    for ( __ix32 i = 0 ; i < N ; i++)
+    {
+        sum_num = gains[i]*( buff_sx[ i ][ 0 ] * cfnum[ 3 * i + 0 ] + buff_sx[ i ][ 1 ] * cfnum[ 3 * i + 1 ] + buff_sx[ i ][ 2 ] * cfnum[ 3 * i + 2 ] );
+        sum_den = ( buff_sy[ i ][ 0 ] * cfden[ 3 * i + 1 ] + buff_sy[ i ][ 1 ] * cfden[ 3 * i + 2 ] );
+        out = sum_num - sum_den;
+        buff_sy[ i ].fill_buff( &out );
+        if( i < N - 1 ) buff_sx[ i + 1 ].fill_buff( &out );
+    }
+    return out;
+}
+
+// frequency response computation function:
+template< typename T > iir_fr< T > __freq_resp__( T *cfnum , T *cfden , T *gains , __ix32 N , __fx64 Fs , __fx64 F )
+{
+    // sampling period:
+    T Ts = 1 / Fs;
+
+    // transfer function initialization:
+    complex< T > tsf = complex< T >( 1, 0 );
+
+    for( __ix32 i = 0 ; i < N ; i++ )
+    {
+        // complex exponents:
+        complex< T > z0 = complex<__fx64>( cos( -PI2 * F * Ts * 0 ) , sin( -PI2 * F * Ts * 0 ) );
+        complex< T > z1 = complex<__fx64>( cos( -PI2 * F * Ts * 1 ) , sin( -PI2 * F * Ts * 1 ) );
+        complex< T > z2 = complex<__fx64>( cos( -PI2 * F * Ts * 2 ) , sin( -PI2 * F * Ts * 2 ) );
+
+        // transfer function:
+        complex< T > num =  z0 * cfnum[ 3 * i + 0 ] + z1 * cfnum[ 3 * i + 1 ] + z2 * cfnum[ 3 * i + 2 ];
+        complex< T > den =  z0 * cfden[ 3 * i + 0 ] + z1 * cfden[ 3 * i + 1 ] + z2 * cfden[ 3 * i + 2 ];
+        tsf *= num / den * gains[i];
+    }
+
+    // multiply by an output gain:
+    tsf *= gains[N];
+
+    // output:
+    return iir_fr< T >{ __absf__( tsf ) , __argf__( tsf ) };
 }
 
 // DEBUGGING FUNCTIONS:
 
+#ifndef __ALG_PLATFORM
+
 // show coeffs:
-extern void __show_coeffs__( iir_cf coeffs )
+template < typename T > void __show_coeffs__( iir_cf< T > coeffs )
 {
     __ix32 L = coeffs.L , R = coeffs.R , N = L + R;
     __fx64 *cfnum = coeffs.cfnum;
@@ -1420,238 +1509,135 @@ extern void __show_coeffs__( iir_cf coeffs )
     printf( "filter gain = : %.12f \n " , fgain    );
 }
 
-// frequency response computation function:
-template< typename CT > extern iir_fr __freq_resp__( CT *cfnum , CT *cfden , CT *gains , __ix32 N , __fx64 Fs , __fx64 F )
+template < typename T > void __show_iir__( iir_sp sp , iir_cf<T> cf , const char *name )
 {
-    // sampling period:
-    __fx64 Ts = 1 / Fs;
+    printf( "%s " , name );
 
-    // transfer function initialization:
-    complex< __fx64 > tsf = complex< __fx64 >( 1, 0 );
-
-    for( __ix32 i = 0 ; i < N ; i++ )
+    switch ( sp.type )
     {
-        // complex exponents:
-        complex<__fx64> z0 = complex<__fx64>( cos( -PI2 * F * Ts * 0 ) , sin( -PI2 * F * Ts * 0 ) );
-        complex<__fx64> z1 = complex<__fx64>( cos( -PI2 * F * Ts * 1 ) , sin( -PI2 * F * Ts * 1 ) );
-        complex<__fx64> z2 = complex<__fx64>( cos( -PI2 * F * Ts * 2 ) , sin( -PI2 * F * Ts * 2 ) );
+        case 0:
+        printf( "lowpass specifications: \n" );
+        break;
 
-        // transfer function:
-        complex< __fx64 > num =  z0 * cfnum[ 3 * i + 0 ] + z1 * cfnum[ 3 * i + 1 ] + z2 * cfnum[ 3 * i + 2 ];
-        complex< __fx64 > den =  z0 * cfden[ 3 * i + 0 ] + z1 * cfden[ 3 * i + 1 ] + z2 * cfden[ 3 * i + 2 ];
-        tsf *= num / den * gains[i];
+        case 1:
+        printf( "highpass specifications: \n" );
+        break;
+
+        case 2:
+        printf( "bandpass specifications: \n" );
+        break;
+
+        case 3:
+        printf( "bandstop specifications: \n" );
+        break;
     }
 
-    // multiply by an output gain:
-    tsf *= gains[N];
+    printf( "\n" );
+    printf( "Fs    = %.6f Hz \n"   , sp.Fs    );
+    printf( "Ts    = %.6f s  \n"   , sp.Ts    );
+    printf( "Fn    = %.6f Hz \n"   , sp.Fn    );
+    printf( "Fc    = %.6f Hz \n"   , sp.Fc    );
+    printf( "BW    = %.6f Hz \n"   , sp.BW    );
+    printf( "Gs    = %.6f Db \n"   , sp.Gs    );
+    printf( "Gp    = %.6f Db \n"   , sp.Gp    );
+    printf( "order = %d      \n"   , sp.order );
+    printf( "N     = %d      \n"   , cf.N     );
+    printf( "L     = %d      \n"   , cf.L     );
+    printf( "R     = %d      \n\n" , cf.R     );
 
-    // output:
-    return iir_fr{ __absf__( tsf ) , __argf__( tsf ) };
-}
-
-// filtering template function:
-
-// float x64 input:
-template< typename DT , typename CT > extern DT __filt__( DT *input , CT *cfnum , CT *cfden , CT *gains  , __ix32 N ,  mirror_ring_buffer< DT > *buff_sx , mirror_ring_buffer< DT > *buff_sy )
-{
-    // initialization:
-    DT sum_num = 0 , sum_den = 0 , out = 0;
-
-    // filtering:
-    buff_sx[0].fill_buff( input );
-    for ( __ix32 i = 0 ; i < N ; i++)
+    if( cf.cfden != 0 && cf.cfnum != 0 && cf.gains != 0 )
     {
-        sum_num = gains[i]*( buff_sx[ i ][ 0 ] * cfnum[ 3 * i + 0 ] + buff_sx[ i ][ 1 ] * cfnum[ 3 * i + 1 ] + buff_sx[ i ][ 2 ] * cfnum[ 3 * i + 2 ] );
-        sum_den = ( buff_sy[ i ][ 0 ] * cfden[ 3 * i + 1 ] + buff_sy[ i ][ 1 ] * cfden[ 3 * i + 2 ] );
-        out = sum_num - sum_den;
-        buff_sy[ i ].fill_buff( &out );
-        if( i < N - 1 ) buff_sx[ i + 1 ].fill_buff( &out );
+        printf( "coefficients: \n\n" );
+        for( __ix32 i = 0 ; i < cf.N ; i++ )
+        {
+            printf( " section %d \n" , i );
+            printf( " numerator  : %.6f %.6f %.6f \n" , cf.cfnum[ 3 * i + 0 ] , cf.cfnum[ 3 * i + 1 ]  , cf.cfnum[ 3 * i + 2 ] );
+            printf( " denominator: %.6f %.6f %.6f \n" , cf.cfden[ 3 * i + 0 ] , cf.cfden[ 3 * i + 1 ]  , cf.cfden[ 3 * i + 2 ] );
+            printf( " gain       : %.6f \n\n" , cf.gains[i] );
+        }
+        printf( "output gain: %.6f \n" , cf.gains[ cf.N ] );
     }
-
-    return out;
+    else
+    {
+        printf( "coefficients : coefficients have not been computed yet... \n" );
+    }
 }
 
-// parent IIR filter class:
-template < typename T > class iir
+#endif
+
+// template Butterworth filter:
+template < typename T > class butt
 {
-protected:
-
-    // filter parameters:
-    __ix32 m_N , m_L , m_R , m_Fc , m_BW , m_Gs , m_Gp , m_Fs , m_Ts , m_Fn , m_order;
-
-    // filter coefficients matrix:
-    T *m_cfnum , *m_cfden , *m_gains;
-
-    // filter input / output samples buffers:
-    mirror_ring_buffer<T> *m_buff_sx , *m_buff_sy;
+public:
+    // filter specification , coefficients and buffers:
+    iir_sp      m_sp;
+    iir_cf< T > m_cf;
+    iir_bf< T > m_bf;
 
 public:
 
     // filter output:
     T m_out , m_Km , m_pH;
 
-    // coefficients computation virtual function:
-    virtual __ix32 coeff_calc() { return 0; }
+    // initializations:
+    void lp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 1 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , -1 , order , 0 }; }
+    void hp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 1 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , -1 , order , 1 }; }
+    void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , 2 }; }
+    void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , 3 }; }
 
-    // lowpass / highpass iir filters initialization functions:
-    void init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 1 )
-    {
-        m_Fs    = Fs;
-        m_Fn    = Fn;
-        m_Fc    = Fc;
-        m_order = order;
-        m_Gs    = Gs;
-    }
-
-    void init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 )
-    {
-        m_Fs    = Fs;
-        m_Fn    = Fn;
-        m_Fc    = Fc;
-        m_order = order;
-        m_Gp    = Gp;
-        m_Gs    = Gs;
-    }
-
-    // bandpass / bandstop iir filters initialization functions:
-    void init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 )
-    {
-        m_Fs    = Fs;
-        m_Fn    = Fn;
-        m_Fc    = Fc;
-        m_BW    = BW;
-        m_order = order;
-        m_Gs    = Gs;
-    }
-
-    void init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 )
-    {
-        m_Fs    = Fs;
-        m_Fn    = Fn;
-        m_Fc    = Fc;
-        m_BW    = BW;
-        m_order = order;
-        m_Gp    = Gp;
-        m_Gs    = Gs;
-    }
-
-    // memory allocation:
     __ix32 allocate()
     {
-        // compute coefficients:
-        coeff_calc();
-
-        // coefficients matrix memory allocation:
-        m_cfden = ( T* ) calloc( 3 * m_N , sizeof ( T ) );
-        m_cfnum = ( T* ) calloc( 3 * m_N , sizeof ( T ) );
-        m_gains = ( T* ) calloc( m_N + 1 , sizeof ( T ) );
-
-        // input/output samples buffer memory allocation:
-        m_buff_sx = ( mirror_ring_buffer<T>* ) calloc( m_N , sizeof ( mirror_ring_buffer<T> ) );
-        m_buff_sy = ( mirror_ring_buffer<T>* ) calloc( m_N , sizeof ( mirror_ring_buffer<T> ) );
-
-        for( __ix32 i = 0 ; i < m_N ; i++ )
+        switch ( m_sp.type )
         {
-            m_buff_sx[i].allocate( 4 );
-            m_buff_sy[i].allocate( 3 );
+            case 0: // lowpass computation
+            m_cf = __butt_cheb1_digital_lp__< T >( m_sp.Fs , m_sp.Fc , m_sp.order , 0 , m_sp.Gs );
+            break;
+
+            case 1: // highpass computation:
+            m_cf = __butt_cheb1_digital_hp__< T >( m_sp.Fs , m_sp.Fc , m_sp.order , 0 , m_sp.Gs );
+            break;
+
+            case 2: // bandpass computation
+            m_cf = __butt_cheb1_digital_bp__< T >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 0 , m_sp.Gs );
+            break;
+
+            case 3: // bandstop computation
+            m_cf = __butt_cheb1_digital_bs__< T >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 0 , m_sp.Gs );
+            break;
         }
 
-        return 1;
+        m_bf = ( ( m_cf.cfnum != 0 ) && ( m_cf.cfden != 0 ) && ( m_cf.gains != 0 ) ) ? __iir_bf_alloc__< T >( m_cf.N ) : iir_bf< T >{ 0 , 0 , -1 } ;
+        return ( m_bf.bx != 0 && m_bf.by != 0 );
     }
 
-    // memory deallocation:
-    __fx32 deallocate()
+    void deallocate()
     {
-        if( m_cfden != 0 ) { free( m_cfden ); m_cfden = 0; }
-        if( m_cfnum != 0 ) { free( m_cfnum ); m_cfnum = 0; }
-        if( m_gains != 0 ) { free( m_gains ); m_gains = 0; }
-
-        if( m_buff_sx != 0 )
-        {
-            for( __ix32 i = 0 ; i < m_N ; i++ ) m_buff_sx[i].deallocate();
-            free( m_buff_sx );
-            m_buff_sx = 0;
-        }
-
-        if( m_buff_sy != 0 )
-        {
-            for( __ix32 i = 0 ; i < m_N ; i++ ) m_buff_sy[i].deallocate();
-            free( m_buff_sy );
-            m_buff_sy = 0;
-        }
-
-        return 1;
+        __iir_bf_free__< T >( m_bf );
+        __iir_cf_free__< T >( m_cf );
     }
-
 
     // default constructor:
-    iir()
+    butt()
     {
-        // variables initialization:
-        m_N     = 4;
-        m_L     = trunc( m_N / 2 );
-        m_R     = m_N - 2 * m_L;
-        m_Fc    = 100;
-        m_BW    = 500;
-        m_Gs    = 1;
-        m_Gs    = 80;
-        m_out   = 0;
-        m_Km    = 0;
-        m_pH    = 0;
-        m_Fn    = 50;
-        m_Fs    = 4000;
-        m_Ts    = 1 / m_Fs;
-        m_order = 4;
-
-        // pointers initialization:
-        m_cfnum   = 0;
-        m_cfden   = 0;
-        m_buff_sx = 0;
-        m_buff_sy = 0;
+        m_cf = iir_cf<T>{ 0 , 0 , 0 , -1 , -1 , -1 };
+        m_bf = iir_bf<T>{ 0 , 0 , -1 };
+        m_sp = iir_sp   { 4000 , 1 / 4000 , 50 , 100 , -1 , 1 , -1 , 4 , 0 };
     }
 
     // default destructor:
-    ~iir() { deallocate(); }
+    ~butt(){ deallocate(); }
 
-    // frequency response computation:
-    void freq_resp( __fx64 F )
-    {
-        iir_fr fr = __freq_resp__( m_cfnum , m_cfden , m_gains , m_N , m_Fs , F );
-        m_Km = fr.Km;
-        m_pH = fr.pH;
-    }
+    // coefficients computation virtual function:
 
     // filtering function:
-    T filt( __fx64 *input ) { return __filt__< __fx64 , T >( input , m_cfnum , m_cfden , m_gains , m_N , m_buff_sx , m_buff_sy ); }
-    T filt( __fx32 *input ) { return __filt__< __fx64 , T >( input , m_cfnum , m_cfden , m_gains , m_N , m_buff_sx , m_buff_sy ); }
+    T filt( T *input ) { return ( m_out = __filt__< T >( input , m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_bf.bx , m_bf.by ) ); }
 
+    inline T operator () (  T *input  ) { return filt( input ); }
+
+    #ifndef __ALG_PLATFORM
+    void show_properties() { __show_iir__< T >( m_sp , m_cf , "Butterworth" ); }
+    #endif
 };
-
-// child lowpass filters :
-class butterworth_lp_fx64 : iir<__fx64>
-{
-public:
-
-    // IIR filter coefficients computation function override:
-    virtual __ix32 coeff_calc() override
-    {
-        __butt_cheb1_digital_lp__( m_Fs , m_Fc , m_order , 0 , m_Gs );
-        return 1;
-    }
-
-    // operators:
-    inline __fx64 operator() ( __fx64 *input )
-    {
-        m_out = filt( input );
-        return m_out;
-    }
-};
-
-class chebyshevt1_lp_fx64 : iir<__fx64> { };
-class chebyshevt2_lp_fx64 : iir<__fx64> { };
-class elliptic_lp_fx64    : iir<__fx64> { };
-
-// child highpass filters :
 
 // customized macros exclusion to avoid aliases during compilation:
 #undef __fx32

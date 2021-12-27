@@ -1079,27 +1079,14 @@ template< typename T > __ix32 __sign__( T input ) { return ( input > 0 ) ? 1 : -
 #ifdef COMPLEX_H
 
 // __absf__ :
-__fx64 __absf__( complex<__fx64> _complex ) { return sqrt( _complex.m_re*_complex.m_re + _complex.m_im*_complex.m_im ); }
 __fx32 __absf__( complex<__fx32> _complex ) { return sqrt( _complex.m_re*_complex.m_re + _complex.m_im*_complex.m_im ); }
-__ix64 __absf__( complex<__ix64> _complex ) { return sqrt( _complex.m_re*_complex.m_re + _complex.m_im*_complex.m_im ); }
-__ix32 __absf__( complex<__ix32> _complex ) { return sqrt( _complex.m_re*_complex.m_re + _complex.m_im*_complex.m_im ); }
-__ix16 __absf__( complex<__ix16> _complex ) { return sqrt( _complex.m_re*_complex.m_re + _complex.m_im*_complex.m_im ); }
+__fx64 __absf__( complex<__fx64> _complex ) { return sqrt( _complex.m_re*_complex.m_re + _complex.m_im*_complex.m_im ); }
 
 // __argf__ :
-__fx64 __argf__( complex<__fx64> _complex ) { return atan2( _complex.m_im , _complex.m_re ); }
 __fx32 __argf__( complex<__fx32> _complex ) { return atan2( _complex.m_im , _complex.m_re ); }
-__ix64 __argf__( complex<__ix64> _complex ) { return atan2( _complex.m_im , _complex.m_re ); }
-__ix32 __argf__( complex<__ix32> _complex ) { return atan2( _complex.m_im , _complex.m_re ); }
-__ix16 __argf__( complex<__ix16> _complex ) { return atan2( _complex.m_im , _complex.m_re ); }
+__fx64 __argf__( complex<__fx64> _complex ) { return atan2( _complex.m_im , _complex.m_re ); }
 
 // __sqrtf__:
-complex<__fx64> __sqrtf__( complex<__fx64> _complex )
-{
-    __fx64 abs = sqrt ( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
-    __fx64 arg = atan2( _complex.m_im , _complex.m_re );
-    return complex<__fx64>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
-}
-
 complex<__fx32> __sqrtf__( complex<__fx32> _complex )
 {
     __fx32 abs = sqrt ( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
@@ -1107,80 +1094,35 @@ complex<__fx32> __sqrtf__( complex<__fx32> _complex )
     return complex<__fx32>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
 }
 
-complex<__ix64> __sqrtf__( complex<__ix64> _complex )
+complex<__fx64> __sqrtf__( complex<__fx64> _complex )
 {
-    __ix64 abs = sqrt ( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
-    __ix64 arg = atan2( _complex.m_im , _complex.m_re );
-    return complex<__ix64>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
-}
-
-complex<__ix32> __sqrtf__( complex<__ix32> _complex )
-{
-    __ix32 abs = sqrt ( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
-    __ix32 arg = atan2( _complex.m_im , _complex.m_re );
-    return complex<__ix32>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
-}
-
-complex<__ix16> __sqrtf__( complex<__ix16> _complex )
-{
-    __ix16 abs = sqrt ( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
-    __ix16 arg = atan2( _complex.m_im , _complex.m_re );
-    return complex<__ix16>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
+    __fx64 abs = sqrt ( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
+    __fx64 arg = atan2( _complex.m_im , _complex.m_re );
+    return complex<__fx64>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
 }
 
 // __conjf__ :
-complex<__fx64> __conjf__( complex<__fx64> _complex ) { _complex.m_im *= -1.0; return _complex; }
 complex<__fx32> __conjf__( complex<__fx32> _complex ) { _complex.m_im *= -1.0; return _complex; }
-complex<__ix64> __conjf__( complex<__ix64> _complex ) { _complex.m_im *= -1.0; return _complex; }
-complex<__ix32> __conjf__( complex<__ix32> _complex ) { _complex.m_im *= -1.0; return _complex; }
-complex<__ix16> __conjf__( complex<__ix16> _complex ) { _complex.m_im *= -1.0; return _complex; }
+complex<__fx64> __conjf__( complex<__fx64> _complex ) { _complex.m_im *= -1.0; return _complex; }
 
 // __normf__ :
-complex<__fx64> __normf__( complex<__fx64> _complex ) { __fx64 m = __absf__( _complex ); return complex<__fx64>( _complex / m ); }
 complex<__fx32> __normf__( complex<__fx32> _complex ) { __fx32 m = __absf__( _complex ); return complex<__fx32>( _complex / m ); }
-complex<__ix64> __normf__( complex<__ix64> _complex ) { __ix64 m = __absf__( _complex ); return complex<__ix64>( _complex / m ); }
-complex<__ix32> __normf__( complex<__ix32> _complex ) { __ix32 m = __absf__( _complex ); return complex<__ix32>( _complex / m ); }
-complex<__ix16> __normf__( complex<__ix16> _complex ) { __ix16 m = __absf__( _complex ); return complex<__ix16>( _complex / m ); }
+complex<__fx64> __normf__( complex<__fx64> _complex ) { __fx64 m = __absf__( _complex ); return complex<__fx64>( _complex / m ); }
 
 // __rotf__ :
-complex<__fx64> __rotf__( __fx64 arg , bool mode )
-{
-    if( mode ) { arg = __TO_RADIANS( arg ); }
-    return complex<__fx64>( cos(arg) , sin(arg) );
-}
-
 complex<__fx32> __rotf__( __fx32 arg , bool mode )
 {
     if( mode ) { arg = __TO_RADIANS( arg ); }
     return complex<__fx32>( cos(arg) , sin(arg) );
 }
 
-complex<__ix64> __rotf__( __ix64 arg , bool mode )
+complex<__fx64> __rotf__( __fx64 arg , bool mode )
 {
     if( mode ) { arg = __TO_RADIANS( arg ); }
-    return complex<__ix64>( cos(arg) , sin(arg) );
-}
-
-complex<__ix32> __rotf__( __ix32 arg , bool mode )
-{
-    if( mode ) { arg = __TO_RADIANS( arg ); }
-    return complex<__ix32>( cos(arg) , sin(arg) );
-}
-
-complex<__ix16> __rotf__( __ix16 arg , bool mode )
-{
-    if( mode ) { arg = __TO_RADIANS( arg ); }
-    return complex<__ix16>( cos(arg) , sin(arg) );
+    return complex<__fx64>( cos(arg) , sin(arg) );
 }
 
 // __sinhf__   :
-complex<__fx64> __sinhf__( complex<__fx64> _complex )
-{
-    __fx64 re = ( exp( _complex.m_re ) * cos( _complex.m_im ) - exp( -_complex.m_re ) * cos( -_complex.m_im ) ) * 0.5;
-    __fx64 im = ( exp( _complex.m_re ) * sin( _complex.m_im ) - exp( -_complex.m_re ) * sin( -_complex.m_im ) ) * 0.5;
-    return complex<__fx64>( re , im );
-}
-
 complex<__fx32> __sinhf__( complex<__fx32> _complex )
 {
     __fx32 re = ( exp( _complex.m_re ) * cos( _complex.m_im ) - exp( -_complex.m_re ) * cos( -_complex.m_im ) ) * 0.5;
@@ -1188,35 +1130,14 @@ complex<__fx32> __sinhf__( complex<__fx32> _complex )
     return complex<__fx32>( re , im );
 }
 
-complex<__ix64> __sinhf__( complex<__ix64> _complex )
+complex<__fx64> __sinhf__( complex<__fx64> _complex )
 {
-    __ix64 re = ( exp( _complex.m_re ) * cos( _complex.m_im ) - exp( -_complex.m_re ) * cos( -_complex.m_im ) ) * 0.5;
-    __ix64 im = ( exp( _complex.m_re ) * sin( _complex.m_im ) - exp( -_complex.m_re ) * sin( -_complex.m_im ) ) * 0.5;
-    return complex<__ix64>( re , im );
-}
-
-complex<__ix32> __sinhf__( complex<__ix32> _complex )
-{
-    __ix32 re = ( exp( _complex.m_re ) * cos( _complex.m_im ) - exp( -_complex.m_re ) * cos( -_complex.m_im ) ) * 0.5;
-    __ix32 im = ( exp( _complex.m_re ) * sin( _complex.m_im ) - exp( -_complex.m_re ) * sin( -_complex.m_im ) ) * 0.5;
-    return complex<__ix32>( re , im );
-}
-
-complex<__ix16> __sinhf__( complex<__ix16> _complex )
-{
-    __ix16 re = ( exp( _complex.m_re ) * cos( _complex.m_im ) - exp( -_complex.m_re ) * cos( -_complex.m_im ) ) * 0.5;
-    __ix16 im = ( exp( _complex.m_re ) * sin( _complex.m_im ) - exp( -_complex.m_re ) * sin( -_complex.m_im ) ) * 0.5;
-    return complex<__ix16>( re , im );
-}
-
-// __coshf__   :
-complex<__fx64> __coshf__( complex<__fx64> _complex )
-{
-    __fx64 re = ( exp( _complex.m_re ) * cos( _complex.m_im ) + exp( -_complex.m_re ) * cos( -_complex.m_im ) ) * 0.5;
-    __fx64 im = ( exp( _complex.m_re ) * sin( _complex.m_im ) + exp( -_complex.m_re ) * sin( -_complex.m_im ) ) * 0.5;
+    __fx64 re = ( exp( _complex.m_re ) * cos( _complex.m_im ) - exp( -_complex.m_re ) * cos( -_complex.m_im ) ) * 0.5;
+    __fx64 im = ( exp( _complex.m_re ) * sin( _complex.m_im ) - exp( -_complex.m_re ) * sin( -_complex.m_im ) ) * 0.5;
     return complex<__fx64>( re , im );
 }
 
+// __coshf__   :
 complex<__fx32> __coshf__( complex<__fx32> _complex )
 {
     __fx32 re = ( exp( _complex.m_re ) * cos( _complex.m_im ) + exp( -_complex.m_re ) * cos( -_complex.m_im ) ) * 0.5;
@@ -1224,40 +1145,20 @@ complex<__fx32> __coshf__( complex<__fx32> _complex )
     return complex<__fx32>( re , im );
 }
 
-complex<__ix64> __coshf__( complex<__ix64> _complex )
+complex<__fx64> __coshf__( complex<__fx64> _complex )
 {
-    __ix64 re = ( exp( _complex.m_re ) * cos( _complex.m_im ) + exp( -_complex.m_re ) * cos( -_complex.m_im ) ) * 0.5;
-    __ix64 im = ( exp( _complex.m_re ) * sin( _complex.m_im ) + exp( -_complex.m_re ) * sin( -_complex.m_im ) ) * 0.5;
-    return complex<__ix64>( re , im );
-}
-
-complex<__ix32> __coshf__( complex<__ix32> _complex )
-{
-    __ix32 re = ( exp( _complex.m_re ) * cos( _complex.m_im ) + exp( -_complex.m_re ) * cos( -_complex.m_im ) ) * 0.5;
-    __ix32 im = ( exp( _complex.m_re ) * sin( _complex.m_im ) + exp( -_complex.m_re ) * sin( -_complex.m_im ) ) * 0.5;
-    return complex<__ix32>( re , im );
-}
-
-complex<__ix16> __coshf__( complex<__ix16> _complex )
-{
-    __ix16 re = ( exp( _complex.m_re ) * cos( _complex.m_im ) + exp( -_complex.m_re ) * cos( -_complex.m_im ) ) * 0.5;
-    __ix16 im = ( exp( _complex.m_re ) * sin( _complex.m_im ) + exp( -_complex.m_re ) * sin( -_complex.m_im ) ) * 0.5;
-    return complex<__ix16>( re , im );
+    __fx64 re = ( exp( _complex.m_re ) * cos( _complex.m_im ) + exp( -_complex.m_re ) * cos( -_complex.m_im ) ) * 0.5;
+    __fx64 im = ( exp( _complex.m_re ) * sin( _complex.m_im ) + exp( -_complex.m_re ) * sin( -_complex.m_im ) ) * 0.5;
+    return complex<__fx64>( re , im );
 }
 
 // __tanhf__   :
-complex<__fx64> __tanhf__( complex<__fx64> _complex ) { return __sinhf__(_complex) / __coshf__(_complex); }
 complex<__fx32> __tanhf__( complex<__fx32> _complex ) { return __sinhf__(_complex) / __coshf__(_complex); }
-complex<__ix64> __tanhf__( complex<__ix64> _complex ) { return __sinhf__(_complex) / __coshf__(_complex); }
-complex<__ix32> __tanhf__( complex<__ix32> _complex ) { return __sinhf__(_complex) / __coshf__(_complex); }
-complex<__ix16> __tanhf__( complex<__ix16> _complex ) { return __sinhf__(_complex) / __coshf__(_complex); }
+complex<__fx64> __tanhf__( complex<__fx64> _complex ) { return __sinhf__(_complex) / __coshf__(_complex); }
 
 // __catanhf__ :
-complex<__fx64> __ctnhf__( complex<__fx64> _complex ) { return __coshf__(_complex) / __sinhf__(_complex); }
 complex<__fx32> __ctnhf__( complex<__fx32> _complex ) { return __coshf__(_complex) / __sinhf__(_complex); }
-complex<__ix64> __ctnhf__( complex<__ix64> _complex ) { return __coshf__(_complex) / __sinhf__(_complex); }
-complex<__ix32> __ctnhf__( complex<__ix32> _complex ) { return __coshf__(_complex) / __sinhf__(_complex); }
-complex<__ix16> __ctnhf__( complex<__ix16> _complex ) { return __coshf__(_complex) / __sinhf__(_complex); }
+complex<__fx64> __ctnhf__( complex<__fx64> _complex ) { return __coshf__(_complex) / __sinhf__(_complex); }
 
 #endif
 

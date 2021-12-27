@@ -117,22 +117,24 @@ int test1()
     complex<double> z1( 2.0 , 0.5 );
     complex<double> z2( 3.5 , 4.5 );
 
-    std::cout << " complex math functions check: " << "\n\n";
-    std::cout << "z0 = " << z0.m_re << "\t" << z0.m_im << "\n";
-    std::cout << "z1 = " << z1.m_re << "\t" << z1.m_im << "\n";
-    std::cout << "z2 = " << z2.m_re << "\t" << z2.m_im << "\n\n";
+    printf( "complex math functions check: \n" );
+    printf( "z0 = %.4f \t %.4f \n" , z0.m_re , z0.m_im );
+    printf( "z1 = %.4f \t %.4f \n" , z1.m_re , z1.m_im );
+    printf( "z2 = %.4f \t %.4f \n" , z2.m_re , z2.m_im );
 
-    std::cout << "arithmetics: " << "\n\n";
-    std::cout << " sqrt( z0 )    =  " << __sqrtf__(z0).m_re << "\t" << __sqrtf__(z0).m_im  << "\n";
-    std::cout << " z0 + z1 + z2    =  " << ( z0 + z1 + z2 ).m_re << "\t\t" << ( z0 + z1 + z2 ).m_im << "\n";
-    std::cout << " z0 - z1 - z2    =  " << ( z0 - z1 - z2 ).m_re << "\t\t" << ( z0 - z1 - z2 ).m_im << "\n";
-    std::cout << " z0 * z1 / z2    =  " << ( z0 * z1 / z2 ).m_re << "\t\t" << ( z0 * z1 / z2 ).m_im << "\n";
-    std::cout << " (z1-z2)/(z1+z2) =  " << ( ( z1 - z2 ) / ( z1 + z2 ) ).m_re << "\t" << ( ( z1 - z2 ) / ( z1 + z2 ) ).m_im << "\n";
-    std::cout << " z0 = z0 + z2    =  " << ( z0 += z2 ).m_re << "\t\t" << z0.m_im << "\n";
-    std::cout << " z1 = z1 * z2    =  " << ( z1 *= z2 ).m_re << "\t\t" << z1.m_im << "\n";
-    std::cout << " z2 = z2 / z1    =  " << ( z2 /= z1 ).m_re << "\t\t" << z2.m_im << "\n";
+    printf( "arithmetics: \n" );
+    printf( "sqrt( z0 )       = %.4f \t %.4f \n" , __sqrtf__(z0).m_re , __sqrtf__(z0).m_im );
+    printf( "z0 + z1 + z2     = %.4f \t %.4f \n" , ( z0 + z1 + z2 ).m_re , ( z0 + z1 + z2 ).m_im );
+    printf( "z0 - z1 - z2     = %.4f \t %.4f \n" , ( z0 - z1 - z2 ).m_re , ( z0 - z1 - z2 ).m_im );
+    printf( "z0 * z1 / z2     = %.4f \t %.4f \n" , ( z0 * z1 / z2 ).m_re , ( z0 * z1 / z2 ).m_im );
+    printf( "(z1-z2)/(z1+z2)  = %.4f \t %.4f \n" , ( ( z1 - z2 ) / ( z1 + z2 ) ).m_re , ( ( z1 - z2 ) / ( z1 + z2 ) ).m_im );
+    printf( "( z0 = z0 + z2 ) = %.4f \t %.4f \n" , ( z0 += z2 ).m_re , ( z0 += z2 ).m_im );
+    printf( "( z1 = z1 * z2 ) = %.4f \t %.4f \n" , ( z1 *= z2 ).m_re , ( z1 *= z2 ).m_im );
+    printf( "( z2 = z2 / z1 ) = %.4f \t %.4f \n" , ( z2 /= z1 ).m_re , ( z2 /= z1 ).m_im );
 
-    std::cout << "functions: " << "\n\n";
+    printf( "functions : \n" );
+
+
     std::cout << " sinh( z0 )    =  " << __sinhf__(z0).m_re << "\t" << __sinhf__(z0).m_im  << "\n";
     std::cout << " cosh( z0 )    =  " << __coshf__(z0).m_re << "\t" << __coshf__(z0).m_im  << "\n";
     std::cout << " tanh( z0 )    =  " << __tanhf__(z0).m_re << "\t" << __tanhf__(z0).m_im  << "\n";
@@ -415,9 +417,9 @@ int test7()
     double Fs = 4000;
 
     // digital Butterworth or Chebyshev type I filters computation:
-    iir_cf coeffs{ 0 , 0 , 0 , -1 , -1 , -1 };
+    iir_cf< double > coeffs{ 0 , 0 , 0 , -1 , -1 , -1 };
     // iir coefficients computation:
-     coeffs = __butt_cheb1_digital_lp__( Fs , 100 , 5 , 1 , 1 ); // it works !!!
+     coeffs = __butt_cheb1_digital_lp__< double >( Fs , 100 , 5 , 0 , 1 ); // it works !!!
     // coeffs = __butt_cheb1_digital_hp__( Fs , 800 , 6 , 1 , 1 ); // it works !!!
     // coeffs = __butt_cheb1_digital_bp__( Fs , 100 , 500 , 8 , 1 , 1 ); // it works !!!
     // coeffs = __butt_cheb1_digital_bs__( Fs , 100 , 700 , 6 , 1 , 1 );
@@ -466,8 +468,10 @@ int test7()
     tt.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\tt.txt");
 
 
-    butterworth_lp_fx64 butt_x64;
-    butt_x64.init( 4000.0 , 50.0 , 100.0 , 5 , 1.0 );
+    butt< double > butt;
+    butt.lp_init( Fs , 50 , 100 , 5 );
+    butt.allocate();
+    butt.show_properties();
 
     for( int i = 0 ; i < cycles_num ; i++ )
     {
@@ -475,7 +479,12 @@ int test7()
         {
             // signal generation and filtering:
             _yt = gen( 1 , 50 , 0 , 4000 );
-            _ft = __filt__( &_yt  , coeffs.cfnum , coeffs.cfden , coeffs.gains , coeffs.N , buff_sx , buff_sy );
+
+            _ft = butt( &_yt );
+
+            //butt_x64( &_yt );
+
+            //_ft = __filt__( &_yt  , coeffs.cfnum , coeffs.cfden , coeffs.gains , coeffs.N , buff_sx , buff_sy );
 
             yt << _yt << "\n";
             ft << _ft << "\n";
@@ -486,7 +495,7 @@ int test7()
     // frequency response computation :
     for( int i = 0 ; i < Fs / 2 ; i++ )
     {
-        iir_fr fr = __freq_resp__( coeffs.cfnum , coeffs.cfden , coeffs.gains , coeffs.N , Fs , i );
+        iir_fr< double > fr = __freq_resp__( coeffs.cfnum , coeffs.cfden , coeffs.gains , coeffs.N , Fs , i );
         Km << fr.Km << "\n";
         pH << fr.pH << "\n";
         FF << i     << "\n";
@@ -525,8 +534,7 @@ int main()
     // test4(); // fir highpass test
     // test5(); // fir bandpass test
     // test6(); // fir bandstop test
-
-    test7();
+     test7(); // iir filters test
 
     return 0;
 }

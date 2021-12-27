@@ -40,6 +40,10 @@
 #define __fx64 double
 #endif
 
+#ifndef __fxx64
+#define __fxx64 long double
+#endif
+
 // customized upper limits:
 #ifndef __max_fx32
 #define __max_fx32 3.402823466e+38
@@ -106,220 +110,43 @@
 #define __min_uix64 0
 #endif
 
+// template complex number structure:
+template< typename T > struct fcomplex;
+template<> struct fcomplex< __fx32  >  { __fx32  re , im; };
+template<> struct fcomplex< __fx64  >  { __fx64  re , im; };
+template<> struct fcomplex< __fxx64 >  { __fxx64 re , im; };
+
+// complex numbers main functions:
+
+// __cadd__ :
+template< typename T>  fcomplex< T > __cadd__( T re0 , T im0 , T re1 , T im1 ) { return fcomplex<T>{ re0 + re1 , im0 + im1 }; }
+
+// __csub__ :
+template< typename T>  fcomplex< T > __csub__( T re0 , T im0 , T re1 , T im1 ) { return fcomplex<T>{ re0 - re1 , im0 - im1 }; }
+
+// __cmul__ :
+template< typename T>  fcomplex< T > __cmul__( T re0 , T im0 , T re1 , T im1 ) { return fcomplex< T >{ re0 * re1 - im0 * im1 , im0 * re1 + re0 * im1 }; }
+
+// __cdiv__ :
+template< typename T>  fcomplex< T > __cdiv__( T re0 , T im0 , T re1 , T im1 , T max )
+{
+    __fx32 den = re1 * re1 + im1 * im1;
+    return ( den == 0 ) ? fcomplex< T >{ max , max } : fcomplex< T >{ ( re0 * re1 + im0 * im1 ) / den , ( im0 * re1 - re0 * im1 ) / den } ;
+}
+
+/* template complex number class */
+
 // complex number type:
-template< typename T > class complex;
-
-// float x64:
-template<> class complex< __fx64 >
+template< typename T > class complex
 {
-    typedef __fx64 __type;
-    __type m_MAX = __max_fx64;
-public:
-
-    __type m_re;
-    __type m_im;
-
-    // default constructor:
-    complex()
-    {
-        m_re  = 0;
-        m_im  = 0;
-    }
-
-    // intialization constructor:
-    complex( __type re , __type im )
-    {
-        m_re = re;
-        m_im = im;
-    }
-
-    complex( __type number )
-    {
-        m_re = number;
-    }
-
-    // copying constructor:
-    complex( const complex &_complex )
-    {
-        this->m_re = _complex.m_re;
-        this->m_im = _complex.m_im;
-    }
-
-    // operators:
-
-    // add another complex:
-    inline complex operator + ( complex _complex ) const
-    {
-        return complex( this->m_re + _complex.m_re , this->m_im + _complex.m_im );
-    }
-
-    inline complex operator += ( complex _complex )
-    {
-        this->m_re += _complex.m_re;
-        this->m_im += _complex.m_im;
-        return *this;
-    }
-
-    // add constant:
-    inline complex operator + ( __type number ) const
-    {
-        return complex( this->m_re + number , this->m_im );
-    }
-
-    inline complex operator += ( __type number )
-    {
-        this->m_re += number;
-        return *this;
-    }
-
-    // substract another complex:
-    inline complex operator - ( complex _complex ) const
-    {
-        return complex( this->m_re - _complex.m_re , this->m_im - _complex.m_im );
-    }
-
-    inline complex operator -= ( complex _complex )
-    {
-        this->m_re -= _complex.m_re;
-        this->m_im -= _complex.m_im;
-        return *this;
-    }
-
-    // substract constnat:
-    inline complex operator - ( __type number ) const
-    {
-        return complex( this->m_re - number , this->m_im );
-    }
-
-    inline complex operator -= ( __type number )
-    {
-        this->m_re -= number;
-        return *this;
-    }
-
-    // multiply by another complex:
-    inline complex operator * (complex _complex ) const
-    {
-        return complex( this->m_re * _complex.m_re - this->m_im * _complex.m_im , this->m_im * _complex.m_re + this->m_re * _complex.m_im);
-    }
-
-    inline complex operator *= (complex _complex )
-    {
-        __type re = this->m_re * _complex.m_re - this->m_im * _complex.m_im;
-        __type im = this->m_im * _complex.m_re + this->m_re * _complex.m_im;
-        this->m_re = re;
-        this->m_im = im;
-        return *this;
-    }
-
-    // multiply by a constant:
-    inline complex operator * ( __type number ) const
-    {
-        return complex( this->m_re * number ,this->m_im * number);
-    }
-
-    inline complex operator *= ( __type number )
-    {
-        this->m_re *= number;
-        this->m_im *= number;
-        return *this;
-    }
-
-    // divide by another complex:
-    inline complex operator / ( complex _complex ) const
-    {
-        __type denum = _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im;
-
-        if( denum == 0 )
-        {
-            return complex( m_MAX , m_MAX );
-        }
-        else
-        {
-            return complex( ( this->m_re * _complex.m_re + this->m_im * _complex.m_im ) / denum , ( this->m_im * _complex.m_re - this->m_re * _complex.m_im ) / denum);
-        }
-    }
-
-    inline complex operator /= ( complex _complex )
-    {
-        __type denum = _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im;
-        if( denum == 0 )
-        {
-            this->m_re = m_MAX;
-            this->m_im = m_MAX;
-            return *this;
-        }
-        else
-        {
-            __type re = ( this->m_re * _complex.m_re + this->m_im * _complex.m_im ) / denum;
-            __type im = ( this->m_im * _complex.m_re - this->m_re * _complex.m_im ) / denum;
-            this->m_re = re;
-            this->m_im = im;
-            return *this;
-        }
-    }
-
-    // divide by a constant:
-    inline complex operator / ( __type number ) const
-    {
-        return  ( number == 0 ) ? complex( m_MAX , m_MAX ) : complex( this->m_re / number , this->m_im / number ) ;
-    }
-
-    inline complex operator /= ( __type number )
-    {
-        if( number == 0 )
-        {
-            this->m_re = m_MAX;
-            this->m_im = m_MAX;
-        }
-        else
-        {
-            this->m_re /= number;
-            this->m_im /= number;
-        }
-
-        return *this;
-    }
-
-    // assign another complex:
-    inline complex operator = ( const complex _complex )
-    {
-        this->m_re = _complex.m_re;
-        this->m_im = _complex.m_im;
-        return *this;
-    }
-
-    // assign a constant:
-    inline complex operator = ( const __type number )
-    {
-        this->m_re = number;
-        this->m_im = 0;
-        return *this;
-    }
-
-    // comparison operator:
-    inline bool operator == ( const complex _complex )
-    {
-        return ( this->m_re == _complex.m_re ) && ( this->m_im == _complex.m_im );
-    }
-};
-
-// float x32:
-template<> class complex< __fx32 >
-{
-    typedef __fx32 __type;
+    typedef T __type;
     __type m_MAX = __max_fx32;
 public:
 
-    __type m_re;
-    __type m_im;
+    __type m_re , m_im;
 
     // default constructor:
-    complex()
-    {
-        m_re  = 0;
-        m_im  = 0;
-    }
+    complex() { m_re  = m_im  = 0; }
 
     // intialization constructor:
     complex( __type re , __type im )
@@ -345,134 +172,119 @@ public:
     // add another complex:
     inline complex operator + ( complex _complex ) const
     {
-        return complex( this->m_re + _complex.m_re , this->m_im + _complex.m_im );
+        fcomplex< __type > c = __cadd__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im );
+        return complex( c.re , c.im ) ;
     }
 
     inline complex operator += ( complex _complex )
     {
-        this->m_re += _complex.m_re;
-        this->m_im += _complex.m_im;
+        fcomplex< __type > c = __cadd__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im );
+        this->m_re = c.re;
+        this->m_im = c.im;
         return *this;
     }
 
     // add constant:
     inline complex operator + ( __type number ) const
     {
-        return complex( this->m_re + number , this->m_im );
+        fcomplex< __type > c = __cadd__< __type >( this->m_re , this->m_im , number , 0.0 );
+        return complex( c.re , c.im );
     }
 
     inline complex operator += ( __type number )
     {
-        this->m_re += number;
+        //this->m_re += number;
+        fcomplex< __type > c = __cadd__< __type >( this->m_re , this->m_im , number , 0.0 );
+        this->m_re = c.re; this->m_im = c.im;
         return *this;
     }
 
     // substract another complex:
     inline complex operator - ( complex _complex ) const
     {
-        return complex( this->m_re - _complex.m_re , this->m_im - _complex.m_im );
+        fcomplex< __type > c = __csub__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im );
+        return complex( c.re , c.im );
     }
 
     inline complex operator -= ( complex _complex )
     {
-        this->m_re -= _complex.m_re;
-        this->m_im -= _complex.m_im;
+
+        fcomplex< __type > c = __csub__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im );
+        this->m_re = c.re; this->m_im = c.im;
         return *this;
     }
 
     // substract constnat:
     inline complex operator - ( __type number ) const
     {
-        return complex( this->m_re - number , this->m_im );
+        fcomplex< __type > c = __csub__< __type >( this->m_re , this->m_im , number , 0.0 );
+        return complex( c.re , c.im );
     }
 
     inline complex operator -= ( __type number )
     {
-        this->m_re -= number;
-        return *this;
+        fcomplex< __type > c = __csub__< __type >( this->m_re , this->m_im , number , 0.0 );
+        return complex( c.re , c.im );
     }
 
     // multiply by another complex:
     inline complex operator * (complex _complex ) const
     {
-        return complex( this->m_re * _complex.m_re - this->m_im * _complex.m_im , this->m_im * _complex.m_re + this->m_re * _complex.m_im);
+        fcomplex< __type > c = __cmul__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im );
+        return complex( c.re , c.im );
     }
 
     inline complex operator *= (complex _complex )
     {
-        __type re = this->m_re * _complex.m_re - this->m_im * _complex.m_im;
-        __type im = this->m_im * _complex.m_re + this->m_re * _complex.m_im;
-        this->m_re = re;
-        this->m_im = im;
+        fcomplex< __type > c = __cmul__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im );
+        this->m_re = c.re;
+        this->m_im = c.im;
         return *this;
     }
 
     // multiply by a constant:
     inline complex operator * ( __type number ) const
     {
-        return complex( this->m_re * number ,this->m_im * number);
+        fcomplex< __type > c = __cmul__< __type >( this->m_re , this->m_im , number , 0.0 );
+        return complex( c.re , c.im );
     }
 
     inline complex operator *= ( __type number )
     {
-        this->m_re *= number;
-        this->m_im *= number;
+        fcomplex< __type > c = __cmul__< __type >( this->m_re , this->m_im , number , 0.0 );
+        this->m_re = c.re;
+        this->m_im = c.im;
         return *this;
     }
 
     // divide by another complex:
     inline complex operator / ( complex _complex ) const
     {
-        __type denum = _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im;
-
-        if( denum == 0 )
-        {
-            return complex( m_MAX , m_MAX );
-        }
-        else
-        {
-            return complex( ( this->m_re * _complex.m_re + this->m_im * _complex.m_im ) / denum , ( this->m_im * _complex.m_re - this->m_re * _complex.m_im ) / denum);
-        }
+        fcomplex< __type > c = __cdiv__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im , m_MAX );
+        return complex( c.re , c.im );
     }
 
     inline complex operator /= ( complex _complex )
     {
-        __type denum = _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im;
-        if( denum == 0 )
-        {
-            this->m_re = m_MAX;
-            this->m_im = m_MAX;
-            return *this;
-        }
-        else
-        {
-            __type re = ( this->m_re * _complex.m_re + this->m_im * _complex.m_im ) / denum;
-            __type im = ( this->m_im * _complex.m_re - this->m_re * _complex.m_im ) / denum;
-            this->m_re = re;
-            this->m_im = im;
-            return *this;
-        }
+
+        fcomplex< __type > c = __cdiv__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im , m_MAX );
+        this->m_re = c.re;
+        this->m_im = c.im;
+        return *this;
     }
 
     // divide by a constant:
     inline complex operator / ( __type number ) const
     {
-        return  ( number == 0 ) ? complex( m_MAX , m_MAX ) : complex( this->m_re / number , this->m_im / number ) ;
+        fcomplex< __type > c = __cdiv__< __type >( this->m_re , this->m_im , number , 0.0 , m_MAX );
+        return complex( c.re , c.im );
     }
 
     inline complex operator /= ( __type number )
     {
-        if( number == 0 )
-        {
-            this->m_re = m_MAX;
-            this->m_im = m_MAX;
-        }
-        else
-        {
-            this->m_re /= number;
-            this->m_im /= number;
-        }
-
+        fcomplex< __type > c = __cdiv__< __type >( this->m_re , this->m_im , number , 0.0 , m_MAX );
+        this->m_re = c.re;
+        this->m_im = c.im;
         return *this;
     }
 
@@ -498,592 +310,6 @@ public:
         return ( this->m_re == _complex.m_re ) && ( this->m_im == _complex.m_im );
     }
 };
-
-// int x64:
-template<> class complex< __ix64 >
-{
-    typedef __ix64 __type;
-    __type m_MAX = __max_ix64;
-public:
-
-    __type m_re;
-    __type m_im;
-
-    // default constructor:
-    complex()
-    {
-        m_re  = 0;
-        m_im  = 0;
-    }
-
-    // intialization constructor:
-    complex( __type re , __type im )
-    {
-        m_re = re;
-        m_im = im;
-    }
-
-    complex( __type number )
-    {
-        m_re = number;
-    }
-
-    // copying constructor:
-    complex( const complex &_complex )
-    {
-        this->m_re = _complex.m_re;
-        this->m_im = _complex.m_im;
-    }
-
-    // operators:
-
-    // add another complex:
-    inline complex operator + ( complex _complex ) const
-    {
-        return complex( this->m_re + _complex.m_re , this->m_im + _complex.m_im );
-    }
-
-    inline complex operator += ( complex _complex )
-    {
-        this->m_re += _complex.m_re;
-        this->m_im += _complex.m_im;
-        return *this;
-    }
-
-    // add constant:
-    inline complex operator + ( __type number ) const
-    {
-        return complex( this->m_re + number , this->m_im );
-    }
-
-    inline complex operator += ( __type number )
-    {
-        this->m_re += number;
-        return *this;
-    }
-
-    // substract another complex:
-    inline complex operator - ( complex _complex ) const
-    {
-        return complex( this->m_re - _complex.m_re , this->m_im - _complex.m_im );
-    }
-
-    inline complex operator -= ( complex _complex )
-    {
-        this->m_re -= _complex.m_re;
-        this->m_im -= _complex.m_im;
-        return *this;
-    }
-
-    // substract constnat:
-    inline complex operator - ( __type number ) const
-    {
-        return complex( this->m_re - number , this->m_im );
-    }
-
-    inline complex operator -= ( __type number )
-    {
-        this->m_re -= number;
-        return *this;
-    }
-
-    // multiply by another complex:
-    inline complex operator * (complex _complex ) const
-    {
-        return complex( this->m_re * _complex.m_re - this->m_im * _complex.m_im , this->m_im * _complex.m_re + this->m_re * _complex.m_im);
-    }
-
-    inline complex operator *= (complex _complex )
-    {
-        __type re = this->m_re * _complex.m_re - this->m_im * _complex.m_im;
-        __type im = this->m_im * _complex.m_re + this->m_re * _complex.m_im;
-        this->m_re = re;
-        this->m_im = im;
-        return *this;
-    }
-
-    // multiply by a constant:
-    inline complex operator * ( __type number ) const
-    {
-        return complex( this->m_re * number ,this->m_im * number);
-    }
-
-    inline complex operator *= ( __type number )
-    {
-        this->m_re *= number;
-        this->m_im *= number;
-        return *this;
-    }
-
-    // divide by another complex:
-    inline complex operator / ( complex _complex ) const
-    {
-        __type denum = _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im;
-
-        if( denum == 0 )
-        {
-            return complex( m_MAX , m_MAX );
-        }
-        else
-        {
-            return complex( ( this->m_re * _complex.m_re + this->m_im * _complex.m_im ) / denum , ( this->m_im * _complex.m_re - this->m_re * _complex.m_im ) / denum);
-        }
-    }
-
-    inline complex operator /= ( complex _complex )
-    {
-        __type denum = _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im;
-        if( denum == 0 )
-        {
-            this->m_re = m_MAX;
-            this->m_im = m_MAX;
-            return *this;
-        }
-        else
-        {
-            __type re = ( this->m_re * _complex.m_re + this->m_im * _complex.m_im ) / denum;
-            __type im = ( this->m_im * _complex.m_re - this->m_re * _complex.m_im ) / denum;
-            this->m_re = re;
-            this->m_im = im;
-            return *this;
-        }
-    }
-
-    // divide by a constant:
-    inline complex operator / ( __type number ) const
-    {
-        return  ( number == 0 ) ? complex( m_MAX , m_MAX ) : complex( this->m_re / number , this->m_im / number ) ;
-    }
-
-    inline complex operator /= ( __type number )
-    {
-        if( number == 0 )
-        {
-            this->m_re = m_MAX;
-            this->m_im = m_MAX;
-        }
-        else
-        {
-            this->m_re /= number;
-            this->m_im /= number;
-        }
-
-        return *this;
-    }
-
-    // assign another complex:
-    inline complex operator = ( const complex _complex )
-    {
-        this->m_re = _complex.m_re;
-        this->m_im = _complex.m_im;
-        return *this;
-    }
-
-    // assign a constant:
-    inline complex operator = ( const __type number )
-    {
-        this->m_re = number;
-        this->m_im = 0;
-        return *this;
-    }
-
-    // comparison operator:
-    inline bool operator == ( const complex _complex )
-    {
-        return ( this->m_re == _complex.m_re ) && ( this->m_im == _complex.m_im );
-    }
-};
-
-// int x32:
-template<> class complex< __ix32 >
-{
-    typedef __ix32 __type;
-    __type m_MAX = __max_ix32;
-public:
-
-    __type m_re;
-    __type m_im;
-
-    // default constructor:
-    complex()
-    {
-        m_re  = 0;
-        m_im  = 0;
-    }
-
-    // intialization constructor:
-    complex( __type re , __type im )
-    {
-        m_re = re;
-        m_im = im;
-    }
-
-    complex( __type number )
-    {
-        m_re = number;
-    }
-
-    // copying constructor:
-    complex( const complex &_complex )
-    {
-        this->m_re = _complex.m_re;
-        this->m_im = _complex.m_im;
-    }
-
-    // operators:
-
-    // add another complex:
-    inline complex operator + ( complex _complex ) const
-    {
-        return complex( this->m_re + _complex.m_re , this->m_im + _complex.m_im );
-    }
-
-    inline complex operator += ( complex _complex )
-    {
-        this->m_re += _complex.m_re;
-        this->m_im += _complex.m_im;
-        return *this;
-    }
-
-    // add constant:
-    inline complex operator + ( __type number ) const
-    {
-        return complex( this->m_re + number , this->m_im );
-    }
-
-    inline complex operator += ( __type number )
-    {
-        this->m_re += number;
-        return *this;
-    }
-
-    // substract another complex:
-    inline complex operator - ( complex _complex ) const
-    {
-        return complex( this->m_re - _complex.m_re , this->m_im - _complex.m_im );
-    }
-
-    inline complex operator -= ( complex _complex )
-    {
-        this->m_re -= _complex.m_re;
-        this->m_im -= _complex.m_im;
-        return *this;
-    }
-
-    // substract constnat:
-    inline complex operator - ( __type number ) const
-    {
-        return complex( this->m_re - number , this->m_im );
-    }
-
-    inline complex operator -= ( __type number )
-    {
-        this->m_re -= number;
-        return *this;
-    }
-
-    // multiply by another complex:
-    inline complex operator * (complex _complex ) const
-    {
-        return complex( this->m_re * _complex.m_re - this->m_im * _complex.m_im , this->m_im * _complex.m_re + this->m_re * _complex.m_im);
-    }
-
-    inline complex operator *= (complex _complex )
-    {
-        __type re = this->m_re * _complex.m_re - this->m_im * _complex.m_im;
-        __type im = this->m_im * _complex.m_re + this->m_re * _complex.m_im;
-        this->m_re = re;
-        this->m_im = im;
-        return *this;
-    }
-
-    // multiply by a constant:
-    inline complex operator * ( __type number ) const
-    {
-        return complex( this->m_re * number ,this->m_im * number);
-    }
-
-    inline complex operator *= ( __type number )
-    {
-        this->m_re *= number;
-        this->m_im *= number;
-        return *this;
-    }
-
-    // divide by another complex:
-    inline complex operator / ( complex _complex ) const
-    {
-        __type denum = _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im;
-
-        if( denum == 0 )
-        {
-            return complex( m_MAX , m_MAX );
-        }
-        else
-        {
-            return complex( ( this->m_re * _complex.m_re + this->m_im * _complex.m_im ) / denum , ( this->m_im * _complex.m_re - this->m_re * _complex.m_im ) / denum);
-        }
-    }
-
-    inline complex operator /= ( complex _complex )
-    {
-        __type denum = _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im;
-        if( denum == 0 )
-        {
-            this->m_re = m_MAX;
-            this->m_im = m_MAX;
-            return *this;
-        }
-        else
-        {
-            __type re = ( this->m_re * _complex.m_re + this->m_im * _complex.m_im ) / denum;
-            __type im = ( this->m_im * _complex.m_re - this->m_re * _complex.m_im ) / denum;
-            this->m_re = re;
-            this->m_im = im;
-            return *this;
-        }
-    }
-
-    // divide by a constant:
-    inline complex operator / ( __type number ) const
-    {
-        return  ( number == 0 ) ? complex( m_MAX , m_MAX ) : complex( this->m_re / number , this->m_im / number ) ;
-    }
-
-    inline complex operator /= ( __type number )
-    {
-        if( number == 0 )
-        {
-            this->m_re = m_MAX;
-            this->m_im = m_MAX;
-        }
-        else
-        {
-            this->m_re /= number;
-            this->m_im /= number;
-        }
-
-        return *this;
-    }
-
-    // assign another complex:
-    inline complex operator = ( const complex _complex )
-    {
-        this->m_re = _complex.m_re;
-        this->m_im = _complex.m_im;
-        return *this;
-    }
-
-    // assign a constant:
-    inline complex operator = ( const __type number )
-    {
-        this->m_re = number;
-        this->m_im = 0;
-        return *this;
-    }
-
-    // comparison operator:
-    inline bool operator == ( const complex _complex )
-    {
-        return ( this->m_re == _complex.m_re ) && ( this->m_im == _complex.m_im );
-    }
-};
-
-// int x16:
-template<> class complex< __ix16 >
-{
-    typedef __ix16 __type;
-    __type m_MAX = __max_ix16;
-public:
-
-    __type m_re;
-    __type m_im;
-
-    // default constructor:
-    complex()
-    {
-        m_re  = 0;
-        m_im  = 0;
-    }
-
-    // intialization constructor:
-    complex( __type re , __type im )
-    {
-        m_re = re;
-        m_im = im;
-    }
-
-    complex( __type number )
-    {
-        m_re = number;
-    }
-
-    // copying constructor:
-    complex( const complex &_complex )
-    {
-        this->m_re = _complex.m_re;
-        this->m_im = _complex.m_im;
-    }
-
-    // operators:
-
-    // add another complex:
-    inline complex operator + ( complex _complex ) const
-    {
-        return complex( this->m_re + _complex.m_re , this->m_im + _complex.m_im );
-    }
-
-    inline complex operator += ( complex _complex )
-    {
-        this->m_re += _complex.m_re;
-        this->m_im += _complex.m_im;
-        return *this;
-    }
-
-    // add constant:
-    inline complex operator + ( __type number ) const
-    {
-        return complex( this->m_re + number , this->m_im );
-    }
-
-    inline complex operator += ( __type number )
-    {
-        this->m_re += number;
-        return *this;
-    }
-
-    // substract another complex:
-    inline complex operator - ( complex _complex ) const
-    {
-        return complex( this->m_re - _complex.m_re , this->m_im - _complex.m_im );
-    }
-
-    inline complex operator -= ( complex _complex )
-    {
-        this->m_re -= _complex.m_re;
-        this->m_im -= _complex.m_im;
-        return *this;
-    }
-
-    // substract constnat:
-    inline complex operator - ( __type number ) const
-    {
-        return complex( this->m_re - number , this->m_im );
-    }
-
-    inline complex operator -= ( __type number )
-    {
-        this->m_re -= number;
-        return *this;
-    }
-
-    // multiply by another complex:
-    inline complex operator * (complex _complex ) const
-    {
-        return complex( this->m_re * _complex.m_re - this->m_im * _complex.m_im , this->m_im * _complex.m_re + this->m_re * _complex.m_im);
-    }
-
-    inline complex operator *= (complex _complex )
-    {
-        __type re = this->m_re * _complex.m_re - this->m_im * _complex.m_im;
-        __type im = this->m_im * _complex.m_re + this->m_re * _complex.m_im;
-        this->m_re = re;
-        this->m_im = im;
-        return *this;
-    }
-
-    // multiply by a constant:
-    inline complex operator * ( __type number ) const
-    {
-        return complex( this->m_re * number ,this->m_im * number);
-    }
-
-    inline complex operator *= ( __type number )
-    {
-        this->m_re *= number;
-        this->m_im *= number;
-        return *this;
-    }
-
-    // divide by another complex:
-    inline complex operator / ( complex _complex ) const
-    {
-        __type denum = _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im;
-
-        if( denum == 0 )
-        {
-            return complex( m_MAX , m_MAX );
-        }
-        else
-        {
-            return complex( ( this->m_re * _complex.m_re + this->m_im * _complex.m_im ) / denum , ( this->m_im * _complex.m_re - this->m_re * _complex.m_im ) / denum);
-        }
-    }
-
-    inline complex operator /= ( complex _complex )
-    {
-        __type denum = _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im;
-        if( denum == 0 )
-        {
-            this->m_re = m_MAX;
-            this->m_im = m_MAX;
-            return *this;
-        }
-        else
-        {
-            __type re = ( this->m_re * _complex.m_re + this->m_im * _complex.m_im ) / denum;
-            __type im = ( this->m_im * _complex.m_re - this->m_re * _complex.m_im ) / denum;
-            this->m_re = re;
-            this->m_im = im;
-            return *this;
-        }
-    }
-
-    // divide by a constant:
-    inline complex operator / ( __type number ) const
-    {
-        return  ( number == 0 ) ? complex( m_MAX , m_MAX ) : complex( this->m_re / number , this->m_im / number ) ;
-    }
-
-    inline complex operator /= ( __type number )
-    {
-        if( number == 0 )
-        {
-            this->m_re = m_MAX;
-            this->m_im = m_MAX;
-        }
-        else
-        {
-            this->m_re /= number;
-            this->m_im /= number;
-        }
-
-        return *this;
-    }
-
-    // assign another complex:
-    inline complex operator = ( const complex _complex )
-    {
-        this->m_re = _complex.m_re;
-        this->m_im = _complex.m_im;
-        return *this;
-    }
-
-    // assign a constant:
-    inline complex operator = ( const __type number )
-    {
-        this->m_re = number;
-        this->m_im = 0;
-        return *this;
-    }
-
-    // comparison operator:
-    inline bool operator == ( const complex _complex )
-    {
-        return ( this->m_re == _complex.m_re ) && ( this->m_im == _complex.m_im );
-    }
-};
-
 
 // customized types names exclusion to avoid aliases during compilation:
 #undef __ix16
@@ -1094,6 +320,7 @@ public:
 #undef __uix64
 #undef __fx32
 #undef __fx64
+#undef __fxx64
 
 // customized upper limits exclusion to avoid aliases during compilation:
 #undef __max_fx32
