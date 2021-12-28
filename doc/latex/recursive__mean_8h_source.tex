@@ -1,0 +1,258 @@
+\hypertarget{recursive__mean_8h_source}{}\doxysection{recursive\+\_\+mean.\+h}
+\label{recursive__mean_8h_source}\index{C:/Qt\_projects/DigitalFilters\_x32/include/recursive\_mean.h@{C:/Qt\_projects/DigitalFilters\_x32/include/recursive\_mean.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{2 \textcolor{comment}{//A.M.Tykvinsky, 21.12.2021}}
+\DoxyCodeLine{3 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{4 \textcolor{comment}{// TEMPLATE RECURSIVE MEAN CLASS}}
+\DoxyCodeLine{5 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{6 }
+\DoxyCodeLine{7 \textcolor{preprocessor}{\#ifndef RECURSIVE\_MEAN\_H}}
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#define RECURSIVE\_MEAN\_H}}
+\DoxyCodeLine{9 }
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#ifndef \_\_ALG\_PLATFORM }\textcolor{comment}{// identify if the compilation is for ProsoftSystems IDE}}
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include "{}cmath"{}}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include "{}buffer.h"{}}}
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{comment}{// customized C data types definition:}}
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#ifndef \_\_ix16}}
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#define \_\_ix16 short}}
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21 \textcolor{preprocessor}{\#ifndef \_\_ix32}}
+\DoxyCodeLine{22 \textcolor{preprocessor}{\#define \_\_ix32 int}}
+\DoxyCodeLine{23 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25 \textcolor{preprocessor}{\#ifndef \_\_ix64}}
+\DoxyCodeLine{26 \textcolor{preprocessor}{\#define \_\_ix64 long long}}
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{29 \textcolor{preprocessor}{\#ifndef \_\_uix16}}
+\DoxyCodeLine{30 \textcolor{preprocessor}{\#define \_\_uix16 unsigned short}}
+\DoxyCodeLine{31 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{32 }
+\DoxyCodeLine{33 \textcolor{preprocessor}{\#ifndef \_\_uix32}}
+\DoxyCodeLine{34 \textcolor{preprocessor}{\#define \_\_uix32 unsigned int}}
+\DoxyCodeLine{35 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{37 \textcolor{preprocessor}{\#ifndef \_\_uix64}}
+\DoxyCodeLine{38 \textcolor{preprocessor}{\#define \_\_uix64 unsigned long long}}
+\DoxyCodeLine{39 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{40 }
+\DoxyCodeLine{41 \textcolor{preprocessor}{\#ifndef \_\_fx32}}
+\DoxyCodeLine{42 \textcolor{preprocessor}{\#define \_\_fx32 float}}
+\DoxyCodeLine{43 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{44 }
+\DoxyCodeLine{45 \textcolor{preprocessor}{\#ifndef \_\_fx64}}
+\DoxyCodeLine{46 \textcolor{preprocessor}{\#define \_\_fx64 double}}
+\DoxyCodeLine{47 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{48 }
+\DoxyCodeLine{49 \textcolor{comment}{// customized math constants:}}
+\DoxyCodeLine{50 \textcolor{preprocessor}{\#ifndef PI0 }\textcolor{comment}{// PI}}
+\DoxyCodeLine{51 \textcolor{preprocessor}{\#define PI0 3.1415926535897932384626433832795}}
+\DoxyCodeLine{52 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{53 }
+\DoxyCodeLine{54 \textcolor{preprocessor}{\#ifndef PI2 }\textcolor{comment}{// 2*PI}}
+\DoxyCodeLine{55 \textcolor{preprocessor}{\#define PI2 6.283185307179586476925286766559}}
+\DoxyCodeLine{56 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{57 }
+\DoxyCodeLine{58 \textcolor{comment}{// recursive mean}}
+\DoxyCodeLine{59 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \textcolor{keyword}{class }\mbox{\hyperlink{classrecursive__mean}{recursive\_mean}};}
+\DoxyCodeLine{60 }
+\DoxyCodeLine{61 \textcolor{comment}{// Recursive mean implementation:}}
+\DoxyCodeLine{62 }
+\DoxyCodeLine{63 \textcolor{comment}{// float x32}}
+\DoxyCodeLine{64 \textcolor{keyword}{template}<> \textcolor{keyword}{class }\mbox{\hyperlink{classrecursive__mean}{recursive\_mean}}<\mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}}>}
+\DoxyCodeLine{65 \{}
+\DoxyCodeLine{66     \textcolor{keyword}{typedef} \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}} \_\_type;}
+\DoxyCodeLine{67     \textcolor{comment}{// system variables:}}
+\DoxyCodeLine{68     \_\_type m\_Fn;}
+\DoxyCodeLine{69     \_\_type m\_Fs;}
+\DoxyCodeLine{70     \_\_type m\_Ts;}
+\DoxyCodeLine{71     \_\_type m\_Gain;}
+\DoxyCodeLine{72     \_\_type m\_Ns;}
+\DoxyCodeLine{73     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} m\_order;}
+\DoxyCodeLine{74 }
+\DoxyCodeLine{75     \textcolor{comment}{// buffer:}}
+\DoxyCodeLine{76     \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer<\_\_type>}} m\_buffer\_sx;}
+\DoxyCodeLine{77 }
+\DoxyCodeLine{78 \textcolor{keyword}{public}:}
+\DoxyCodeLine{79     \textcolor{comment}{// filter output:}}
+\DoxyCodeLine{80     \_\_type m\_out , m\_Km , m\_pH;}
+\DoxyCodeLine{81 }
+\DoxyCodeLine{82     \textcolor{comment}{// memory allocation and deallocation functions:}}
+\DoxyCodeLine{83     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} allocate() \{ \textcolor{keywordflow}{return} ( m\_buffer\_sx.allocate( m\_order + 2 ) ); \}}
+\DoxyCodeLine{84     \textcolor{keywordtype}{void} deallocate() \{ m\_buffer\_sx.deallocate(); \}}
+\DoxyCodeLine{85 }
+\DoxyCodeLine{86     \textcolor{comment}{// initialization function:}}
+\DoxyCodeLine{87     \textcolor{keywordtype}{void} init( \_\_type Fn , \_\_type Fs , \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order )}
+\DoxyCodeLine{88     \{}
+\DoxyCodeLine{89         m\_Fs      = Fs;}
+\DoxyCodeLine{90         m\_Fn      = Fn;}
+\DoxyCodeLine{91         m\_order   = order;}
+\DoxyCodeLine{92         m\_Ns      = m\_order;}
+\DoxyCodeLine{93         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{94         m\_Gain    = 1 / m\_Ns;}
+\DoxyCodeLine{95     \}}
+\DoxyCodeLine{96 }
+\DoxyCodeLine{97     \textcolor{comment}{// default constructor:}}
+\DoxyCodeLine{98     \mbox{\hyperlink{classrecursive__mean}{recursive\_mean}}()}
+\DoxyCodeLine{99     \{}
+\DoxyCodeLine{100         m\_Fs      = 4000;}
+\DoxyCodeLine{101         m\_Fn      = 50;}
+\DoxyCodeLine{102         m\_order   = m\_Fs / m\_Fn;}
+\DoxyCodeLine{103         m\_Ns      = m\_order;}
+\DoxyCodeLine{104         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{105         m\_Gain    = 1 / m\_Ns;}
+\DoxyCodeLine{106     \};}
+\DoxyCodeLine{107 }
+\DoxyCodeLine{108     \textcolor{comment}{// constructor with initiallization:}}
+\DoxyCodeLine{109     \mbox{\hyperlink{classrecursive__mean}{recursive\_mean}}( \_\_type Fn , \_\_type Fs , \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order ) \{ init( Fn , Fs , order ); \}}
+\DoxyCodeLine{110 }
+\DoxyCodeLine{111     \textcolor{comment}{// default destructor:}}
+\DoxyCodeLine{112     \mbox{\hyperlink{classrecursive__mean}{\string~recursive\_mean}}()\{ deallocate(); \}}
+\DoxyCodeLine{113 }
+\DoxyCodeLine{114     \textcolor{comment}{// Frequency characteristics computation function:}}
+\DoxyCodeLine{115     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} FreqCharacteristics( \_\_type F )}
+\DoxyCodeLine{116     \{}
+\DoxyCodeLine{117         \_\_type Re\_nom = 0 , Im\_nom = 0 , Re\_den = 0 , Im\_den = 0 , Re = 0 , Im = 0;}
+\DoxyCodeLine{118         Re\_nom = 1 -\/ cos(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ns * m\_Ts);}
+\DoxyCodeLine{119         Im\_nom = 0 -\/ sin(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ns * m\_Ts);}
+\DoxyCodeLine{120         Re\_den = 1 -\/ cos(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ts);}
+\DoxyCodeLine{121         Im\_den = 0 -\/ sin(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ts);}
+\DoxyCodeLine{122         Re   = (Re\_nom * Re\_den + Im\_nom * Im\_den) / (Re\_den * Re\_den + Im\_den * Im\_den);}
+\DoxyCodeLine{123         Im   = (Re\_den * Im\_nom -\/ Re\_nom * Im\_den) / (Re\_den * Re\_den + Im\_den * Im\_den);}
+\DoxyCodeLine{124         m\_Km = m\_Gain * sqrt(Re * Re + Im * Im);}
+\DoxyCodeLine{125         m\_pH = atan2(Im , Re);}
+\DoxyCodeLine{126         \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{127     \}}
+\DoxyCodeLine{128 }
+\DoxyCodeLine{129     \textcolor{comment}{// filtering function:}}
+\DoxyCodeLine{130 }
+\DoxyCodeLine{131     \textcolor{comment}{// float x32 input:}}
+\DoxyCodeLine{132     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} filt ( \_\_type *input )}
+\DoxyCodeLine{133     \{}
+\DoxyCodeLine{134         m\_buffer\_sx.fill\_buff( input );}
+\DoxyCodeLine{135         m\_out = m\_Gain * (*input -\/ m\_buffer\_sx[ m\_order ] ) + m\_out;}
+\DoxyCodeLine{136     \}}
+\DoxyCodeLine{137 }
+\DoxyCodeLine{138     \textcolor{comment}{// float x64 input ( CAUTION !!! ROUNDING ERROR OCCURS !!! ):}}
+\DoxyCodeLine{139     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} filt ( \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *input )}
+\DoxyCodeLine{140     \{}
+\DoxyCodeLine{141         m\_buffer\_sx.fill\_buff( input );}
+\DoxyCodeLine{142         m\_out = m\_Gain * (*input -\/ m\_buffer\_sx[ m\_order ] ) + m\_out;}
+\DoxyCodeLine{143     \}}
+\DoxyCodeLine{144 }
+\DoxyCodeLine{145     \textcolor{comment}{// operators:}}
+\DoxyCodeLine{146 }
+\DoxyCodeLine{147     \textcolor{comment}{// x32:}}
+\DoxyCodeLine{148     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} operator () ( \_\_type *input )\{ filt ( input ); \}}
+\DoxyCodeLine{149     \textcolor{comment}{// x64:}}
+\DoxyCodeLine{150     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} operator () ( \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *input )\{ filt ( input ); \}}
+\DoxyCodeLine{151 \};}
+\DoxyCodeLine{152 }
+\DoxyCodeLine{153 \textcolor{comment}{// float x64:}}
+\DoxyCodeLine{154 \textcolor{keyword}{template}<> \textcolor{keyword}{class }\mbox{\hyperlink{classrecursive__mean}{recursive\_mean}}<\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}}>}
+\DoxyCodeLine{155 \{}
+\DoxyCodeLine{156     \textcolor{keyword}{typedef} \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} \_\_type;}
+\DoxyCodeLine{157     \textcolor{comment}{// system variables:}}
+\DoxyCodeLine{158     \_\_type m\_Fn;}
+\DoxyCodeLine{159     \_\_type m\_Fs;}
+\DoxyCodeLine{160     \_\_type m\_Ts;}
+\DoxyCodeLine{161     \_\_type m\_Gain;}
+\DoxyCodeLine{162     \_\_type m\_Ns;}
+\DoxyCodeLine{163     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} m\_order;}
+\DoxyCodeLine{164 }
+\DoxyCodeLine{165     \textcolor{comment}{// buffer:}}
+\DoxyCodeLine{166     \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer<\_\_type>}} m\_buffer\_sx;}
+\DoxyCodeLine{167 }
+\DoxyCodeLine{168 \textcolor{keyword}{public}:}
+\DoxyCodeLine{169     \textcolor{comment}{// filter output:}}
+\DoxyCodeLine{170     \_\_type m\_out , m\_Km , m\_pH;}
+\DoxyCodeLine{171 }
+\DoxyCodeLine{172     \textcolor{comment}{// memory allocation and deallocation functions:}}
+\DoxyCodeLine{173     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} allocate() \{ \textcolor{keywordflow}{return} ( m\_buffer\_sx.allocate( m\_order + 2 ) ); \}}
+\DoxyCodeLine{174     \textcolor{keywordtype}{void} deallocate() \{ m\_buffer\_sx.deallocate(); \}}
+\DoxyCodeLine{175 }
+\DoxyCodeLine{176     \textcolor{comment}{// initialization function:}}
+\DoxyCodeLine{177     \textcolor{keywordtype}{void} init( \_\_type Fn , \_\_type Fs , \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order )}
+\DoxyCodeLine{178     \{}
+\DoxyCodeLine{179         m\_Fs      = Fs;}
+\DoxyCodeLine{180         m\_Fn      = Fn;}
+\DoxyCodeLine{181         m\_order   = order;}
+\DoxyCodeLine{182         m\_Ns      = m\_order;}
+\DoxyCodeLine{183         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{184         m\_Gain    = 1 / m\_Ns;}
+\DoxyCodeLine{185     \}}
+\DoxyCodeLine{186 }
+\DoxyCodeLine{187     \textcolor{comment}{// default constructor:}}
+\DoxyCodeLine{188     \mbox{\hyperlink{classrecursive__mean}{recursive\_mean}}()}
+\DoxyCodeLine{189     \{}
+\DoxyCodeLine{190         m\_Fs      = 4000;}
+\DoxyCodeLine{191         m\_Fn      = 50;}
+\DoxyCodeLine{192         m\_order   = m\_Fs / m\_Fn;}
+\DoxyCodeLine{193         m\_Ns      = m\_order;}
+\DoxyCodeLine{194         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{195         m\_Gain    = 1 / m\_Ns;}
+\DoxyCodeLine{196     \};}
+\DoxyCodeLine{197 }
+\DoxyCodeLine{198     \textcolor{comment}{// constructor with initiallization:}}
+\DoxyCodeLine{199     \mbox{\hyperlink{classrecursive__mean}{recursive\_mean}}( \_\_type Fn , \_\_type Fs , \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order ) \{ init( Fn , Fs , order ); \}}
+\DoxyCodeLine{200 }
+\DoxyCodeLine{201     \textcolor{comment}{// default destructor:}}
+\DoxyCodeLine{202     \mbox{\hyperlink{classrecursive__mean}{\string~recursive\_mean}}()\{ deallocate(); \}}
+\DoxyCodeLine{203 }
+\DoxyCodeLine{204     \textcolor{comment}{// Frequency characteristics computation function:}}
+\DoxyCodeLine{205     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} FreqCharacteristics( \_\_type F )}
+\DoxyCodeLine{206     \{}
+\DoxyCodeLine{207         \_\_type Re\_nom = 0 , Im\_nom = 0 , Re\_den = 0 , Im\_den = 0 , Re = 0 , Im = 0;}
+\DoxyCodeLine{208         Re\_nom = 1 -\/ cos(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ns * m\_Ts);}
+\DoxyCodeLine{209         Im\_nom = 0 -\/ sin(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ns * m\_Ts);}
+\DoxyCodeLine{210         Re\_den = 1 -\/ cos(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ts);}
+\DoxyCodeLine{211         Im\_den = 0 -\/ sin(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ts);}
+\DoxyCodeLine{212         Re   = (Re\_nom * Re\_den + Im\_nom * Im\_den) / (Re\_den * Re\_den + Im\_den * Im\_den);}
+\DoxyCodeLine{213         Im   = (Re\_den * Im\_nom -\/ Re\_nom * Im\_den) / (Re\_den * Re\_den + Im\_den * Im\_den);}
+\DoxyCodeLine{214         m\_Km = m\_Gain * sqrt(Re * Re + Im * Im);}
+\DoxyCodeLine{215         m\_pH = atan2(Im , Re);}
+\DoxyCodeLine{216         \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{217     \}}
+\DoxyCodeLine{218 }
+\DoxyCodeLine{219     \textcolor{comment}{// filtering function:}}
+\DoxyCodeLine{220     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} filt ( \_\_type *input )}
+\DoxyCodeLine{221     \{}
+\DoxyCodeLine{222         m\_buffer\_sx.fill\_buff( input );}
+\DoxyCodeLine{223         m\_out = m\_Gain * (*input -\/ m\_buffer\_sx[ m\_order ] ) + m\_out;}
+\DoxyCodeLine{224     \}}
+\DoxyCodeLine{225 }
+\DoxyCodeLine{226     \textcolor{comment}{// operators:}}
+\DoxyCodeLine{227 }
+\DoxyCodeLine{228     \textcolor{comment}{// initialization operator:}}
+\DoxyCodeLine{229     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} operator () ( \_\_type *input )\{ filt ( input ); \}}
+\DoxyCodeLine{230 \};}
+\DoxyCodeLine{231 }
+\DoxyCodeLine{232 \textcolor{comment}{// customized data types exclusion to avoid aliases:}}
+\DoxyCodeLine{233 \textcolor{preprocessor}{\#undef \_\_ix16}}
+\DoxyCodeLine{234 \textcolor{preprocessor}{\#undef \_\_ix32}}
+\DoxyCodeLine{235 \textcolor{preprocessor}{\#undef \_\_ix64}}
+\DoxyCodeLine{236 \textcolor{preprocessor}{\#undef \_\_uix16}}
+\DoxyCodeLine{237 \textcolor{preprocessor}{\#undef \_\_uix32}}
+\DoxyCodeLine{238 \textcolor{preprocessor}{\#undef \_\_uix64}}
+\DoxyCodeLine{239 \textcolor{preprocessor}{\#undef \_\_fx32}}
+\DoxyCodeLine{240 \textcolor{preprocessor}{\#undef \_\_fx64}}
+\DoxyCodeLine{241 }
+\DoxyCodeLine{242 \textcolor{comment}{// customized math constants exclusion to avoid aliases:}}
+\DoxyCodeLine{243 \textcolor{preprocessor}{\#undef PI0}}
+\DoxyCodeLine{244 \textcolor{preprocessor}{\#undef PI2}}
+\DoxyCodeLine{245 \textcolor{preprocessor}{\#undef PI\_2}}
+\DoxyCodeLine{246 \textcolor{preprocessor}{\#undef PI\_4}}
+\DoxyCodeLine{247 \textcolor{preprocessor}{\#undef inv\_PI0}}
+\DoxyCodeLine{248 \textcolor{preprocessor}{\#undef inv\_PI2}}
+\DoxyCodeLine{249 \textcolor{preprocessor}{\#undef inv\_PI\_2}}
+\DoxyCodeLine{250 \textcolor{preprocessor}{\#undef inv\_PI\_4}}
+\DoxyCodeLine{251 }
+\DoxyCodeLine{252 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// RECURSIVE\_MEAN\_H}}
+
+\end{DoxyCode}

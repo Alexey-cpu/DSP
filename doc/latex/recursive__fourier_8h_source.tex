@@ -1,0 +1,339 @@
+\hypertarget{recursive__fourier_8h_source}{}\doxysection{recursive\+\_\+fourier.\+h}
+\label{recursive__fourier_8h_source}\index{C:/Qt\_projects/DigitalFilters\_x32/include/recursive\_fourier.h@{C:/Qt\_projects/DigitalFilters\_x32/include/recursive\_fourier.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{2 \textcolor{comment}{//A.M.Tykvinsky, 21.12.2021}}
+\DoxyCodeLine{3 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{4 \textcolor{comment}{// TEMPLATE RECURSIVE FOURIER CLASS}}
+\DoxyCodeLine{5 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{6 }
+\DoxyCodeLine{7 \textcolor{preprocessor}{\#ifndef RECURSIVE\_FOURIER\_H}}
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#define RECURSIVE\_FOURIER\_H}}
+\DoxyCodeLine{9 }
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#ifndef \_\_ALG\_PLATFORM }\textcolor{comment}{// identify if the compilation is for ProsoftSystems IDE}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include "{}cmath"{}}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include "{}buffer.h"{}}}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 \textcolor{comment}{// customized C data types definition:}}
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#ifndef \_\_ix16}}
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#define \_\_ix16 short}}
+\DoxyCodeLine{20 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22 \textcolor{preprocessor}{\#ifndef \_\_ix32}}
+\DoxyCodeLine{23 \textcolor{preprocessor}{\#define \_\_ix32 int}}
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{26 \textcolor{preprocessor}{\#ifndef \_\_ix64}}
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#define \_\_ix64 long long}}
+\DoxyCodeLine{28 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30 \textcolor{preprocessor}{\#ifndef \_\_uix16}}
+\DoxyCodeLine{31 \textcolor{preprocessor}{\#define \_\_uix16 unsigned short}}
+\DoxyCodeLine{32 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{33 }
+\DoxyCodeLine{34 \textcolor{preprocessor}{\#ifndef \_\_uix32}}
+\DoxyCodeLine{35 \textcolor{preprocessor}{\#define \_\_uix32 unsigned int}}
+\DoxyCodeLine{36 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{37 }
+\DoxyCodeLine{38 \textcolor{preprocessor}{\#ifndef \_\_uix64}}
+\DoxyCodeLine{39 \textcolor{preprocessor}{\#define \_\_uix64 unsigned long long}}
+\DoxyCodeLine{40 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{41 }
+\DoxyCodeLine{42 \textcolor{preprocessor}{\#ifndef \_\_fx32}}
+\DoxyCodeLine{43 \textcolor{preprocessor}{\#define \_\_fx32 float}}
+\DoxyCodeLine{44 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{45 }
+\DoxyCodeLine{46 \textcolor{preprocessor}{\#ifndef \_\_fx64}}
+\DoxyCodeLine{47 \textcolor{preprocessor}{\#define \_\_fx64 double}}
+\DoxyCodeLine{48 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{49 }
+\DoxyCodeLine{50 \textcolor{comment}{// customized math constants:}}
+\DoxyCodeLine{51 \textcolor{preprocessor}{\#ifndef PI0 }\textcolor{comment}{// PI}}
+\DoxyCodeLine{52 \textcolor{preprocessor}{\#define PI0 3.1415926535897932384626433832795}}
+\DoxyCodeLine{53 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{54 }
+\DoxyCodeLine{55 \textcolor{preprocessor}{\#ifndef PI2 }\textcolor{comment}{// 2*PI}}
+\DoxyCodeLine{56 \textcolor{preprocessor}{\#define PI2 6.283185307179586476925286766559}}
+\DoxyCodeLine{57 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{58 }
+\DoxyCodeLine{59 \textcolor{comment}{// recursive Fourier}}
+\DoxyCodeLine{60 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \textcolor{keyword}{class }\mbox{\hyperlink{classrecursive__fourier}{recursive\_fourier}};}
+\DoxyCodeLine{61 }
+\DoxyCodeLine{62 \textcolor{comment}{// Recursive Fourier implementations:}}
+\DoxyCodeLine{63 }
+\DoxyCodeLine{64 \textcolor{comment}{// float x32:}}
+\DoxyCodeLine{65 \textcolor{keyword}{template}<> \textcolor{keyword}{class }\mbox{\hyperlink{classrecursive__fourier}{recursive\_fourier}}<\mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}}>}
+\DoxyCodeLine{66 \{}
+\DoxyCodeLine{67     \textcolor{keyword}{typedef} \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}} \_\_type;}
+\DoxyCodeLine{68 }
+\DoxyCodeLine{69     \textcolor{comment}{// system variables:}}
+\DoxyCodeLine{70     \_\_type m\_Fn;}
+\DoxyCodeLine{71     \_\_type m\_Fs;}
+\DoxyCodeLine{72     \_\_type m\_Ts;}
+\DoxyCodeLine{73     \_\_type m\_Gain;}
+\DoxyCodeLine{74     \_\_type m\_Ns;}
+\DoxyCodeLine{75     \_\_type m\_hnum;}
+\DoxyCodeLine{76     \_\_type m\_a0 , m\_Ks , m\_Kc;}
+\DoxyCodeLine{77     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} m\_order;}
+\DoxyCodeLine{78 }
+\DoxyCodeLine{79     \textcolor{comment}{// buffer:}}
+\DoxyCodeLine{80     \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer<\_\_type>}} m\_buffer\_sx;}
+\DoxyCodeLine{81 }
+\DoxyCodeLine{82 \textcolor{keyword}{public}:}
+\DoxyCodeLine{83     \textcolor{comment}{// filter output:}}
+\DoxyCodeLine{84     \_\_type m\_a , m\_b , m\_Km , m\_pH;}
+\DoxyCodeLine{85 }
+\DoxyCodeLine{86     \textcolor{comment}{// memory allocation and deallocation functions:}}
+\DoxyCodeLine{87     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}}  allocate() \{ \textcolor{keywordflow}{return} ( m\_buffer\_sx.allocate( m\_order + 2 ) ); \}}
+\DoxyCodeLine{88     \textcolor{keywordtype}{void} deallocate() \{ m\_buffer\_sx.deallocate(); \}}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{90     \textcolor{comment}{// initialization function:}}
+\DoxyCodeLine{91     \textcolor{keywordtype}{void} init( \_\_type Fn , \_\_type Fs , \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} hnum )}
+\DoxyCodeLine{92     \{}
+\DoxyCodeLine{93         \textcolor{comment}{// system variables initialization:}}
+\DoxyCodeLine{94         m\_Fn      = Fn;}
+\DoxyCodeLine{95         m\_Fs      = Fs;}
+\DoxyCodeLine{96         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{97         m\_Ns      = ceil(m\_Fs / m\_Fn);}
+\DoxyCodeLine{98         m\_order   = m\_Ns;}
+\DoxyCodeLine{99         m\_Gain    = ( hnum == 0 ) ? ( 1.0 / m\_Ns ) : ( 2.0 / m\_Ns );}
+\DoxyCodeLine{100         m\_hnum    = hnum;}
+\DoxyCodeLine{101         m\_Ks      = sin( \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_hnum / m\_Ns );}
+\DoxyCodeLine{102         m\_Kc      = cos( \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_hnum / m\_Ns );}
+\DoxyCodeLine{103 }
+\DoxyCodeLine{104         \textcolor{comment}{// filter output initialization:}}
+\DoxyCodeLine{105         m\_a0 = 0;}
+\DoxyCodeLine{106         m\_a  = 0;}
+\DoxyCodeLine{107         m\_b  = 0;}
+\DoxyCodeLine{108         m\_Km = 0;}
+\DoxyCodeLine{109         m\_pH = 0;}
+\DoxyCodeLine{110     \}}
+\DoxyCodeLine{111 }
+\DoxyCodeLine{112     \textcolor{comment}{// default constructor:}}
+\DoxyCodeLine{113     \mbox{\hyperlink{classrecursive__fourier}{recursive\_fourier}}()}
+\DoxyCodeLine{114     \{}
+\DoxyCodeLine{115         \textcolor{comment}{// system variables initialization:}}
+\DoxyCodeLine{116         m\_Fn       = 50;}
+\DoxyCodeLine{117         m\_Fs       = 4000;}
+\DoxyCodeLine{118         m\_Ts       = 1 / m\_Fs;}
+\DoxyCodeLine{119         m\_Ns       = ceil(m\_Fs / m\_Fn);}
+\DoxyCodeLine{120         m\_order    = m\_Ns;}
+\DoxyCodeLine{121         m\_Gain     = 2.0 / m\_Ns;}
+\DoxyCodeLine{122         m\_hnum     = 1;}
+\DoxyCodeLine{123         m\_Ks       = sin( \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_hnum / m\_Ns );}
+\DoxyCodeLine{124         m\_Kc       = cos( \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_hnum / m\_Ns );}
+\DoxyCodeLine{125 }
+\DoxyCodeLine{126         \textcolor{comment}{// filter output initialization:}}
+\DoxyCodeLine{127         m\_a0 = 0;}
+\DoxyCodeLine{128         m\_a  = 0;}
+\DoxyCodeLine{129         m\_b  = 0;}
+\DoxyCodeLine{130         m\_Km = 0;}
+\DoxyCodeLine{131         m\_pH = 0;}
+\DoxyCodeLine{132     \};}
+\DoxyCodeLine{133 }
+\DoxyCodeLine{134     \textcolor{comment}{// constructor with initiallization:}}
+\DoxyCodeLine{135     \mbox{\hyperlink{classrecursive__fourier}{recursive\_fourier}}( \_\_type Fn , \_\_type Fs , \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} hnum ) \{ init( Fn , Fs , hnum ); \}}
+\DoxyCodeLine{136 }
+\DoxyCodeLine{137     \textcolor{comment}{// default destructor:}}
+\DoxyCodeLine{138     \mbox{\hyperlink{classrecursive__fourier}{\string~recursive\_fourier}}()\{ deallocate(); \}}
+\DoxyCodeLine{139 }
+\DoxyCodeLine{140     \textcolor{comment}{// filtering function:}}
+\DoxyCodeLine{141 }
+\DoxyCodeLine{142     \textcolor{comment}{// float x32 input:}}
+\DoxyCodeLine{143     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} filt ( \_\_type *input )}
+\DoxyCodeLine{144     \{}
+\DoxyCodeLine{145         m\_buffer\_sx.fill\_buff( input );}
+\DoxyCodeLine{146         m\_a0 = m\_a + ( *input -\/ m\_buffer\_sx[ m\_order ] ) * m\_Gain;}
+\DoxyCodeLine{147         m\_a  = m\_a0 * m\_Kc -\/ m\_b * m\_Ks;}
+\DoxyCodeLine{148         m\_b  = m\_a0 * m\_Ks + m\_b * m\_Kc;}
+\DoxyCodeLine{149     \}}
+\DoxyCodeLine{150 }
+\DoxyCodeLine{151     \textcolor{comment}{// float x64 input ( CAUTION !!! ROUNDING ERROR OCCURS !!! )}}
+\DoxyCodeLine{152     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} filt ( \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *input )}
+\DoxyCodeLine{153     \{}
+\DoxyCodeLine{154         m\_buffer\_sx.fill\_buff( input );}
+\DoxyCodeLine{155         m\_a0 = m\_a + ( *input -\/ m\_buffer\_sx[ m\_order ] ) * m\_Gain;}
+\DoxyCodeLine{156         m\_a  = m\_a0 * m\_Kc -\/ m\_b * m\_Ks;}
+\DoxyCodeLine{157         m\_b  = m\_a0 * m\_Ks + m\_b * m\_Kc;}
+\DoxyCodeLine{158     \}}
+\DoxyCodeLine{159 }
+\DoxyCodeLine{160     \textcolor{comment}{// Frequency characteristics computation function:}}
+\DoxyCodeLine{161     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} FreqCharacteristics( \_\_type F )}
+\DoxyCodeLine{162     \{}
+\DoxyCodeLine{163         \textcolor{comment}{// complex frequency coeffs:}}
+\DoxyCodeLine{164         \_\_type Re1 = 0 , Im1 = 0 , Re2 = 0 , Im2 = 0 , K = 1 / m\_Ns;}
+\DoxyCodeLine{165 }
+\DoxyCodeLine{166         \textcolor{comment}{// transfer function:}}
+\DoxyCodeLine{167         Re1 = 1 -\/ cos( -\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ns * m\_Ts );}
+\DoxyCodeLine{168         Im1 = 0 -\/ sin( -\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ns * m\_Ts );}
+\DoxyCodeLine{169         Re2 = 1 -\/ ( cos(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ts) * m\_Kc -\/ sin(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ts) * m\_Ks );}
+\DoxyCodeLine{170         Im2 = 0 -\/ ( cos(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ts) * m\_Ks + sin(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ts) * m\_Kc );}
+\DoxyCodeLine{171 }
+\DoxyCodeLine{172         \textcolor{comment}{// amplitude and phase response:}}
+\DoxyCodeLine{173         \textcolor{keywordflow}{if}( F == m\_Fn * m\_hnum )}
+\DoxyCodeLine{174         \{}
+\DoxyCodeLine{175             m\_Km = 1;}
+\DoxyCodeLine{176             m\_pH = 0;}
+\DoxyCodeLine{177         \}}
+\DoxyCodeLine{178         \textcolor{keywordflow}{else}}
+\DoxyCodeLine{179         \{}
+\DoxyCodeLine{180             m\_Km = sqrt( Re1 * Re1 + Im1 * Im1 ) / sqrt( Re2 * Re2 + Im2 * Im2 ) * K;}
+\DoxyCodeLine{181             m\_pH = atan2( Im1 , Re1 ) -\/ atan2( Im2 , Re2 );}
+\DoxyCodeLine{182         \}}
+\DoxyCodeLine{183 }
+\DoxyCodeLine{184         \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{185     \}}
+\DoxyCodeLine{186 }
+\DoxyCodeLine{187     \textcolor{comment}{// operators:}}
+\DoxyCodeLine{188 }
+\DoxyCodeLine{189     \textcolor{comment}{// x32:}}
+\DoxyCodeLine{190     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} operator () ( \_\_type *input )\{ filt ( input ); \}}
+\DoxyCodeLine{191     \textcolor{comment}{// x64:}}
+\DoxyCodeLine{192     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} operator () ( \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *input )\{ filt ( input ); \}}
+\DoxyCodeLine{193 \};}
+\DoxyCodeLine{194 }
+\DoxyCodeLine{195 \textcolor{comment}{// float x64:}}
+\DoxyCodeLine{196 \textcolor{keyword}{template}<> \textcolor{keyword}{class }\mbox{\hyperlink{classrecursive__fourier}{recursive\_fourier}}<\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}}>}
+\DoxyCodeLine{197 \{}
+\DoxyCodeLine{198     \textcolor{keyword}{typedef} \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} \_\_type;}
+\DoxyCodeLine{199 }
+\DoxyCodeLine{200     \textcolor{comment}{// system variables:}}
+\DoxyCodeLine{201     \_\_type m\_Fn;}
+\DoxyCodeLine{202     \_\_type m\_Fs;}
+\DoxyCodeLine{203     \_\_type m\_Ts;}
+\DoxyCodeLine{204     \_\_type m\_Gain;}
+\DoxyCodeLine{205     \_\_type m\_Ns;}
+\DoxyCodeLine{206     \_\_type m\_hnum;}
+\DoxyCodeLine{207     \_\_type m\_a0 , m\_Ks , m\_Kc;}
+\DoxyCodeLine{208     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} m\_order;}
+\DoxyCodeLine{209 }
+\DoxyCodeLine{210     \textcolor{comment}{// buffer:}}
+\DoxyCodeLine{211     \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer<\_\_type>}} m\_buffer\_sx;}
+\DoxyCodeLine{212 }
+\DoxyCodeLine{213 \textcolor{keyword}{public}:}
+\DoxyCodeLine{214     \textcolor{comment}{// filter output:}}
+\DoxyCodeLine{215     \_\_type m\_a , m\_b , m\_Km , m\_pH;}
+\DoxyCodeLine{216 }
+\DoxyCodeLine{217     \textcolor{comment}{// memory allocation and deallocation functions:}}
+\DoxyCodeLine{218     \textcolor{keywordtype}{int}  allocate() \{ \textcolor{keywordflow}{return} ( m\_buffer\_sx.allocate( m\_order + 2 ) ); \}}
+\DoxyCodeLine{219     \textcolor{keywordtype}{void} deallocate() \{ m\_buffer\_sx.deallocate(); \}}
+\DoxyCodeLine{220 }
+\DoxyCodeLine{221     \textcolor{comment}{// initialization function:}}
+\DoxyCodeLine{222     \textcolor{keywordtype}{void} init( \_\_type Fn , \_\_type Fs , \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} hnum )}
+\DoxyCodeLine{223     \{}
+\DoxyCodeLine{224         \textcolor{comment}{// system variables initialization:}}
+\DoxyCodeLine{225         m\_Fn      = Fn;}
+\DoxyCodeLine{226         m\_Fs      = Fs;}
+\DoxyCodeLine{227         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{228         m\_Ns      = ceil(m\_Fs / m\_Fn);}
+\DoxyCodeLine{229         m\_order   = m\_Ns;}
+\DoxyCodeLine{230         m\_Gain    = ( hnum == 0 ) ? ( 1.0 / m\_Ns ) : ( 2.0 / m\_Ns );}
+\DoxyCodeLine{231         m\_hnum    = hnum;}
+\DoxyCodeLine{232         m\_Ks      = sin( \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}})m\_hnum / m\_Ns );}
+\DoxyCodeLine{233         m\_Kc      = cos( \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}})m\_hnum / m\_Ns );}
+\DoxyCodeLine{234 }
+\DoxyCodeLine{235         \textcolor{comment}{// filter output initialization:}}
+\DoxyCodeLine{236         m\_a0 = 0;}
+\DoxyCodeLine{237         m\_a  = 0;}
+\DoxyCodeLine{238         m\_b  = 0;}
+\DoxyCodeLine{239         m\_Km = 0;}
+\DoxyCodeLine{240         m\_pH = 0;}
+\DoxyCodeLine{241     \}}
+\DoxyCodeLine{242 }
+\DoxyCodeLine{243     \textcolor{comment}{// default constructor:}}
+\DoxyCodeLine{244     \mbox{\hyperlink{classrecursive__fourier}{recursive\_fourier}}()}
+\DoxyCodeLine{245     \{}
+\DoxyCodeLine{246         \textcolor{comment}{// system variables initialization:}}
+\DoxyCodeLine{247         m\_Fn       = 50;}
+\DoxyCodeLine{248         m\_Fs       = 4000;}
+\DoxyCodeLine{249         m\_Ts       = 1 / m\_Fs;}
+\DoxyCodeLine{250         m\_Ns       = ceil(m\_Fs / m\_Fn);}
+\DoxyCodeLine{251         m\_order    = m\_Ns;}
+\DoxyCodeLine{252         m\_Gain     = 2.0 / m\_Ns;}
+\DoxyCodeLine{253         m\_hnum     = 1;}
+\DoxyCodeLine{254         m\_Ks       = sin( \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}})m\_hnum / m\_Ns );}
+\DoxyCodeLine{255         m\_Kc       = cos( \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}})m\_hnum / m\_Ns );}
+\DoxyCodeLine{256 }
+\DoxyCodeLine{257         \textcolor{comment}{// filter output initialization:}}
+\DoxyCodeLine{258         m\_a0 = 0;}
+\DoxyCodeLine{259         m\_a  = 0;}
+\DoxyCodeLine{260         m\_b  = 0;}
+\DoxyCodeLine{261         m\_Km = 0;}
+\DoxyCodeLine{262         m\_pH = 0;}
+\DoxyCodeLine{263     \};}
+\DoxyCodeLine{264 }
+\DoxyCodeLine{265     \textcolor{comment}{// constructor with initiallization:}}
+\DoxyCodeLine{266     \mbox{\hyperlink{classrecursive__fourier}{recursive\_fourier}}( \_\_type Fn , \_\_type Fs , \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} hnum ) \{ init( Fn , Fs , hnum ); \}}
+\DoxyCodeLine{267 }
+\DoxyCodeLine{268     \textcolor{comment}{// default destructor:}}
+\DoxyCodeLine{269     \mbox{\hyperlink{classrecursive__fourier}{\string~recursive\_fourier}}()\{ deallocate(); \}}
+\DoxyCodeLine{270 }
+\DoxyCodeLine{271     \textcolor{comment}{// Frequency characteristics computation function:}}
+\DoxyCodeLine{272     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} FreqCharacteristics( \_\_type F )}
+\DoxyCodeLine{273     \{}
+\DoxyCodeLine{274         \textcolor{comment}{// complex frequency coeffs:}}
+\DoxyCodeLine{275         \_\_type Re1 = 0 , Im1 = 0 , Re2 = 0 , Im2 = 0 , K = 1 / m\_Ns;}
+\DoxyCodeLine{276 }
+\DoxyCodeLine{277         \textcolor{comment}{// transfer function:}}
+\DoxyCodeLine{278         Re1 = 1 -\/ cos( -\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ns * m\_Ts );}
+\DoxyCodeLine{279         Im1 = 0 -\/ sin( -\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ns * m\_Ts );}
+\DoxyCodeLine{280         Re2 = 1 -\/ ( cos(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ts) * m\_Kc -\/ sin(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ts) * m\_Ks );}
+\DoxyCodeLine{281         Im2 = 0 -\/ ( cos(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ts) * m\_Ks + sin(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * F * m\_Ts) * m\_Kc );}
+\DoxyCodeLine{282 }
+\DoxyCodeLine{283         \textcolor{comment}{// amplitude and phase response:}}
+\DoxyCodeLine{284         \textcolor{keywordflow}{if}( F == m\_Fn * m\_hnum )}
+\DoxyCodeLine{285         \{}
+\DoxyCodeLine{286             m\_Km = 1;}
+\DoxyCodeLine{287             m\_pH = 0;}
+\DoxyCodeLine{288         \}}
+\DoxyCodeLine{289         \textcolor{keywordflow}{else}}
+\DoxyCodeLine{290         \{}
+\DoxyCodeLine{291             m\_Km = sqrt( Re1 * Re1 + Im1 * Im1 ) / sqrt( Re2 * Re2 + Im2 * Im2 ) * K;}
+\DoxyCodeLine{292             m\_pH = atan2( Im1 , Re1 ) -\/ atan2( Im2 , Re2 );}
+\DoxyCodeLine{293         \}}
+\DoxyCodeLine{294 }
+\DoxyCodeLine{295         \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{296     \}}
+\DoxyCodeLine{297 }
+\DoxyCodeLine{298     \textcolor{comment}{// filtering function:}}
+\DoxyCodeLine{299     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} filt ( \_\_type *input )}
+\DoxyCodeLine{300     \{}
+\DoxyCodeLine{301         m\_buffer\_sx.fill\_buff( input );}
+\DoxyCodeLine{302         m\_a0 = m\_a + ( *input -\/ m\_buffer\_sx[ m\_order ] ) * m\_Gain;}
+\DoxyCodeLine{303         m\_a  = m\_a0 * m\_Kc -\/ m\_b * m\_Ks;}
+\DoxyCodeLine{304         m\_b  = m\_a0 * m\_Ks + m\_b * m\_Kc;}
+\DoxyCodeLine{305     \}}
+\DoxyCodeLine{306 }
+\DoxyCodeLine{307     \textcolor{comment}{// operators:}}
+\DoxyCodeLine{308 }
+\DoxyCodeLine{309     \textcolor{comment}{// initialization operator:}}
+\DoxyCodeLine{310     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} operator () ( \_\_type *input )\{ filt ( input ); \}}
+\DoxyCodeLine{311 \};}
+\DoxyCodeLine{312 }
+\DoxyCodeLine{313 \textcolor{comment}{// customized data types exclusion to avoid aliases:}}
+\DoxyCodeLine{314 \textcolor{preprocessor}{\#undef \_\_ix16}}
+\DoxyCodeLine{315 \textcolor{preprocessor}{\#undef \_\_ix32}}
+\DoxyCodeLine{316 \textcolor{preprocessor}{\#undef \_\_ix64}}
+\DoxyCodeLine{317 \textcolor{preprocessor}{\#undef \_\_uix16}}
+\DoxyCodeLine{318 \textcolor{preprocessor}{\#undef \_\_uix32}}
+\DoxyCodeLine{319 \textcolor{preprocessor}{\#undef \_\_uix64}}
+\DoxyCodeLine{320 \textcolor{preprocessor}{\#undef \_\_fx32}}
+\DoxyCodeLine{321 \textcolor{preprocessor}{\#undef \_\_fx64}}
+\DoxyCodeLine{322 }
+\DoxyCodeLine{323 \textcolor{comment}{// customized math constants exclusion to avoid aliases:}}
+\DoxyCodeLine{324 \textcolor{preprocessor}{\#undef PI0}}
+\DoxyCodeLine{325 \textcolor{preprocessor}{\#undef PI2}}
+\DoxyCodeLine{326 \textcolor{preprocessor}{\#undef PI\_2}}
+\DoxyCodeLine{327 \textcolor{preprocessor}{\#undef PI\_4}}
+\DoxyCodeLine{328 \textcolor{preprocessor}{\#undef inv\_PI0}}
+\DoxyCodeLine{329 \textcolor{preprocessor}{\#undef inv\_PI2}}
+\DoxyCodeLine{330 \textcolor{preprocessor}{\#undef inv\_PI\_2}}
+\DoxyCodeLine{331 \textcolor{preprocessor}{\#undef inv\_PI\_4}}
+\DoxyCodeLine{332 }
+\DoxyCodeLine{333 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// RECURSIVE\_FOURIER\_H}}
+
+\end{DoxyCode}

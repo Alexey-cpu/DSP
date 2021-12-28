@@ -1,0 +1,1006 @@
+\hypertarget{special__functions_8h}{}\doxysection{C\+:/\+Qt\+\_\+projects/\+Digital\+Filters\+\_\+x32/include/special\+\_\+functions.h File Reference}
+\label{special__functions_8h}\index{C:/Qt\_projects/DigitalFilters\_x32/include/special\_functions.h@{C:/Qt\_projects/DigitalFilters\_x32/include/special\_functions.h}}
+
+
+SPECIAL MATHEMATICAL FUNCTIONS HEADER.  
+
+
+{\ttfamily \#include \char`\"{}cmath\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}malloc.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}complex.\+h\char`\"{}}\newline
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classwind__fcn}{wind\+\_\+fcn}}
+\begin{DoxyCompactList}\small\item\em Window function class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{special__functions_8h_a622e34ee31440205cd52bec25721b9fa}\label{special__functions_8h_a622e34ee31440205cd52bec25721b9fa}} 
+\#define {\bfseries \+\_\+\+\_\+\+TO\+\_\+\+DEGREES}(x)~( (x) $\ast$ 57.\+295779513082320876798154814105)
+\begin{DoxyCompactList}\small\item\em converts radians to degrees \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_ad37ddbd09cea5e81546e591a81209377}\label{special__functions_8h_ad37ddbd09cea5e81546e591a81209377}} 
+\#define {\bfseries \+\_\+\+\_\+\+TO\+\_\+\+RADIANS}(x)~( (x) $\ast$ 0.\+01745329251994329576923690768489)
+\begin{DoxyCompactList}\small\item\em converts degrees to radians \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a982079e95250a895dbcaa6a5e01b01cc}\label{special__functions_8h_a982079e95250a895dbcaa6a5e01b01cc}} 
+\#define {\bfseries \+\_\+\+\_\+\+ITERATIONS\+\_\+\+NUMBER\+\_\+\+\_\+}~30
+\begin{DoxyCompactList}\small\item\em sets maximum number of iteration for elliptic functions computation \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a10e3f977135a26130c576559aa53da47}\label{special__functions_8h_a10e3f977135a26130c576559aa53da47}} 
+\#define {\bfseries \+\_\+\+\_\+ix16}~short
+\begin{DoxyCompactList}\small\item\em defines 16-\/bit integer type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}\label{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}} 
+\#define {\bfseries \+\_\+\+\_\+ix32}~int
+\begin{DoxyCompactList}\small\item\em defines 32-\/bit integer type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_acacb808424e710c3b69f94237e8bbcca}\label{special__functions_8h_acacb808424e710c3b69f94237e8bbcca}} 
+\#define {\bfseries \+\_\+\+\_\+ix64}~long long
+\begin{DoxyCompactList}\small\item\em defines 64-\/bit integer type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a4b23256623402d9eb1c73c1dde83eea6}\label{special__functions_8h_a4b23256623402d9eb1c73c1dde83eea6}} 
+\#define {\bfseries \+\_\+\+\_\+uix16}~unsigned short
+\begin{DoxyCompactList}\small\item\em defines unsigned 16-\/bit integer type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a65f8ff7bc07925ad20f07e6663e8406d}\label{special__functions_8h_a65f8ff7bc07925ad20f07e6663e8406d}} 
+\#define {\bfseries \+\_\+\+\_\+uix32}~unsigned int
+\begin{DoxyCompactList}\small\item\em defines unsigned 32-\/bit integer type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_af307233f537d213a2809e727ac1a0d2e}\label{special__functions_8h_af307233f537d213a2809e727ac1a0d2e}} 
+\#define {\bfseries \+\_\+\+\_\+uix64}~unsigned long long
+\begin{DoxyCompactList}\small\item\em defines unsigned 64-\/bit integer type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}\label{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}} 
+\#define {\bfseries \+\_\+\+\_\+fx32}~float
+\begin{DoxyCompactList}\small\item\em defines 32-\/bit floating point type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}\label{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}} 
+\#define {\bfseries \+\_\+\+\_\+fx64}~double
+\begin{DoxyCompactList}\small\item\em defines 64-\/bit floating point type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}\label{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}} 
+\#define {\bfseries \+\_\+\+\_\+fxx64}~long double
+\begin{DoxyCompactList}\small\item\em defines extended 64-\/bit floating point type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a9855a8239f6c2aea5868ebcaa24008b4}\label{special__functions_8h_a9855a8239f6c2aea5868ebcaa24008b4}} 
+\#define {\bfseries \+\_\+\+\_\+max\+\_\+fx32}~3.\+402823466e+38
+\begin{DoxyCompactList}\small\item\em defines 32-\/bit floating point type upper limit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a458f38b851745c78be2093d4c6e1a6c8}\label{special__functions_8h_a458f38b851745c78be2093d4c6e1a6c8}} 
+\#define {\bfseries \+\_\+\+\_\+max\+\_\+fx64}~1.\+7976931348623158e+308
+\begin{DoxyCompactList}\small\item\em defines 64-\/bit floating point type upper limit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a84c5bdb7264a3a75e83a0b4c96756ca8}\label{special__functions_8h_a84c5bdb7264a3a75e83a0b4c96756ca8}} 
+\#define {\bfseries \+\_\+\+\_\+max\+\_\+ix16}~32767
+\begin{DoxyCompactList}\small\item\em defines 16-\/bit integer type upper limit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a48d3dbe73a81b3eb2fa71ad0f3d7e5b0}\label{special__functions_8h_a48d3dbe73a81b3eb2fa71ad0f3d7e5b0}} 
+\#define {\bfseries \+\_\+\+\_\+max\+\_\+ix32}~2147483647
+\begin{DoxyCompactList}\small\item\em defines 32-\/bit integer type upper limit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_abece76b527dc7af950651bc8d0ef47f0}\label{special__functions_8h_abece76b527dc7af950651bc8d0ef47f0}} 
+\#define {\bfseries \+\_\+\+\_\+max\+\_\+ix64}~9223372036854775807
+\begin{DoxyCompactList}\small\item\em defines 64-\/bit integer type upper limit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a9b7c93509642cfe7fee4ed8aceb92126}\label{special__functions_8h_a9b7c93509642cfe7fee4ed8aceb92126}} 
+\#define {\bfseries \+\_\+\+\_\+max\+\_\+uix16}~65535
+\begin{DoxyCompactList}\small\item\em defines unsigned 16-\/bit integer type upper limit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a229725091255ad991143131d443f8a6e}\label{special__functions_8h_a229725091255ad991143131d443f8a6e}} 
+\#define {\bfseries \+\_\+\+\_\+max\+\_\+uix32}~4294967295
+\begin{DoxyCompactList}\small\item\em defines unsigned 32-\/bit integer type upper limit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a721d05331bdf573d3f69f83b9a2acda2}\label{special__functions_8h_a721d05331bdf573d3f69f83b9a2acda2}} 
+\#define {\bfseries \+\_\+\+\_\+max\+\_\+uix64}~18446744073709551615
+\begin{DoxyCompactList}\small\item\em defines unsigned 64-\/bit integer type upper limit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_aec9413b89f4742c7efd5bd1b1bcfe206}\label{special__functions_8h_aec9413b89f4742c7efd5bd1b1bcfe206}} 
+\#define {\bfseries \+\_\+\+\_\+min\+\_\+fx32}~1.\+175494351e-\/38
+\begin{DoxyCompactList}\small\item\em defines 32-\/bit floating point type lower limit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a61cdb76bef3bae68814c74c808509e49}\label{special__functions_8h_a61cdb76bef3bae68814c74c808509e49}} 
+\#define {\bfseries \+\_\+\+\_\+min\+\_\+fx64}~1.\+7976931348623158e+308
+\begin{DoxyCompactList}\small\item\em defines 64-\/bit floating point type lower limit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_afc24908b733167f2d6b7e839c180691b}\label{special__functions_8h_afc24908b733167f2d6b7e839c180691b}} 
+\#define {\bfseries \+\_\+\+\_\+min\+\_\+ix16}~-\/32767
+\begin{DoxyCompactList}\small\item\em defines 16-\/bit integer type lower limit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a95ba8cab5db90d8930f750e0e50937bf}\label{special__functions_8h_a95ba8cab5db90d8930f750e0e50937bf}} 
+\#define {\bfseries \+\_\+\+\_\+min\+\_\+ix32}~-\/2147483647
+\begin{DoxyCompactList}\small\item\em defines 32-\/bit integer type lower limit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a9beb536ae5a29bd07c22c33373e5c7dc}\label{special__functions_8h_a9beb536ae5a29bd07c22c33373e5c7dc}} 
+\#define {\bfseries \+\_\+\+\_\+min\+\_\+ix64}~-\/9223372036854775807
+\begin{DoxyCompactList}\small\item\em defines 64-\/bit integer type lower limit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_ac555d285df2379bb34c3d9a054927f57}\label{special__functions_8h_ac555d285df2379bb34c3d9a054927f57}} 
+\#define {\bfseries \+\_\+\+\_\+min\+\_\+uix16}~0
+\begin{DoxyCompactList}\small\item\em defines unsigned 16-\/bit integer type lower limit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_aa41371c217fd2c6d5d0078d7607215c4}\label{special__functions_8h_aa41371c217fd2c6d5d0078d7607215c4}} 
+\#define {\bfseries \+\_\+\+\_\+min\+\_\+uix32}~0
+\begin{DoxyCompactList}\small\item\em defines unsigned 32-\/bit integer type lower limit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a1657c56397b5d03101f697506bee8867}\label{special__functions_8h_a1657c56397b5d03101f697506bee8867}} 
+\#define {\bfseries \+\_\+\+\_\+min\+\_\+uix64}~0
+\begin{DoxyCompactList}\small\item\em defines unsigned 64-\/bit integer type lower limit \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a98b05be7a3d798a81e7eed15ece0858c}\label{special__functions_8h_a98b05be7a3d798a81e7eed15ece0858c}} 
+\#define {\bfseries \+\_\+\+\_\+\+EPSILON\+\_\+x32\+\_\+\+\_\+}~1.\+19209e-\/007
+\begin{DoxyCompactList}\small\item\em defines 32-\/bit floating point computer epsilon \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a0e4babcb3dd25aa21b5b0fa413643c88}\label{special__functions_8h_a0e4babcb3dd25aa21b5b0fa413643c88}} 
+\#define {\bfseries \+\_\+\+\_\+\+EPSILON\+\_\+x64\+\_\+\+\_\+}~2.\+22045e-\/016
+\begin{DoxyCompactList}\small\item\em defines 64-\/bit floating point computer epsilon \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_ae31ab1f22b582472d5697ca1d4a030e0}\label{special__functions_8h_ae31ab1f22b582472d5697ca1d4a030e0}} 
+\#define {\bfseries \+\_\+\+\_\+\+EPSILON\+\_\+xx64\+\_\+\+\_\+}~1.\+0842e-\/019
+\begin{DoxyCompactList}\small\item\em defines extended 64-\/bit floating point computer epsilon \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a6eaf18f28b8bcd8aa3e36d0e307afa0e}\label{special__functions_8h_a6eaf18f28b8bcd8aa3e36d0e307afa0e}} 
+\#define {\bfseries PI0}~3.\+1415926535897932384626433832795
+\begin{DoxyCompactList}\small\item\em defines pi \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a2750dfdda752269a036f487a4a34b849}\label{special__functions_8h_a2750dfdda752269a036f487a4a34b849}} 
+\#define {\bfseries PI2}~6.\+283185307179586476925286766559
+\begin{DoxyCompactList}\small\item\em defines 2$\ast$pi \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a7c7671235d3f0d09bc5c011920fe0d5b}\label{special__functions_8h_a7c7671235d3f0d09bc5c011920fe0d5b}} 
+\#define {\bfseries PI\+\_\+2}~1.\+5707963267948966192313216916398
+\begin{DoxyCompactList}\small\item\em defines pi / 2 \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_a3945c7d7ed478e71bab7c5cd9c5eb579}\label{special__functions_8h_a3945c7d7ed478e71bab7c5cd9c5eb579}} 
+\#define {\bfseries PI\+\_\+4}~0.\+78539816339744830961566084581988
+\begin{DoxyCompactList}\small\item\em defines pi / 4 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a6d8ae01e3a5cdf87228bf0c11e0d9a07}{\+\_\+\+\_\+am\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} u, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} k)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a73f108269c4fe5a4fc7084d663a54920}{\+\_\+\+\_\+sn\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} u, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a852068c36a4bce93e885484a85f154bf}{\+\_\+\+\_\+cn\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} u, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a9f49e0deb7335a6c82defffdbd19918e}{\+\_\+\+\_\+dn\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} u, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_ac8d3c7e155d00374fa9d5c92fe4c4860}{\+\_\+\+\_\+cd\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} u, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_ab87b518efe929a37bd6cb0c7f7f85f72}{\+\_\+\+\_\+sd\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} u, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a3572ec039121d301071e8c3324d990e8}{\+\_\+\+\_\+nd\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} u, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a43d982f09de3e96fde974af9b9ba0bbf}{\+\_\+\+\_\+dc\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} u, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_aa593c3e628ea45157b14bcde43bcfdd1}{\+\_\+\+\_\+nc\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} u, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a1e9ab2894b043a8ad3c7a1b8d6c4bcd6}{\+\_\+\+\_\+sc\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} u, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a412e4efba29e3ce31f2999971973b8ea}{\+\_\+\+\_\+ns\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} u, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_aa334794b8cb3a1e13b423be5547cd30a}{\+\_\+\+\_\+ds\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} u, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_abff32dd03dd144e72ac327bfc8ec3ade}{\+\_\+\+\_\+cs\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} u, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a7fa0224a030fbd96d24f0a00c1611954}{\+\_\+\+\_\+isn\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} sn, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a4494868f53a6976e82bc1314ca89064b}{\+\_\+\+\_\+icn\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} sn, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a65259112aa591b6253f52e63a494f78a}{\+\_\+\+\_\+idn\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} dn, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_ab43e935a2408e713b3cb392fbc6d9f92}{\+\_\+\+\_\+icd\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} cd, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a7a7a9a70eb045a417c84e982ce11b784}{\+\_\+\+\_\+isd\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} sd, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a092194b3131394664d035a3b53626cc2}{\+\_\+\+\_\+ind\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} nd, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a4767e68b91a4f7534cb2b64d4f8c6899}{\+\_\+\+\_\+idc\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} dc, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_acacbbab02f5a828332f9a9636edc66c1}{\+\_\+\+\_\+inc\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} nc, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_ac134d47fba3ac51f40bf5b5f363c14b1}{\+\_\+\+\_\+isc\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} sc, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a4f775bff64a2dc2da99274c77e4df592}{\+\_\+\+\_\+ins\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} ns, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a4a693887628137e117144b43371dae6c}{\+\_\+\+\_\+ids\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} ds, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a45ed54745dcebc91c919d8d68d1dbc95}{\+\_\+\+\_\+ics\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} cs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a3fa06fe8d85507b8ee533ab4794902f6}{\+\_\+\+\_\+ellip\+\_\+k\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} k)
+\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a73e0da019ae99186ee62812ec95ceb7e}{\+\_\+\+\_\+ellip\+\_\+e\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} k)
+\item 
+\mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}} \mbox{\hyperlink{special__functions_8h_a69d5fae17f06b79a99c0f72af053f220}{\+\_\+\+\_\+factorial\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_acacb808424e710c3b69f94237e8bbcca}{\+\_\+\+\_\+ix64}} n)
+\item 
+\mbox{\hyperlink{special__functions_8h_af307233f537d213a2809e727ac1a0d2e}{\+\_\+\+\_\+uix64}} \mbox{\hyperlink{special__functions_8h_af1c663c386e60967c93566e9dd00ff3e}{\+\_\+\+\_\+gamma\+\_\+integer\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_af307233f537d213a2809e727ac1a0d2e}{\+\_\+\+\_\+uix64}} n)
+\item 
+\mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}} \mbox{\hyperlink{special__functions_8h_aea0f8be9e1aab3b6b3d385b092e4c27f}{\+\_\+\+\_\+bessel\+\_\+i0\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}} \mbox{\hyperlink{special__functions_8h_aaa41509fb008b683d2ddb2c6a97d28ca}{\+\_\+\+\_\+bessel\+\_\+i1\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}} x)
+\item 
+\mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}} \mbox{\hyperlink{special__functions_8h_ab5a36d37c5f76f35103ef3f1f0a22c73}{\+\_\+\+\_\+bessel\+\_\+in\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}} x, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order)
+\item 
+\mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}} \mbox{\hyperlink{special__functions_8h_a9671f0e28146b06d6a328846d3453b2e}{\+\_\+\+\_\+modified\+\_\+bessel\+\_\+in\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}} x, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order)
+\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{special__functions_8h_a8da2ecad7e3a361f48cd300d54c18f7d}{\+\_\+\+\_\+sign\+\_\+\+\_\+}} (T input)
+\begin{DoxyCompactList}\small\item\em Template sign function. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} \mbox{\hyperlink{special__functions_8h_a0765799ca4abb9e483c3ef879af01fb6}{\+\_\+\+\_\+absf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex number modulus computation function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_ae1074b74463552317e6343f9db131be8}{\+\_\+\+\_\+absf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex number modulus computation function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} \mbox{\hyperlink{special__functions_8h_a9d52070119bede5b645e38ff626ab49d}{\+\_\+\+\_\+argf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex number angle computation function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{special__functions_8h_a97a6da6fc74d9148bf987e200cef73fb}{\+\_\+\+\_\+argf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex number angle computation function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \mbox{\hyperlink{special__functions_8h_a01fec2085d62c37467538eeb9ae36e91}{\+\_\+\+\_\+sqrtf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex number square root computation function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \mbox{\hyperlink{special__functions_8h_ae1899ec36517e8e719542d62a0653850}{\+\_\+\+\_\+sqrtf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex number square root computation function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \mbox{\hyperlink{special__functions_8h_a319cdc31249b735fc75ef40c9743e317}{\+\_\+\+\_\+conjf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex number conjugation functon \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \mbox{\hyperlink{special__functions_8h_a6466a2fb498e4f1a1e37e97e3459a580}{\+\_\+\+\_\+conjf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex number conjugation functon \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \mbox{\hyperlink{special__functions_8h_ae6c8ecd4418446de7fe4d12e6e8f457b}{\+\_\+\+\_\+normf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex number normalization \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \mbox{\hyperlink{special__functions_8h_aafa06abf4305391fe6770104a80e705b}{\+\_\+\+\_\+normf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex number normalization \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \mbox{\hyperlink{special__functions_8h_a7c577c76d98370d99503202332669bba}{\+\_\+\+\_\+rotf\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} arg, bool mode)
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex rotation vector form function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \mbox{\hyperlink{special__functions_8h_ae5c83acf9da5a0127399833249fe2d1b}{\+\_\+\+\_\+rotf\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} arg, bool mode)
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex rotation vector form function \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{special__functions_8h_aa5b90837465d875edbe8117632290f2d}\label{special__functions_8h_aa5b90837465d875edbe8117632290f2d}} 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ {\bfseries \+\_\+\+\_\+sinhf\+\_\+\+\_\+} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\item 
+\mbox{\Hypertarget{special__functions_8h_a708deccce1973fa1175259a6926f5b50}\label{special__functions_8h_a708deccce1973fa1175259a6926f5b50}} 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ {\bfseries \+\_\+\+\_\+sinhf\+\_\+\+\_\+} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\item 
+\mbox{\Hypertarget{special__functions_8h_a10fc6e162af5e694043ab86af22e8419}\label{special__functions_8h_a10fc6e162af5e694043ab86af22e8419}} 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ {\bfseries \+\_\+\+\_\+coshf\+\_\+\+\_\+} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\item 
+\mbox{\Hypertarget{special__functions_8h_a03c37ec15766e2e11739e249f74847bf}\label{special__functions_8h_a03c37ec15766e2e11739e249f74847bf}} 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ {\bfseries \+\_\+\+\_\+coshf\+\_\+\+\_\+} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\item 
+\mbox{\Hypertarget{special__functions_8h_a7320478bb00e242bc6212152d134d04d}\label{special__functions_8h_a7320478bb00e242bc6212152d134d04d}} 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ {\bfseries \+\_\+\+\_\+tanhf\+\_\+\+\_\+} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\item 
+\mbox{\Hypertarget{special__functions_8h_a3bbe03348afd2d8f88779eb6734d7924}\label{special__functions_8h_a3bbe03348afd2d8f88779eb6734d7924}} 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ {\bfseries \+\_\+\+\_\+tanhf\+\_\+\+\_\+} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\item 
+\mbox{\Hypertarget{special__functions_8h_a0a844a6b442813ae92c0806fcfddc56c}\label{special__functions_8h_a0a844a6b442813ae92c0806fcfddc56c}} 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ {\bfseries \+\_\+\+\_\+ctnhf\+\_\+\+\_\+} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\item 
+\mbox{\Hypertarget{special__functions_8h_afbfd6964ab27d78b180a90f367679550}\label{special__functions_8h_afbfd6964ab27d78b180a90f367679550}} 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ {\bfseries \+\_\+\+\_\+ctnhf\+\_\+\+\_\+} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+SPECIAL MATHEMATICAL FUNCTIONS HEADER. 
+
+\begin{DoxyAuthor}{Author}
+A.\+Tykvinskiy 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+28.\+12.\+2021 
+\end{DoxyDate}
+\begin{DoxyVersion}{Version}
+1.\+0
+\end{DoxyVersion}
+The header declares specialized mathematical functions and classes that utilized for digital signal processing (DSP). 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{special__functions_8h_a0765799ca4abb9e483c3ef879af01fb6}\label{special__functions_8h_a0765799ca4abb9e483c3ef879af01fb6}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_absf\_\_@{\_\_absf\_\_}}
+\index{\_\_absf\_\_@{\_\_absf\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_absf\_\_()}{\_\_absf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} \+\_\+\+\_\+absf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+32-\/bit floating point complex number modulus computation function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns input 32-\/bit complex number modulus\+: \[ abs(z) = \sqrt{ real\left( z \right)^2 + imag\left( z \right)^2 } \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_ae1074b74463552317e6343f9db131be8}\label{special__functions_8h_ae1074b74463552317e6343f9db131be8}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_absf\_\_@{\_\_absf\_\_}}
+\index{\_\_absf\_\_@{\_\_absf\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_absf\_\_()}{\_\_absf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+absf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+64-\/bit floating point complex number modulus computation function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns input 64-\/bit complex number modulus\+: \[ abs(z) = \sqrt{ real\left( z \right)^2 + imag\left( z \right)^2 } \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a6d8ae01e3a5cdf87228bf0c11e0d9a07}\label{special__functions_8h_a6d8ae01e3a5cdf87228bf0c11e0d9a07}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_am\_\_@{\_\_am\_\_}}
+\index{\_\_am\_\_@{\_\_am\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_am\_\_()}{\_\_am\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+am\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{u,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{k }\end{DoxyParamCaption})}
+
+Jacobi amplitude function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}u\mbox{]}} & incomplete elliptic integral of the first kind \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Jacobi amplitude function
+\end{DoxyReturn}
+The computes the Jacobi amplitude function using the method of the arithmetic-\/geometric mean. \mbox{\Hypertarget{special__functions_8h_a9d52070119bede5b645e38ff626ab49d}\label{special__functions_8h_a9d52070119bede5b645e38ff626ab49d}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_argf\_\_@{\_\_argf\_\_}}
+\index{\_\_argf\_\_@{\_\_argf\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_argf\_\_()}{\_\_argf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} \+\_\+\+\_\+argf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+32-\/bit floating point complex number angle computation function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns input 32-\/bit complex number angle\+: \[ arg(z) = atan2\left( real\left( z \right) , imag\left( z \right) \right) \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a97a6da6fc74d9148bf987e200cef73fb}\label{special__functions_8h_a97a6da6fc74d9148bf987e200cef73fb}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_argf\_\_@{\_\_argf\_\_}}
+\index{\_\_argf\_\_@{\_\_argf\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_argf\_\_()}{\_\_argf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+argf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+64-\/bit floating point complex number angle computation function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns input 64-\/bit complex number angle\+: \[ arg(z) = atan2\left( real\left( z \right) , imag\left( z \right) \right) \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_aea0f8be9e1aab3b6b3d385b092e4c27f}\label{special__functions_8h_aea0f8be9e1aab3b6b3d385b092e4c27f}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_bessel\_i0\_\_@{\_\_bessel\_i0\_\_}}
+\index{\_\_bessel\_i0\_\_@{\_\_bessel\_i0\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_bessel\_i0\_\_()}{\_\_bessel\_i0\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}} \+\_\+\+\_\+bessel\+\_\+i0\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}}}]{x }\end{DoxyParamCaption})}
+
+Zero order Bessel function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}x\mbox{]}} & input x \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns zero order Bessel function value 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_aaa41509fb008b683d2ddb2c6a97d28ca}\label{special__functions_8h_aaa41509fb008b683d2ddb2c6a97d28ca}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_bessel\_i1\_\_@{\_\_bessel\_i1\_\_}}
+\index{\_\_bessel\_i1\_\_@{\_\_bessel\_i1\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_bessel\_i1\_\_()}{\_\_bessel\_i1\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}} \+\_\+\+\_\+bessel\+\_\+i1\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}}}]{x }\end{DoxyParamCaption})}
+
+First order Bessel function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}x\mbox{]}} & input x \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns first order Bessel function value 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_ab5a36d37c5f76f35103ef3f1f0a22c73}\label{special__functions_8h_ab5a36d37c5f76f35103ef3f1f0a22c73}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_bessel\_in\_\_@{\_\_bessel\_in\_\_}}
+\index{\_\_bessel\_in\_\_@{\_\_bessel\_in\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_bessel\_in\_\_()}{\_\_bessel\_in\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}} \+\_\+\+\_\+bessel\+\_\+in\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}}}]{x,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order }\end{DoxyParamCaption})}
+
+N-\/th order Bessel function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}x\mbox{]}} & input x \\
+\hline
+{\em \mbox{[}n\mbox{]}} & Bessel function order \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns N-\/th order Bessel function value 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_ac8d3c7e155d00374fa9d5c92fe4c4860}\label{special__functions_8h_ac8d3c7e155d00374fa9d5c92fe4c4860}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_cd\_\_@{\_\_cd\_\_}}
+\index{\_\_cd\_\_@{\_\_cd\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_cd\_\_()}{\_\_cd\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+cd\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{u,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi CD function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}u\mbox{]}} & incomplete elliptic integral of the first kind \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi CD( u , x ) = CN( u , x ) / DN( u , x ) function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a852068c36a4bce93e885484a85f154bf}\label{special__functions_8h_a852068c36a4bce93e885484a85f154bf}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_cn\_\_@{\_\_cn\_\_}}
+\index{\_\_cn\_\_@{\_\_cn\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_cn\_\_()}{\_\_cn\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+cn\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{u,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi CN function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}u\mbox{]}} & incomplete elliptic integral of the first kind \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi CN( u , x ) = cos( am( u , x ) ) function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a319cdc31249b735fc75ef40c9743e317}\label{special__functions_8h_a319cdc31249b735fc75ef40c9743e317}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_conjf\_\_@{\_\_conjf\_\_}}
+\index{\_\_conjf\_\_@{\_\_conjf\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_conjf\_\_()}{\_\_conjf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+\+\_\+conjf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+32-\/bit floating point complex number conjugation functon 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns input 32-\/bit complex conjugated number\+: \[ conj(z) = real(z) + j * imag(z) \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a6466a2fb498e4f1a1e37e97e3459a580}\label{special__functions_8h_a6466a2fb498e4f1a1e37e97e3459a580}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_conjf\_\_@{\_\_conjf\_\_}}
+\index{\_\_conjf\_\_@{\_\_conjf\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_conjf\_\_()}{\_\_conjf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+\+\_\+conjf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+64-\/bit floating point complex number conjugation functon 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns input 64-\/bit complex conjugated number\+: \[ conj(z) = real(z) + j * imag(z) \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_abff32dd03dd144e72ac327bfc8ec3ade}\label{special__functions_8h_abff32dd03dd144e72ac327bfc8ec3ade}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_cs\_\_@{\_\_cs\_\_}}
+\index{\_\_cs\_\_@{\_\_cs\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_cs\_\_()}{\_\_cs\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+cs\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{u,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi CS function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}u\mbox{]}} & incomplete elliptic integral of the first kind \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi CS( u , x ) = CN( u , x ) / SN( u , x ) function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a43d982f09de3e96fde974af9b9ba0bbf}\label{special__functions_8h_a43d982f09de3e96fde974af9b9ba0bbf}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_dc\_\_@{\_\_dc\_\_}}
+\index{\_\_dc\_\_@{\_\_dc\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_dc\_\_()}{\_\_dc\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+dc\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{u,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi DC function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}u\mbox{]}} & incomplete elliptic integral of the first kind \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi DC( u , x ) = 1 / ND( u , x ) function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a9f49e0deb7335a6c82defffdbd19918e}\label{special__functions_8h_a9f49e0deb7335a6c82defffdbd19918e}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_dn\_\_@{\_\_dn\_\_}}
+\index{\_\_dn\_\_@{\_\_dn\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_dn\_\_()}{\_\_dn\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+dn\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{u,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi DN function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}u\mbox{]}} & incomplete elliptic integral of the first kind \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi DN( u , x ) = sqrt( 1 -\/ x $\ast$ x $\ast$ SN( u , x ) $\ast$ SN( u , x ) ) function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_aa334794b8cb3a1e13b423be5547cd30a}\label{special__functions_8h_aa334794b8cb3a1e13b423be5547cd30a}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_ds\_\_@{\_\_ds\_\_}}
+\index{\_\_ds\_\_@{\_\_ds\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_ds\_\_()}{\_\_ds\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+ds\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{u,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi DS function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}u\mbox{]}} & incomplete elliptic integral of the first kind \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi DS( u , x ) = DN( u , x ) / SN( u , x ) function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a73e0da019ae99186ee62812ec95ceb7e}\label{special__functions_8h_a73e0da019ae99186ee62812ec95ceb7e}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_ellip\_e\_\_@{\_\_ellip\_e\_\_}}
+\index{\_\_ellip\_e\_\_@{\_\_ellip\_e\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_ellip\_e\_\_()}{\_\_ellip\_e\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+ellip\+\_\+e\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{k }\end{DoxyParamCaption})}
+
+Elliptic integral of the second kind 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic integral of the second kind 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a3fa06fe8d85507b8ee533ab4794902f6}\label{special__functions_8h_a3fa06fe8d85507b8ee533ab4794902f6}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_ellip\_k\_\_@{\_\_ellip\_k\_\_}}
+\index{\_\_ellip\_k\_\_@{\_\_ellip\_k\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_ellip\_k\_\_()}{\_\_ellip\_k\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+ellip\+\_\+k\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{k }\end{DoxyParamCaption})}
+
+Elliptic integral of the first kind 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic integral of the first kind 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a69d5fae17f06b79a99c0f72af053f220}\label{special__functions_8h_a69d5fae17f06b79a99c0f72af053f220}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_factorial\_\_@{\_\_factorial\_\_}}
+\index{\_\_factorial\_\_@{\_\_factorial\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_factorial\_\_()}{\_\_factorial\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}} \+\_\+\+\_\+factorial\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_acacb808424e710c3b69f94237e8bbcca}{\+\_\+\+\_\+ix64}}}]{n }\end{DoxyParamCaption})}
+
+Factorial computation function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}n\mbox{]}} & input n \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns n! 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_af1c663c386e60967c93566e9dd00ff3e}\label{special__functions_8h_af1c663c386e60967c93566e9dd00ff3e}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_gamma\_integer\_\_@{\_\_gamma\_integer\_\_}}
+\index{\_\_gamma\_integer\_\_@{\_\_gamma\_integer\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_gamma\_integer\_\_()}{\_\_gamma\_integer\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_af307233f537d213a2809e727ac1a0d2e}{\+\_\+\+\_\+uix64}} \+\_\+\+\_\+gamma\+\_\+integer\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_af307233f537d213a2809e727ac1a0d2e}{\+\_\+\+\_\+uix64}}}]{n }\end{DoxyParamCaption})}
+
+Integer gamma function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}n\mbox{]}} & input n \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns ( n -\/ 1 )! 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_ab43e935a2408e713b3cb392fbc6d9f92}\label{special__functions_8h_ab43e935a2408e713b3cb392fbc6d9f92}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_icd\_\_@{\_\_icd\_\_}}
+\index{\_\_icd\_\_@{\_\_icd\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_icd\_\_()}{\_\_icd\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+icd\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{cd,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi inverse CD function\textbackslash{} 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}dn\mbox{]}} & Elliptic Jacobi CD function \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi inverse CD function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a4494868f53a6976e82bc1314ca89064b}\label{special__functions_8h_a4494868f53a6976e82bc1314ca89064b}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_icn\_\_@{\_\_icn\_\_}}
+\index{\_\_icn\_\_@{\_\_icn\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_icn\_\_()}{\_\_icn\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+icn\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{sn,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi inverse CN function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}cn\mbox{]}} & elliptic Jacobi CN function \\
+\hline
+{\em \mbox{[}x\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi inverse CN function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a45ed54745dcebc91c919d8d68d1dbc95}\label{special__functions_8h_a45ed54745dcebc91c919d8d68d1dbc95}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_ics\_\_@{\_\_ics\_\_}}
+\index{\_\_ics\_\_@{\_\_ics\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_ics\_\_()}{\_\_ics\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+ics\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{cs,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi inverse CS function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}dn\mbox{]}} & Elliptic Jacobi CS function \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi inverse CS function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a4767e68b91a4f7534cb2b64d4f8c6899}\label{special__functions_8h_a4767e68b91a4f7534cb2b64d4f8c6899}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_idc\_\_@{\_\_idc\_\_}}
+\index{\_\_idc\_\_@{\_\_idc\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_idc\_\_()}{\_\_idc\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+idc\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{dc,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi inverse DC function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}dn\mbox{]}} & Elliptic Jacobi DC function \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi inverse DC function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a65259112aa591b6253f52e63a494f78a}\label{special__functions_8h_a65259112aa591b6253f52e63a494f78a}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_idn\_\_@{\_\_idn\_\_}}
+\index{\_\_idn\_\_@{\_\_idn\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_idn\_\_()}{\_\_idn\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+idn\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{dn,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi inverse DN function\textbackslash{} 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}dn\mbox{]}} & Elliptic Jacobi DN function \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi inverse DN function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a4a693887628137e117144b43371dae6c}\label{special__functions_8h_a4a693887628137e117144b43371dae6c}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_ids\_\_@{\_\_ids\_\_}}
+\index{\_\_ids\_\_@{\_\_ids\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_ids\_\_()}{\_\_ids\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+ids\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{ds,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi inverse DS function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}dn\mbox{]}} & Elliptic Jacobi DS function \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi inverse DS function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_acacbbab02f5a828332f9a9636edc66c1}\label{special__functions_8h_acacbbab02f5a828332f9a9636edc66c1}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_inc\_\_@{\_\_inc\_\_}}
+\index{\_\_inc\_\_@{\_\_inc\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_inc\_\_()}{\_\_inc\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+inc\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{nc,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi inverse NC function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}dn\mbox{]}} & Elliptic Jacobi NC function \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi inverse NC function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a092194b3131394664d035a3b53626cc2}\label{special__functions_8h_a092194b3131394664d035a3b53626cc2}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_ind\_\_@{\_\_ind\_\_}}
+\index{\_\_ind\_\_@{\_\_ind\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_ind\_\_()}{\_\_ind\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+ind\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{nd,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi inverse ND function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}dn\mbox{]}} & Elliptic Jacobi ND function \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi inverse ND function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a4f775bff64a2dc2da99274c77e4df592}\label{special__functions_8h_a4f775bff64a2dc2da99274c77e4df592}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_ins\_\_@{\_\_ins\_\_}}
+\index{\_\_ins\_\_@{\_\_ins\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_ins\_\_()}{\_\_ins\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+ins\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{ns,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi inverse NS function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}dn\mbox{]}} & Elliptic Jacobi NS function \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi inverse NS function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_ac134d47fba3ac51f40bf5b5f363c14b1}\label{special__functions_8h_ac134d47fba3ac51f40bf5b5f363c14b1}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_isc\_\_@{\_\_isc\_\_}}
+\index{\_\_isc\_\_@{\_\_isc\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_isc\_\_()}{\_\_isc\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+isc\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{sc,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi inverse SC function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}dn\mbox{]}} & Elliptic Jacobi SC function \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi inverse SC function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a7a7a9a70eb045a417c84e982ce11b784}\label{special__functions_8h_a7a7a9a70eb045a417c84e982ce11b784}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_isd\_\_@{\_\_isd\_\_}}
+\index{\_\_isd\_\_@{\_\_isd\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_isd\_\_()}{\_\_isd\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+isd\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{sd,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi inverse SD function\textbackslash{} 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}dn\mbox{]}} & Elliptic Jacobi SD function \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi inverse SD function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a7fa0224a030fbd96d24f0a00c1611954}\label{special__functions_8h_a7fa0224a030fbd96d24f0a00c1611954}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_isn\_\_@{\_\_isn\_\_}}
+\index{\_\_isn\_\_@{\_\_isn\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_isn\_\_()}{\_\_isn\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+isn\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{sn,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi inverse SN function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}sn\mbox{]}} & Elliptic Jacobi SN function \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi inverse SN function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a9671f0e28146b06d6a328846d3453b2e}\label{special__functions_8h_a9671f0e28146b06d6a328846d3453b2e}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_modified\_bessel\_in\_\_@{\_\_modified\_bessel\_in\_\_}}
+\index{\_\_modified\_bessel\_in\_\_@{\_\_modified\_bessel\_in\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_modified\_bessel\_in\_\_()}{\_\_modified\_bessel\_in\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}} \+\_\+\+\_\+modified\+\_\+bessel\+\_\+in\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a3aacdef884931407dac0c8d6208e647b}{\+\_\+\+\_\+fxx64}}}]{x,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order }\end{DoxyParamCaption})}
+
+N-\/th order modified Bessel function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}x\mbox{]}} & input x \\
+\hline
+{\em \mbox{[}n\mbox{]}} & Modified Bessel function order \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns N-\/th order modified Bessel function value 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_aa593c3e628ea45157b14bcde43bcfdd1}\label{special__functions_8h_aa593c3e628ea45157b14bcde43bcfdd1}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_nc\_\_@{\_\_nc\_\_}}
+\index{\_\_nc\_\_@{\_\_nc\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_nc\_\_()}{\_\_nc\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+nc\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{u,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi NC function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}u\mbox{]}} & incomplete elliptic integral of the first kind \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi NC( u , x ) = 1 / CN( u , x ) function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a3572ec039121d301071e8c3324d990e8}\label{special__functions_8h_a3572ec039121d301071e8c3324d990e8}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_nd\_\_@{\_\_nd\_\_}}
+\index{\_\_nd\_\_@{\_\_nd\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_nd\_\_()}{\_\_nd\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+nd\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{u,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi ND function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}u\mbox{]}} & incomplete elliptic integral of the first kind \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi ND( u , x ) = SN( u , x ) / DN( u , x ) function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_ae6c8ecd4418446de7fe4d12e6e8f457b}\label{special__functions_8h_ae6c8ecd4418446de7fe4d12e6e8f457b}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_normf\_\_@{\_\_normf\_\_}}
+\index{\_\_normf\_\_@{\_\_normf\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_normf\_\_()}{\_\_normf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+\+\_\+normf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+32-\/bit floating point complex number normalization 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns 32-\/bit normalized complex number\+: \[ norm(z) = \frac{ real(z) + j * imag(z) }{ abs( z ) } \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_aafa06abf4305391fe6770104a80e705b}\label{special__functions_8h_aafa06abf4305391fe6770104a80e705b}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_normf\_\_@{\_\_normf\_\_}}
+\index{\_\_normf\_\_@{\_\_normf\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_normf\_\_()}{\_\_normf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+\+\_\+normf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+64-\/bit floating point complex number normalization 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns 64-\/bit normalized complex number\+: \[ norm(z) = \frac{ real(z) + j * imag(z) }{ abs( z ) } \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a412e4efba29e3ce31f2999971973b8ea}\label{special__functions_8h_a412e4efba29e3ce31f2999971973b8ea}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_ns\_\_@{\_\_ns\_\_}}
+\index{\_\_ns\_\_@{\_\_ns\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_ns\_\_()}{\_\_ns\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+ns\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{u,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi NS function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}u\mbox{]}} & incomplete elliptic integral of the first kind \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi NS( u , x ) = 1 / SN( u , x ) function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a7c577c76d98370d99503202332669bba}\label{special__functions_8h_a7c577c76d98370d99503202332669bba}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_rotf\_\_@{\_\_rotf\_\_}}
+\index{\_\_rotf\_\_@{\_\_rotf\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_rotf\_\_()}{\_\_rotf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+\+\_\+rotf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}}}]{arg,  }\item[{bool}]{mode }\end{DoxyParamCaption})}
+
+
+
+32-\/bit floating point complex rotation vector form function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & arg \mbox{]} input unit vector angle \\
+\hline
+{\em \mbox{[}} & mode \mbox{]} input unit vector angle format ( degrees / radians ) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns 32-\/bit unit vector represented by a complex number with argument arg\+: \[ rot( arg ) = \begin{cases} cos( arg ) + sin( arg ) \quad , \quad mode = 0 \\ cos( arg * \pi / 180 ) + sin( arg * \pi / 180 ) \quad , \quad mode = 1 \end{cases} \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_ae5c83acf9da5a0127399833249fe2d1b}\label{special__functions_8h_ae5c83acf9da5a0127399833249fe2d1b}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_rotf\_\_@{\_\_rotf\_\_}}
+\index{\_\_rotf\_\_@{\_\_rotf\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_rotf\_\_()}{\_\_rotf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+\+\_\+rotf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{arg,  }\item[{bool}]{mode }\end{DoxyParamCaption})}
+
+
+
+64-\/bit floating point complex rotation vector form function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & arg \mbox{]} input unit vector angle \\
+\hline
+{\em \mbox{[}} & mode \mbox{]} input unit vector angle format ( degrees / radians ) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns 64-\/bit unit vector represented by a complex number with argument arg\+: \[ rot( arg ) = \begin{cases} cos( arg ) + sin( arg ) \quad , \quad mode = 0 \\ cos( arg * \pi / 180 ) + sin( arg * \pi / 180 ) \quad , \quad mode = 1 \end{cases} \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a1e9ab2894b043a8ad3c7a1b8d6c4bcd6}\label{special__functions_8h_a1e9ab2894b043a8ad3c7a1b8d6c4bcd6}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_sc\_\_@{\_\_sc\_\_}}
+\index{\_\_sc\_\_@{\_\_sc\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_sc\_\_()}{\_\_sc\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+sc\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{u,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi SC function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}u\mbox{]}} & incomplete elliptic integral of the first kind \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi SC( u , x ) = SN( u , x ) / CN( u , x ) function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_ab87b518efe929a37bd6cb0c7f7f85f72}\label{special__functions_8h_ab87b518efe929a37bd6cb0c7f7f85f72}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_sd\_\_@{\_\_sd\_\_}}
+\index{\_\_sd\_\_@{\_\_sd\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_sd\_\_()}{\_\_sd\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+sd\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{u,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi SD function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}u\mbox{]}} & incomplete elliptic integral of the first kind \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi SD( u , x ) = SN( u , x ) / DN( u , x ) function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a8da2ecad7e3a361f48cd300d54c18f7d}\label{special__functions_8h_a8da2ecad7e3a361f48cd300d54c18f7d}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_sign\_\_@{\_\_sign\_\_}}
+\index{\_\_sign\_\_@{\_\_sign\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_sign\_\_()}{\_\_sign\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \+\_\+\+\_\+sign\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{T}]{input }\end{DoxyParamCaption})}
+
+
+
+Template sign function. 
+
+the function returns 1 if the input is positive and -\/1 otherwise \mbox{\Hypertarget{special__functions_8h_a73f108269c4fe5a4fc7084d663a54920}\label{special__functions_8h_a73f108269c4fe5a4fc7084d663a54920}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_sn\_\_@{\_\_sn\_\_}}
+\index{\_\_sn\_\_@{\_\_sn\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_sn\_\_()}{\_\_sn\_\_()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+sn\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{u,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{x }\end{DoxyParamCaption})}
+
+Elliptic Jacobi SN function 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}u\mbox{]}} & incomplete elliptic integral of the first kind \\
+\hline
+{\em \mbox{[}k\mbox{]}} & elliptical modulus \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns Ellptic Jacobi SN( u , x ) = sin( am( u , x ) ) function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_a01fec2085d62c37467538eeb9ae36e91}\label{special__functions_8h_a01fec2085d62c37467538eeb9ae36e91}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_sqrtf\_\_@{\_\_sqrtf\_\_}}
+\index{\_\_sqrtf\_\_@{\_\_sqrtf\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_sqrtf\_\_()}{\_\_sqrtf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+\+\_\+sqrtf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+32-\/bit floating point complex number square root computation function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns input 32-\/bit complex number square root\+: \[ \sqrt{z} = \sqrt{ abs(z) } * cos( arg(z) ) + j*\sqrt{ abs(z) } * sin( arg(z) ) \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{special__functions_8h_ae1899ec36517e8e719542d62a0653850}\label{special__functions_8h_ae1899ec36517e8e719542d62a0653850}} 
+\index{special\_functions.h@{special\_functions.h}!\_\_sqrtf\_\_@{\_\_sqrtf\_\_}}
+\index{\_\_sqrtf\_\_@{\_\_sqrtf\_\_}!special\_functions.h@{special\_functions.h}}
+\doxysubsubsection{\texorpdfstring{\_\_sqrtf\_\_()}{\_\_sqrtf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+\+\_\+sqrtf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+64-\/bit floating point complex number square root computation function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns input 64-\/bit complex number square root\+: \[ \sqrt{z} = \sqrt{ abs(z) } * cos( arg(z) ) + j*\sqrt{ abs(z) } * sin( arg(z) ) \] 
+\end{DoxyReturn}

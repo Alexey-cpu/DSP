@@ -1,0 +1,1810 @@
+\hypertarget{_f_i_r_8h_source}{}\doxysection{FIR.\+h}
+\label{_f_i_r_8h_source}\index{C:/Qt\_projects/DigitalFilters\_x32/include/FIR.h@{C:/Qt\_projects/DigitalFilters\_x32/include/FIR.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{2 \textcolor{comment}{//A.M.Tykvinsky, 21.12.2021}}
+\DoxyCodeLine{3 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{4 \textcolor{comment}{// TEMPLATE FINITE IMPULSE RESPONSE FILTER CLASS}}
+\DoxyCodeLine{5 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{6 }
+\DoxyCodeLine{7 \textcolor{preprocessor}{\#ifndef FIR\_H}}
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#define FIR\_H}}
+\DoxyCodeLine{9 }
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#ifndef \_\_ALG\_PLATFORM }\textcolor{comment}{// identify if the compilation is for ProsoftSystems IDE}}
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <iostream>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <fstream>}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include "{}buffer.h"{}}}
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{special__functions_8h}{special\_functions.h}}"{}}}
+\DoxyCodeLine{17 }
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#ifndef \_\_fx32}}
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#define \_\_fx32 float}}
+\DoxyCodeLine{20 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22 \textcolor{preprocessor}{\#ifndef \_\_fx64}}
+\DoxyCodeLine{23 \textcolor{preprocessor}{\#define \_\_fx64 double}}
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{26 \textcolor{preprocessor}{\#ifndef \_\_ix32}}
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#define \_\_ix32 int}}
+\DoxyCodeLine{28 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30 \textcolor{comment}{// customized PI:}}
+\DoxyCodeLine{31 \textcolor{preprocessor}{\#ifndef PI0}}
+\DoxyCodeLine{32 \textcolor{preprocessor}{\#define PI0 3.1415926535897932384626433832795}}
+\DoxyCodeLine{33 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{34 }
+\DoxyCodeLine{35 \textcolor{preprocessor}{\#ifndef PI2}}
+\DoxyCodeLine{36 \textcolor{preprocessor}{\#define PI2 6.283185307179586476925286766559}}
+\DoxyCodeLine{37 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{38 }
+\DoxyCodeLine{39 \textcolor{preprocessor}{\#ifndef PI\_2}}
+\DoxyCodeLine{40 \textcolor{preprocessor}{\#define PI\_2 1.5707963267948966192313216916398}}
+\DoxyCodeLine{41 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{42 }
+\DoxyCodeLine{43 \textcolor{preprocessor}{\#ifndef PI\_4}}
+\DoxyCodeLine{44 \textcolor{preprocessor}{\#define PI\_4 0.78539816339744830961566084581988}}
+\DoxyCodeLine{45 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{46 }
+\DoxyCodeLine{47 \textcolor{comment}{// fir templates:}}
+\DoxyCodeLine{48 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \textcolor{keyword}{class }\mbox{\hyperlink{classfir__lp}{fir\_lp}}; \textcolor{comment}{// fir lowpass}}
+\DoxyCodeLine{49 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \textcolor{keyword}{class }\mbox{\hyperlink{classfir__hp}{fir\_hp}}; \textcolor{comment}{// fir highpass}}
+\DoxyCodeLine{50 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \textcolor{keyword}{class }\mbox{\hyperlink{classfir__bp}{fir\_bp}}; \textcolor{comment}{// fir bandpass}}
+\DoxyCodeLine{51 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \textcolor{keyword}{class }\mbox{\hyperlink{classfir__bs}{fir\_bs}}; \textcolor{comment}{// fir bandstop}}
+\DoxyCodeLine{52 }
+\DoxyCodeLine{53 \textcolor{comment}{// lowpass fir implemetations:}}
+\DoxyCodeLine{54 }
+\DoxyCodeLine{55 \textcolor{comment}{// float x32:}}
+\DoxyCodeLine{56 \textcolor{keyword}{template}<> \textcolor{keyword}{class }\mbox{\hyperlink{classfir__lp}{fir\_lp}}<\mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}}>}
+\DoxyCodeLine{57 \{}
+\DoxyCodeLine{58     \textcolor{keyword}{typedef} \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}} \_\_type ;}
+\DoxyCodeLine{59     \textcolor{keyword}{typedef} \textcolor{keywordtype}{bool}   \_\_bool ;}
+\DoxyCodeLine{60     \textcolor{keyword}{typedef} \textcolor{keywordtype}{void}   \_\_void ;}
+\DoxyCodeLine{61 }
+\DoxyCodeLine{62     \textcolor{comment}{// system variables:}}
+\DoxyCodeLine{63     \_\_type m\_Ts;}
+\DoxyCodeLine{64     \_\_type m\_Fs;}
+\DoxyCodeLine{65     \_\_type m\_Fn;}
+\DoxyCodeLine{66     \_\_type m\_Fstop;}
+\DoxyCodeLine{67     \_\_type m\_Ns;}
+\DoxyCodeLine{68     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} m\_order;}
+\DoxyCodeLine{69     \_\_bool m\_scale;}
+\DoxyCodeLine{70 }
+\DoxyCodeLine{71     \textcolor{comment}{// coefficients:}}
+\DoxyCodeLine{72     \_\_type *m\_buff\_cx;}
+\DoxyCodeLine{73 }
+\DoxyCodeLine{74 \textcolor{keyword}{public}:}
+\DoxyCodeLine{75 }
+\DoxyCodeLine{76     \_\_type m\_pH;}
+\DoxyCodeLine{77     \_\_type m\_Km;}
+\DoxyCodeLine{78     \_\_type m\_out;}
+\DoxyCodeLine{79 }
+\DoxyCodeLine{80     \textcolor{comment}{// buffers:}}
+\DoxyCodeLine{81     \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer< \_\_type >}} m\_buff\_sx;}
+\DoxyCodeLine{82 }
+\DoxyCodeLine{83     \textcolor{comment}{// window function object:}}
+\DoxyCodeLine{84     \mbox{\hyperlink{classwind__fcn}{wind\_fcn}} m\_wind\_fcn;}
+\DoxyCodeLine{85 }
+\DoxyCodeLine{86     \textcolor{comment}{// coefficients computation function:}}
+\DoxyCodeLine{87     \_\_void coeff\_calc()}
+\DoxyCodeLine{88     \{}
+\DoxyCodeLine{89         \textcolor{comment}{// check if the window is ready to use:}}
+\DoxyCodeLine{90         \textcolor{keywordflow}{if} ( m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_ad71b3a4bf91eae2db01d060b8b2ff0c2}{is\_ready}}() == 0 ) m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a0b84c65f589e9f9253c78fdb0b449948}{Chebyshev}}(100);}
+\DoxyCodeLine{91 }
+\DoxyCodeLine{92         \textcolor{comment}{// coefficients computation:}}
+\DoxyCodeLine{93         \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} k = 0;}
+\DoxyCodeLine{94         m\_Fstop /= m\_Fs;}
+\DoxyCodeLine{95 }
+\DoxyCodeLine{96         \textcolor{keywordflow}{if} (m\_order \% 2 == 0) \textcolor{comment}{// even order filter coefficients computation}}
+\DoxyCodeLine{97         \{}
+\DoxyCodeLine{98             \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order / 2; n++)}
+\DoxyCodeLine{99             \{}
+\DoxyCodeLine{100                 k = abs(n -\/ (m\_order + 1) / 2);}
+\DoxyCodeLine{101 }
+\DoxyCodeLine{102                 \textcolor{keywordflow}{if} (n == 0)}
+\DoxyCodeLine{103                 \{}
+\DoxyCodeLine{104                     m\_buff\_cx[k] = 2 * m\_Fstop * m\_wind\_fcn[k];}
+\DoxyCodeLine{105                 \}}
+\DoxyCodeLine{106                 \textcolor{keywordflow}{else}}
+\DoxyCodeLine{107                 \{}
+\DoxyCodeLine{108                     m\_buff\_cx[k] = 2 * m\_Fstop * sin(n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop) / (n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop) * m\_wind\_fcn[k];}
+\DoxyCodeLine{109                     m\_buff\_cx[m\_order -\/ k] = m\_buff\_cx[k];}
+\DoxyCodeLine{110                 \}}
+\DoxyCodeLine{111             \}}
+\DoxyCodeLine{112         \}}
+\DoxyCodeLine{113         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (m\_order \% 2 != 0) \textcolor{comment}{// odd order filter coefficients computation}}
+\DoxyCodeLine{114         \{}
+\DoxyCodeLine{115             \_\_type rem = ceil((\_\_type)m\_order / 2) -\/ (\_\_type)m\_order / 2;}
+\DoxyCodeLine{116             \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= ceil(m\_order / 2); n++)}
+\DoxyCodeLine{117             \{}
+\DoxyCodeLine{118                 k = abs(n -\/ m\_order / 2);}
+\DoxyCodeLine{119                 m\_buff\_cx[k] = 2 * m\_Fstop * sin((n + rem) * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop) / ((n + rem) * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop) * m\_wind\_fcn[k];}
+\DoxyCodeLine{120                 m\_buff\_cx[m\_order -\/ k] = m\_buff\_cx[k];}
+\DoxyCodeLine{121             \}}
+\DoxyCodeLine{122         \}}
+\DoxyCodeLine{123 }
+\DoxyCodeLine{124         \textcolor{comment}{// filter pulse characteristic normalization:}}
+\DoxyCodeLine{125         \textcolor{keywordflow}{if} ( m\_scale )}
+\DoxyCodeLine{126         \{}
+\DoxyCodeLine{127             freq\_ch(0);}
+\DoxyCodeLine{128             \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order; n++) m\_buff\_cx[n] = m\_buff\_cx[n] / m\_Km;}
+\DoxyCodeLine{129             freq\_ch(m\_Fn);}
+\DoxyCodeLine{130         \}}
+\DoxyCodeLine{131 }
+\DoxyCodeLine{132         \textcolor{comment}{// deallocate the window function:}}
+\DoxyCodeLine{133         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_af2ef94171d3ebb655a22e3c16d6a316f}{deallocate}}();}
+\DoxyCodeLine{134     \}}
+\DoxyCodeLine{135 }
+\DoxyCodeLine{136     \textcolor{comment}{// Frequency characteristics:}}
+\DoxyCodeLine{137     \_\_void freq\_ch( \_\_type F )}
+\DoxyCodeLine{138     \{}
+\DoxyCodeLine{139         \_\_type m\_W\_re = 0;}
+\DoxyCodeLine{140         \_\_type m\_W\_im = 0;}
+\DoxyCodeLine{141         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order; n++)}
+\DoxyCodeLine{142         \{}
+\DoxyCodeLine{143             m\_W\_re = m\_W\_re + cos(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * n * F * m\_Ts) * m\_buff\_cx[n];}
+\DoxyCodeLine{144             m\_W\_im = m\_W\_im + sin(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * n * F * m\_Ts) * m\_buff\_cx[n];}
+\DoxyCodeLine{145         \}}
+\DoxyCodeLine{146         m\_pH   = atan2( m\_W\_im , m\_W\_im );}
+\DoxyCodeLine{147         m\_Km   = sqrt (m\_W\_re * m\_W\_re + m\_W\_im * m\_W\_im);}
+\DoxyCodeLine{148     \}}
+\DoxyCodeLine{149 }
+\DoxyCodeLine{150 \textcolor{preprocessor}{    \#ifndef \_\_ALG\_PLATFORM}}
+\DoxyCodeLine{151 }
+\DoxyCodeLine{152     \textcolor{comment}{// filter response store to a text files:}}
+\DoxyCodeLine{153     \_\_void freq\_rp( std::string directory )}
+\DoxyCodeLine{154     \{}
+\DoxyCodeLine{155         \textcolor{comment}{// open files:}}
+\DoxyCodeLine{156         std::ofstream ampr;}
+\DoxyCodeLine{157         std::ofstream phsr;}
+\DoxyCodeLine{158         std::ofstream freq;}
+\DoxyCodeLine{159         std::ofstream plsr;}
+\DoxyCodeLine{160         ampr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)ampr.txt"{}} );}
+\DoxyCodeLine{161         phsr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)phsr.txt"{}} );}
+\DoxyCodeLine{162         freq.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)freq.txt"{}} );}
+\DoxyCodeLine{163         plsr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)plsr.txt"{}} );}
+\DoxyCodeLine{164 }
+\DoxyCodeLine{165         \textcolor{comment}{// frequency response}}
+\DoxyCodeLine{166         \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i = 0 ; i < m\_Fs * 0.5 ; i++ )}
+\DoxyCodeLine{167         \{}
+\DoxyCodeLine{168             freq\_ch( i );}
+\DoxyCodeLine{169             ampr << m\_Km << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{170             phsr << m\_pH << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{171             freq << i    << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{172         \}}
+\DoxyCodeLine{173 }
+\DoxyCodeLine{174         \textcolor{comment}{// pulse response:}}
+\DoxyCodeLine{175         \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i = 0 ; i <= m\_order ; i++ ) \{ plsr << m\_buff\_cx[i] << \textcolor{stringliteral}{"{}\(\backslash\)n"{}}; \}}
+\DoxyCodeLine{176 }
+\DoxyCodeLine{177         \textcolor{comment}{// close files:}}
+\DoxyCodeLine{178         ampr.close();}
+\DoxyCodeLine{179         phsr.close();}
+\DoxyCodeLine{180         freq.close();}
+\DoxyCodeLine{181         plsr.close();}
+\DoxyCodeLine{182     \}}
+\DoxyCodeLine{183 }
+\DoxyCodeLine{184 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{185 }
+\DoxyCodeLine{186     \textcolor{comment}{// memory allocation:}}
+\DoxyCodeLine{187     \_\_bool allocate()}
+\DoxyCodeLine{188     \{}
+\DoxyCodeLine{189         \textcolor{comment}{// memory allocation:}}
+\DoxyCodeLine{190         m\_buff\_cx = ( \_\_type* ) calloc( m\_order + 1 , \textcolor{keyword}{sizeof} ( \_\_type ) );}
+\DoxyCodeLine{191         m\_buff\_sx.allocate( m\_order + 2 );}
+\DoxyCodeLine{192         \textcolor{comment}{// compute FIR filter coefficients:}}
+\DoxyCodeLine{193         coeff\_calc();}
+\DoxyCodeLine{194         \textcolor{keywordflow}{return} 1;}
+\DoxyCodeLine{195     \}}
+\DoxyCodeLine{196 }
+\DoxyCodeLine{197     \textcolor{comment}{// memory deallocation:}}
+\DoxyCodeLine{198     \_\_void deallocate()}
+\DoxyCodeLine{199     \{}
+\DoxyCodeLine{200         \textcolor{keywordflow}{if}( m\_buff\_cx != 0 ) free( m\_buff\_cx );}
+\DoxyCodeLine{201         m\_buff\_sx.deallocate();}
+\DoxyCodeLine{202         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_af2ef94171d3ebb655a22e3c16d6a316f}{deallocate}}();}
+\DoxyCodeLine{203     \}}
+\DoxyCodeLine{204 }
+\DoxyCodeLine{205     \textcolor{comment}{// initialization function:}}
+\DoxyCodeLine{206     \_\_void init( \_\_type Fs, \_\_type Fn, \_\_type F\_stop, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \_\_bool scale )}
+\DoxyCodeLine{207     \{}
+\DoxyCodeLine{208         m\_Fs      = Fs;}
+\DoxyCodeLine{209         m\_Fn      = Fn;}
+\DoxyCodeLine{210         m\_Fstop   = F\_stop;}
+\DoxyCodeLine{211         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{212         m\_order   = order;}
+\DoxyCodeLine{213         m\_Ns      = m\_order;}
+\DoxyCodeLine{214         m\_scale   = scale;}
+\DoxyCodeLine{215         m\_buff\_cx = 0;}
+\DoxyCodeLine{216         m\_out     = 0;}
+\DoxyCodeLine{217 }
+\DoxyCodeLine{218         \textcolor{comment}{// window function initialization:}}
+\DoxyCodeLine{219         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a6deb4f700c93c94aff8e17194309cab7}{init}}( m\_order + 1 );}
+\DoxyCodeLine{220     \}}
+\DoxyCodeLine{221 }
+\DoxyCodeLine{222     \textcolor{comment}{// default constructor:}}
+\DoxyCodeLine{223     \mbox{\hyperlink{classfir__lp}{fir\_lp}}()}
+\DoxyCodeLine{224     \{}
+\DoxyCodeLine{225         m\_Fs      = 4000;}
+\DoxyCodeLine{226         m\_Fn      = 50;}
+\DoxyCodeLine{227         m\_Fstop   = 100;}
+\DoxyCodeLine{228         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{229         m\_order   = 80;}
+\DoxyCodeLine{230         m\_Ns      = m\_order;}
+\DoxyCodeLine{231         m\_scale   = \textcolor{keyword}{false};}
+\DoxyCodeLine{232         m\_buff\_cx = 0;}
+\DoxyCodeLine{233         m\_out     = 0;}
+\DoxyCodeLine{234 }
+\DoxyCodeLine{235         \textcolor{comment}{// window function initialization:}}
+\DoxyCodeLine{236         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a6deb4f700c93c94aff8e17194309cab7}{init}}( m\_order + 1 );}
+\DoxyCodeLine{237     \}}
+\DoxyCodeLine{238 }
+\DoxyCodeLine{239     \textcolor{comment}{// initializing constructor:}}
+\DoxyCodeLine{240     \mbox{\hyperlink{classfir__lp}{fir\_lp}}( \_\_type Fs, \_\_type Fn, \_\_type F\_stop, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \_\_bool scale ) \{ init( Fs , Fn , F\_stop , order , scale ); \}}
+\DoxyCodeLine{241 }
+\DoxyCodeLine{242     \textcolor{comment}{// destructor:}}
+\DoxyCodeLine{243     \mbox{\hyperlink{classfir__lp}{\string~fir\_lp}}() \{ deallocate(); \}}
+\DoxyCodeLine{244 }
+\DoxyCodeLine{245     \textcolor{comment}{// filtering function:}}
+\DoxyCodeLine{246 }
+\DoxyCodeLine{247     \textcolor{comment}{// x32:}}
+\DoxyCodeLine{248     \textcolor{keyword}{inline} \_\_type filt( \_\_type *input )}
+\DoxyCodeLine{249     \{}
+\DoxyCodeLine{250         m\_buff\_sx( input );}
+\DoxyCodeLine{251         m\_out = 0;}
+\DoxyCodeLine{252         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{253         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{254     \}}
+\DoxyCodeLine{255 }
+\DoxyCodeLine{256     \textcolor{comment}{// x64:}}
+\DoxyCodeLine{257     \textcolor{keyword}{inline} \_\_type filt( \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *input )}
+\DoxyCodeLine{258     \{}
+\DoxyCodeLine{259         m\_buff\_sx( input );}
+\DoxyCodeLine{260         m\_out = 0;}
+\DoxyCodeLine{261         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{262         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{263     \}}
+\DoxyCodeLine{264 }
+\DoxyCodeLine{265     \textcolor{keyword}{inline} \_\_type filt()}
+\DoxyCodeLine{266     \{}
+\DoxyCodeLine{267         m\_out = 0;}
+\DoxyCodeLine{268         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{269         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{270     \}}
+\DoxyCodeLine{271 }
+\DoxyCodeLine{272     \textcolor{comment}{// operators:}}
+\DoxyCodeLine{273     \textcolor{keyword}{inline} \_\_type operator() ( \_\_type *input ) \{ \textcolor{keywordflow}{return} filt( input ); \}}
+\DoxyCodeLine{274     \textcolor{keyword}{inline} \_\_type operator() ( \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *input ) \{ \textcolor{keywordflow}{return} filt( input ); \}}
+\DoxyCodeLine{275     \textcolor{keyword}{inline} \_\_type operator() () \{ \textcolor{keywordflow}{return} filt(); \}}
+\DoxyCodeLine{276 \};}
+\DoxyCodeLine{277 }
+\DoxyCodeLine{278 \textcolor{comment}{// float x64:}}
+\DoxyCodeLine{279 \textcolor{keyword}{template}<> \textcolor{keyword}{class }\mbox{\hyperlink{classfir__lp}{fir\_lp}}<\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}}>}
+\DoxyCodeLine{280 \{}
+\DoxyCodeLine{281     \textcolor{keyword}{typedef} \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} \_\_type ;}
+\DoxyCodeLine{282     \textcolor{keyword}{typedef} \textcolor{keywordtype}{bool}   \_\_bool ;}
+\DoxyCodeLine{283     \textcolor{keyword}{typedef} \textcolor{keywordtype}{void}   \_\_void ;}
+\DoxyCodeLine{284 }
+\DoxyCodeLine{285     \textcolor{comment}{// system variables:}}
+\DoxyCodeLine{286     \_\_type m\_Ts;}
+\DoxyCodeLine{287     \_\_type m\_Fs;}
+\DoxyCodeLine{288     \_\_type m\_Fn;}
+\DoxyCodeLine{289     \_\_type m\_Fstop;}
+\DoxyCodeLine{290     \_\_type m\_Ns;}
+\DoxyCodeLine{291     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} m\_order;}
+\DoxyCodeLine{292     \_\_bool m\_scale;}
+\DoxyCodeLine{293 }
+\DoxyCodeLine{294     \textcolor{comment}{// coefficients:}}
+\DoxyCodeLine{295     \_\_type *m\_buff\_cx;}
+\DoxyCodeLine{296 }
+\DoxyCodeLine{297 \textcolor{keyword}{public}:}
+\DoxyCodeLine{298 }
+\DoxyCodeLine{299     \_\_type m\_pH;}
+\DoxyCodeLine{300     \_\_type m\_Km;}
+\DoxyCodeLine{301     \_\_type m\_out;}
+\DoxyCodeLine{302 }
+\DoxyCodeLine{303     \textcolor{comment}{// buffers:}}
+\DoxyCodeLine{304     \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer< \_\_type >}} m\_buff\_sx;}
+\DoxyCodeLine{305 }
+\DoxyCodeLine{306     \textcolor{comment}{// window function object:}}
+\DoxyCodeLine{307     \mbox{\hyperlink{classwind__fcn}{wind\_fcn}} m\_wind\_fcn;}
+\DoxyCodeLine{308 }
+\DoxyCodeLine{309     \textcolor{comment}{// coefficients computation function:}}
+\DoxyCodeLine{310     \_\_void coeff\_calc()}
+\DoxyCodeLine{311     \{}
+\DoxyCodeLine{312         \textcolor{comment}{// check if the window is ready to use:}}
+\DoxyCodeLine{313         \textcolor{keywordflow}{if} ( m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_ad71b3a4bf91eae2db01d060b8b2ff0c2}{is\_ready}}() == 0 ) m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a0b84c65f589e9f9253c78fdb0b449948}{Chebyshev}}(100);}
+\DoxyCodeLine{314 }
+\DoxyCodeLine{315         \textcolor{comment}{// coefficients computation:}}
+\DoxyCodeLine{316         \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} k = 0;}
+\DoxyCodeLine{317         m\_Fstop /= m\_Fs;}
+\DoxyCodeLine{318 }
+\DoxyCodeLine{319         \textcolor{keywordflow}{if} (m\_order \% 2 == 0) \textcolor{comment}{// even order filter coefficients computation}}
+\DoxyCodeLine{320         \{}
+\DoxyCodeLine{321             \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order / 2; n++)}
+\DoxyCodeLine{322             \{}
+\DoxyCodeLine{323                 k = abs(n -\/ (m\_order + 1) / 2);}
+\DoxyCodeLine{324 }
+\DoxyCodeLine{325                 \textcolor{keywordflow}{if} (n == 0)}
+\DoxyCodeLine{326                 \{}
+\DoxyCodeLine{327                     m\_buff\_cx[k] = 2 * m\_Fstop * m\_wind\_fcn[k];}
+\DoxyCodeLine{328                 \}}
+\DoxyCodeLine{329                 \textcolor{keywordflow}{else}}
+\DoxyCodeLine{330                 \{}
+\DoxyCodeLine{331                     m\_buff\_cx[k] = 2 * m\_Fstop * sin(n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop) / (n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop) * m\_wind\_fcn[k];}
+\DoxyCodeLine{332                     m\_buff\_cx[m\_order -\/ k] = m\_buff\_cx[k];}
+\DoxyCodeLine{333                 \}}
+\DoxyCodeLine{334             \}}
+\DoxyCodeLine{335         \}}
+\DoxyCodeLine{336         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (m\_order \% 2 != 0) \textcolor{comment}{// odd order filter coefficients computation}}
+\DoxyCodeLine{337         \{}
+\DoxyCodeLine{338             \_\_type rem = ceil((\_\_type)m\_order / 2) -\/ (\_\_type)m\_order / 2;}
+\DoxyCodeLine{339             \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= ceil(m\_order / 2); n++)}
+\DoxyCodeLine{340             \{}
+\DoxyCodeLine{341                 k = abs(n -\/ m\_order / 2);}
+\DoxyCodeLine{342                 m\_buff\_cx[k] = 2 * m\_Fstop * sin((n + rem) * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop) / ((n + rem) * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop) * m\_wind\_fcn[k];}
+\DoxyCodeLine{343                 m\_buff\_cx[m\_order -\/ k] = m\_buff\_cx[k];}
+\DoxyCodeLine{344             \}}
+\DoxyCodeLine{345         \}}
+\DoxyCodeLine{346 }
+\DoxyCodeLine{347         \textcolor{comment}{// filter pulse characteristic normalization:}}
+\DoxyCodeLine{348         \textcolor{keywordflow}{if} ( m\_scale )}
+\DoxyCodeLine{349         \{}
+\DoxyCodeLine{350             freq\_ch(0);}
+\DoxyCodeLine{351             \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order; n++) m\_buff\_cx[n] = m\_buff\_cx[n] / m\_Km;}
+\DoxyCodeLine{352             freq\_ch(m\_Fn);}
+\DoxyCodeLine{353         \}}
+\DoxyCodeLine{354 }
+\DoxyCodeLine{355         \textcolor{comment}{// deallocate the window function:}}
+\DoxyCodeLine{356         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_af2ef94171d3ebb655a22e3c16d6a316f}{deallocate}}();}
+\DoxyCodeLine{357     \}}
+\DoxyCodeLine{358 }
+\DoxyCodeLine{359     \textcolor{comment}{// Frequency characteristics:}}
+\DoxyCodeLine{360     \_\_void freq\_ch( \_\_type F )}
+\DoxyCodeLine{361     \{}
+\DoxyCodeLine{362         \_\_type m\_W\_re = 0;}
+\DoxyCodeLine{363         \_\_type m\_W\_im = 0;}
+\DoxyCodeLine{364         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order; n++)}
+\DoxyCodeLine{365         \{}
+\DoxyCodeLine{366             m\_W\_re = m\_W\_re + cos(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * n * F * m\_Ts) * m\_buff\_cx[n];}
+\DoxyCodeLine{367             m\_W\_im = m\_W\_im + sin(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * n * F * m\_Ts) * m\_buff\_cx[n];}
+\DoxyCodeLine{368         \}}
+\DoxyCodeLine{369         m\_pH   = atan2( m\_W\_im , m\_W\_im );}
+\DoxyCodeLine{370         m\_Km   = sqrt (m\_W\_re * m\_W\_re + m\_W\_im * m\_W\_im);}
+\DoxyCodeLine{371     \}}
+\DoxyCodeLine{372 }
+\DoxyCodeLine{373 \textcolor{preprocessor}{    \#ifndef \_\_ALG\_PLATFORM}}
+\DoxyCodeLine{374 }
+\DoxyCodeLine{375     \textcolor{comment}{// filter response store to a text files:}}
+\DoxyCodeLine{376     \_\_void freq\_rp( std::string directory )}
+\DoxyCodeLine{377     \{}
+\DoxyCodeLine{378         \textcolor{comment}{// open files:}}
+\DoxyCodeLine{379         std::ofstream ampr;}
+\DoxyCodeLine{380         std::ofstream phsr;}
+\DoxyCodeLine{381         std::ofstream freq;}
+\DoxyCodeLine{382         std::ofstream plsr;}
+\DoxyCodeLine{383         ampr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)ampr.txt"{}} );}
+\DoxyCodeLine{384         phsr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)phsr.txt"{}} );}
+\DoxyCodeLine{385         freq.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)freq.txt"{}} );}
+\DoxyCodeLine{386         plsr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)plsr.txt"{}} );}
+\DoxyCodeLine{387 }
+\DoxyCodeLine{388         \textcolor{comment}{// frequency response}}
+\DoxyCodeLine{389         \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i = 0 ; i < m\_Fs * 0.5 ; i++ )}
+\DoxyCodeLine{390         \{}
+\DoxyCodeLine{391             freq\_ch( i );}
+\DoxyCodeLine{392             ampr << m\_Km << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{393             phsr << m\_pH << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{394             freq << i    << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{395         \}}
+\DoxyCodeLine{396 }
+\DoxyCodeLine{397         \textcolor{comment}{// pulse response:}}
+\DoxyCodeLine{398         \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i = 0 ; i <= m\_order ; i++ ) \{ plsr << m\_buff\_cx[i] << \textcolor{stringliteral}{"{}\(\backslash\)n"{}}; \}}
+\DoxyCodeLine{399 }
+\DoxyCodeLine{400         \textcolor{comment}{// close files:}}
+\DoxyCodeLine{401         ampr.close();}
+\DoxyCodeLine{402         phsr.close();}
+\DoxyCodeLine{403         freq.close();}
+\DoxyCodeLine{404         plsr.close();}
+\DoxyCodeLine{405     \}}
+\DoxyCodeLine{406 }
+\DoxyCodeLine{407 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{408 }
+\DoxyCodeLine{409     \textcolor{comment}{// memory allocation:}}
+\DoxyCodeLine{410     \_\_bool allocate()}
+\DoxyCodeLine{411     \{}
+\DoxyCodeLine{412         \textcolor{comment}{// memory allocation:}}
+\DoxyCodeLine{413         m\_buff\_cx = ( \_\_type* ) calloc( m\_order + 1 , \textcolor{keyword}{sizeof} ( \_\_type ) );}
+\DoxyCodeLine{414         m\_buff\_sx.allocate( m\_order + 2 );}
+\DoxyCodeLine{415         \textcolor{comment}{// compute FIR filter coefficients:}}
+\DoxyCodeLine{416         coeff\_calc();}
+\DoxyCodeLine{417         \textcolor{keywordflow}{return} 1;}
+\DoxyCodeLine{418     \}}
+\DoxyCodeLine{419 }
+\DoxyCodeLine{420     \textcolor{comment}{// memory deallocation:}}
+\DoxyCodeLine{421     \_\_void deallocate()}
+\DoxyCodeLine{422     \{}
+\DoxyCodeLine{423         \textcolor{keywordflow}{if}( m\_buff\_cx != 0 ) free( m\_buff\_cx );}
+\DoxyCodeLine{424         m\_buff\_sx.deallocate();}
+\DoxyCodeLine{425         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_af2ef94171d3ebb655a22e3c16d6a316f}{deallocate}}();}
+\DoxyCodeLine{426     \}}
+\DoxyCodeLine{427 }
+\DoxyCodeLine{428     \textcolor{comment}{// initialization function:}}
+\DoxyCodeLine{429     \_\_void init( \_\_type Fs, \_\_type Fn, \_\_type F\_stop, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \_\_bool scale )}
+\DoxyCodeLine{430     \{}
+\DoxyCodeLine{431         m\_Fs      = Fs;}
+\DoxyCodeLine{432         m\_Fn      = Fn;}
+\DoxyCodeLine{433         m\_Fstop   = F\_stop;}
+\DoxyCodeLine{434         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{435         m\_order   = order;}
+\DoxyCodeLine{436         m\_Ns      = m\_order;}
+\DoxyCodeLine{437         m\_scale   = scale;}
+\DoxyCodeLine{438         m\_buff\_cx = 0;}
+\DoxyCodeLine{439         m\_out     = 0;}
+\DoxyCodeLine{440 }
+\DoxyCodeLine{441         \textcolor{comment}{// window function initialization:}}
+\DoxyCodeLine{442         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a6deb4f700c93c94aff8e17194309cab7}{init}}( m\_order + 1 );}
+\DoxyCodeLine{443     \}}
+\DoxyCodeLine{444 }
+\DoxyCodeLine{445     \textcolor{comment}{// default constructor:}}
+\DoxyCodeLine{446     \mbox{\hyperlink{classfir__lp}{fir\_lp}}()}
+\DoxyCodeLine{447     \{}
+\DoxyCodeLine{448         m\_Fs      = 4000;}
+\DoxyCodeLine{449         m\_Fn      = 50;}
+\DoxyCodeLine{450         m\_Fstop   = 100;}
+\DoxyCodeLine{451         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{452         m\_order   = 80;}
+\DoxyCodeLine{453         m\_Ns      = m\_order;}
+\DoxyCodeLine{454         m\_scale   = \textcolor{keyword}{false};}
+\DoxyCodeLine{455         m\_buff\_cx = 0;}
+\DoxyCodeLine{456         m\_out     = 0;}
+\DoxyCodeLine{457 }
+\DoxyCodeLine{458         \textcolor{comment}{// window function initialization:}}
+\DoxyCodeLine{459         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a6deb4f700c93c94aff8e17194309cab7}{init}}( m\_order + 1 );}
+\DoxyCodeLine{460     \}}
+\DoxyCodeLine{461 }
+\DoxyCodeLine{462     \textcolor{comment}{// initializing constructor:}}
+\DoxyCodeLine{463     \mbox{\hyperlink{classfir__lp}{fir\_lp}}( \_\_type Fs, \_\_type Fn, \_\_type F\_stop, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \_\_bool scale ) \{ init( Fs , Fn , F\_stop , order , scale ); \}}
+\DoxyCodeLine{464 }
+\DoxyCodeLine{465     \textcolor{comment}{// destructor:}}
+\DoxyCodeLine{466     \mbox{\hyperlink{classfir__lp}{\string~fir\_lp}}() \{ deallocate(); \}}
+\DoxyCodeLine{467 }
+\DoxyCodeLine{468     \textcolor{comment}{// filtering function:}}
+\DoxyCodeLine{469 }
+\DoxyCodeLine{470     \textcolor{comment}{// x32:}}
+\DoxyCodeLine{471     \textcolor{keyword}{inline} \_\_type filt( \_\_type *input )}
+\DoxyCodeLine{472     \{}
+\DoxyCodeLine{473         m\_buff\_sx( input );}
+\DoxyCodeLine{474         m\_out = 0;}
+\DoxyCodeLine{475         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{476         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{477     \}}
+\DoxyCodeLine{478 }
+\DoxyCodeLine{479     \textcolor{keyword}{inline} \_\_type filt()}
+\DoxyCodeLine{480     \{}
+\DoxyCodeLine{481         m\_out = 0;}
+\DoxyCodeLine{482         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{483         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{484     \}}
+\DoxyCodeLine{485 }
+\DoxyCodeLine{486     \textcolor{comment}{// operators:}}
+\DoxyCodeLine{487     \textcolor{keyword}{inline} \_\_type operator() ( \_\_type *input ) \{ \textcolor{keywordflow}{return} filt( input ); \}}
+\DoxyCodeLine{488     \textcolor{keyword}{inline} \_\_type operator() () \{ \textcolor{keywordflow}{return} filt(); \}}
+\DoxyCodeLine{489 \};}
+\DoxyCodeLine{490 }
+\DoxyCodeLine{491 \textcolor{comment}{// highpass fir implemetations:}}
+\DoxyCodeLine{492 }
+\DoxyCodeLine{493 \textcolor{comment}{// float x32:}}
+\DoxyCodeLine{494 \textcolor{keyword}{template}<> \textcolor{keyword}{class }\mbox{\hyperlink{classfir__hp}{fir\_hp}}<\mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}}>}
+\DoxyCodeLine{495 \{}
+\DoxyCodeLine{496     \textcolor{keyword}{typedef} \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}} \_\_type ;}
+\DoxyCodeLine{497     \textcolor{keyword}{typedef} \textcolor{keywordtype}{bool}   \_\_bool ;}
+\DoxyCodeLine{498     \textcolor{keyword}{typedef} \textcolor{keywordtype}{void}   \_\_void ;}
+\DoxyCodeLine{499 }
+\DoxyCodeLine{500     \textcolor{comment}{// system variables:}}
+\DoxyCodeLine{501     \_\_type m\_Ts;}
+\DoxyCodeLine{502     \_\_type m\_Fs;}
+\DoxyCodeLine{503     \_\_type m\_Fn;}
+\DoxyCodeLine{504     \_\_type m\_Fstop;}
+\DoxyCodeLine{505     \_\_type m\_Ns;}
+\DoxyCodeLine{506     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} m\_order;}
+\DoxyCodeLine{507     \_\_bool m\_scale;}
+\DoxyCodeLine{508 }
+\DoxyCodeLine{509     \textcolor{comment}{// coefficients:}}
+\DoxyCodeLine{510     \_\_type *m\_buff\_cx;}
+\DoxyCodeLine{511 }
+\DoxyCodeLine{512 \textcolor{keyword}{public}:}
+\DoxyCodeLine{513 }
+\DoxyCodeLine{514     \_\_type m\_pH;}
+\DoxyCodeLine{515     \_\_type m\_Km;}
+\DoxyCodeLine{516     \_\_type m\_out;}
+\DoxyCodeLine{517 }
+\DoxyCodeLine{518     \textcolor{comment}{// buffers:}}
+\DoxyCodeLine{519     \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer< \_\_type >}} m\_buff\_sx;}
+\DoxyCodeLine{520 }
+\DoxyCodeLine{521     \textcolor{comment}{// window function object:}}
+\DoxyCodeLine{522     \mbox{\hyperlink{classwind__fcn}{wind\_fcn}} m\_wind\_fcn;}
+\DoxyCodeLine{523 }
+\DoxyCodeLine{524     \textcolor{comment}{// coefficients computation function:}}
+\DoxyCodeLine{525     \_\_void coeff\_calc()}
+\DoxyCodeLine{526     \{}
+\DoxyCodeLine{527         \textcolor{comment}{// check if the window is ready to use:}}
+\DoxyCodeLine{528         \textcolor{keywordflow}{if} ( m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_ad71b3a4bf91eae2db01d060b8b2ff0c2}{is\_ready}}() == 0 ) m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a0b84c65f589e9f9253c78fdb0b449948}{Chebyshev}}(100);}
+\DoxyCodeLine{529 }
+\DoxyCodeLine{530         \textcolor{comment}{// coefficients computation:}}
+\DoxyCodeLine{531         \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} k = 0;}
+\DoxyCodeLine{532         m\_Fstop /= m\_Fs;}
+\DoxyCodeLine{533 }
+\DoxyCodeLine{534         \textcolor{keywordflow}{if} (m\_order \% 2 == 0) \textcolor{comment}{// even order highpass}}
+\DoxyCodeLine{535         \{}
+\DoxyCodeLine{536             \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order / 2; n++)}
+\DoxyCodeLine{537             \{}
+\DoxyCodeLine{538                 k = abs(n -\/ (m\_order + 1) / 2);}
+\DoxyCodeLine{539 }
+\DoxyCodeLine{540                 \textcolor{keywordflow}{if} (n == 0)}
+\DoxyCodeLine{541                 \{}
+\DoxyCodeLine{542                     m\_buff\_cx[k] = (1 -\/ 2 * m\_Fstop) * m\_wind\_fcn[k];}
+\DoxyCodeLine{543                 \}}
+\DoxyCodeLine{544                 \textcolor{keywordflow}{else}}
+\DoxyCodeLine{545                 \{}
+\DoxyCodeLine{546                     m\_buff\_cx[k] = -\/2 * m\_Fstop * sin(n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop) / (n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop) * m\_wind\_fcn[k];}
+\DoxyCodeLine{547                     m\_buff\_cx[m\_order -\/ k] = m\_buff\_cx[k];}
+\DoxyCodeLine{548                 \}}
+\DoxyCodeLine{549             \}}
+\DoxyCodeLine{550         \}}
+\DoxyCodeLine{551         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (m\_order \% 2 != 0) \textcolor{comment}{// odd order highpass}}
+\DoxyCodeLine{552         \{}
+\DoxyCodeLine{553             \_\_type rem = ceil((\_\_type)m\_order / 2) -\/ (\_\_type)m\_order / 2;}
+\DoxyCodeLine{554             \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= ceil(m\_order / 2); n++)}
+\DoxyCodeLine{555             \{}
+\DoxyCodeLine{556                 k = abs(n -\/ m\_order / 2);}
+\DoxyCodeLine{557                 m\_buff\_cx[k]           = -\/pow(-\/1 , n) * 2 * (0.5-\/m\_Fstop) * sin((n + rem) * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * (0.5-\/m\_Fstop) ) / ((n + rem) * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * (0.5 -\/ m\_Fstop) )* m\_wind\_fcn[k];}
+\DoxyCodeLine{558                 m\_buff\_cx[m\_order -\/ k] = -\/m\_buff\_cx[k];}
+\DoxyCodeLine{559             \}}
+\DoxyCodeLine{560         \}}
+\DoxyCodeLine{561 }
+\DoxyCodeLine{562         \textcolor{comment}{// filter pulse characteristic normalization:}}
+\DoxyCodeLine{563         \textcolor{keywordflow}{if} ( m\_scale )}
+\DoxyCodeLine{564         \{}
+\DoxyCodeLine{565             freq\_ch( m\_Fs / 2 );}
+\DoxyCodeLine{566             \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order; n++) m\_buff\_cx[n] = m\_buff\_cx[n] / m\_Km;}
+\DoxyCodeLine{567             freq\_ch(m\_Fn);}
+\DoxyCodeLine{568         \}}
+\DoxyCodeLine{569 }
+\DoxyCodeLine{570         \textcolor{comment}{// deallocate the window function:}}
+\DoxyCodeLine{571         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_af2ef94171d3ebb655a22e3c16d6a316f}{deallocate}}();}
+\DoxyCodeLine{572     \}}
+\DoxyCodeLine{573 }
+\DoxyCodeLine{574     \textcolor{comment}{// Frequency characteristics:}}
+\DoxyCodeLine{575     \_\_void freq\_ch( \_\_type F )}
+\DoxyCodeLine{576     \{}
+\DoxyCodeLine{577         \_\_type m\_W\_re = 0;}
+\DoxyCodeLine{578         \_\_type m\_W\_im = 0;}
+\DoxyCodeLine{579         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order ; n++)}
+\DoxyCodeLine{580         \{}
+\DoxyCodeLine{581             m\_W\_re = m\_W\_re + cos(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * n * F * m\_Ts) * m\_buff\_cx[n];}
+\DoxyCodeLine{582             m\_W\_im = m\_W\_im + sin(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * n * F * m\_Ts) * m\_buff\_cx[n];}
+\DoxyCodeLine{583         \}}
+\DoxyCodeLine{584         m\_pH   = atan2( m\_W\_im , m\_W\_im );}
+\DoxyCodeLine{585         m\_Km   = sqrt (m\_W\_re * m\_W\_re + m\_W\_im * m\_W\_im);}
+\DoxyCodeLine{586     \}}
+\DoxyCodeLine{587 }
+\DoxyCodeLine{588 \textcolor{preprocessor}{    \#ifndef \_\_ALG\_PLATFORM}}
+\DoxyCodeLine{589 }
+\DoxyCodeLine{590     \textcolor{comment}{// filter response store to a text files:}}
+\DoxyCodeLine{591     \_\_void freq\_rp( std::string directory )}
+\DoxyCodeLine{592     \{}
+\DoxyCodeLine{593         \textcolor{comment}{// open files:}}
+\DoxyCodeLine{594         std::ofstream ampr;}
+\DoxyCodeLine{595         std::ofstream phsr;}
+\DoxyCodeLine{596         std::ofstream freq;}
+\DoxyCodeLine{597         std::ofstream plsr;}
+\DoxyCodeLine{598         ampr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)ampr.txt"{}} );}
+\DoxyCodeLine{599         phsr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)phsr.txt"{}} );}
+\DoxyCodeLine{600         freq.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)freq.txt"{}} );}
+\DoxyCodeLine{601         plsr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)plsr.txt"{}} );}
+\DoxyCodeLine{602 }
+\DoxyCodeLine{603         \textcolor{comment}{// frequency response}}
+\DoxyCodeLine{604         \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i = 0 ; i < m\_Fs * 0.5 ; i++ )}
+\DoxyCodeLine{605         \{}
+\DoxyCodeLine{606             freq\_ch( i );}
+\DoxyCodeLine{607             ampr << m\_Km << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{608             phsr << m\_pH << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{609             freq << i    << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{610         \}}
+\DoxyCodeLine{611 }
+\DoxyCodeLine{612         \textcolor{comment}{// pulse response:}}
+\DoxyCodeLine{613         \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i = 0 ; i <= m\_order ; i++ ) \{ plsr << m\_buff\_cx[i] << \textcolor{stringliteral}{"{}\(\backslash\)n"{}}; \}}
+\DoxyCodeLine{614 }
+\DoxyCodeLine{615         \textcolor{comment}{// close files:}}
+\DoxyCodeLine{616         ampr.close();}
+\DoxyCodeLine{617         phsr.close();}
+\DoxyCodeLine{618         freq.close();}
+\DoxyCodeLine{619         plsr.close();}
+\DoxyCodeLine{620     \}}
+\DoxyCodeLine{621 }
+\DoxyCodeLine{622 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{623 }
+\DoxyCodeLine{624     \textcolor{comment}{// memory allocation:}}
+\DoxyCodeLine{625     \_\_bool allocate()}
+\DoxyCodeLine{626     \{}
+\DoxyCodeLine{627         \textcolor{comment}{// memory allocation:}}
+\DoxyCodeLine{628         m\_buff\_cx = ( \_\_type* ) calloc( m\_order + 1 , \textcolor{keyword}{sizeof} ( \_\_type ) );}
+\DoxyCodeLine{629         m\_buff\_sx.allocate( m\_order + 2 );}
+\DoxyCodeLine{630         \textcolor{comment}{// compute FIR filter coefficients:}}
+\DoxyCodeLine{631         coeff\_calc();}
+\DoxyCodeLine{632         \textcolor{keywordflow}{return} 1;}
+\DoxyCodeLine{633     \}}
+\DoxyCodeLine{634 }
+\DoxyCodeLine{635     \textcolor{comment}{// memory deallocation:}}
+\DoxyCodeLine{636     \_\_void deallocate()}
+\DoxyCodeLine{637     \{}
+\DoxyCodeLine{638         \textcolor{keywordflow}{if}( m\_buff\_cx != 0 ) free( m\_buff\_cx );}
+\DoxyCodeLine{639         m\_buff\_sx.deallocate();}
+\DoxyCodeLine{640         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_af2ef94171d3ebb655a22e3c16d6a316f}{deallocate}}();}
+\DoxyCodeLine{641     \}}
+\DoxyCodeLine{642 }
+\DoxyCodeLine{643     \textcolor{comment}{// initialization function:}}
+\DoxyCodeLine{644     \_\_void init( \_\_type Fs, \_\_type Fn, \_\_type F\_stop, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \_\_bool scale )}
+\DoxyCodeLine{645     \{}
+\DoxyCodeLine{646         m\_Fs      = Fs;}
+\DoxyCodeLine{647         m\_Fn      = Fn;}
+\DoxyCodeLine{648         m\_Fstop   = F\_stop;}
+\DoxyCodeLine{649         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{650         m\_order   = order;}
+\DoxyCodeLine{651         m\_Ns      = m\_order;}
+\DoxyCodeLine{652         m\_scale   = scale;}
+\DoxyCodeLine{653         m\_buff\_cx = 0;}
+\DoxyCodeLine{654         m\_out     = 0;}
+\DoxyCodeLine{655 }
+\DoxyCodeLine{656         \textcolor{comment}{// window function initialization:}}
+\DoxyCodeLine{657         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a6deb4f700c93c94aff8e17194309cab7}{init}}( m\_order + 1 );}
+\DoxyCodeLine{658     \}}
+\DoxyCodeLine{659 }
+\DoxyCodeLine{660     \textcolor{comment}{// default constructor:}}
+\DoxyCodeLine{661     \mbox{\hyperlink{classfir__hp}{fir\_hp}}()}
+\DoxyCodeLine{662     \{}
+\DoxyCodeLine{663         m\_Fs      = 4000;}
+\DoxyCodeLine{664         m\_Fn      = 50;}
+\DoxyCodeLine{665         m\_Fstop   = 100;}
+\DoxyCodeLine{666         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{667         m\_order   = 80;}
+\DoxyCodeLine{668         m\_Ns      = m\_order;}
+\DoxyCodeLine{669         m\_scale   = \textcolor{keyword}{false};}
+\DoxyCodeLine{670         m\_buff\_cx = 0;}
+\DoxyCodeLine{671         m\_out     = 0;}
+\DoxyCodeLine{672 }
+\DoxyCodeLine{673         \textcolor{comment}{// window function initialization:}}
+\DoxyCodeLine{674         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a6deb4f700c93c94aff8e17194309cab7}{init}}( m\_order + 1 );}
+\DoxyCodeLine{675     \}}
+\DoxyCodeLine{676 }
+\DoxyCodeLine{677     \textcolor{comment}{// initializing constructor:}}
+\DoxyCodeLine{678     \mbox{\hyperlink{classfir__hp}{fir\_hp}}( \_\_type Fs, \_\_type Fn, \_\_type F\_stop, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \_\_bool scale ) \{ init( Fs , Fn , F\_stop , order , scale ); \}}
+\DoxyCodeLine{679 }
+\DoxyCodeLine{680     \textcolor{comment}{// destructor:}}
+\DoxyCodeLine{681     \mbox{\hyperlink{classfir__hp}{\string~fir\_hp}}() \{ deallocate(); \}}
+\DoxyCodeLine{682 }
+\DoxyCodeLine{683     \textcolor{comment}{// filtering function:}}
+\DoxyCodeLine{684 }
+\DoxyCodeLine{685     \textcolor{comment}{// x32:}}
+\DoxyCodeLine{686     \textcolor{keyword}{inline} \_\_type filt( \_\_type *input )}
+\DoxyCodeLine{687     \{}
+\DoxyCodeLine{688         m\_buff\_sx( input );}
+\DoxyCodeLine{689         m\_out = 0;}
+\DoxyCodeLine{690         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{691         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{692     \}}
+\DoxyCodeLine{693 }
+\DoxyCodeLine{694     \textcolor{comment}{// x64 input ( CAUTION !!! ROUNDING ERROR OCCURS !!! )}}
+\DoxyCodeLine{695     \textcolor{keyword}{inline} \_\_type filt( \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *input )}
+\DoxyCodeLine{696     \{}
+\DoxyCodeLine{697         m\_buff\_sx( input );}
+\DoxyCodeLine{698         m\_out = 0;}
+\DoxyCodeLine{699         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{700         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{701     \}}
+\DoxyCodeLine{702 }
+\DoxyCodeLine{703     \textcolor{keyword}{inline} \_\_type filt()}
+\DoxyCodeLine{704     \{}
+\DoxyCodeLine{705         m\_out = 0;}
+\DoxyCodeLine{706         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{707         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{708     \}}
+\DoxyCodeLine{709 }
+\DoxyCodeLine{710     \textcolor{comment}{// operators:}}
+\DoxyCodeLine{711     \textcolor{keyword}{inline} \_\_type operator() ( \_\_type *input ) \{ \textcolor{keywordflow}{return} filt( input ); \}}
+\DoxyCodeLine{712     \textcolor{keyword}{inline} \_\_type operator() ( \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *input ) \{ \textcolor{keywordflow}{return} filt( input ); \}}
+\DoxyCodeLine{713     \textcolor{keyword}{inline} \_\_type operator() () \{ \textcolor{keywordflow}{return} filt(); \}}
+\DoxyCodeLine{714 \};}
+\DoxyCodeLine{715 }
+\DoxyCodeLine{716 \textcolor{comment}{// float x64:}}
+\DoxyCodeLine{717 \textcolor{keyword}{template}<> \textcolor{keyword}{class }\mbox{\hyperlink{classfir__hp}{fir\_hp}}<\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}}>}
+\DoxyCodeLine{718 \{}
+\DoxyCodeLine{719     \textcolor{keyword}{typedef} \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} \_\_type ;}
+\DoxyCodeLine{720     \textcolor{keyword}{typedef} \textcolor{keywordtype}{bool}   \_\_bool ;}
+\DoxyCodeLine{721     \textcolor{keyword}{typedef} \textcolor{keywordtype}{void}   \_\_void ;}
+\DoxyCodeLine{722 }
+\DoxyCodeLine{723     \textcolor{comment}{// system variables:}}
+\DoxyCodeLine{724     \_\_type m\_Ts;}
+\DoxyCodeLine{725     \_\_type m\_Fs;}
+\DoxyCodeLine{726     \_\_type m\_Fn;}
+\DoxyCodeLine{727     \_\_type m\_Fstop;}
+\DoxyCodeLine{728     \_\_type m\_Ns;}
+\DoxyCodeLine{729     \_\_type m\_pH;}
+\DoxyCodeLine{730     \_\_type m\_Km;}
+\DoxyCodeLine{731     \_\_type m\_out;}
+\DoxyCodeLine{732     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} m\_order;}
+\DoxyCodeLine{733     \_\_bool m\_scale;}
+\DoxyCodeLine{734 }
+\DoxyCodeLine{735     \textcolor{comment}{// coefficients:}}
+\DoxyCodeLine{736     \_\_type *m\_buff\_cx;}
+\DoxyCodeLine{737 }
+\DoxyCodeLine{738 \textcolor{keyword}{public}:}
+\DoxyCodeLine{739 }
+\DoxyCodeLine{740     \textcolor{comment}{// buffers:}}
+\DoxyCodeLine{741     \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer< \_\_type >}} m\_buff\_sx;}
+\DoxyCodeLine{742 }
+\DoxyCodeLine{743     \textcolor{comment}{// window function object:}}
+\DoxyCodeLine{744     \mbox{\hyperlink{classwind__fcn}{wind\_fcn}} m\_wind\_fcn;}
+\DoxyCodeLine{745 }
+\DoxyCodeLine{746     \textcolor{comment}{// coefficients computation function:}}
+\DoxyCodeLine{747     \_\_void coeff\_calc()}
+\DoxyCodeLine{748     \{}
+\DoxyCodeLine{749         \textcolor{comment}{// check if the window is ready to use:}}
+\DoxyCodeLine{750         \textcolor{keywordflow}{if} ( m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_ad71b3a4bf91eae2db01d060b8b2ff0c2}{is\_ready}}() == 0 ) m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a0b84c65f589e9f9253c78fdb0b449948}{Chebyshev}}(100);}
+\DoxyCodeLine{751 }
+\DoxyCodeLine{752         \textcolor{comment}{// coefficients computation:}}
+\DoxyCodeLine{753         \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} k = 0;}
+\DoxyCodeLine{754         m\_Fstop /= m\_Fs;}
+\DoxyCodeLine{755 }
+\DoxyCodeLine{756         \textcolor{keywordflow}{if} (m\_order \% 2 == 0) \textcolor{comment}{// even order highpass}}
+\DoxyCodeLine{757         \{}
+\DoxyCodeLine{758             \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order / 2; n++)}
+\DoxyCodeLine{759             \{}
+\DoxyCodeLine{760                 k = abs(n -\/ (m\_order + 1) / 2);}
+\DoxyCodeLine{761 }
+\DoxyCodeLine{762                 \textcolor{keywordflow}{if} (n == 0)}
+\DoxyCodeLine{763                 \{}
+\DoxyCodeLine{764                     m\_buff\_cx[k] = (1 -\/ 2 * m\_Fstop) * m\_wind\_fcn[k];}
+\DoxyCodeLine{765                 \}}
+\DoxyCodeLine{766                 \textcolor{keywordflow}{else}}
+\DoxyCodeLine{767                 \{}
+\DoxyCodeLine{768                     m\_buff\_cx[k] = -\/2 * m\_Fstop * sin(n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop) / (n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop) * m\_wind\_fcn[k];}
+\DoxyCodeLine{769                     m\_buff\_cx[m\_order -\/ k] = m\_buff\_cx[k];}
+\DoxyCodeLine{770                 \}}
+\DoxyCodeLine{771             \}}
+\DoxyCodeLine{772         \}}
+\DoxyCodeLine{773         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (m\_order \% 2 != 0) \textcolor{comment}{// odd order highpass}}
+\DoxyCodeLine{774         \{}
+\DoxyCodeLine{775             \_\_type rem = ceil((\_\_type)m\_order / 2) -\/ (\_\_type)m\_order / 2;}
+\DoxyCodeLine{776             \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= ceil(m\_order / 2); n++)}
+\DoxyCodeLine{777             \{}
+\DoxyCodeLine{778                 k = abs(n -\/ m\_order / 2);}
+\DoxyCodeLine{779                 m\_buff\_cx[k]           = -\/pow(-\/1 , n) * 2 * (0.5-\/m\_Fstop) * sin((n + rem) * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * (0.5-\/m\_Fstop) ) / ((n + rem) * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * (0.5 -\/ m\_Fstop) )* m\_wind\_fcn[k];}
+\DoxyCodeLine{780                 m\_buff\_cx[m\_order -\/ k] = -\/m\_buff\_cx[k];}
+\DoxyCodeLine{781             \}}
+\DoxyCodeLine{782         \}}
+\DoxyCodeLine{783 }
+\DoxyCodeLine{784         \textcolor{comment}{// filter pulse characteristic normalization:}}
+\DoxyCodeLine{785         \textcolor{keywordflow}{if} ( m\_scale )}
+\DoxyCodeLine{786         \{}
+\DoxyCodeLine{787             freq\_ch( m\_Fs / 2 );}
+\DoxyCodeLine{788             \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order; n++) m\_buff\_cx[n] = m\_buff\_cx[n] / m\_Km;}
+\DoxyCodeLine{789             freq\_ch(m\_Fn);}
+\DoxyCodeLine{790         \}}
+\DoxyCodeLine{791 }
+\DoxyCodeLine{792         \textcolor{comment}{// deallocate the window function:}}
+\DoxyCodeLine{793         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_af2ef94171d3ebb655a22e3c16d6a316f}{deallocate}}();}
+\DoxyCodeLine{794     \}}
+\DoxyCodeLine{795 }
+\DoxyCodeLine{796     \textcolor{comment}{// Frequency characteristics:}}
+\DoxyCodeLine{797     \_\_void freq\_ch( \_\_type F )}
+\DoxyCodeLine{798     \{}
+\DoxyCodeLine{799         \_\_type m\_W\_re = 0;}
+\DoxyCodeLine{800         \_\_type m\_W\_im = 0;}
+\DoxyCodeLine{801         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order ; n++)}
+\DoxyCodeLine{802         \{}
+\DoxyCodeLine{803             m\_W\_re = m\_W\_re + cos(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * n * F * m\_Ts) * m\_buff\_cx[n];}
+\DoxyCodeLine{804             m\_W\_im = m\_W\_im + sin(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * n * F * m\_Ts) * m\_buff\_cx[n];}
+\DoxyCodeLine{805         \}}
+\DoxyCodeLine{806         m\_pH   = atan2( m\_W\_im , m\_W\_im );}
+\DoxyCodeLine{807         m\_Km   = sqrt (m\_W\_re * m\_W\_re + m\_W\_im * m\_W\_im);}
+\DoxyCodeLine{808     \}}
+\DoxyCodeLine{809 }
+\DoxyCodeLine{810 \textcolor{preprocessor}{    \#ifndef \_\_ALG\_PLATFORM}}
+\DoxyCodeLine{811 }
+\DoxyCodeLine{812     \textcolor{comment}{// filter response store to a text files:}}
+\DoxyCodeLine{813     \_\_void freq\_rp( std::string directory )}
+\DoxyCodeLine{814     \{}
+\DoxyCodeLine{815         \textcolor{comment}{// open files:}}
+\DoxyCodeLine{816         std::ofstream ampr;}
+\DoxyCodeLine{817         std::ofstream phsr;}
+\DoxyCodeLine{818         std::ofstream freq;}
+\DoxyCodeLine{819         std::ofstream plsr;}
+\DoxyCodeLine{820         ampr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)ampr.txt"{}} );}
+\DoxyCodeLine{821         phsr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)phsr.txt"{}} );}
+\DoxyCodeLine{822         freq.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)freq.txt"{}} );}
+\DoxyCodeLine{823         plsr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)plsr.txt"{}} );}
+\DoxyCodeLine{824 }
+\DoxyCodeLine{825         \textcolor{comment}{// frequency response}}
+\DoxyCodeLine{826         \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i = 0 ; i < m\_Fs * 0.5 ; i++ )}
+\DoxyCodeLine{827         \{}
+\DoxyCodeLine{828             freq\_ch( i );}
+\DoxyCodeLine{829             ampr << m\_Km << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{830             phsr << m\_pH << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{831             freq << i    << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{832         \}}
+\DoxyCodeLine{833 }
+\DoxyCodeLine{834         \textcolor{comment}{// pulse response:}}
+\DoxyCodeLine{835         \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i = 0 ; i <= m\_order ; i++ ) \{ plsr << m\_buff\_cx[i] << \textcolor{stringliteral}{"{}\(\backslash\)n"{}}; \}}
+\DoxyCodeLine{836 }
+\DoxyCodeLine{837         \textcolor{comment}{// close files:}}
+\DoxyCodeLine{838         ampr.close();}
+\DoxyCodeLine{839         phsr.close();}
+\DoxyCodeLine{840         freq.close();}
+\DoxyCodeLine{841         plsr.close();}
+\DoxyCodeLine{842     \}}
+\DoxyCodeLine{843 }
+\DoxyCodeLine{844 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{845 }
+\DoxyCodeLine{846     \textcolor{comment}{// memory allocation:}}
+\DoxyCodeLine{847     \_\_bool allocate()}
+\DoxyCodeLine{848     \{}
+\DoxyCodeLine{849         \textcolor{comment}{// memory allocation:}}
+\DoxyCodeLine{850         m\_buff\_cx = ( \_\_type* ) calloc( m\_order + 1 , \textcolor{keyword}{sizeof} ( \_\_type ) );}
+\DoxyCodeLine{851         m\_buff\_sx.allocate( m\_order + 2 );}
+\DoxyCodeLine{852         \textcolor{comment}{// compute FIR filter coefficients:}}
+\DoxyCodeLine{853         coeff\_calc();}
+\DoxyCodeLine{854         \textcolor{keywordflow}{return} 1;}
+\DoxyCodeLine{855     \}}
+\DoxyCodeLine{856 }
+\DoxyCodeLine{857     \textcolor{comment}{// memory deallocation:}}
+\DoxyCodeLine{858     \_\_void deallocate()}
+\DoxyCodeLine{859     \{}
+\DoxyCodeLine{860         \textcolor{keywordflow}{if}( m\_buff\_cx != 0 ) free( m\_buff\_cx );}
+\DoxyCodeLine{861         m\_buff\_sx.deallocate();}
+\DoxyCodeLine{862         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_af2ef94171d3ebb655a22e3c16d6a316f}{deallocate}}();}
+\DoxyCodeLine{863     \}}
+\DoxyCodeLine{864 }
+\DoxyCodeLine{865     \textcolor{comment}{// initialization function:}}
+\DoxyCodeLine{866     \_\_void init( \_\_type Fs, \_\_type Fn, \_\_type F\_stop, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \_\_bool scale )}
+\DoxyCodeLine{867     \{}
+\DoxyCodeLine{868         m\_Fs      = Fs;}
+\DoxyCodeLine{869         m\_Fn      = Fn;}
+\DoxyCodeLine{870         m\_Fstop   = F\_stop;}
+\DoxyCodeLine{871         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{872         m\_order   = order;}
+\DoxyCodeLine{873         m\_Ns      = m\_order;}
+\DoxyCodeLine{874         m\_scale   = scale;}
+\DoxyCodeLine{875         m\_buff\_cx = 0;}
+\DoxyCodeLine{876         m\_out     = 0;}
+\DoxyCodeLine{877 }
+\DoxyCodeLine{878         \textcolor{comment}{// window function initialization:}}
+\DoxyCodeLine{879         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a6deb4f700c93c94aff8e17194309cab7}{init}}( m\_order + 1 );}
+\DoxyCodeLine{880     \}}
+\DoxyCodeLine{881 }
+\DoxyCodeLine{882     \textcolor{comment}{// default constructor:}}
+\DoxyCodeLine{883     \mbox{\hyperlink{classfir__hp}{fir\_hp}}()}
+\DoxyCodeLine{884     \{}
+\DoxyCodeLine{885         m\_Fs      = 4000;}
+\DoxyCodeLine{886         m\_Fn      = 50;}
+\DoxyCodeLine{887         m\_Fstop   = 100;}
+\DoxyCodeLine{888         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{889         m\_order   = 80;}
+\DoxyCodeLine{890         m\_Ns      = m\_order;}
+\DoxyCodeLine{891         m\_scale   = \textcolor{keyword}{false};}
+\DoxyCodeLine{892         m\_buff\_cx = 0;}
+\DoxyCodeLine{893         m\_out     = 0;}
+\DoxyCodeLine{894 }
+\DoxyCodeLine{895         \textcolor{comment}{// window function initialization:}}
+\DoxyCodeLine{896         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a6deb4f700c93c94aff8e17194309cab7}{init}}( m\_order + 1 );}
+\DoxyCodeLine{897     \}}
+\DoxyCodeLine{898 }
+\DoxyCodeLine{899     \textcolor{comment}{// initializing constructor:}}
+\DoxyCodeLine{900     \mbox{\hyperlink{classfir__hp}{fir\_hp}}( \_\_type Fs, \_\_type Fn, \_\_type F\_stop, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \_\_bool scale ) \{ init( Fs , Fn , F\_stop , order , scale ); \}}
+\DoxyCodeLine{901 }
+\DoxyCodeLine{902     \textcolor{comment}{// destructor:}}
+\DoxyCodeLine{903     \mbox{\hyperlink{classfir__hp}{\string~fir\_hp}}() \{ deallocate(); \}}
+\DoxyCodeLine{904 }
+\DoxyCodeLine{905     \textcolor{comment}{// filtering function:}}
+\DoxyCodeLine{906 }
+\DoxyCodeLine{907     \textcolor{comment}{// x32:}}
+\DoxyCodeLine{908     \textcolor{keyword}{inline} \_\_type filt( \_\_type *input )}
+\DoxyCodeLine{909     \{}
+\DoxyCodeLine{910         m\_buff\_sx( input );}
+\DoxyCodeLine{911         m\_out = 0;}
+\DoxyCodeLine{912         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{913         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{914     \}}
+\DoxyCodeLine{915 }
+\DoxyCodeLine{916     \textcolor{keyword}{inline} \_\_type filt()}
+\DoxyCodeLine{917     \{}
+\DoxyCodeLine{918         m\_out = 0;}
+\DoxyCodeLine{919         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{920         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{921     \}}
+\DoxyCodeLine{922 }
+\DoxyCodeLine{923     \textcolor{comment}{// operators:}}
+\DoxyCodeLine{924     \textcolor{keyword}{inline} \_\_type operator() ( \_\_type *input ) \{ \textcolor{keywordflow}{return} filt( input ); \}}
+\DoxyCodeLine{925     \textcolor{keyword}{inline} \_\_type operator() () \{ \textcolor{keywordflow}{return} filt(); \}}
+\DoxyCodeLine{926 \};}
+\DoxyCodeLine{927 }
+\DoxyCodeLine{928 \textcolor{comment}{// bandpass implementations:}}
+\DoxyCodeLine{929 }
+\DoxyCodeLine{930 \textcolor{comment}{// float x32:}}
+\DoxyCodeLine{931 \textcolor{keyword}{template}<> \textcolor{keyword}{class }\mbox{\hyperlink{classfir__bp}{fir\_bp}}<\mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}}>}
+\DoxyCodeLine{932 \{}
+\DoxyCodeLine{933     \textcolor{keyword}{typedef} \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}} \_\_type ;}
+\DoxyCodeLine{934     \textcolor{keyword}{typedef} \textcolor{keywordtype}{bool}   \_\_bool ;}
+\DoxyCodeLine{935     \textcolor{keyword}{typedef} \textcolor{keywordtype}{void}   \_\_void ;}
+\DoxyCodeLine{936 }
+\DoxyCodeLine{937     \textcolor{comment}{// system variables:}}
+\DoxyCodeLine{938     \_\_type m\_Ts;}
+\DoxyCodeLine{939     \_\_type m\_Fs;}
+\DoxyCodeLine{940     \_\_type m\_Fn;}
+\DoxyCodeLine{941     \_\_type m\_Fstop1;}
+\DoxyCodeLine{942     \_\_type m\_Fstop2;}
+\DoxyCodeLine{943     \_\_type m\_Ns;}
+\DoxyCodeLine{944     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} m\_order;}
+\DoxyCodeLine{945     \_\_bool m\_scale;}
+\DoxyCodeLine{946 }
+\DoxyCodeLine{947     \textcolor{comment}{// coefficients:}}
+\DoxyCodeLine{948     \_\_type *m\_buff\_cx;}
+\DoxyCodeLine{949 }
+\DoxyCodeLine{950 \textcolor{keyword}{public}:}
+\DoxyCodeLine{951 }
+\DoxyCodeLine{952     \_\_type m\_pH;}
+\DoxyCodeLine{953     \_\_type m\_Km;}
+\DoxyCodeLine{954     \_\_type m\_out;}
+\DoxyCodeLine{955 }
+\DoxyCodeLine{956     \textcolor{comment}{// buffers:}}
+\DoxyCodeLine{957     \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer< \_\_type >}} m\_buff\_sx;}
+\DoxyCodeLine{958 }
+\DoxyCodeLine{959     \textcolor{comment}{// window function object:}}
+\DoxyCodeLine{960     \mbox{\hyperlink{classwind__fcn}{wind\_fcn}} m\_wind\_fcn;}
+\DoxyCodeLine{961 }
+\DoxyCodeLine{962     \textcolor{comment}{// coefficients computation function:}}
+\DoxyCodeLine{963     \_\_void coeff\_calc()}
+\DoxyCodeLine{964     \{}
+\DoxyCodeLine{965         \textcolor{comment}{// check if the window is ready to use:}}
+\DoxyCodeLine{966         \textcolor{keywordflow}{if} ( m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_ad71b3a4bf91eae2db01d060b8b2ff0c2}{is\_ready}}() == 0 ) m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a0b84c65f589e9f9253c78fdb0b449948}{Chebyshev}}(100);}
+\DoxyCodeLine{967 }
+\DoxyCodeLine{968         \textcolor{comment}{// coefficients computation:}}
+\DoxyCodeLine{969         \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} k = 0;}
+\DoxyCodeLine{970         m\_Fstop1 /= m\_Fs;}
+\DoxyCodeLine{971         m\_Fstop2 /= m\_Fs;}
+\DoxyCodeLine{972 }
+\DoxyCodeLine{973         \textcolor{keywordflow}{if} (m\_order \% 2 == 0) \textcolor{comment}{// считаем ПФ четного порядка}}
+\DoxyCodeLine{974         \{}
+\DoxyCodeLine{975             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} n = 0; n <= m\_order / 2; n++)}
+\DoxyCodeLine{976             \{}
+\DoxyCodeLine{977                 k = abs(n -\/ (m\_order + 1) / 2);}
+\DoxyCodeLine{978 }
+\DoxyCodeLine{979                 \textcolor{keywordflow}{if} (n == 0)}
+\DoxyCodeLine{980                 \{}
+\DoxyCodeLine{981                     m\_buff\_cx[k] = 2 * (m\_Fstop2 -\/ m\_Fstop1) * m\_wind\_fcn[k];}
+\DoxyCodeLine{982                 \}}
+\DoxyCodeLine{983                 \textcolor{keywordflow}{else}}
+\DoxyCodeLine{984                 \{}
+\DoxyCodeLine{985                     m\_buff\_cx[k] = 2 * (m\_Fstop2 * sin(n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop2) / (n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop2) -\/ m\_Fstop1 * sin(n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop1) / (n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop1)) * m\_wind\_fcn[k];}
+\DoxyCodeLine{986                     m\_buff\_cx[m\_order -\/ k] = m\_buff\_cx[k];}
+\DoxyCodeLine{987                 \}}
+\DoxyCodeLine{988             \}}
+\DoxyCodeLine{989         \}}
+\DoxyCodeLine{990         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (m\_order \% 2 != 0) \textcolor{comment}{// считаем ПФ нечетного порядка}}
+\DoxyCodeLine{991         \{}
+\DoxyCodeLine{992             \textcolor{keywordtype}{double} rem = ceil((\textcolor{keywordtype}{double})m\_order / 2) -\/ (double)m\_order / 2;}
+\DoxyCodeLine{993             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} n = 0; n <= ceil(m\_order / 2); n++)}
+\DoxyCodeLine{994             \{}
+\DoxyCodeLine{995                 k = abs(n -\/ m\_order / 2);}
+\DoxyCodeLine{996                 m\_buff\_cx[k] = 2 * (m\_Fstop2 * sin((n + rem) * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop2) / ((n + rem) * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop2) -\/ m\_Fstop1 * sin((n + rem) * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop1) / ((n + rem) * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop1)) * m\_wind\_fcn[k];}
+\DoxyCodeLine{997                 m\_buff\_cx[m\_order -\/ k] = m\_buff\_cx[k];}
+\DoxyCodeLine{998             \}}
+\DoxyCodeLine{999         \}}
+\DoxyCodeLine{1000 }
+\DoxyCodeLine{1001         \textcolor{comment}{// filter pulse characteristic normalization:}}
+\DoxyCodeLine{1002         \textcolor{keywordflow}{if} ( m\_scale )}
+\DoxyCodeLine{1003         \{}
+\DoxyCodeLine{1004             freq\_ch( ( m\_Fstop1 + 0.5 * ( m\_Fstop2 -\/ m\_Fstop1 ) ) * m\_Fs );}
+\DoxyCodeLine{1005             \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order; n++) m\_buff\_cx[n] = m\_buff\_cx[n] / m\_Km;}
+\DoxyCodeLine{1006             freq\_ch(m\_Fn);}
+\DoxyCodeLine{1007         \}}
+\DoxyCodeLine{1008 }
+\DoxyCodeLine{1009         \textcolor{comment}{// deallocate the window function:}}
+\DoxyCodeLine{1010         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_af2ef94171d3ebb655a22e3c16d6a316f}{deallocate}}();}
+\DoxyCodeLine{1011     \}}
+\DoxyCodeLine{1012 }
+\DoxyCodeLine{1013     \textcolor{comment}{// Frequency characteristics:}}
+\DoxyCodeLine{1014     \_\_void freq\_ch( \_\_type F )}
+\DoxyCodeLine{1015     \{}
+\DoxyCodeLine{1016         \_\_type m\_W\_re = 0;}
+\DoxyCodeLine{1017         \_\_type m\_W\_im = 0;}
+\DoxyCodeLine{1018         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order ; n++)}
+\DoxyCodeLine{1019         \{}
+\DoxyCodeLine{1020             m\_W\_re = m\_W\_re + cos(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * n * F * m\_Ts) * m\_buff\_cx[n];}
+\DoxyCodeLine{1021             m\_W\_im = m\_W\_im + sin(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * n * F * m\_Ts) * m\_buff\_cx[n];}
+\DoxyCodeLine{1022         \}}
+\DoxyCodeLine{1023         m\_pH   = atan2( m\_W\_im , m\_W\_im );}
+\DoxyCodeLine{1024         m\_Km   = sqrt (m\_W\_re * m\_W\_re + m\_W\_im * m\_W\_im);}
+\DoxyCodeLine{1025     \}}
+\DoxyCodeLine{1026 }
+\DoxyCodeLine{1027 \textcolor{preprocessor}{    \#ifndef \_\_ALG\_PLATFORM}}
+\DoxyCodeLine{1028 }
+\DoxyCodeLine{1029     \textcolor{comment}{// filter response store to a text files:}}
+\DoxyCodeLine{1030     \_\_void freq\_rp( std::string directory )}
+\DoxyCodeLine{1031     \{}
+\DoxyCodeLine{1032         \textcolor{comment}{// open files:}}
+\DoxyCodeLine{1033         std::ofstream ampr;}
+\DoxyCodeLine{1034         std::ofstream phsr;}
+\DoxyCodeLine{1035         std::ofstream freq;}
+\DoxyCodeLine{1036         std::ofstream plsr;}
+\DoxyCodeLine{1037         ampr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)ampr.txt"{}} );}
+\DoxyCodeLine{1038         phsr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)phsr.txt"{}} );}
+\DoxyCodeLine{1039         freq.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)freq.txt"{}} );}
+\DoxyCodeLine{1040         plsr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)plsr.txt"{}} );}
+\DoxyCodeLine{1041 }
+\DoxyCodeLine{1042         \textcolor{comment}{// frequency response}}
+\DoxyCodeLine{1043         \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i = 0 ; i < m\_Fs * 0.5 ; i++ )}
+\DoxyCodeLine{1044         \{}
+\DoxyCodeLine{1045             freq\_ch( i );}
+\DoxyCodeLine{1046             ampr << m\_Km << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{1047             phsr << m\_pH << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{1048             freq << i    << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{1049         \}}
+\DoxyCodeLine{1050 }
+\DoxyCodeLine{1051         \textcolor{comment}{// pulse response:}}
+\DoxyCodeLine{1052         \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i = 0 ; i <= m\_order ; i++ ) \{ plsr << m\_buff\_cx[i] << \textcolor{stringliteral}{"{}\(\backslash\)n"{}}; \}}
+\DoxyCodeLine{1053 }
+\DoxyCodeLine{1054         \textcolor{comment}{// close files:}}
+\DoxyCodeLine{1055         ampr.close();}
+\DoxyCodeLine{1056         phsr.close();}
+\DoxyCodeLine{1057         freq.close();}
+\DoxyCodeLine{1058         plsr.close();}
+\DoxyCodeLine{1059     \}}
+\DoxyCodeLine{1060 }
+\DoxyCodeLine{1061 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{1062 }
+\DoxyCodeLine{1063     \textcolor{comment}{// memory allocation:}}
+\DoxyCodeLine{1064     \_\_bool allocate()}
+\DoxyCodeLine{1065     \{}
+\DoxyCodeLine{1066         \textcolor{comment}{// memory allocation:}}
+\DoxyCodeLine{1067         m\_buff\_cx = ( \_\_type* ) calloc( m\_order + 1 , \textcolor{keyword}{sizeof} ( \_\_type ) );}
+\DoxyCodeLine{1068         m\_buff\_sx.allocate( m\_order + 2 );}
+\DoxyCodeLine{1069         \textcolor{comment}{// compute FIR filter coefficients:}}
+\DoxyCodeLine{1070         coeff\_calc();}
+\DoxyCodeLine{1071         \textcolor{keywordflow}{return} 1;}
+\DoxyCodeLine{1072     \}}
+\DoxyCodeLine{1073 }
+\DoxyCodeLine{1074     \textcolor{comment}{// memory deallocation:}}
+\DoxyCodeLine{1075     \_\_void deallocate()}
+\DoxyCodeLine{1076     \{}
+\DoxyCodeLine{1077         \textcolor{keywordflow}{if}( m\_buff\_cx != 0 ) free( m\_buff\_cx );}
+\DoxyCodeLine{1078         m\_buff\_sx.deallocate();}
+\DoxyCodeLine{1079         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_af2ef94171d3ebb655a22e3c16d6a316f}{deallocate}}();}
+\DoxyCodeLine{1080     \}}
+\DoxyCodeLine{1081 }
+\DoxyCodeLine{1082     \textcolor{comment}{// initialization function:}}
+\DoxyCodeLine{1083     \_\_void init( \_\_type Fs, \_\_type Fn, \_\_type F\_stop , \_\_type BandWidth , \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \_\_bool scale )}
+\DoxyCodeLine{1084     \{}
+\DoxyCodeLine{1085         m\_Fs      = Fs;}
+\DoxyCodeLine{1086         m\_Fn      = Fn;}
+\DoxyCodeLine{1087         m\_Fstop1  = F\_stop;}
+\DoxyCodeLine{1088         m\_Fstop2  = F\_stop + BandWidth;}
+\DoxyCodeLine{1089         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{1090         m\_order   = order;}
+\DoxyCodeLine{1091         m\_Ns      = m\_order;}
+\DoxyCodeLine{1092         m\_scale   = scale;}
+\DoxyCodeLine{1093         m\_buff\_cx = 0;}
+\DoxyCodeLine{1094         m\_out     = 0;}
+\DoxyCodeLine{1095 }
+\DoxyCodeLine{1096         \textcolor{comment}{// window function initialization:}}
+\DoxyCodeLine{1097         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a6deb4f700c93c94aff8e17194309cab7}{init}}( m\_order + 1 );}
+\DoxyCodeLine{1098     \}}
+\DoxyCodeLine{1099 }
+\DoxyCodeLine{1100     \textcolor{comment}{// default constructor:}}
+\DoxyCodeLine{1101     \mbox{\hyperlink{classfir__bp}{fir\_bp}}()}
+\DoxyCodeLine{1102     \{}
+\DoxyCodeLine{1103         m\_Fs      = 4000;}
+\DoxyCodeLine{1104         m\_Fn      = 50;}
+\DoxyCodeLine{1105         m\_Fstop1  = 100;}
+\DoxyCodeLine{1106         m\_Fstop1  = 200;}
+\DoxyCodeLine{1107         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{1108         m\_order   = 80;}
+\DoxyCodeLine{1109         m\_Ns      = m\_order;}
+\DoxyCodeLine{1110         m\_scale   = \textcolor{keyword}{false};}
+\DoxyCodeLine{1111         m\_buff\_cx = 0;}
+\DoxyCodeLine{1112         m\_out     = 0;}
+\DoxyCodeLine{1113 }
+\DoxyCodeLine{1114         \textcolor{comment}{// window function initialization:}}
+\DoxyCodeLine{1115         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a6deb4f700c93c94aff8e17194309cab7}{init}}( m\_order + 1 );}
+\DoxyCodeLine{1116     \}}
+\DoxyCodeLine{1117 }
+\DoxyCodeLine{1118     \textcolor{comment}{// initializing constructor:}}
+\DoxyCodeLine{1119     \mbox{\hyperlink{classfir__bp}{fir\_bp}}( \_\_type Fs, \_\_type Fn, \_\_type F\_stop , \_\_type BandWidth , \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \_\_bool scale ) \{ init( Fs , Fn , F\_stop , BandWidth , order , scale ); \}}
+\DoxyCodeLine{1120 }
+\DoxyCodeLine{1121     \textcolor{comment}{// destructor:}}
+\DoxyCodeLine{1122     \mbox{\hyperlink{classfir__bp}{\string~fir\_bp}}() \{ deallocate(); \}}
+\DoxyCodeLine{1123 }
+\DoxyCodeLine{1124     \textcolor{comment}{// filtering function:}}
+\DoxyCodeLine{1125 }
+\DoxyCodeLine{1126     \textcolor{comment}{// x32:}}
+\DoxyCodeLine{1127     \textcolor{keyword}{inline} \_\_type filt( \_\_type *input )}
+\DoxyCodeLine{1128     \{}
+\DoxyCodeLine{1129         m\_buff\_sx( input );}
+\DoxyCodeLine{1130         m\_out = 0;}
+\DoxyCodeLine{1131         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{1132         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{1133     \}}
+\DoxyCodeLine{1134 }
+\DoxyCodeLine{1135     \textcolor{comment}{// x64:}}
+\DoxyCodeLine{1136     \textcolor{keyword}{inline} \_\_type filt( \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *input )}
+\DoxyCodeLine{1137     \{}
+\DoxyCodeLine{1138         m\_buff\_sx( input );}
+\DoxyCodeLine{1139         m\_out = 0;}
+\DoxyCodeLine{1140         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{1141         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{1142     \}}
+\DoxyCodeLine{1143 }
+\DoxyCodeLine{1144     \textcolor{keyword}{inline} \_\_type filt()}
+\DoxyCodeLine{1145     \{}
+\DoxyCodeLine{1146         m\_out = 0;}
+\DoxyCodeLine{1147         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{1148         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{1149     \}}
+\DoxyCodeLine{1150 }
+\DoxyCodeLine{1151     \textcolor{comment}{// operators:}}
+\DoxyCodeLine{1152     \textcolor{keyword}{inline} \_\_type operator() ( \_\_type *input ) \{ \textcolor{keywordflow}{return} filt( input ); \}}
+\DoxyCodeLine{1153     \textcolor{keyword}{inline} \_\_type operator() ( \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *input ) \{ \textcolor{keywordflow}{return} filt( input ); \}}
+\DoxyCodeLine{1154     \textcolor{keyword}{inline} \_\_type operator() () \{ \textcolor{keywordflow}{return} filt(); \}}
+\DoxyCodeLine{1155 \};}
+\DoxyCodeLine{1156 }
+\DoxyCodeLine{1157 \textcolor{comment}{// float x64:}}
+\DoxyCodeLine{1158 \textcolor{keyword}{template}<> \textcolor{keyword}{class }\mbox{\hyperlink{classfir__bp}{fir\_bp}}<\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}}>}
+\DoxyCodeLine{1159 \{}
+\DoxyCodeLine{1160     \textcolor{keyword}{typedef} \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} \_\_type ;}
+\DoxyCodeLine{1161     \textcolor{keyword}{typedef} \textcolor{keywordtype}{bool}   \_\_bool ;}
+\DoxyCodeLine{1162     \textcolor{keyword}{typedef} \textcolor{keywordtype}{void}   \_\_void ;}
+\DoxyCodeLine{1163 }
+\DoxyCodeLine{1164     \textcolor{comment}{// system variables:}}
+\DoxyCodeLine{1165     \_\_type m\_Ts;}
+\DoxyCodeLine{1166     \_\_type m\_Fs;}
+\DoxyCodeLine{1167     \_\_type m\_Fn;}
+\DoxyCodeLine{1168     \_\_type m\_Fstop1;}
+\DoxyCodeLine{1169     \_\_type m\_Fstop2;}
+\DoxyCodeLine{1170     \_\_type m\_Ns;}
+\DoxyCodeLine{1171     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} m\_order;}
+\DoxyCodeLine{1172     \_\_bool m\_scale;}
+\DoxyCodeLine{1173 }
+\DoxyCodeLine{1174     \textcolor{comment}{// coefficients:}}
+\DoxyCodeLine{1175     \_\_type *m\_buff\_cx;}
+\DoxyCodeLine{1176 }
+\DoxyCodeLine{1177 \textcolor{keyword}{public}:}
+\DoxyCodeLine{1178 }
+\DoxyCodeLine{1179     \_\_type m\_pH;}
+\DoxyCodeLine{1180     \_\_type m\_Km;}
+\DoxyCodeLine{1181     \_\_type m\_out;}
+\DoxyCodeLine{1182 }
+\DoxyCodeLine{1183     \textcolor{comment}{// buffers:}}
+\DoxyCodeLine{1184     \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer< \_\_type >}} m\_buff\_sx;}
+\DoxyCodeLine{1185 }
+\DoxyCodeLine{1186     \textcolor{comment}{// window function object:}}
+\DoxyCodeLine{1187     \mbox{\hyperlink{classwind__fcn}{wind\_fcn}} m\_wind\_fcn;}
+\DoxyCodeLine{1188 }
+\DoxyCodeLine{1189     \textcolor{comment}{// coefficients computation function:}}
+\DoxyCodeLine{1190     \_\_void coeff\_calc()}
+\DoxyCodeLine{1191     \{}
+\DoxyCodeLine{1192         \textcolor{comment}{// check if the window is ready to use:}}
+\DoxyCodeLine{1193         \textcolor{keywordflow}{if} ( m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_ad71b3a4bf91eae2db01d060b8b2ff0c2}{is\_ready}}() == 0 ) m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a0b84c65f589e9f9253c78fdb0b449948}{Chebyshev}}(100);}
+\DoxyCodeLine{1194 }
+\DoxyCodeLine{1195         \textcolor{comment}{// coefficients computation:}}
+\DoxyCodeLine{1196         \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} k = 0;}
+\DoxyCodeLine{1197         m\_Fstop1 /= m\_Fs;}
+\DoxyCodeLine{1198         m\_Fstop2 /= m\_Fs;}
+\DoxyCodeLine{1199 }
+\DoxyCodeLine{1200         \textcolor{keywordflow}{if} (m\_order \% 2 == 0) \textcolor{comment}{// считаем ПФ четного порядка}}
+\DoxyCodeLine{1201         \{}
+\DoxyCodeLine{1202             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} n = 0; n <= m\_order / 2; n++)}
+\DoxyCodeLine{1203             \{}
+\DoxyCodeLine{1204                 k = abs(n -\/ (m\_order + 1) / 2);}
+\DoxyCodeLine{1205 }
+\DoxyCodeLine{1206                 \textcolor{keywordflow}{if} (n == 0)}
+\DoxyCodeLine{1207                 \{}
+\DoxyCodeLine{1208                     m\_buff\_cx[k] = 2 * (m\_Fstop2 -\/ m\_Fstop1) * m\_wind\_fcn[k];}
+\DoxyCodeLine{1209                 \}}
+\DoxyCodeLine{1210                 \textcolor{keywordflow}{else}}
+\DoxyCodeLine{1211                 \{}
+\DoxyCodeLine{1212                     m\_buff\_cx[k] = 2 * (m\_Fstop2 * sin(n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop2) / (n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop2) -\/ m\_Fstop1 * sin(n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop1) / (n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop1)) * m\_wind\_fcn[k];}
+\DoxyCodeLine{1213                     m\_buff\_cx[m\_order -\/ k] = m\_buff\_cx[k];}
+\DoxyCodeLine{1214                 \}}
+\DoxyCodeLine{1215             \}}
+\DoxyCodeLine{1216         \}}
+\DoxyCodeLine{1217         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (m\_order \% 2 != 0) \textcolor{comment}{// считаем ПФ нечетного порядка}}
+\DoxyCodeLine{1218         \{}
+\DoxyCodeLine{1219             \textcolor{keywordtype}{double} rem = ceil((\textcolor{keywordtype}{double})m\_order / 2) -\/ (double)m\_order / 2;}
+\DoxyCodeLine{1220             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} n = 0; n <= ceil(m\_order / 2); n++)}
+\DoxyCodeLine{1221             \{}
+\DoxyCodeLine{1222                 k = abs(n -\/ m\_order / 2);}
+\DoxyCodeLine{1223                 m\_buff\_cx[k] = 2 * (m\_Fstop2 * sin((n + rem) * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop2) / ((n + rem) * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop2) -\/ m\_Fstop1 * sin((n + rem) * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop1) / ((n + rem) * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop1)) * m\_wind\_fcn[k];}
+\DoxyCodeLine{1224                 m\_buff\_cx[m\_order -\/ k] = m\_buff\_cx[k];}
+\DoxyCodeLine{1225             \}}
+\DoxyCodeLine{1226         \}}
+\DoxyCodeLine{1227 }
+\DoxyCodeLine{1228         \textcolor{comment}{// filter pulse characteristic normalization:}}
+\DoxyCodeLine{1229         \textcolor{keywordflow}{if} ( m\_scale )}
+\DoxyCodeLine{1230         \{}
+\DoxyCodeLine{1231             freq\_ch( ( m\_Fstop1 + 0.5 * ( m\_Fstop2 -\/ m\_Fstop1 ) ) * m\_Fs );}
+\DoxyCodeLine{1232             \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order; n++) m\_buff\_cx[n] = m\_buff\_cx[n] / m\_Km;}
+\DoxyCodeLine{1233             freq\_ch(m\_Fn);}
+\DoxyCodeLine{1234         \}}
+\DoxyCodeLine{1235 }
+\DoxyCodeLine{1236         \textcolor{comment}{// deallocate the window function:}}
+\DoxyCodeLine{1237         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_af2ef94171d3ebb655a22e3c16d6a316f}{deallocate}}();}
+\DoxyCodeLine{1238     \}}
+\DoxyCodeLine{1239 }
+\DoxyCodeLine{1240     \textcolor{comment}{// Frequency characteristics:}}
+\DoxyCodeLine{1241     \_\_void freq\_ch( \_\_type F )}
+\DoxyCodeLine{1242     \{}
+\DoxyCodeLine{1243         \_\_type m\_W\_re = 0;}
+\DoxyCodeLine{1244         \_\_type m\_W\_im = 0;}
+\DoxyCodeLine{1245         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order ; n++)}
+\DoxyCodeLine{1246         \{}
+\DoxyCodeLine{1247             m\_W\_re = m\_W\_re + cos(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * n * F * m\_Ts) * m\_buff\_cx[n];}
+\DoxyCodeLine{1248             m\_W\_im = m\_W\_im + sin(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * n * F * m\_Ts) * m\_buff\_cx[n];}
+\DoxyCodeLine{1249         \}}
+\DoxyCodeLine{1250         m\_pH   = atan2( m\_W\_im , m\_W\_im );}
+\DoxyCodeLine{1251         m\_Km   = sqrt (m\_W\_re * m\_W\_re + m\_W\_im * m\_W\_im);}
+\DoxyCodeLine{1252     \}}
+\DoxyCodeLine{1253 }
+\DoxyCodeLine{1254 \textcolor{preprocessor}{    \#ifndef \_\_ALG\_PLATFORM}}
+\DoxyCodeLine{1255 }
+\DoxyCodeLine{1256     \textcolor{comment}{// filter response store to a text files:}}
+\DoxyCodeLine{1257     \_\_void freq\_rp( std::string directory )}
+\DoxyCodeLine{1258     \{}
+\DoxyCodeLine{1259         \textcolor{comment}{// open files:}}
+\DoxyCodeLine{1260         std::ofstream ampr;}
+\DoxyCodeLine{1261         std::ofstream phsr;}
+\DoxyCodeLine{1262         std::ofstream freq;}
+\DoxyCodeLine{1263         std::ofstream plsr;}
+\DoxyCodeLine{1264         ampr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)ampr.txt"{}} );}
+\DoxyCodeLine{1265         phsr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)phsr.txt"{}} );}
+\DoxyCodeLine{1266         freq.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)freq.txt"{}} );}
+\DoxyCodeLine{1267         plsr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)plsr.txt"{}} );}
+\DoxyCodeLine{1268 }
+\DoxyCodeLine{1269         \textcolor{comment}{// frequency response}}
+\DoxyCodeLine{1270         \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i = 0 ; i < m\_Fs * 0.5 ; i++ )}
+\DoxyCodeLine{1271         \{}
+\DoxyCodeLine{1272             freq\_ch( i );}
+\DoxyCodeLine{1273             ampr << m\_Km << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{1274             phsr << m\_pH << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{1275             freq << i    << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{1276         \}}
+\DoxyCodeLine{1277 }
+\DoxyCodeLine{1278         \textcolor{comment}{// pulse response:}}
+\DoxyCodeLine{1279         \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i = 0 ; i <= m\_order ; i++ ) \{ plsr << m\_buff\_cx[i] << \textcolor{stringliteral}{"{}\(\backslash\)n"{}}; \}}
+\DoxyCodeLine{1280 }
+\DoxyCodeLine{1281         \textcolor{comment}{// close files:}}
+\DoxyCodeLine{1282         ampr.close();}
+\DoxyCodeLine{1283         phsr.close();}
+\DoxyCodeLine{1284         freq.close();}
+\DoxyCodeLine{1285         plsr.close();}
+\DoxyCodeLine{1286     \}}
+\DoxyCodeLine{1287 }
+\DoxyCodeLine{1288 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{1289 }
+\DoxyCodeLine{1290     \textcolor{comment}{// memory allocation:}}
+\DoxyCodeLine{1291     \_\_bool allocate()}
+\DoxyCodeLine{1292     \{}
+\DoxyCodeLine{1293         \textcolor{comment}{// memory allocation:}}
+\DoxyCodeLine{1294         m\_buff\_cx = ( \_\_type* ) calloc( m\_order + 1 , \textcolor{keyword}{sizeof} ( \_\_type ) );}
+\DoxyCodeLine{1295         m\_buff\_sx.allocate( m\_order + 2 );}
+\DoxyCodeLine{1296         \textcolor{comment}{// compute FIR filter coefficients:}}
+\DoxyCodeLine{1297         coeff\_calc();}
+\DoxyCodeLine{1298         \textcolor{keywordflow}{return} 1;}
+\DoxyCodeLine{1299     \}}
+\DoxyCodeLine{1300 }
+\DoxyCodeLine{1301     \textcolor{comment}{// memory deallocation:}}
+\DoxyCodeLine{1302     \_\_void deallocate()}
+\DoxyCodeLine{1303     \{}
+\DoxyCodeLine{1304         \textcolor{keywordflow}{if}( m\_buff\_cx != 0 ) free( m\_buff\_cx );}
+\DoxyCodeLine{1305         m\_buff\_sx.deallocate();}
+\DoxyCodeLine{1306         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_af2ef94171d3ebb655a22e3c16d6a316f}{deallocate}}();}
+\DoxyCodeLine{1307     \}}
+\DoxyCodeLine{1308 }
+\DoxyCodeLine{1309     \textcolor{comment}{// initialization function:}}
+\DoxyCodeLine{1310     \_\_void init( \_\_type Fs, \_\_type Fn, \_\_type F\_stop , \_\_type BandWidth , \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \_\_bool scale )}
+\DoxyCodeLine{1311     \{}
+\DoxyCodeLine{1312         m\_Fs      = Fs;}
+\DoxyCodeLine{1313         m\_Fn      = Fn;}
+\DoxyCodeLine{1314         m\_Fstop1  = F\_stop;}
+\DoxyCodeLine{1315         m\_Fstop2  = F\_stop + BandWidth;}
+\DoxyCodeLine{1316         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{1317         m\_order   = order;}
+\DoxyCodeLine{1318         m\_Ns      = m\_order;}
+\DoxyCodeLine{1319         m\_scale   = scale;}
+\DoxyCodeLine{1320         m\_buff\_cx = 0;}
+\DoxyCodeLine{1321         m\_out     = 0;}
+\DoxyCodeLine{1322 }
+\DoxyCodeLine{1323         \textcolor{comment}{// window function initialization:}}
+\DoxyCodeLine{1324         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a6deb4f700c93c94aff8e17194309cab7}{init}}( m\_order + 1 );}
+\DoxyCodeLine{1325     \}}
+\DoxyCodeLine{1326 }
+\DoxyCodeLine{1327     \textcolor{comment}{// default constructor:}}
+\DoxyCodeLine{1328     \mbox{\hyperlink{classfir__bp}{fir\_bp}}()}
+\DoxyCodeLine{1329     \{}
+\DoxyCodeLine{1330         m\_Fs      = 4000;}
+\DoxyCodeLine{1331         m\_Fn      = 50;}
+\DoxyCodeLine{1332         m\_Fstop1  = 100;}
+\DoxyCodeLine{1333         m\_Fstop1  = 200;}
+\DoxyCodeLine{1334         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{1335         m\_order   = 80;}
+\DoxyCodeLine{1336         m\_Ns      = m\_order;}
+\DoxyCodeLine{1337         m\_scale   = \textcolor{keyword}{false};}
+\DoxyCodeLine{1338         m\_buff\_cx = 0;}
+\DoxyCodeLine{1339         m\_out     = 0;}
+\DoxyCodeLine{1340 }
+\DoxyCodeLine{1341         \textcolor{comment}{// window function initialization:}}
+\DoxyCodeLine{1342         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a6deb4f700c93c94aff8e17194309cab7}{init}}( m\_order + 1 );}
+\DoxyCodeLine{1343     \}}
+\DoxyCodeLine{1344 }
+\DoxyCodeLine{1345     \textcolor{comment}{// initializing constructor:}}
+\DoxyCodeLine{1346     \mbox{\hyperlink{classfir__bp}{fir\_bp}}( \_\_type Fs, \_\_type Fn, \_\_type F\_stop , \_\_type BandWidth , \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \_\_bool scale ) \{ init( Fs , Fn , F\_stop , BandWidth , order , scale ); \}}
+\DoxyCodeLine{1347 }
+\DoxyCodeLine{1348     \textcolor{comment}{// destructor:}}
+\DoxyCodeLine{1349     \mbox{\hyperlink{classfir__bp}{\string~fir\_bp}}() \{ deallocate(); \}}
+\DoxyCodeLine{1350 }
+\DoxyCodeLine{1351     \textcolor{comment}{// filtering function:}}
+\DoxyCodeLine{1352 }
+\DoxyCodeLine{1353     \textcolor{comment}{// x32:}}
+\DoxyCodeLine{1354     \textcolor{keyword}{inline} \_\_type filt( \_\_type *input )}
+\DoxyCodeLine{1355     \{}
+\DoxyCodeLine{1356         m\_buff\_sx( input );}
+\DoxyCodeLine{1357         m\_out = 0;}
+\DoxyCodeLine{1358         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{1359         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{1360     \}}
+\DoxyCodeLine{1361 }
+\DoxyCodeLine{1362     \textcolor{keyword}{inline} \_\_type filt()}
+\DoxyCodeLine{1363     \{}
+\DoxyCodeLine{1364         m\_out = 0;}
+\DoxyCodeLine{1365         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{1366         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{1367     \}}
+\DoxyCodeLine{1368 }
+\DoxyCodeLine{1369     \textcolor{comment}{// operators:}}
+\DoxyCodeLine{1370     \textcolor{keyword}{inline} \_\_type operator() ( \_\_type *input ) \{ \textcolor{keywordflow}{return} filt( input ); \}}
+\DoxyCodeLine{1371     \textcolor{keyword}{inline} \_\_type operator() () \{ \textcolor{keywordflow}{return} filt(); \}}
+\DoxyCodeLine{1372 \};}
+\DoxyCodeLine{1373 }
+\DoxyCodeLine{1374 \textcolor{comment}{// bandstop implementations:}}
+\DoxyCodeLine{1375 }
+\DoxyCodeLine{1376 \textcolor{comment}{// float x64:}}
+\DoxyCodeLine{1377 \textcolor{keyword}{template}<> \textcolor{keyword}{class }\mbox{\hyperlink{classfir__bs}{fir\_bs}}<\mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}}>}
+\DoxyCodeLine{1378 \{}
+\DoxyCodeLine{1379     \textcolor{keyword}{typedef} \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}} \_\_type ;}
+\DoxyCodeLine{1380     \textcolor{keyword}{typedef} \textcolor{keywordtype}{bool}   \_\_bool ;}
+\DoxyCodeLine{1381     \textcolor{keyword}{typedef} \textcolor{keywordtype}{void}   \_\_void ;}
+\DoxyCodeLine{1382 }
+\DoxyCodeLine{1383     \textcolor{comment}{// system variables:}}
+\DoxyCodeLine{1384     \_\_type m\_Ts;}
+\DoxyCodeLine{1385     \_\_type m\_Fs;}
+\DoxyCodeLine{1386     \_\_type m\_Fn;}
+\DoxyCodeLine{1387     \_\_type m\_Fstop1;}
+\DoxyCodeLine{1388     \_\_type m\_Fstop2;}
+\DoxyCodeLine{1389     \_\_type m\_Ns;}
+\DoxyCodeLine{1390     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} m\_order;}
+\DoxyCodeLine{1391     \_\_bool m\_scale;}
+\DoxyCodeLine{1392 }
+\DoxyCodeLine{1393     \textcolor{comment}{// coefficients:}}
+\DoxyCodeLine{1394     \_\_type *m\_buff\_cx;}
+\DoxyCodeLine{1395 }
+\DoxyCodeLine{1396 \textcolor{keyword}{public}:}
+\DoxyCodeLine{1397 }
+\DoxyCodeLine{1398     \_\_type m\_pH;}
+\DoxyCodeLine{1399     \_\_type m\_Km;}
+\DoxyCodeLine{1400     \_\_type m\_out;}
+\DoxyCodeLine{1401 }
+\DoxyCodeLine{1402     \textcolor{comment}{// buffers:}}
+\DoxyCodeLine{1403     \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer< \_\_type >}} m\_buff\_sx;}
+\DoxyCodeLine{1404 }
+\DoxyCodeLine{1405     \textcolor{comment}{// window function object:}}
+\DoxyCodeLine{1406     \mbox{\hyperlink{classwind__fcn}{wind\_fcn}} m\_wind\_fcn;}
+\DoxyCodeLine{1407 }
+\DoxyCodeLine{1408     \textcolor{comment}{// coefficients computation function:}}
+\DoxyCodeLine{1409     \_\_void coeff\_calc()}
+\DoxyCodeLine{1410     \{}
+\DoxyCodeLine{1411         \textcolor{comment}{// check if the window is ready to use:}}
+\DoxyCodeLine{1412         \textcolor{keywordflow}{if} ( m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_ad71b3a4bf91eae2db01d060b8b2ff0c2}{is\_ready}}() == 0 ) m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a0b84c65f589e9f9253c78fdb0b449948}{Chebyshev}}(100);}
+\DoxyCodeLine{1413 }
+\DoxyCodeLine{1414         \textcolor{comment}{// coefficients computation:}}
+\DoxyCodeLine{1415         \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} k = 0;}
+\DoxyCodeLine{1416         m\_Fstop1 /= m\_Fs;}
+\DoxyCodeLine{1417         m\_Fstop2 /= m\_Fs;}
+\DoxyCodeLine{1418 }
+\DoxyCodeLine{1419         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} n = 0; n <= m\_order / 2; n++)}
+\DoxyCodeLine{1420         \{}
+\DoxyCodeLine{1421             k = abs(n -\/ (m\_order + 1) / 2);}
+\DoxyCodeLine{1422 }
+\DoxyCodeLine{1423             \textcolor{keywordflow}{if} (n == 0)}
+\DoxyCodeLine{1424             \{}
+\DoxyCodeLine{1425                 m\_buff\_cx[k] = 1 -\/ 2 * (m\_Fstop2 -\/ m\_Fstop1) * m\_wind\_fcn[k];}
+\DoxyCodeLine{1426             \}}
+\DoxyCodeLine{1427             \textcolor{keywordflow}{else}}
+\DoxyCodeLine{1428             \{}
+\DoxyCodeLine{1429                 m\_buff\_cx[k] = 2 * (m\_Fstop1 * sin(n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop1) / (n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop1) -\/ m\_Fstop2 * sin(n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop2) / (n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop2)) * m\_wind\_fcn[k];}
+\DoxyCodeLine{1430                 m\_buff\_cx[m\_order -\/ k] = m\_buff\_cx[k];}
+\DoxyCodeLine{1431             \}}
+\DoxyCodeLine{1432         \}}
+\DoxyCodeLine{1433 }
+\DoxyCodeLine{1434         \textcolor{comment}{// filter pulse characteristic normalization:}}
+\DoxyCodeLine{1435         \textcolor{keywordflow}{if} ( m\_scale )}
+\DoxyCodeLine{1436         \{}
+\DoxyCodeLine{1437             freq\_ch(0);}
+\DoxyCodeLine{1438             \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order; n++) m\_buff\_cx[n] = m\_buff\_cx[n] / m\_Km;}
+\DoxyCodeLine{1439             freq\_ch(m\_Fn);}
+\DoxyCodeLine{1440         \}}
+\DoxyCodeLine{1441 }
+\DoxyCodeLine{1442         \textcolor{comment}{// deallocate the window function:}}
+\DoxyCodeLine{1443         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_af2ef94171d3ebb655a22e3c16d6a316f}{deallocate}}();}
+\DoxyCodeLine{1444     \}}
+\DoxyCodeLine{1445 }
+\DoxyCodeLine{1446     \textcolor{comment}{// Frequency characteristics:}}
+\DoxyCodeLine{1447     \_\_void freq\_ch( \_\_type F )}
+\DoxyCodeLine{1448     \{}
+\DoxyCodeLine{1449         \_\_type m\_W\_re = 0;}
+\DoxyCodeLine{1450         \_\_type m\_W\_im = 0;}
+\DoxyCodeLine{1451         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order ; n++)}
+\DoxyCodeLine{1452         \{}
+\DoxyCodeLine{1453             m\_W\_re = m\_W\_re + cos(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * n * F * m\_Ts) * m\_buff\_cx[n];}
+\DoxyCodeLine{1454             m\_W\_im = m\_W\_im + sin(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * n * F * m\_Ts) * m\_buff\_cx[n];}
+\DoxyCodeLine{1455         \}}
+\DoxyCodeLine{1456         m\_pH   = atan2( m\_W\_im , m\_W\_im );}
+\DoxyCodeLine{1457         m\_Km   = sqrt (m\_W\_re * m\_W\_re + m\_W\_im * m\_W\_im);}
+\DoxyCodeLine{1458     \}}
+\DoxyCodeLine{1459 }
+\DoxyCodeLine{1460 \textcolor{preprocessor}{    \#ifndef \_\_ALG\_PLATFORM }\textcolor{comment}{// identify if the compilation is for ProsoftSystems IDE}}
+\DoxyCodeLine{1461 }
+\DoxyCodeLine{1462     \textcolor{comment}{// filter response store to a text files:}}
+\DoxyCodeLine{1463     \_\_void freq\_rp( std::string directory )}
+\DoxyCodeLine{1464     \{}
+\DoxyCodeLine{1465         \textcolor{comment}{// open files:}}
+\DoxyCodeLine{1466         std::ofstream ampr;}
+\DoxyCodeLine{1467         std::ofstream phsr;}
+\DoxyCodeLine{1468         std::ofstream freq;}
+\DoxyCodeLine{1469         std::ofstream plsr;}
+\DoxyCodeLine{1470         ampr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)ampr.txt"{}} );}
+\DoxyCodeLine{1471         phsr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)phsr.txt"{}} );}
+\DoxyCodeLine{1472         freq.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)freq.txt"{}} );}
+\DoxyCodeLine{1473         plsr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)plsr.txt"{}} );}
+\DoxyCodeLine{1474 }
+\DoxyCodeLine{1475         \textcolor{comment}{// frequency response}}
+\DoxyCodeLine{1476         \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i = 0 ; i < m\_Fs * 0.5 ; i++ )}
+\DoxyCodeLine{1477         \{}
+\DoxyCodeLine{1478             freq\_ch( i );}
+\DoxyCodeLine{1479             ampr << m\_Km << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{1480             phsr << m\_pH << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{1481             freq << i    << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{1482         \}}
+\DoxyCodeLine{1483 }
+\DoxyCodeLine{1484         \textcolor{comment}{// pulse response:}}
+\DoxyCodeLine{1485         \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i = 0 ; i <= m\_order ; i++ ) \{ plsr << m\_buff\_cx[i] << \textcolor{stringliteral}{"{}\(\backslash\)n"{}}; \}}
+\DoxyCodeLine{1486 }
+\DoxyCodeLine{1487         \textcolor{comment}{// close files:}}
+\DoxyCodeLine{1488         ampr.close();}
+\DoxyCodeLine{1489         phsr.close();}
+\DoxyCodeLine{1490         freq.close();}
+\DoxyCodeLine{1491         plsr.close();}
+\DoxyCodeLine{1492     \}}
+\DoxyCodeLine{1493 }
+\DoxyCodeLine{1494 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{1495 }
+\DoxyCodeLine{1496     \textcolor{comment}{// memory allocation:}}
+\DoxyCodeLine{1497     \_\_bool allocate()}
+\DoxyCodeLine{1498     \{}
+\DoxyCodeLine{1499         \textcolor{comment}{// memory allocation:}}
+\DoxyCodeLine{1500         m\_buff\_cx = ( \_\_type* ) calloc( m\_order + 1 , \textcolor{keyword}{sizeof} ( \_\_type ) );}
+\DoxyCodeLine{1501         m\_buff\_sx.allocate( m\_order + 2 );}
+\DoxyCodeLine{1502         \textcolor{comment}{// compute FIR filter coefficients:}}
+\DoxyCodeLine{1503         coeff\_calc();}
+\DoxyCodeLine{1504         \textcolor{keywordflow}{return} 1;}
+\DoxyCodeLine{1505     \}}
+\DoxyCodeLine{1506 }
+\DoxyCodeLine{1507     \textcolor{comment}{// memory deallocation:}}
+\DoxyCodeLine{1508     \_\_void deallocate()}
+\DoxyCodeLine{1509     \{}
+\DoxyCodeLine{1510         \textcolor{keywordflow}{if}( m\_buff\_cx != 0 ) free( m\_buff\_cx );}
+\DoxyCodeLine{1511         m\_buff\_sx.deallocate();}
+\DoxyCodeLine{1512         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_af2ef94171d3ebb655a22e3c16d6a316f}{deallocate}}();}
+\DoxyCodeLine{1513     \}}
+\DoxyCodeLine{1514 }
+\DoxyCodeLine{1515     \textcolor{comment}{// initialization function:}}
+\DoxyCodeLine{1516     \_\_void init( \_\_type Fs, \_\_type Fn, \_\_type F\_stop , \_\_type BandWidth , \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \_\_bool scale )}
+\DoxyCodeLine{1517     \{}
+\DoxyCodeLine{1518         m\_Fs      = Fs;}
+\DoxyCodeLine{1519         m\_Fn      = Fn;}
+\DoxyCodeLine{1520         m\_Fstop1  = F\_stop;}
+\DoxyCodeLine{1521         m\_Fstop2  = F\_stop + BandWidth;}
+\DoxyCodeLine{1522         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{1523         m\_order   = order;}
+\DoxyCodeLine{1524         m\_Ns      = m\_order;}
+\DoxyCodeLine{1525         m\_scale   = scale;}
+\DoxyCodeLine{1526         m\_buff\_cx = 0;}
+\DoxyCodeLine{1527         m\_out     = 0;}
+\DoxyCodeLine{1528 }
+\DoxyCodeLine{1529         \textcolor{comment}{// window function initialization:}}
+\DoxyCodeLine{1530         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a6deb4f700c93c94aff8e17194309cab7}{init}}( m\_order + 1 );}
+\DoxyCodeLine{1531     \}}
+\DoxyCodeLine{1532 }
+\DoxyCodeLine{1533     \textcolor{comment}{// default constructor:}}
+\DoxyCodeLine{1534     \mbox{\hyperlink{classfir__bs}{fir\_bs}}()}
+\DoxyCodeLine{1535     \{}
+\DoxyCodeLine{1536         m\_Fs      = 4000;}
+\DoxyCodeLine{1537         m\_Fn      = 50;}
+\DoxyCodeLine{1538         m\_Fstop1  = 100;}
+\DoxyCodeLine{1539         m\_Fstop1  = 200;}
+\DoxyCodeLine{1540         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{1541         m\_order   = 80;}
+\DoxyCodeLine{1542         m\_Ns      = m\_order;}
+\DoxyCodeLine{1543         m\_scale   = \textcolor{keyword}{false};}
+\DoxyCodeLine{1544         m\_buff\_cx = 0;}
+\DoxyCodeLine{1545         m\_out     = 0;}
+\DoxyCodeLine{1546 }
+\DoxyCodeLine{1547         \textcolor{comment}{// window function initialization:}}
+\DoxyCodeLine{1548         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a6deb4f700c93c94aff8e17194309cab7}{init}}( m\_order + 1 );}
+\DoxyCodeLine{1549     \}}
+\DoxyCodeLine{1550 }
+\DoxyCodeLine{1551     \textcolor{comment}{// initializing constructor:}}
+\DoxyCodeLine{1552     \mbox{\hyperlink{classfir__bs}{fir\_bs}}( \_\_type Fs, \_\_type Fn, \_\_type F\_stop , \_\_type BandWidth , \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \_\_bool scale ) \{ init( Fs , Fn , F\_stop , BandWidth , order , scale ); \}}
+\DoxyCodeLine{1553 }
+\DoxyCodeLine{1554     \textcolor{comment}{// destructor:}}
+\DoxyCodeLine{1555     \mbox{\hyperlink{classfir__bs}{\string~fir\_bs}}() \{ deallocate(); \}}
+\DoxyCodeLine{1556 }
+\DoxyCodeLine{1557     \textcolor{comment}{// filtering function:}}
+\DoxyCodeLine{1558 }
+\DoxyCodeLine{1559     \textcolor{comment}{// x32:}}
+\DoxyCodeLine{1560     \textcolor{keyword}{inline} \_\_type filt( \_\_type *input )}
+\DoxyCodeLine{1561     \{}
+\DoxyCodeLine{1562         m\_buff\_sx( input );}
+\DoxyCodeLine{1563         m\_out = 0;}
+\DoxyCodeLine{1564         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{1565         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{1566     \}}
+\DoxyCodeLine{1567 }
+\DoxyCodeLine{1568     \textcolor{comment}{// x64:}}
+\DoxyCodeLine{1569     \textcolor{keyword}{inline} \_\_type filt( \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *input )}
+\DoxyCodeLine{1570     \{}
+\DoxyCodeLine{1571         m\_buff\_sx( input );}
+\DoxyCodeLine{1572         m\_out = 0;}
+\DoxyCodeLine{1573         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{1574         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{1575     \}}
+\DoxyCodeLine{1576 }
+\DoxyCodeLine{1577     \textcolor{keyword}{inline} \_\_type filt()}
+\DoxyCodeLine{1578     \{}
+\DoxyCodeLine{1579         m\_out = 0;}
+\DoxyCodeLine{1580         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[ n ] * m\_buff\_cx[n];}
+\DoxyCodeLine{1581         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{1582     \}}
+\DoxyCodeLine{1583 }
+\DoxyCodeLine{1584     \textcolor{comment}{// operators:}}
+\DoxyCodeLine{1585     \textcolor{keyword}{inline} \_\_type operator() ( \_\_type *input ) \{ \textcolor{keywordflow}{return} filt( input ); \}}
+\DoxyCodeLine{1586     \textcolor{keyword}{inline} \_\_type operator() ( \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *input ) \{ \textcolor{keywordflow}{return} filt( input ); \}}
+\DoxyCodeLine{1587     \textcolor{keyword}{inline} \_\_type operator() () \{ \textcolor{keywordflow}{return} filt(); \}}
+\DoxyCodeLine{1588 \};}
+\DoxyCodeLine{1589 }
+\DoxyCodeLine{1590 \textcolor{comment}{// float x32:}}
+\DoxyCodeLine{1591 \textcolor{keyword}{template}<> \textcolor{keyword}{class }\mbox{\hyperlink{classfir__bs}{fir\_bs}}<\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}}>}
+\DoxyCodeLine{1592 \{}
+\DoxyCodeLine{1593     \textcolor{keyword}{typedef} \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} \_\_type ;}
+\DoxyCodeLine{1594     \textcolor{keyword}{typedef} \textcolor{keywordtype}{bool}   \_\_bool ;}
+\DoxyCodeLine{1595     \textcolor{keyword}{typedef} \textcolor{keywordtype}{void}   \_\_void ;}
+\DoxyCodeLine{1596 }
+\DoxyCodeLine{1597     \textcolor{comment}{// system variables:}}
+\DoxyCodeLine{1598     \_\_type m\_Ts;}
+\DoxyCodeLine{1599     \_\_type m\_Fs;}
+\DoxyCodeLine{1600     \_\_type m\_Fn;}
+\DoxyCodeLine{1601     \_\_type m\_Fstop1;}
+\DoxyCodeLine{1602     \_\_type m\_Fstop2;}
+\DoxyCodeLine{1603     \_\_type m\_Ns;}
+\DoxyCodeLine{1604     \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} m\_order;}
+\DoxyCodeLine{1605     \_\_bool m\_scale;}
+\DoxyCodeLine{1606 }
+\DoxyCodeLine{1607     \textcolor{comment}{// coefficients:}}
+\DoxyCodeLine{1608     \_\_type *m\_buff\_cx;}
+\DoxyCodeLine{1609 }
+\DoxyCodeLine{1610 \textcolor{keyword}{public}:}
+\DoxyCodeLine{1611 }
+\DoxyCodeLine{1612     \_\_type m\_pH;}
+\DoxyCodeLine{1613     \_\_type m\_Km;}
+\DoxyCodeLine{1614     \_\_type m\_out;}
+\DoxyCodeLine{1615 }
+\DoxyCodeLine{1616     \textcolor{comment}{// buffers:}}
+\DoxyCodeLine{1617     \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer< \_\_type >}} m\_buff\_sx;}
+\DoxyCodeLine{1618 }
+\DoxyCodeLine{1619     \textcolor{comment}{// window function object:}}
+\DoxyCodeLine{1620     \mbox{\hyperlink{classwind__fcn}{wind\_fcn}} m\_wind\_fcn;}
+\DoxyCodeLine{1621 }
+\DoxyCodeLine{1622     \textcolor{comment}{// coefficients computation function:}}
+\DoxyCodeLine{1623     \_\_void coeff\_calc()}
+\DoxyCodeLine{1624     \{}
+\DoxyCodeLine{1625         \textcolor{comment}{// check if the window is ready to use:}}
+\DoxyCodeLine{1626         \textcolor{keywordflow}{if} ( m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_ad71b3a4bf91eae2db01d060b8b2ff0c2}{is\_ready}}() == 0 ) m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a0b84c65f589e9f9253c78fdb0b449948}{Chebyshev}}(100);}
+\DoxyCodeLine{1627 }
+\DoxyCodeLine{1628         \textcolor{comment}{// coefficients computation:}}
+\DoxyCodeLine{1629         \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} k = 0;}
+\DoxyCodeLine{1630         m\_Fstop1 /= m\_Fs;}
+\DoxyCodeLine{1631         m\_Fstop2 /= m\_Fs;}
+\DoxyCodeLine{1632 }
+\DoxyCodeLine{1633         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} n = 0; n <= m\_order / 2; n++)}
+\DoxyCodeLine{1634         \{}
+\DoxyCodeLine{1635             k = abs(n -\/ (m\_order + 1) / 2);}
+\DoxyCodeLine{1636 }
+\DoxyCodeLine{1637             \textcolor{keywordflow}{if} (n == 0)}
+\DoxyCodeLine{1638             \{}
+\DoxyCodeLine{1639                 m\_buff\_cx[k] = 1 -\/ 2 * (m\_Fstop2 -\/ m\_Fstop1) * m\_wind\_fcn[k];}
+\DoxyCodeLine{1640             \}}
+\DoxyCodeLine{1641             \textcolor{keywordflow}{else}}
+\DoxyCodeLine{1642             \{}
+\DoxyCodeLine{1643                 m\_buff\_cx[k] = 2 * (m\_Fstop1 * sin(n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop1) / (n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop1) -\/ m\_Fstop2 * sin(n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop2) / (n * \mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * m\_Fstop2)) * m\_wind\_fcn[k];}
+\DoxyCodeLine{1644                 m\_buff\_cx[m\_order -\/ k] = m\_buff\_cx[k];}
+\DoxyCodeLine{1645             \}}
+\DoxyCodeLine{1646         \}}
+\DoxyCodeLine{1647 }
+\DoxyCodeLine{1648         \textcolor{comment}{// filter pulse characteristic normalization:}}
+\DoxyCodeLine{1649         \textcolor{keywordflow}{if} ( m\_scale )}
+\DoxyCodeLine{1650         \{}
+\DoxyCodeLine{1651             freq\_ch(0);}
+\DoxyCodeLine{1652             \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order; n++) m\_buff\_cx[n] = m\_buff\_cx[n] / m\_Km;}
+\DoxyCodeLine{1653             freq\_ch(m\_Fn);}
+\DoxyCodeLine{1654         \}}
+\DoxyCodeLine{1655 }
+\DoxyCodeLine{1656         \textcolor{comment}{// deallocate the window function:}}
+\DoxyCodeLine{1657         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_af2ef94171d3ebb655a22e3c16d6a316f}{deallocate}}();}
+\DoxyCodeLine{1658     \}}
+\DoxyCodeLine{1659 }
+\DoxyCodeLine{1660     \textcolor{comment}{// Frequency characteristics:}}
+\DoxyCodeLine{1661     \_\_void freq\_ch( \_\_type F )}
+\DoxyCodeLine{1662     \{}
+\DoxyCodeLine{1663         \_\_type m\_W\_re = 0;}
+\DoxyCodeLine{1664         \_\_type m\_W\_im = 0;}
+\DoxyCodeLine{1665         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = 0; n <= m\_order ; n++)}
+\DoxyCodeLine{1666         \{}
+\DoxyCodeLine{1667             m\_W\_re = m\_W\_re + cos(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * n * F * m\_Ts) * m\_buff\_cx[n];}
+\DoxyCodeLine{1668             m\_W\_im = m\_W\_im + sin(-\/\mbox{\hyperlink{special__functions_8h_a2750dfdda752269a036f487a4a34b849}{PI2}} * n * F * m\_Ts) * m\_buff\_cx[n];}
+\DoxyCodeLine{1669         \}}
+\DoxyCodeLine{1670         m\_pH   = atan2( m\_W\_im , m\_W\_im );}
+\DoxyCodeLine{1671         m\_Km   = sqrt (m\_W\_re * m\_W\_re + m\_W\_im * m\_W\_im);}
+\DoxyCodeLine{1672     \}}
+\DoxyCodeLine{1673 }
+\DoxyCodeLine{1674 \textcolor{preprocessor}{    \#ifndef \_\_ALG\_PLATFORM}}
+\DoxyCodeLine{1675 }
+\DoxyCodeLine{1676     \textcolor{comment}{// filter response store to a text files:}}
+\DoxyCodeLine{1677     \_\_void freq\_rp( std::string directory )}
+\DoxyCodeLine{1678     \{}
+\DoxyCodeLine{1679         \textcolor{comment}{// open files:}}
+\DoxyCodeLine{1680         std::ofstream ampr;}
+\DoxyCodeLine{1681         std::ofstream phsr;}
+\DoxyCodeLine{1682         std::ofstream freq;}
+\DoxyCodeLine{1683         std::ofstream plsr;}
+\DoxyCodeLine{1684         ampr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)ampr.txt"{}} );}
+\DoxyCodeLine{1685         phsr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)phsr.txt"{}} );}
+\DoxyCodeLine{1686         freq.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)freq.txt"{}} );}
+\DoxyCodeLine{1687         plsr.open( directory + \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)plsr.txt"{}} );}
+\DoxyCodeLine{1688 }
+\DoxyCodeLine{1689         \textcolor{comment}{// frequency response}}
+\DoxyCodeLine{1690         \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i = 0 ; i < m\_Fs * 0.5 ; i++ )}
+\DoxyCodeLine{1691         \{}
+\DoxyCodeLine{1692             freq\_ch( i );}
+\DoxyCodeLine{1693             ampr << m\_Km << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{1694             phsr << m\_pH << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{1695             freq << i    << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{1696         \}}
+\DoxyCodeLine{1697 }
+\DoxyCodeLine{1698         \textcolor{comment}{// pulse response:}}
+\DoxyCodeLine{1699         \textcolor{keywordflow}{for}( \textcolor{keywordtype}{int} i = 0 ; i <= m\_order ; i++ ) \{ plsr << m\_buff\_cx[i] << \textcolor{stringliteral}{"{}\(\backslash\)n"{}}; \}}
+\DoxyCodeLine{1700 }
+\DoxyCodeLine{1701         \textcolor{comment}{// close files:}}
+\DoxyCodeLine{1702         ampr.close();}
+\DoxyCodeLine{1703         phsr.close();}
+\DoxyCodeLine{1704         freq.close();}
+\DoxyCodeLine{1705         plsr.close();}
+\DoxyCodeLine{1706     \}}
+\DoxyCodeLine{1707 }
+\DoxyCodeLine{1708 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{1709 }
+\DoxyCodeLine{1710     \textcolor{comment}{// memory allocation:}}
+\DoxyCodeLine{1711     \_\_bool allocate()}
+\DoxyCodeLine{1712     \{}
+\DoxyCodeLine{1713         \textcolor{comment}{// memory allocation:}}
+\DoxyCodeLine{1714         m\_buff\_cx = ( \_\_type* ) calloc( m\_order + 1 , \textcolor{keyword}{sizeof} ( \_\_type ) );}
+\DoxyCodeLine{1715         m\_buff\_sx.allocate( m\_order + 2 );}
+\DoxyCodeLine{1716         \textcolor{comment}{// compute FIR filter coefficients:}}
+\DoxyCodeLine{1717         coeff\_calc();}
+\DoxyCodeLine{1718         \textcolor{keywordflow}{return} 1;}
+\DoxyCodeLine{1719     \}}
+\DoxyCodeLine{1720 }
+\DoxyCodeLine{1721     \textcolor{comment}{// memory deallocation:}}
+\DoxyCodeLine{1722     \_\_void deallocate()}
+\DoxyCodeLine{1723     \{}
+\DoxyCodeLine{1724         \textcolor{keywordflow}{if}( m\_buff\_cx != 0 ) free( m\_buff\_cx );}
+\DoxyCodeLine{1725         m\_buff\_sx.deallocate();}
+\DoxyCodeLine{1726         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_af2ef94171d3ebb655a22e3c16d6a316f}{deallocate}}();}
+\DoxyCodeLine{1727     \}}
+\DoxyCodeLine{1728 }
+\DoxyCodeLine{1729     \textcolor{comment}{// initialization function:}}
+\DoxyCodeLine{1730     \_\_void init( \_\_type Fs, \_\_type Fn, \_\_type F\_stop , \_\_type BandWidth , \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \_\_bool scale )}
+\DoxyCodeLine{1731     \{}
+\DoxyCodeLine{1732         m\_Fs      = Fs;}
+\DoxyCodeLine{1733         m\_Fn      = Fn;}
+\DoxyCodeLine{1734         m\_Fstop1  = F\_stop;}
+\DoxyCodeLine{1735         m\_Fstop2  = F\_stop + BandWidth;}
+\DoxyCodeLine{1736         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{1737         m\_order   = ( order \% 2 != 0) ? ( order + 1 ) : order;}
+\DoxyCodeLine{1738         m\_Ns      = m\_order;}
+\DoxyCodeLine{1739         m\_scale   = scale;}
+\DoxyCodeLine{1740         m\_buff\_cx = 0;}
+\DoxyCodeLine{1741         m\_out     = 0;}
+\DoxyCodeLine{1742 }
+\DoxyCodeLine{1743         \textcolor{comment}{// window function initialization:}}
+\DoxyCodeLine{1744         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a6deb4f700c93c94aff8e17194309cab7}{init}}( m\_order + 1 );}
+\DoxyCodeLine{1745     \}}
+\DoxyCodeLine{1746 }
+\DoxyCodeLine{1747     \textcolor{comment}{// default constructor:}}
+\DoxyCodeLine{1748     \mbox{\hyperlink{classfir__bs}{fir\_bs}}()}
+\DoxyCodeLine{1749     \{}
+\DoxyCodeLine{1750         m\_Fs      = 4000;}
+\DoxyCodeLine{1751         m\_Fn      = 50;}
+\DoxyCodeLine{1752         m\_Fstop1  = 100;}
+\DoxyCodeLine{1753         m\_Fstop1  = 200;}
+\DoxyCodeLine{1754         m\_Ts      = 1 / m\_Fs;}
+\DoxyCodeLine{1755         m\_order   = 80;}
+\DoxyCodeLine{1756         m\_Ns      = m\_order;}
+\DoxyCodeLine{1757         m\_scale   = \textcolor{keyword}{false};}
+\DoxyCodeLine{1758         m\_buff\_cx = 0;}
+\DoxyCodeLine{1759         m\_out     = 0;}
+\DoxyCodeLine{1760 }
+\DoxyCodeLine{1761         \textcolor{comment}{// window function initialization:}}
+\DoxyCodeLine{1762         m\_wind\_fcn.\mbox{\hyperlink{classwind__fcn_a6deb4f700c93c94aff8e17194309cab7}{init}}( m\_order + 1 );}
+\DoxyCodeLine{1763     \}}
+\DoxyCodeLine{1764 }
+\DoxyCodeLine{1765     \textcolor{comment}{// initializing constructor:}}
+\DoxyCodeLine{1766     \mbox{\hyperlink{classfir__bs}{fir\_bs}}( \_\_type Fs, \_\_type Fn, \_\_type F\_stop , \_\_type BandWidth , \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \_\_bool scale ) \{ init( Fs , Fn , F\_stop , BandWidth , order , scale ); \}}
+\DoxyCodeLine{1767 }
+\DoxyCodeLine{1768     \textcolor{comment}{// destructor:}}
+\DoxyCodeLine{1769     \mbox{\hyperlink{classfir__bs}{\string~fir\_bs}}() \{ deallocate(); \}}
+\DoxyCodeLine{1770 }
+\DoxyCodeLine{1771     \textcolor{comment}{// filtering function:}}
+\DoxyCodeLine{1772 }
+\DoxyCodeLine{1773     \textcolor{comment}{// x32:}}
+\DoxyCodeLine{1774     \textcolor{keyword}{inline} \_\_type filt( \_\_type *input )}
+\DoxyCodeLine{1775     \{}
+\DoxyCodeLine{1776         m\_buff\_sx( input );}
+\DoxyCodeLine{1777         m\_out = 0;}
+\DoxyCodeLine{1778         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[n] * m\_buff\_cx[n];}
+\DoxyCodeLine{1779         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{1780     \}}
+\DoxyCodeLine{1781 }
+\DoxyCodeLine{1782     \textcolor{keyword}{inline} \_\_type filt()}
+\DoxyCodeLine{1783     \{}
+\DoxyCodeLine{1784         m\_out = 0;}
+\DoxyCodeLine{1785         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} n = m\_order; n >= 0; n-\/-\/) m\_out += m\_buff\_sx[n] * m\_buff\_cx[n];}
+\DoxyCodeLine{1786         \textcolor{keywordflow}{return} m\_out;}
+\DoxyCodeLine{1787     \}}
+\DoxyCodeLine{1788 }
+\DoxyCodeLine{1789     \textcolor{comment}{// operators:}}
+\DoxyCodeLine{1790     \textcolor{keyword}{inline} \_\_type operator() ( \_\_type *input ) \{ \textcolor{keywordflow}{return} filt( input ); \}}
+\DoxyCodeLine{1791     \textcolor{keyword}{inline} \_\_type operator() () \{ \textcolor{keywordflow}{return} filt(); \}}
+\DoxyCodeLine{1792 \};}
+\DoxyCodeLine{1793 }
+\DoxyCodeLine{1794 \textcolor{preprocessor}{\#undef \_\_fx32}}
+\DoxyCodeLine{1795 \textcolor{preprocessor}{\#undef \_\_fx64}}
+\DoxyCodeLine{1796 \textcolor{preprocessor}{\#undef \_\_ix32}}
+\DoxyCodeLine{1797 }
+\DoxyCodeLine{1798 \textcolor{comment}{// customized pi undef:}}
+\DoxyCodeLine{1799 \textcolor{preprocessor}{\#undef PI0}}
+\DoxyCodeLine{1800 \textcolor{preprocessor}{\#undef PI2}}
+\DoxyCodeLine{1801 \textcolor{preprocessor}{\#undef PI\_2}}
+\DoxyCodeLine{1802 \textcolor{preprocessor}{\#undef PI\_4}}
+\DoxyCodeLine{1803 }
+\DoxyCodeLine{1804 \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,28 @@
+var classwind__fcn =
+[
+    [ "allocate", "classwind__fcn.html#ab51ab640f96fa0711f15ecda6ad21b6e", null ],
+    [ "Bartlett", "classwind__fcn.html#aeb7c0bbf9af0eb5e4d5029d1b8c614b5", null ],
+    [ "BartlettHanning", "classwind__fcn.html#a8435dd425ab21f44f3d7aaaaed7388fb", null ],
+    [ "Blackman", "classwind__fcn.html#aa33f3870e42cd03b07c8bc5746a1cae7", null ],
+    [ "BlackmanHarris", "classwind__fcn.html#a71fb61d97342b1c12dcf66be8ea1a878", null ],
+    [ "Bohman", "classwind__fcn.html#ab3d78c32cfbcd478b0ac7a55faeb5d69", null ],
+    [ "cheby_poly", "classwind__fcn.html#a76ae6ebc9c2f6ce9b888ce186f33f9e4", null ],
+    [ "Chebyshev", "classwind__fcn.html#a0b84c65f589e9f9253c78fdb0b449948", null ],
+    [ "deallocate", "classwind__fcn.html#af2ef94171d3ebb655a22e3c16d6a316f", null ],
+    [ "FlatTop", "classwind__fcn.html#a6343da3d7f084ddd89452829788abffc", null ],
+    [ "Gaussian", "classwind__fcn.html#a22a927344a0a4a000f5a8094624e6389", null ],
+    [ "Hamming", "classwind__fcn.html#a12e4b871024caea7a95e6530d6c449bf", null ],
+    [ "Hann", "classwind__fcn.html#a4df11b327a5fe8c290fd2e1a37a31cac", null ],
+    [ "init", "classwind__fcn.html#a6deb4f700c93c94aff8e17194309cab7", null ],
+    [ "is_ready", "classwind__fcn.html#ad71b3a4bf91eae2db01d060b8b2ff0c2", null ],
+    [ "Kaiser", "classwind__fcn.html#aa10982a07581fa8811af75e7c9bccff8", null ],
+    [ "Nutall", "classwind__fcn.html#a9b205addb43b718d70ef31bda58be44c", null ],
+    [ "operator[]", "classwind__fcn.html#add5dfb9e1c25a79ab5794a419dbdadca", null ],
+    [ "Parzen", "classwind__fcn.html#aeb61805d1745fed8d9d077643a8c2ec3", null ],
+    [ "Rectangular", "classwind__fcn.html#a027174bcf079b4a0bdde25b92256948d", null ],
+    [ "Triangular", "classwind__fcn.html#a858acc7dec50b0f16f664220dfe5675b", null ],
+    [ "Tukey", "classwind__fcn.html#aa15a89665995da65facb39d60217e93c", null ],
+    [ "m_buff", "classwind__fcn.html#af4636317ec6b965533718fd410c22329", null ],
+    [ "m_order", "classwind__fcn.html#a12dcba26443e80d2586f330181b271b7", null ],
+    [ "m_wind_ready", "classwind__fcn.html#afde9972c0b76211f221d0dee420dfd18", null ]
+];
