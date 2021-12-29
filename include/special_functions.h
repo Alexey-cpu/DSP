@@ -1,14 +1,19 @@
-//--------------------------------------------------------------------------------
-//A.M.Tykvinsky, 21.12.2021
-//--------------------------------------------------------------------------------
-// SPECIAL MATHEMATICAL FUNCTIONS CLASS
-//--------------------------------------------------------------------------------
+/*!
+ * \file
+ * \brief   Special mathematical function header
+ * \authors A.Tykvinskiy
+ * \date    28.12.2021
+ * \version 1.0
+ *
+ * The header declares specialized mathematical functions and classes that
+ * utilized for digital signal processing (DSP).
+*/
 
 #ifndef SPECIAL_FUNCTIONS_H
 #define SPECIAL_FUNCTIONS_H
 
 // standart headers
-#ifndef __ALG_PLATFORM // identify if the compilation is for ProsoftSystems IDE
+#ifndef __ALG_PLATFORM
 #include "cmath"
 #include "malloc.h"
 #endif
@@ -16,156 +21,194 @@
 // auxiliary header - files:
 #include "complex.h"
 
-// auxiliary macros:
+/*! \brief converts radians to degrees */
 #ifndef __TO_DEGREES
 #define __TO_DEGREES(x) ( (x) * 57.295779513082320876798154814105)
 #endif
 
+/*! \brief converts degrees to radians */
 #ifndef __TO_RADIANS
 #define __TO_RADIANS(x) ( (x) * 0.01745329251994329576923690768489)
 #endif
 
-// maximum iterations number constant:
+/*! \brief sets maximum number of iteration for elliptic functions computation */
 #ifndef __ITERATIONS_NUMBER__
 #define __ITERATIONS_NUMBER__ 30
 #endif
 
-// customized C data types definition:
+/*! \brief defines 16-bit integer type */
 #ifndef __ix16
 #define __ix16 short
 #endif
 
+/*! \brief defines 32-bit integer type */
 #ifndef __ix32
 #define __ix32 int
 #endif
 
+/*! \brief defines 64-bit integer type */
 #ifndef __ix64
 #define __ix64 long long
 #endif
 
+/*! \brief defines unsigned 16-bit integer type */
 #ifndef __uix16
 #define __uix16 unsigned short
 #endif
 
+/*! \brief defines unsigned 32-bit integer type */
 #ifndef __uix32
 #define __uix32 unsigned int
 #endif
 
+/*! \brief defines unsigned 64-bit integer type */
 #ifndef __uix64
 #define __uix64 unsigned long long
 #endif
 
+/*! \brief defines 32-bit floating point type */
 #ifndef __fx32
 #define __fx32 float
 #endif
 
+/*! \brief defines 64-bit floating point type */
 #ifndef __fx64
 #define __fx64 double
 #endif
 
+/*! \brief defines extended 64-bit floating point type */
 #ifndef __fxx64
 #define __fxx64 long double
 #endif
 
-// customized upper limits:
+/*! \brief defines 32-bit floating point type upper limit */
 #ifndef __max_fx32
 #define __max_fx32 3.402823466e+38
 #endif
 
+/*! \brief defines 64-bit floating point type upper limit */
 #ifndef __max_fx64
 #define __max_fx64 1.7976931348623158e+308
 #endif
 
+/*! \brief defines 16-bit integer type upper limit */
 #ifndef __max_ix16
 #define __max_ix16 32767
 #endif
 
+/*! \brief defines 32-bit integer type upper limit */
 #ifndef __max_ix32
 #define __max_ix32 2147483647
 #endif
 
+/*! \brief defines 64-bit integer type upper limit */
 #ifndef __max_ix64
 #define __max_ix64 9223372036854775807
 #endif
 
+/*! \brief defines unsigned 16-bit integer type upper limit */
 #ifndef __max_uix16
 #define __max_uix16 65535
 #endif
 
+/*! \brief defines unsigned 32-bit integer type upper limit */
 #ifndef __max_uix32
 #define __max_uix32 4294967295
 #endif
 
+/*! \brief defines unsigned 64-bit integer type upper limit */
 #ifndef __max_uix64
 #define __max_uix64 18446744073709551615
 #endif
 
-// customized lower limits:
+/*! \brief defines 32-bit floating point type lower limit */
 #ifndef __min_fx32
 #define __min_fx32 1.175494351e-38
 #endif
 
+/*! \brief defines 64-bit floating point type lower limit */
 #ifndef __min_fx64
 #define __min_fx64 1.7976931348623158e+308
 #endif
 
+/*! \brief defines 16-bit integer type lower limit */
 #ifndef __min_ix16
 #define __min_ix16 -32767
 #endif
 
+/*! \brief defines 32-bit integer type lower limit */
 #ifndef __min_ix32
 #define __min_ix32 -2147483647
 #endif
 
+/*! \brief defines 64-bit integer type lower limit */
 #ifndef __min_ix64
 #define __min_ix64 -9223372036854775807
 #endif
 
+/*! \brief defines unsigned 16-bit integer type lower limit */
 #ifndef __min_uix16
 #define __min_uix16 0
 #endif
 
+/*! \brief defines unsigned 32-bit integer type lower limit */
 #ifndef __min_uix32
 #define __min_uix32 0
 #endif
 
+/*! \brief defines unsigned 64-bit integer type lower limit */
 #ifndef __min_uix64
 #define __min_uix64 0
 #endif
 
-// customized epsilon:
-#ifndef __EPSILON_xx64__
-#define __EPSILON_xx64__ 1.0842e-019
-#endif
-
-#ifndef __EPSILON_x64__
-#define __EPSILON_x64__ 2.22045e-016
-#endif
-
+/*! \brief defines 32-bit floating point computer epsilon */
 #ifndef __EPSILON_x32__
 #define __EPSILON_x32__ 1.19209e-007
 #endif
 
-// customized PI:
+/*! \brief defines 64-bit floating point computer epsilon */
+#ifndef __EPSILON_x64__
+#define __EPSILON_x64__ 2.22045e-016
+#endif
+
+/*! \brief defines extended 64-bit floating point computer epsilon */
+#ifndef __EPSILON_xx64__
+#define __EPSILON_xx64__ 1.0842e-019
+#endif
+
+/*! \brief defines pi */
 #ifndef PI0
 #define PI0 3.1415926535897932384626433832795
 #endif
 
+/*! \brief defines 2*pi */
 #ifndef PI2
 #define PI2 6.283185307179586476925286766559
 #endif
 
+/*! \brief defines pi / 2 */
 #ifndef PI_2
 #define PI_2 1.5707963267948966192313216916398
 #endif
 
+/*! \brief defines pi / 4 */
 #ifndef PI_4
 #define PI_4 0.78539816339744830961566084581988
 #endif
 
-// elliptic functions:
+/*! \defgroup <Elliptic_fcn> ( Elliptic functons )
+ *  \brief the module collaborates all the elliptic functions and integrals
+    @{
+*/
 
-// am fucntion:
+/*!
+    Jacobi amplitude function
+    \param[u] incomplete elliptic integral of the first kind
+    \param[k] elliptical modulus
+    \return  returns Jacobi amplitude function
+
+    The computes the Jacobi amplitude function using the method of the arithmetic-geometric mean.
+*/
 extern __fx64 __am__( __fx64 u , __fx64 k )
 {
     __fxx64 a[__ITERATIONS_NUMBER__ + 1];
@@ -212,43 +255,108 @@ extern __fx64 __am__( __fx64 u , __fx64 k )
     return ( __fx64 )phi;
 }
 
-// function sn:
+/*!
+    Elliptic Jacobi SN function
+    \param[u] incomplete elliptic integral of the first kind
+    \param[k] elliptical modulus
+    \return  returns Ellptic Jacobi SN( u , x ) = sin( am( u , x ) ) function
+*/
 extern __fx64 __sn__( __fx64 u , __fx64 x ) { return sin( __am__( u , x ) ); }
 
-// function cn:
+/*!
+    Elliptic Jacobi CN function
+    \param[u] incomplete elliptic integral of the first kind
+    \param[k] elliptical modulus
+    \return  returns Ellptic Jacobi CN( u , x ) = cos( am( u , x ) ) function
+*/
 extern __fx64 __cn__( __fx64 u , __fx64 x ) { return cos( __am__( u , x ) ); }
 
-// function dn:
+/*!
+    Elliptic Jacobi DN function
+    \param[u] incomplete elliptic integral of the first kind
+    \param[k] elliptical modulus
+    \return  returns Ellptic Jacobi DN( u , x ) = sqrt( 1 - x * x * SN( u , x ) * SN( u , x ) ) function
+*/
 extern __fx64 __dn__( __fx64 u , __fx64 x ) { __fx64 SN = __sn__( u , x ); return sqrt(1.0 - x * x * SN * SN); }
 
-// function cd:
+/*!
+    Elliptic Jacobi CD function
+    \param[u] incomplete elliptic integral of the first kind
+    \param[k] elliptical modulus
+    \return  returns Ellptic Jacobi CD( u , x ) = CN( u , x ) / DN( u , x ) function
+*/
 extern __fx64 __cd__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __dn__( u , x ); }
 
-// function sd:
+/*!
+    Elliptic Jacobi SD function
+    \param[u] incomplete elliptic integral of the first kind
+    \param[k] elliptical modulus
+    \return  returns Ellptic Jacobi SD( u , x ) = SN( u , x ) / DN( u , x ) function
+*/
 extern __fx64 __sd__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __dn__( u , x ); }
 
-// function nd:
+/*!
+    Elliptic Jacobi ND function
+    \param[u] incomplete elliptic integral of the first kind
+    \param[k] elliptical modulus
+    \return  returns Ellptic Jacobi ND( u , x ) = SN( u , x ) / DN( u , x ) function
+*/
 extern __fx64 __nd__( __fx64 u , __fx64 x ) { return 1 / __dn__( u , x ); }
 
-// function dc:
+/*!
+    Elliptic Jacobi DC function
+    \param[u] incomplete elliptic integral of the first kind
+    \param[k] elliptical modulus
+    \return  returns Ellptic Jacobi DC( u , x ) = 1 / ND( u , x ) function
+*/
 extern __fx64 __dc__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __cn__( u , x ); }
 
-// function nc:
+/*!
+    Elliptic Jacobi NC function
+    \param[u] incomplete elliptic integral of the first kind
+    \param[k] elliptical modulus
+    \return  returns Ellptic Jacobi NC( u , x ) = 1 / CN( u , x ) function
+*/
 extern __fx64 __nc__( __fx64 u , __fx64 x ) { return 1 / __cn__(u, x); }
 
-// function sc:
+/*!
+    Elliptic Jacobi SC function
+    \param[u] incomplete elliptic integral of the first kind
+    \param[k] elliptical modulus
+    \return  returns Ellptic Jacobi SC( u , x ) = SN( u , x ) / CN( u , x ) function
+*/
 extern __fx64 __sc__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __cn__( u , x ); }
 
-// function ns:
+/*!
+    Elliptic Jacobi NS function
+    \param[u] incomplete elliptic integral of the first kind
+    \param[k] elliptical modulus
+    \return  returns Ellptic Jacobi NS( u , x ) = 1 / SN( u , x ) function
+*/
 extern __fx64 __ns__( __fx64 u , __fx64 x ) { return 1 / __sn__( u , x ); }
 
-// function ds:
+/*!
+    Elliptic Jacobi DS function
+    \param[u] incomplete elliptic integral of the first kind
+    \param[k] elliptical modulus
+    \return  returns Ellptic Jacobi DS( u , x ) = DN( u , x ) / SN( u , x ) function
+*/
 extern __fx64 __ds__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __sn__( u , x ); }
 
-// function cs:
+/*!
+ * Elliptic Jacobi CS function
+ * \param[u] incomplete elliptic integral of the first kind
+ * \param[k] elliptical modulus
+ * \return  returns Ellptic Jacobi CS( u , x ) = CN( u , x ) / SN( u , x ) function
+*/
 extern __fx64 __cs__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __sn__( u , x ); }
 
-// inverse sn:
+/*!
+ * Elliptic Jacobi inverse SN function
+ * \param[sn] Elliptic Jacobi SN function
+ * \param[k] elliptical modulus
+ * \return  returns Ellptic Jacobi inverse SN function
+*/
 extern __fx64 __isn__( __fx64 sn , __fx64 x )
 {
     // auxiliary variables and arrays:
@@ -293,7 +401,12 @@ extern __fx64 __isn__( __fx64 sn , __fx64 x )
     return  ( sn < 0 ) ? ( -(phi + s[n - 1] * PI0) / two_n / a[n - 1] ) : ( +(phi + s[n - 1] * PI0) / two_n / a[n - 1] );
 }
 
-// inverse cn:
+/*!
+ * Elliptic Jacobi inverse CN function
+ * \param[cn] elliptic Jacobi CN function
+ * \param[x] elliptical modulus
+ * \return  returns Ellptic Jacobi inverse CN function
+*/
 extern __fx64 __icn__( __fx64 sn , __fx64 x )
 {
     __fx64 a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ] , s[ __ITERATIONS_NUMBER__ + 1 ];
@@ -334,7 +447,12 @@ extern __fx64 __icn__( __fx64 sn , __fx64 x )
     return  +(phi + s[n-1] * PI0) / two_n / a[n-1];
 }
 
-// inverse dn:
+/*!
+ * Elliptic Jacobi inverse DN function\
+ * \param[dn] Elliptic Jacobi DN function
+ * \param[k] elliptical modulus
+ * \return  returns Ellptic Jacobi inverse DN function
+*/
 extern __fx64 __idn__( __fx64 dn , __fx64 x )
 {
     __fx64 a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ] , s[ __ITERATIONS_NUMBER__ + 1 ];
@@ -376,7 +494,12 @@ extern __fx64 __idn__( __fx64 dn , __fx64 x )
     return  +(phi + s[n - 1] * PI0) / two_n / a[n - 1];
 }
 
-// inverse cd:
+/*!
+ * Elliptic Jacobi inverse CD function\
+ * \param[dn] Elliptic Jacobi CD function
+ * \param[k] elliptical modulus
+ * \return  returns Ellptic Jacobi inverse CD function
+*/
 extern __fx64 __icd__( __fx64 cd , __fx64 x )
 {
     __fx64 a[ __ITERATIONS_NUMBER__ + 1] , g[ __ITERATIONS_NUMBER__ + 1] , s[ __ITERATIONS_NUMBER__ + 1];
@@ -417,7 +540,12 @@ extern __fx64 __icd__( __fx64 cd , __fx64 x )
     return +(phi + s[n - 1] * PI0) / two_n / a[n - 1];
 }
 
-// inverse sd:
+/*!
+ * Elliptic Jacobi inverse SD function\
+ * \param[dn] Elliptic Jacobi SD function
+ * \param[k] elliptical modulus
+ * \return  returns Ellptic Jacobi inverse SD function
+*/
 extern __fx64 __isd__( __fx64 sd , __fx64 x )
 {
     __fx64 a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ] , s[ __ITERATIONS_NUMBER__ + 1 ];
@@ -458,10 +586,20 @@ extern __fx64 __isd__( __fx64 sd , __fx64 x )
     return  ( sd < 0 ) ? ( -(phi + s[n - 1] * PI0) / two_n / a[n - 1] ) : ( +(phi + s[n - 1] * PI0) / two_n / a[n - 1] ) ;
 }
 
-// inverse nd:
+/*!
+* Elliptic Jacobi inverse ND function
+* \param[dn] Elliptic Jacobi ND function
+* \param[k] elliptical modulus
+* \return  returns Ellptic Jacobi inverse ND function
+*/
 extern __fx64 __ind__( __fx64 nd , __fx64 x ) { return __idn__( 1 / nd , x ); }
 
-// inverse dc:
+/*!
+* Elliptic Jacobi inverse DC function
+* \param[dn] Elliptic Jacobi DC function
+* \param[k] elliptical modulus
+* \return  returns Ellptic Jacobi inverse DC function
+*/
 extern __fx64 __idc__( __fx64 dc , __fx64 x )
 {
     __fx64 a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ] , s[ __ITERATIONS_NUMBER__ + 1 ];
@@ -503,10 +641,20 @@ extern __fx64 __idc__( __fx64 dc , __fx64 x )
     return  +(phi + s[n - 1] * PI0) / two_n / a[n - 1];
 }
 
-// inverse nc:
+/*!
+* Elliptic Jacobi inverse NC function
+* \param[dn] Elliptic Jacobi NC function
+* \param[k] elliptical modulus
+* \return  returns Ellptic Jacobi inverse NC function
+*/
 extern __fx64 __inc__( __fx64 nc , __fx64 x ) { return  __icn__( 1 / nc , x ); }
 
-// inverse sc:
+/*!
+* Elliptic Jacobi inverse SC function
+* \param[dn] Elliptic Jacobi SC function
+* \param[k] elliptical modulus
+* \return  returns Ellptic Jacobi inverse SC function
+*/
 extern __fx64 __isc__( __fx64 sc , __fx64 x )
 {
     __fx64 a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ] , s[ __ITERATIONS_NUMBER__ + 1 ];
@@ -547,16 +695,35 @@ extern __fx64 __isc__( __fx64 sc , __fx64 x )
     return  ( sc < 0 ) ? ( -(phi + s[n - 1] * PI0) / two_n / a[n - 1] ) : ( +(phi + s[n - 1] * PI0) / two_n / a[n - 1] ) ;
 }
 
-// inverse ns:
+/*!
+* Elliptic Jacobi inverse NS function
+* \param[dn] Elliptic Jacobi NS function
+* \param[k] elliptical modulus
+* \return  returns Ellptic Jacobi inverse NS function
+*/
 extern __fx64 __ins__( __fx64 ns , __fx64 x ) { return  __isn__( 1 / ns , x ); }
 
-// inverse ds:
+/*!
+* Elliptic Jacobi inverse DS function
+* \param[dn] Elliptic Jacobi DS function
+* \param[k] elliptical modulus
+* \return  returns Ellptic Jacobi inverse DS function
+*/
 extern __fx64 __ids__( __fx64 ds , __fx64 x ) { return  __isd__( 1 / ds , x ); }
 
-// inverse cs:
+/*!
+* Elliptic Jacobi inverse CS function
+* \param[dn] Elliptic Jacobi CS function
+* \param[k] elliptical modulus
+* \return  returns Ellptic Jacobi inverse CS function
+*/
 extern __fx64 __ics__( __fx64 cs , __fx64 x ) { return  __isc__( 1 / cs , x ); }
 
-// ellitic intergral 1:
+/*!
+* Elliptic integral of the first kind
+* \param[k] elliptical modulus
+* \return  returns Ellptic integral of the first kind
+*/
 extern __fx64 __ellip_k__( __fx64 k )
 {
     __fxx64 a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ];
@@ -590,7 +757,11 @@ extern __fx64 __ellip_k__( __fx64 k )
     return PI_2 / a[n];
 }
 
-// elliptic integral 2:
+/*!
+* Elliptic integral of the second kind
+* \param[k] elliptical modulus
+* \return  returns Ellptic integral of the second kind
+*/
 extern __fx64 __ellip_e__( __fx64 k )
 {
     __fxx64 a[ __ITERATIONS_NUMBER__ + 1 ] ,  g[ __ITERATIONS_NUMBER__ + 1 ] , c[ __ITERATIONS_NUMBER__ + 1 ];
@@ -626,7 +797,20 @@ extern __fx64 __ellip_e__( __fx64 k )
     return PI_2*(1 - (sum + 0.5 * c[0] * c[0]))/ a[n];
 }
 
-// factorial function:
+/*! @} */
+
+
+/*! \defgroup <Bessel_fcn> ( Bessel functions )
+ *  \brief the module collaborates Bessel functions and factorial
+    @{
+*/
+
+/*!
+* Factorial computation function
+* \param[n] input n
+* \return  returns n!
+*/
+
 extern __fxx64 __factorial__( __ix64 n )
 {
     //return (n == 1 || n == 0) ? 1 : __factorial__(n - 1) * n;
@@ -635,10 +819,18 @@ extern __fxx64 __factorial__( __ix64 n )
     return out;
 }
 
-// integer gamma:
+/*!
+* Integer gamma function
+* \param[n] input n
+* \return  returns ( n - 1 )!
+*/
 extern __uix64 __gamma_integer__( __uix64 n ) { return __factorial__(n-1); }
 
-// zero order Bessel:
+/*!
+* Zero order Bessel function
+* \param[x] input x
+* \return  returns zero order Bessel function value
+*/
 extern __fxx64 __bessel_i0__( __fxx64 x )
 {
     __fxx64 sum = 0 , fact_n = 0;
@@ -652,7 +844,11 @@ extern __fxx64 __bessel_i0__( __fxx64 x )
     return sum;
 }
 
-// first order Bessel:
+/*!
+* First order Bessel function
+* \param[x] input x
+* \return  returns first order Bessel function value
+*/
 extern __fxx64 __bessel_i1__( __fxx64 x )
 {
     __fxx64 sum = 0 , fact_n = 0 , fact_n_1 = 0;
@@ -666,7 +862,12 @@ extern __fxx64 __bessel_i1__( __fxx64 x )
     return sum;
 }
 
-// n order Bessel:
+/*!
+* N-th order Bessel function
+* \param[x] input x
+* \param[n] Bessel function order
+* \return  returns N-th order Bessel function value
+*/
 extern __fxx64 __bessel_in__( __fxx64 x  , __ix32 order )
 {
     __fxx64 sum = 0 , fact_n = 0 , fact_n_order = 0;
@@ -680,7 +881,12 @@ extern __fxx64 __bessel_in__( __fxx64 x  , __ix32 order )
     return sum;
 }
 
-// modified n-order Bessel:
+/*!
+* N-th order modified Bessel function
+* \param[x] input x
+* \param[n] Modified Bessel function order
+* \return  returns N-th order modified Bessel function value
+*/
 extern __fxx64 __modified_bessel_in__( __fxx64 x  , __ix32 order )
 {
     __fxx64  sum = 0 , gamma1 = 0 , gamma2    = 0;
@@ -694,13 +900,29 @@ extern __fxx64 __modified_bessel_in__( __fxx64 x  , __ix32 order )
     return sum;
 }
 
-// window functions class:
+/*! @} */
+
+/*! \defgroup <Window_fcn> ( Window functions )
+ *  \brief the module describes windows functions class
+    @{
+*/
+
+/*!
+* \brief Window function class
+* \details Window function class implements the range of window functions coefficients computation and storing
+*/
 class wind_fcn
 {
     typedef bool __bool ;
 protected:
+
+    /*! \brief window function order */
     __fx64 m_order;
+
+    /*! \brief window function completness flag */
     __bool m_wind_ready;
+
+    /*! \brief window function coefficients buffer */
     __fx64 *m_buff;
 public:
 
@@ -713,20 +935,33 @@ public:
 
     ~wind_fcn() { deallocate(); }
 
-    // initialization function:
-    void init( __fx64 order )
+    /*!
+     * \brief window function class object initialization function
+     * \param[order] window function length ( in samples )
+    */
+    void init( __ix32 order )
     {
         m_order = order;
         m_buff  = 0;
     }
 
-    // memory allocation and deallocation functions:
+    /*!
+     * \brief window function class object memory allocation function
+     * \details the function allocates coefficients buffer ( *m_buff )
+     *          of the window function class object
+    */
     __ix32 allocate()
     {
         m_buff = ( __fx64* ) calloc( m_order , sizeof ( __fx64 ) );
         return ( !m_buff );
     }
 
+    /*!
+     * \brief window function class object memory deallocation function
+     * \details the function frees coefficients buffer ( *m_buff )
+     *          of the window function class object. Buffer memory
+     *          is freed if the buffer has not been freed earlier.
+    */
     void deallocate()
     {
         if ( m_buff != 0 )
@@ -736,9 +971,21 @@ public:
         }
     }
 
-    // window functions:
-
-    // Barlett:
+    /*!
+     * \brief Barlett window function computation
+     * \return The function allocates memory sets, m_wind_ready = 1 and computes Barlett window coefficients as follows:
+     *  \f[
+     *      Ns = order \newline
+     *      n = 0 \dots Ns \newline
+     *      y( n ) = \begin{equation}
+     *      \begin{cases}
+     *      2 * n / ( Ns - 1 ) , n <= ( Ns - 1 ) / 2
+     *      \\
+     *      2 - 2 * n / ( Ns - 1 ) , n > ( Ns - 1 ) / 2
+     *      \end{cases}
+     *      \end{equation}
+     *  \f]
+    */
     __ix32 Bartlett()
     {
         // memory allocation:
@@ -753,7 +1000,16 @@ public:
         return m_wind_ready;
     }
 
-    // Barlett-Hanning:
+    /*!
+     * \brief Barlett Hanning window function computation
+     * \return The function allocates memory, sets m_wind_ready = 1 and computes Barlett-Hanning window coefficients as follows:
+     *  \f[
+     *      Ns = order \newline
+     *      n  = 0 \dots Ns \newline
+     *      y( n ) = 0.62 - 0.48 * \left|  \frac{ n }{ Ns - 1 } - 0.5 \right| + 0.38 * cos \left[ \ 2 * \pi * \left( \frac{ n }{ Ns - 1 } - 0.5 \right) \right]
+     *  \f]
+    */
+
     __ix32 BartlettHanning()
     {
         // memory allocation:
@@ -768,7 +1024,15 @@ public:
         return m_wind_ready;
     }
 
-    // Blackman:
+    /*!
+     * \brief Balckman window function computation
+     * \return The function allocates memory, sets m_wind_ready = 1 and computes Balckman window coefficients as follows:
+     *  \f[
+     *      Ns = order \newline
+     *      n  = 0 \dots Ns \newline
+     *      y( n ) = 0.42 - 0.50 * cos \left( 2 * \pi * \frac { n } { Ns - 1 } \right ) + 0.08 * cos \left( 4 * \pi * \frac{ n } { Ns - 1 } \right )
+     *  \f]
+    */
     __ix32 Blackman()
     {
         // memory allocation:
@@ -784,7 +1048,15 @@ public:
         return 0;
     }
 
-    // Blackman-Harris:
+    /*!
+     * \brief Balckman-Harris window function computation
+     * \return The function allocates memory, sets m_wind_ready = 1 and computes Balckman-Harris window coefficients as follows:
+     *  \f[
+     *      Ns = order \newline
+     *      n  = 0 \dots Ns \newline
+     *      y( n ) = 0.35875 - 0.48829 * cos \left( 2 * \pi * \frac{ n } { Ns - 1 } \right ) + 0.14128 * cos\left( 4 * \pi * \frac{ n } { Ns - 1 } \right ) - 0.01168 * cos \left( 6 * \pi * \frac{ n } { Ns - 1 } \right )
+     *  \f]
+    */
     __ix32 BlackmanHarris()
     {
         // memory allocation:
@@ -799,7 +1071,19 @@ public:
         return m_wind_ready;
     }
 
-    // Bohman:
+    /*!
+     * \brief Bohman window function computation
+     * \return The function allocates memory, sets m_wind_ready = 1 and computes Bohman window coefficients as follows:
+     *  \f[
+     *      Ns = ceil \left( \frac{ order } { 2 } \right ) \quad , \quad n  = 0 \dots Ns \newline
+     *      y( n ) = \left( 1 - \left| \frac{ n } { Ns + 1} \right| \right) * cos \left( \pi * \left| \frac{ n } { Ns + 1 } \right| \right ) + \frac{ 1 } { \pi } * sin \left( \pi * \left| \frac { n } { Ns + 1 } \right| \right) \quad , \quad
+     *      n = \begin{cases}
+     *      n = k - Ns \quad \quad \quad , \quad n = 0
+     *      \\
+     *      n = k - Ns - 1 \quad , \quad n >= 0
+     *      \end{cases}
+     *  \f]
+    */
     __ix32 Bohman()
     {
         // memory allocation:
@@ -811,7 +1095,7 @@ public:
         {
             n = k - Ns;
             if ( n >= 0 )  n = k - Ns + 1;
-            m_buff[k] = (1 - fabs(n / (Ns + 1))) * cos(PI0 * fabs(n / (Ns + 1))) + 1 / PI0 * sin(PI0 * fabs(n / (Ns + 1)));
+            m_buff[k] = ( 1 - fabs( n / (Ns + 1) ) ) * cos( PI0 * fabs(n / (Ns + 1))) + 1 / PI0 * sin(PI0 * fabs(n / (Ns + 1)));
         }
 
         // window is ready to use:
@@ -819,7 +1103,20 @@ public:
         return m_wind_ready;
     }
 
-    // Chebyshev poly coefficients computation function:
+    /*!
+     * \brief Auxiliary Chebhshev poly computation function
+     * \param[n] Chebyshev poly order
+     * \param[x] x-value at which n-th order Chebyshev poly value is computed
+     * \return The function returns Chebyshev n-th order poly value
+     *  \f[
+     *      y( x , n ) =
+     *      \begin{cases}
+     *      cos \left( n * acos \left( x \right ) \right ) \quad , \quad |x| <= 1
+     *      \\
+     *      cos \left( n * acosh \left( x \right ) \right ) \quad , \quad |x| > 1
+     *      \end{cases}
+     *  \f]
+    */
     __fx64 cheby_poly(__ix32 n, __fx64 x)
     {
         __fx64 res;
@@ -828,14 +1125,18 @@ public:
         return res;
     }
 
-    // Chebyshev:
+    /*!
+     * \brief Chebyshev window computation function
+     * \param[ atten ] sidelobe attenuation , Db
+     * \return The function allocates memory, sets m_wind_ready = 1 and computes Chebyshev window coefficients
+    */
     __ix32 Chebyshev( __fx64 atten )
     {
         // memory allocation:
         allocate();
 
         // window function coefficients computation:
-        __ix32    Ns = m_order , nn, kk;
+        __ix32 Ns = m_order , nn, kk;
         __fx64 M, n, sum = 0, max = 0;
         __fx64 tg = pow(10, atten / 20);
         __fx64 x0 = cosh((1.0 / (Ns - 1))*acosh(tg));
@@ -858,7 +1159,18 @@ public:
         return m_wind_ready;
     }
 
-    // FlatTop:
+    /*!
+     * \brief Flat-Top window computation function
+     * \return The function allocates memory, sets m_wind_ready = 1 and computes Flat-Top window coefficients as follows:
+     *  \f[
+     *      Ns = order \newline
+     *      n  = 0 \dots Ns \newline
+     *      y( n ) = 0.21557895 - 0.41663158 * cos \left( ( 2 * \pi * \frac{ n } { Ns - 1 } \right)
+     *      + 0.277263158 * cos \left( 4 * \pi * \frac{ n } { Ns - 1 } \right)
+     *      - 0.083578947 * cos \left( 6 * \pi * \frac{ n } { Ns - 1 } \right)
+     *      + 0.006947368 * cos \left( 8 * \pi * \frac{ n } { Ns - 1 } \right)
+     *  \f]
+    */
     __ix32 FlatTop()
     {
         // memory allocation:
@@ -873,15 +1185,32 @@ public:
         return m_wind_ready;
     }
 
-    // Gaussian:
+    /*!
+     * \brief Gaussian window computation function
+     * \param[ alpha ] Gaussian window parameter
+     * \return The function allocates memory, sets m_wind_ready = 1 and computes Gaussian window coefficients as follows:
+     *  \f[
+     *      Ns = order      \newline
+     *      \sigma = 0      \newline
+     *      n  = 0 \dots Ns \newline
+     *      y( n ) = e^ \left( \frac{ n^2 }{ 2 * \sigma^2 } \right) \newline
+     *      \sigma = \frac{ Ns-1 }{ 2 * \alpha } \newline
+     *      n =
+     *      \begin{cases}
+     *      k - \frac{ Ns }{ 2 } \quad , \quad n < 0
+     *      \\
+     *      k - \frac{ Ns }{ 2 } + 1 \quad , \quad n \geq 0
+     *      \end{cases}
+     *  \f]
+    */
     __ix32 Gaussian( __fx64 alpha )
     {
         // memory allocation:
         allocate();
 
         // window function coefficients computation:
-        __ix32    Ns = m_order;
-        __ix32    n     = 0;
+        __ix32 Ns = m_order;
+        __ix32 n     = 0;
         __fx64 sigma = 0;
         for (__ix32 k = 0 ; k < Ns; k++)
         {
@@ -896,7 +1225,15 @@ public:
         return m_wind_ready;
     }
 
-    // Hamming:
+    /*!
+     * \brief Hamming window computation function
+     * \return The function allocates memory, sets m_wind_ready = 1 and computes Hamming window coefficients as follows:
+     *  \f[
+     *      Ns = order      \newline
+     *      n  = 0 \dots Ns \newline
+     *      y( n ) = 0.54 - 0.46 * cos \left( 2 * \pi * \frac{ n } { Ns-1 } \right)
+     *  \f]
+    */
     __ix32 Hamming()
     {
         // memory allocation:
@@ -911,7 +1248,15 @@ public:
         return m_wind_ready;
     }
 
-    // Hann:
+    /*!
+     * \brief Hann window computation function
+     * \return The function allocates memory, sets m_wind_ready = 1 and computes Hann window coefficients as follows:
+     *  \f[
+     *      Ns = order      \newline
+     *      n  = 0 \dots Ns \newline
+     *      y( n ) = 0.5 - 0.5 * cos \left( 2 * \pi * \frac{ n } { Ns-1 } \right)
+     *  \f]
+    */
     __ix32 Hann()
     {
         // memory allocation:
@@ -926,14 +1271,26 @@ public:
         return m_wind_ready;
     }
 
-    // Kaiser:
+    /*!
+     * \brief Kaiser window computation function
+     * \param[betta] Kaiser window function parameter
+     * \return The function allocates memory, sets m_wind_ready = 1 and computes Kaiser window coefficients as follows:
+     *  \f[
+     *      Ns = order                                                                      \newline
+     *      n  = 0 \dots Ns                                                                 \newline
+     *      A  = \frac{ \left( n - \frac{ Ns - 1 } { 2 } \right) }{ \frac{ Ns - 1 } { 2 } } \newline
+     *      B  = \beta * \sqrt( 1 - A^2 )                                                   \newline
+     *      C  = \beta                                                                      \newline
+     *      y(n) = \frac{ ModifiedBessel( B , 0 ) }{ ModifiedBessel( C , 0 ) }
+     *  \f]
+    */
     __ix32 Kaiser( __fx64 betta )
     {
         // memory allocation:
         allocate();
 
         // winfow function coefficients computation:
-        __ix32    Ns = m_order;
+        __ix32 Ns = m_order;
         __fx64 A  = 0;
         __fx64 B  = 0;
         __fx64 C  = 0;
@@ -950,7 +1307,18 @@ public:
         return m_wind_ready;
     }
 
-    // Nutall:
+    /*!
+     * \brief Nutall window computation function
+     * \return The function allocates memory, sets m_wind_ready = 1 and computes Nutall window coefficients as follows:
+     *  \f[
+     *      Ns = order      \newline
+     *      n  = 0 \dots Ns \newline
+     *      y(n) = 0.3635819
+     *      - 0.4891775 * cos \left( 2 * \pi * \frac{ n }{ Ns - 1 } \right)
+     *      + 0.1365995 * cos \left( 4 * \pi * \frac{ n }{ Ns - 1 } \right)
+     *      - 0.0106411 * cos \left( 6 * \pi * \frac{ n }{ Ns - 1 } \right)
+     *  \f]
+    */
     __ix32 Nutall()
     {
         // memory allocation:
@@ -968,7 +1336,24 @@ public:
         return m_wind_ready;
     }
 
-    // Parzen:
+    /*!
+     * \brief Parzen window computation function
+     * \return The function allocates memory, sets m_wind_ready = 1 and computes Parzen window coefficients as follows:
+     *  \f[
+     *      Ns = order      \newline
+     *      n  = 0 \dots Ns \newline
+     *      y(n) =
+     *      \begin{cases}
+     *
+     *      1 - 6 * \left( \frac{ |n| } { \left( Ns / 2 \right) } \right)^2
+     *      + 6 * \left( \frac{ |n| } { \left( Ns / 2 \right) } \right)^3 \quad , \quad 0 \leq |n| \leq \frac{ Ns - 1 }{ 4 }
+     *      \\
+     *      2 * \left( \frac{ |n| } { \left( Ns / 2 \right) } \right)^3 \quad  , \quad \frac{ Ns - 1 }{ 4 } < |n| \leq \frac{ Ns - 1 }{ 2 }
+     *
+     *      \end{cases}
+     *
+     *  \f]
+    */
     __ix32 Parzen()
     {
         // memory allocation:
@@ -997,7 +1382,15 @@ public:
         return m_wind_ready;
     }
 
-    // Rectangular:
+    /*!
+     * \brief Rectangular window computation function
+     * \return The function allocates memory, sets m_wind_ready = 1 and computes Rectangular window coefficients as follows:
+     *  \f[
+     *      Ns = order      \newline
+     *      n  = 0 \dots Ns \newline
+     *      y(n) = 1
+     *  \f]
+    */
     __ix32 Rectangular()
     {
         // memory allocation:
@@ -1011,7 +1404,20 @@ public:
         return m_wind_ready;
     }
 
-    // Triangular:
+    /*!
+     * \brief Triangular window computation function
+     * \return The function allocates memory, sets m_wind_ready = 1 and computes Triangular window coefficients as follows:
+     *  \f[
+     *      Ns = order      \newline
+     *      n  = 0 \dots Ns \newline
+     *      y(n) =
+     *      \begin{cases}
+     *      1 - \left| \frac{ n - \left( Ns - 1 \right) / 2 }{ \left( Ns / 2 \right) } \right| \quad , \quad Ns \mod 2 = 0
+     *      \\
+     *      1 - \left| \frac{ n - \left( Ns - 1 \right) / 2 }{ \left( ( Ns + 1 ) / 2 \right) } \right| \quad , \quad Ns \mod 2 \neq 0
+     *      \end{cases}
+     *  \f]
+    */
     __ix32 Triangular()
     {
         // memory allocation:
@@ -1033,7 +1439,28 @@ public:
         return m_wind_ready;
     }
 
-    // Tukey:
+    /*!
+     * \brief Tukey window computation function
+     * \param[R] Tukey window function parameter
+     * \return The function allocates memory, sets m_wind_ready = 1 and computes Tukey window coefficients as follows:
+     *  \f[
+     *      Ns = order      \newline
+     *      n  = 0 \dots Ns \newline
+     *      y \left( x = \frac{ n }{ Ns - 1 } \right) =
+     *      \begin{cases}
+     *      0.5 + 0.5 * cos \left( \frac{ 2 * \pi }{ R * ( x - 0.5*R ) } \right) \quad , \quad  0 \geq x < R / 2;
+     *
+     *      \\
+     *
+     *      0.5 + 0.5 * cos \left( \frac{ 2 * \pi }{ R * ( x - 1 + 0.5*R ) } \right) \quad , \quad  1 - 0.5*R \geq x \leq 1;
+     *
+     *      \\
+     *
+     *      1
+     *
+     *      \end{cases}
+     *  \f]
+    */
     __ix32 Tukey( __fx64 R )
     {
         // memory allocation:
@@ -1064,103 +1491,18 @@ public:
         return m_wind_ready;
     }
 
-    // ready or not:
+    /*!
+     * \brief the function returns m_wind_ready flag
+    */
     bool is_ready() { return m_wind_ready; }
 
-    // operators:
+    /*!
+     * \brief operator extracts n-th value out of woindow function object buffer
+    */
     inline __fx64 operator [] ( __ix32 n ) { return m_buff[n]; }
 };
 
-// template sign function:
-template< typename T > __ix32 __sign__( T input ) { return ( input > 0 ) ? 1 : -1 ; }
-
-// functions to work with complex numbers:
-
-#ifdef COMPLEX_H
-
-// __absf__ :
-__fx32 __absf__( complex<__fx32> _complex ) { return sqrt( _complex.m_re*_complex.m_re + _complex.m_im*_complex.m_im ); }
-__fx64 __absf__( complex<__fx64> _complex ) { return sqrt( _complex.m_re*_complex.m_re + _complex.m_im*_complex.m_im ); }
-
-// __argf__ :
-__fx32 __argf__( complex<__fx32> _complex ) { return atan2( _complex.m_im , _complex.m_re ); }
-__fx64 __argf__( complex<__fx64> _complex ) { return atan2( _complex.m_im , _complex.m_re ); }
-
-// __sqrtf__:
-complex<__fx32> __sqrtf__( complex<__fx32> _complex )
-{
-    __fx32 abs = sqrt ( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
-    __fx32 arg = atan2( _complex.m_im , _complex.m_re );
-    return complex<__fx32>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
-}
-
-complex<__fx64> __sqrtf__( complex<__fx64> _complex )
-{
-    __fx64 abs = sqrt ( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
-    __fx64 arg = atan2( _complex.m_im , _complex.m_re );
-    return complex<__fx64>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
-}
-
-// __conjf__ :
-complex<__fx32> __conjf__( complex<__fx32> _complex ) { _complex.m_im *= -1.0; return _complex; }
-complex<__fx64> __conjf__( complex<__fx64> _complex ) { _complex.m_im *= -1.0; return _complex; }
-
-// __normf__ :
-complex<__fx32> __normf__( complex<__fx32> _complex ) { __fx32 m = __absf__( _complex ); return complex<__fx32>( _complex / m ); }
-complex<__fx64> __normf__( complex<__fx64> _complex ) { __fx64 m = __absf__( _complex ); return complex<__fx64>( _complex / m ); }
-
-// __rotf__ :
-complex<__fx32> __rotf__( __fx32 arg , bool mode )
-{
-    if( mode ) { arg = __TO_RADIANS( arg ); }
-    return complex<__fx32>( cos(arg) , sin(arg) );
-}
-
-complex<__fx64> __rotf__( __fx64 arg , bool mode )
-{
-    if( mode ) { arg = __TO_RADIANS( arg ); }
-    return complex<__fx64>( cos(arg) , sin(arg) );
-}
-
-// __sinhf__   :
-complex<__fx32> __sinhf__( complex<__fx32> _complex )
-{
-    __fx32 re = ( exp( _complex.m_re ) * cos( _complex.m_im ) - exp( -_complex.m_re ) * cos( -_complex.m_im ) ) * 0.5;
-    __fx32 im = ( exp( _complex.m_re ) * sin( _complex.m_im ) - exp( -_complex.m_re ) * sin( -_complex.m_im ) ) * 0.5;
-    return complex<__fx32>( re , im );
-}
-
-complex<__fx64> __sinhf__( complex<__fx64> _complex )
-{
-    __fx64 re = ( exp( _complex.m_re ) * cos( _complex.m_im ) - exp( -_complex.m_re ) * cos( -_complex.m_im ) ) * 0.5;
-    __fx64 im = ( exp( _complex.m_re ) * sin( _complex.m_im ) - exp( -_complex.m_re ) * sin( -_complex.m_im ) ) * 0.5;
-    return complex<__fx64>( re , im );
-}
-
-// __coshf__   :
-complex<__fx32> __coshf__( complex<__fx32> _complex )
-{
-    __fx32 re = ( exp( _complex.m_re ) * cos( _complex.m_im ) + exp( -_complex.m_re ) * cos( -_complex.m_im ) ) * 0.5;
-    __fx32 im = ( exp( _complex.m_re ) * sin( _complex.m_im ) + exp( -_complex.m_re ) * sin( -_complex.m_im ) ) * 0.5;
-    return complex<__fx32>( re , im );
-}
-
-complex<__fx64> __coshf__( complex<__fx64> _complex )
-{
-    __fx64 re = ( exp( _complex.m_re ) * cos( _complex.m_im ) + exp( -_complex.m_re ) * cos( -_complex.m_im ) ) * 0.5;
-    __fx64 im = ( exp( _complex.m_re ) * sin( _complex.m_im ) + exp( -_complex.m_re ) * sin( -_complex.m_im ) ) * 0.5;
-    return complex<__fx64>( re , im );
-}
-
-// __tanhf__   :
-complex<__fx32> __tanhf__( complex<__fx32> _complex ) { return __sinhf__(_complex) / __coshf__(_complex); }
-complex<__fx64> __tanhf__( complex<__fx64> _complex ) { return __sinhf__(_complex) / __coshf__(_complex); }
-
-// __catanhf__ :
-complex<__fx32> __ctnhf__( complex<__fx32> _complex ) { return __coshf__(_complex) / __sinhf__(_complex); }
-complex<__fx64> __ctnhf__( complex<__fx64> _complex ) { return __coshf__(_complex) / __sinhf__(_complex); }
-
-#endif
+/*! @} */
 
 // customized types names exclusion to avloid aliasing during compilation:
 #undef __ix16

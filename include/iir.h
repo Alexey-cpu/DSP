@@ -5,15 +5,38 @@
 //------------------------------------------------------------------------------------------------------------
 /*
     Naming conventions:
-    plp - poles of the normalized lowpass analogue prototype
-    zlp - zeros of the normalized lowpass analogue prototype
-    glp - gains of the normalized lowpass analogue prototype
-    pbp - poles of the bandpass analogue/digital prototype
-    zbp - zeros of the bandpass analogue/digital prototype
-    gbp - gains of the bandpass analogue/digital prototype
-    pbs - poles of the bandstop analogue/digital prototype
-    zbs - zeros of the bandstop analogue/digital prototype
-    gbs - gains of the bandstop analogue/digital prototype
+
+    IIR - infinite impulse response
+
+    plp   - poles of the normalized lowpass analogue prototype
+    zlp   - zeros of the normalized lowpass analogue prototype
+    glp   - gains of the normalized lowpass analogue prototype
+    pbp   - poles of the bandpass analogue/digital prototype
+    zbp   - zeros of the bandpass analogue/digital prototype
+    gbp   - gains of the bandpass analogue/digital prototype
+    pbs   - poles of the bandstop analogue/digital prototype
+    zbs   - zeros of the bandstop analogue/digital prototype
+    gbs   - gains of the bandstop analogue/digital prototype
+    L     - complex conjugate poles / zeros second order sections number
+    R     - real odd second order section identifier
+    N     - second order sections total numbeer
+    Fs    - sampling frequecny        , Hz
+    Ts    - sampling period           , s
+    Fn    - nominal frequency         , Hz
+    Fc    - cutoff frequency          , Hz
+    BW    - stopband / passband width , Hz
+    Gs    - stopband attenuation      , Db
+    Gp    - passband attenuation      , Db
+    order - IIR filter order
+    type  - IIR filter type ( 0 - lowpass , 1 - highpass , 2 - bandpass , 3 - bandstop )
+    cfnum - second order sections numeator coefficients
+    cfden - second order sections denominator coefficients
+    gains - second order sections gains ( including filter output gain )
+    bx    - second order sections input  buffers
+    by    - second order sections output buffers
+    Km    - filter amplitude frequency response
+    pH    - filter phase frequency response
+
 */
 
 #ifndef IIR_H
@@ -1533,29 +1556,32 @@ template < typename T > void __show_iir__( iir_sp sp , iir_cf<T> cf , const char
     }
 
     printf( "\n" );
-    printf( "Fs    = %.6f Hz \n"   , sp.Fs    );
-    printf( "Ts    = %.6f s  \n"   , sp.Ts    );
-    printf( "Fn    = %.6f Hz \n"   , sp.Fn    );
-    printf( "Fc    = %.6f Hz \n"   , sp.Fc    );
-    printf( "BW    = %.6f Hz \n"   , sp.BW    );
-    printf( "Gs    = %.6f Db \n"   , sp.Gs    );
-    printf( "Gp    = %.6f Db \n"   , sp.Gp    );
-    printf( "order = %d      \n"   , sp.order );
-    printf( "N     = %d      \n"   , cf.N     );
-    printf( "L     = %d      \n"   , cf.L     );
-    printf( "R     = %d      \n\n" , cf.R     );
+    if( sp.Fs > 0    ) { printf( "Fs    = %.6f Hz \n"   , sp.Fs    ); }
+    if( sp.Ts > 0    ) { printf( "Ts    = %.6f s  \n"   , sp.Ts    ); }
+    if( sp.Fn > 0    ) { printf( "Fn    = %.6f Hz \n"   , sp.Fn    ); }
+    if( sp.Fc > 0    ) { printf( "Fc    = %.6f Hz \n"   , sp.Fc    ); }
+    if( sp.BW > 0    ) { printf( "BW    = %.6f Hz \n"   , sp.BW    ); }
+    if( sp.Gs > 0    ) { printf( "Gs    = %.6f Db \n"   , sp.Gs    ); }
+    if( sp.Gp > 0    ) { printf( "Gp    = %.6f Db \n"   , sp.Gp    ); }
+    if( sp.order > 0 ) { printf( "order = %d      \n"   , sp.order ); }
+    if( cf.N > 0     ) { printf( "N     = %d      \n"   , cf.N     ); }
+    if( cf.L > 0     ) { printf( "L     = %d      \n"   , cf.L     ); }
+    if( cf.R > 0     ) { printf( "R     = %d      \n\n" , cf.R     ); }
 
+    __fx64 fgain = 1;
     if( cf.cfden != 0 && cf.cfnum != 0 && cf.gains != 0 )
     {
         printf( "coefficients: \n\n" );
         for( __ix32 i = 0 ; i < cf.N ; i++ )
         {
-            printf( " section %d \n" , i );
-            printf( " numerator  : %.6f %.6f %.6f \n" , cf.cfnum[ 3 * i + 0 ] , cf.cfnum[ 3 * i + 1 ]  , cf.cfnum[ 3 * i + 2 ] );
-            printf( " denominator: %.6f %.6f %.6f \n" , cf.cfden[ 3 * i + 0 ] , cf.cfden[ 3 * i + 1 ]  , cf.cfden[ 3 * i + 2 ] );
-            printf( " gain       : %.6f \n\n" , cf.gains[i] );
+            printf( " section %d : \n" , i );
+            printf( " numerator  : %.12f %.12f %.12f \n" , cf.cfnum[ 3 * i + 0 ] , cf.cfnum[ 3 * i + 1 ]  , cf.cfnum[ 3 * i + 2 ] );
+            printf( " denominator: %.12f %.12f %.12f \n" , cf.cfden[ 3 * i + 0 ] , cf.cfden[ 3 * i + 1 ]  , cf.cfden[ 3 * i + 2 ] );
+            printf( " gain       : %.12f \n\n" , cf.gains[i] );
+            fgain *= cf.gains[i];
         }
-        printf( "output gain: %.6f \n" , cf.gains[ cf.N ] );
+        printf( "output gain: %.12f \n" , cf.gains[ cf.N ]         );
+        printf( "filter gain: %.12f \n\n" , fgain * cf.gains[ cf.N ] );
     }
     else
     {
@@ -1566,14 +1592,13 @@ template < typename T > void __show_iir__( iir_sp sp , iir_cf<T> cf , const char
 #endif
 
 // template Butterworth filter:
-template < typename T > class butt
+template < typename T > class butterworth
 {
 public:
     // filter specification , coefficients and buffers:
     iir_sp      m_sp;
     iir_cf< T > m_cf;
     iir_bf< T > m_bf;
-
 public:
 
     // filter output:
@@ -1585,6 +1610,7 @@ public:
     void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , 2 }; }
     void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , 3 }; }
 
+    // memory allocation function:
     __ix32 allocate()
     {
         switch ( m_sp.type )
@@ -1610,6 +1636,7 @@ public:
         return ( m_bf.bx != 0 && m_bf.by != 0 );
     }
 
+    // memory deallocation function:
     void deallocate()
     {
         __iir_bf_free__< T >( m_bf );
@@ -1617,7 +1644,7 @@ public:
     }
 
     // default constructor:
-    butt()
+    butterworth()
     {
         m_cf = iir_cf<T>{ 0 , 0 , 0 , -1 , -1 , -1 };
         m_bf = iir_bf<T>{ 0 , 0 , -1 };
@@ -1625,7 +1652,7 @@ public:
     }
 
     // default destructor:
-    ~butt(){ deallocate(); }
+    ~butterworth(){ deallocate(); }
 
     // coefficients computation virtual function:
 
@@ -1636,6 +1663,227 @@ public:
 
     #ifndef __ALG_PLATFORM
     void show_properties() { __show_iir__< T >( m_sp , m_cf , "Butterworth" ); }
+    #endif
+};
+
+// template Chebyshev type I filter:
+template < typename T > class chebyshev_1
+{
+public:
+    // filter specification , coefficients and buffers:
+    iir_sp      m_sp;
+    iir_cf< T > m_cf;
+    iir_bf< T > m_bf;
+public:
+
+    // filter output:
+    T m_out , m_Km , m_pH;
+
+    // initializations:
+    void lp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 1 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , -1 , order , 0 }; }
+    void hp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 1 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , -1 , order , 1 }; }
+    void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , 2 }; }
+    void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , 3 }; }
+
+    __ix32 allocate()
+    {
+        switch ( m_sp.type )
+        {
+            case 0: // lowpass computation
+            m_cf = __butt_cheb1_digital_lp__< T >( m_sp.Fs , m_sp.Fc , m_sp.order , 1 , m_sp.Gs );
+            break;
+
+            case 1: // highpass computation:
+            m_cf = __butt_cheb1_digital_hp__< T >( m_sp.Fs , m_sp.Fc , m_sp.order , 1 , m_sp.Gs );
+            break;
+
+            case 2: // bandpass computation
+            m_cf = __butt_cheb1_digital_bp__< T >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 1 , m_sp.Gs );
+            break;
+
+            case 3: // bandstop computation
+            m_cf = __butt_cheb1_digital_bs__< T >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 1 , m_sp.Gs );
+            break;
+        }
+
+        m_bf = ( ( m_cf.cfnum != 0 ) && ( m_cf.cfden != 0 ) && ( m_cf.gains != 0 ) ) ? __iir_bf_alloc__< T >( m_cf.N ) : iir_bf< T >{ 0 , 0 , -1 } ;
+        return ( m_bf.bx != 0 && m_bf.by != 0 );
+    }
+
+    void deallocate()
+    {
+        __iir_bf_free__< T >( m_bf );
+        __iir_cf_free__< T >( m_cf );
+    }
+
+    // default constructor:
+    chebyshev_1()
+    {
+        m_cf = iir_cf<T>{ 0 , 0 , 0 , -1 , -1 , -1 };
+        m_bf = iir_bf<T>{ 0 , 0 , -1 };
+        m_sp = iir_sp   { 4000 , 1 / 4000 , 50 , 100 , -1 , 1 , -1 , 4 , 0 };
+    }
+
+    // default destructor:
+    ~chebyshev_1(){ deallocate(); }
+
+    // coefficients computation virtual function:
+
+    // filtering function:
+    T filt( T *input ) { return ( m_out = __filt__< T >( input , m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_bf.bx , m_bf.by ) ); }
+
+    inline T operator () (  T *input  ) { return filt( input ); }
+
+    #ifndef __ALG_PLATFORM
+    void show_properties() { __show_iir__< T >( m_sp , m_cf , "Chebyshev_I" ); }
+    #endif
+};
+
+// template Chebyshev type II filter:
+template < typename T > class chebyshev_2
+{
+public:
+    // filter specification , coefficients and buffers:
+    iir_sp      m_sp;
+    iir_cf< T > m_cf;
+    iir_bf< T > m_bf;
+public:
+
+    // filter output:
+    T m_out , m_Km , m_pH;
+
+    // initializations:
+    void lp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , Gp , order , 0 }; }
+    void hp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , Gp , order , 1 }; }
+    void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , Gp , order , 2 }; }
+    void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , Gp , order , 3 }; }
+
+    __ix32 allocate()
+    {
+        switch ( m_sp.type )
+        {
+            case 0: // lowpass computation
+            m_cf = __cheb2_ellip_digital_lp__< T >( m_sp.Fs , m_sp.Fc , m_sp.order , 0 , m_sp.Gp , m_sp.Gs );
+            break;
+
+            case 1: // highpass computation:
+            m_cf = __cheb2_ellip_digital_hp__< T >( m_sp.Fs , m_sp.Fc , m_sp.order , 0 , m_sp.Gp , m_sp.Gs );
+            break;
+
+            case 2: // bandpass computation
+            m_cf = __cheb2_ellip_digital_bp__< T >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 0 , m_sp.Gp , m_sp.Gs );
+            break;
+
+            case 3: // bandstop computation
+            m_cf = __cheb2_ellip_digital_bs__< T >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 0 , m_sp.Gp , m_sp.Gs );
+            break;
+        }
+
+        m_bf = ( ( m_cf.cfnum != 0 ) && ( m_cf.cfden != 0 ) && ( m_cf.gains != 0 ) ) ? __iir_bf_alloc__< T >( m_cf.N ) : iir_bf< T >{ 0 , 0 , -1 } ;
+        return ( m_bf.bx != 0 && m_bf.by != 0 );
+    }
+
+    void deallocate()
+    {
+        __iir_bf_free__< T >( m_bf );
+        __iir_cf_free__< T >( m_cf );
+    }
+
+    // default constructor:
+    chebyshev_2()
+    {
+        m_cf = iir_cf<T>{ 0 , 0 , 0 , -1 , -1 , -1 };
+        m_bf = iir_bf<T>{ 0 , 0 , -1 };
+        m_sp = iir_sp   { 4000 , 1 / 4000 , 50 , 100 , -1 , 1 , 80 , 4 , 0 };
+    }
+
+    // default destructor:
+    ~chebyshev_2(){ deallocate(); }
+
+    // coefficients computation virtual function:
+
+    // filtering function:
+    T filt( T *input ) { return ( m_out = __filt__< T >( input , m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_bf.bx , m_bf.by ) ); }
+
+    inline T operator () (  T *input  ) { return filt( input ); }
+
+    #ifndef __ALG_PLATFORM
+    void show_properties() { __show_iir__< T >( m_sp , m_cf , "Chebyshev_II" ); }
+    #endif
+};
+
+// template Chebyshev type II filter:
+template < typename T > class elliptic
+{
+public:
+    // filter specification , coefficients and buffers:
+    iir_sp      m_sp;
+    iir_cf< T > m_cf;
+    iir_bf< T > m_bf;
+public:
+
+    // filter output:
+    T m_out , m_Km , m_pH;
+
+    // initializations:
+    void lp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , Gp , order , 0 }; }
+    void hp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , Gp , order , 1 }; }
+    void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , Gp , order , 2 }; }
+    void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , Gp , order , 3 }; }
+
+    // memory allocation function:
+    __ix32 allocate()
+    {
+        switch ( m_sp.type )
+        {
+            case 0: // lowpass computation
+            m_cf = __cheb2_ellip_digital_lp__< T >( m_sp.Fs , m_sp.Fc , m_sp.order , 1 , m_sp.Gp , m_sp.Gs );
+            break;
+
+            case 1: // highpass computation:
+            m_cf = __cheb2_ellip_digital_hp__< T >( m_sp.Fs , m_sp.Fc , m_sp.order , 1 , m_sp.Gp , m_sp.Gs );
+            break;
+
+            case 2: // bandpass computation
+            m_cf = __cheb2_ellip_digital_bp__< T >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 1 , m_sp.Gp , m_sp.Gs );
+            break;
+
+            case 3: // bandstop computation
+            m_cf = __cheb2_ellip_digital_bs__< T >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 1 , m_sp.Gp , m_sp.Gs );
+            break;
+        }
+
+        m_bf = ( ( m_cf.cfnum != 0 ) && ( m_cf.cfden != 0 ) && ( m_cf.gains != 0 ) ) ? __iir_bf_alloc__< T >( m_cf.N ) : iir_bf< T >{ 0 , 0 , -1 } ;
+        return ( m_bf.bx != 0 && m_bf.by != 0 );
+    }
+
+    // memory deallocation function:
+    void deallocate()
+    {
+        __iir_bf_free__< T >( m_bf );
+        __iir_cf_free__< T >( m_cf );
+    }
+
+    // default constructor:
+    elliptic()
+    {
+        m_cf = iir_cf<T>{ 0 , 0 , 0 , -1 , -1 , -1 };
+        m_bf = iir_bf<T>{ 0 , 0 , -1 };
+        m_sp = iir_sp   { 4000 , 1 / 4000 , 50 , 100 , -1 , 1 , 80 , 4 , 0 };
+    }
+
+    // default destructor:
+    ~elliptic(){ deallocate(); }
+
+
+    // filtering function:
+    T filt( T *input ) { return ( m_out = __filt__< T >( input , m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_bf.bx , m_bf.by ) ); }
+
+    inline T operator () (  T *input  ) { return filt( input ); }
+
+    // debugging function:
+    #ifndef __ALG_PLATFORM
+    void show_properties() { __show_iir__< T >( m_sp , m_cf , "Chebyshev_II" ); }
     #endif
 };
 

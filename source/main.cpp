@@ -431,7 +431,7 @@ int test7()
      // coeffs = __cheb2_ellip_digital_bs__( Fs , 100 , 700 , 6 , 0 , 1 , 80 );
 
     // show iir coefficients:
-    __show_coeffs__( coeffs );
+    // __show_coeffs__( coeffs );
 
     // filter input and output buffers:
     mirror_ring_buffer<double> *buff_sx = ( mirror_ring_buffer<double>* )calloc( coeffs.N , sizeof ( mirror_ring_buffer<double> ) );
@@ -468,7 +468,7 @@ int test7()
     tt.open("C:\\Qt_projects\\DigitalFilters_x32\\logs\\tt.txt");
 
 
-    butt< double > butt;
+    butterworth< double > butt;
     butt.lp_init( Fs , 50 , 100 , 5 );
     butt.allocate();
     butt.show_properties();
