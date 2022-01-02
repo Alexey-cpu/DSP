@@ -1,1795 +1,872 @@
-//--------------------------------------------------------------------------------
-//A.M.Tykvinsky, 21.12.2021
-//--------------------------------------------------------------------------------
-// TEMPLATE FINITE IMPULSE RESPONSE FILTER CLASS
-//--------------------------------------------------------------------------------
+/*!
+ * \file
+ * \brief   FIR filters
+ * \authors A.Tykvinskiy
+ * \date    21.12.2021
+ * \version 1.0
+ *
+ * The header declares FIR filters
+*/
 
 #ifndef FIR_H
 #define FIR_H
 
-#ifndef __ALG_PLATFORM // identify if the compilation is for ProsoftSystems IDE
+#ifndef __ALG_PLATFORM
 #include <iostream>
 #include <fstream>
 #endif
 
+/*! \defgroup <FIR_fcn> ( FIR filters )
+ *  \brief the module contains FIR filter template class and it's auxiliary functions
+    @{
+*/
+
 #include "buffer.h"
 #include "special_functions.h"
 
+/*! \brief defines 32-bit floating point type */
 #ifndef __fx32
 #define __fx32 float
 #endif
 
+/*! \brief defines 64-bit floating point type */
 #ifndef __fx64
 #define __fx64 double
 #endif
 
+/*! \brief defines extended 64-bit floating point type */
+#ifndef __fxx64
+#define __fxx64 long double
+#endif
+
+/*! \brief defines 32-bit integer type */
 #ifndef __ix32
 #define __ix32 int
 #endif
 
-// customized PI:
+/*! \brief defines pi */
 #ifndef PI0
 #define PI0 3.1415926535897932384626433832795
 #endif
 
+/*! \brief defines 2*pi */
 #ifndef PI2
 #define PI2 6.283185307179586476925286766559
 #endif
 
+/*! \brief defines pi / 2 */
 #ifndef PI_2
 #define PI_2 1.5707963267948966192313216916398
 #endif
 
+/*! \brief defines pi / 4 */
 #ifndef PI_4
 #define PI_4 0.78539816339744830961566084581988
 #endif
 
-// fir templates:
-template< typename T > class fir_lp; // fir lowpass
-template< typename T > class fir_hp; // fir highpass
-template< typename T > class fir_bp; // fir bandpass
-template< typename T > class fir_bs; // fir bandstop
+/*!
+  \brief FIR filter types enumeration:
+  \param[ lowpass_fir  ] lowpass  FIR
+  \param[ highpass_fir ] highpass FIR
+  \param[ bandpass_fir ] bandpass FIR
+  \param[ bandstop_fir ] bandstop FIR
+*/
+enum fir_type { lowpass_fir  , highpass_fir , bandpass_fir , bandstop_fir };
 
-// lowpass fir implemetations:
+/*! \brief FIR filter frequency response template data structure */
+template< typename T > struct fir_fr;
 
-// float x32:
-template<> class fir_lp<__fx32>
+/*!
+  \brief FIR filter frequency response 32-bit data structure
+  \param[Km] amplitude frequency response , p.u
+  \param[pH] phase frequency response , rad
+*/
+template<> struct fir_fr< __fx32  >{ __fx32 Km , pH; };
+
+/*!
+  \brief FIR filter frequency response 64-bit data structure
+  \param[Km] amplitude frequency response , p.u
+  \param[pH] phase frequency response , rad
+*/
+template<> struct fir_fr< __fx64  >{ __fx64 Km , pH; };
+
+/*!
+  \brief FIR filter frequency response extended 64-bit data structure
+  \param[Km] amplitude frequency response , p.u
+  \param[pH] phase frequency response , rad
+*/
+template<> struct fir_fr< __fxx64 >{ __fx64 Km , pH; };
+
+/*!
+  \brief FIR filter specification data structure
+  \param[Fs]    sampling frequency        , Hz
+  \param[Fn]    nominal frequency         , Hz
+  \param[Fc]    cutoff frequency          , Hz
+  \param[BW]    stopband / passband width , Hz
+  \param[Ts]    sampling period           , s
+  \param[order] filter order
+  \param[N]     filter coefficients number
+  \param[scale] filter scaling flag ( scale = 0 - not-scaled filter , scale = 1 - scaled filter )
+*/
+struct fir_sp { __fx64 Fs, Fn , Fc , BW , Ts ; __ix32 order , N , scale , type; };
+
+/*!
+  * \brief FIR filter frequency response computation functon
+  * \param[Fs]     sampling frequency , Hz
+  * \param[F]      input frequency    , Hz
+  * \param[N]      filter order
+  * \param[cfbuff] coefficients buffer
+  * \return The function returns FIR filter frequency response data structure:
+  *         \f[
+  *             W\left( j * 2 * \pi * F \right) = a_i * e^{ -j * 2 * \pi * F * i * T_s }
+  *         \f]
+*/
+template< typename OT , typename CT > fir_fr<OT> __fir_freq_resp__(  __fx64 Fs , __fx64 F , __ix32 order , CT *cfbuff )
 {
-    typedef __fx32 __type ;
-    typedef bool   __bool ;
-    typedef void   __void ;
-
-    // system variables:
-    __type m_Ts;
-    __type m_Fs;
-    __type m_Fn;
-    __type m_Fstop;
-    __type m_Ns;
-    __ix32 m_order;
-    __bool m_scale;
-
-    // coefficients:
-    __type *m_buff_cx;
-
-public:
-
-    __type m_pH;
-    __type m_Km;
-    __type m_out;
-
-    // buffers:
-    mirror_ring_buffer< __type > m_buff_sx;
-
-    // window function object:
-    wind_fcn m_wind_fcn;
-
-    // coefficients computation function:
-    __void coeff_calc()
+    OT Re = 0 , Im = 0 , Ts = 1 / Fs;
+    for ( __ix32 i = 0; i <= order; i++)
     {
-        // check if the window is ready to use:
-        if ( m_wind_fcn.is_ready() == 0 ) m_wind_fcn.Chebyshev(100);
-
-        // coefficients computation:
-        __ix32 k = 0;
-        m_Fstop /= m_Fs;
-
-        if (m_order % 2 == 0) // even order filter coefficients computation
-        {
-            for ( __ix32 n = 0; n <= m_order / 2; n++)
-            {
-                k = abs(n - (m_order + 1) / 2);
-
-                if (n == 0)
-                {
-                    m_buff_cx[k] = 2 * m_Fstop * m_wind_fcn[k];
-                }
-                else
-                {
-                    m_buff_cx[k] = 2 * m_Fstop * sin(n * PI2 * m_Fstop) / (n * PI2 * m_Fstop) * m_wind_fcn[k];
-                    m_buff_cx[m_order - k] = m_buff_cx[k];
-                }
-            }
-        }
-        else if (m_order % 2 != 0) // odd order filter coefficients computation
-        {
-            __type rem = ceil((__type)m_order / 2) - (__type)m_order / 2;
-            for ( __ix32 n = 0; n <= ceil(m_order / 2); n++)
-            {
-                k = abs(n - m_order / 2);
-                m_buff_cx[k] = 2 * m_Fstop * sin((n + rem) * PI2 * m_Fstop) / ((n + rem) * PI2 * m_Fstop) * m_wind_fcn[k];
-                m_buff_cx[m_order - k] = m_buff_cx[k];
-            }
-        }
-
-        // filter pulse characteristic normalization:
-        if ( m_scale )
-        {
-            freq_ch(0);
-            for ( __ix32 n = 0; n <= m_order; n++) m_buff_cx[n] = m_buff_cx[n] / m_Km;
-            freq_ch(m_Fn);
-        }
-
-        // deallocate the window function:
-        m_wind_fcn.deallocate();
+        Re = Re + cos(-PI2 * i * F * Ts) * cfbuff[ i ];
+        Im = Im + sin(-PI2 * i * F * Ts) * cfbuff[ i ];
     }
+    OT Km = sqrt (Re * Re + Im * Im) , pH = atan2( Im , Re );
+    return { Km , pH };
+}
 
-    // Frequency characteristics:
-    __void freq_ch( __type F )
-    {
-        __type m_W_re = 0;
-        __type m_W_im = 0;
-        for ( __ix32 n = 0; n <= m_order; n++)
-        {
-            m_W_re = m_W_re + cos(-PI2 * n * F * m_Ts) * m_buff_cx[n];
-            m_W_im = m_W_im + sin(-PI2 * n * F * m_Ts) * m_buff_cx[n];
-        }
-        m_pH   = atan2( m_W_im , m_W_im );
-        m_Km   = sqrt (m_W_re * m_W_re + m_W_im * m_W_im);
-    }
-
-    #ifndef __ALG_PLATFORM
-
-    // filter response store to a text files:
-    __void freq_rp( std::string directory )
-    {
-        // open files:
-        std::ofstream ampr;
-        std::ofstream phsr;
-        std::ofstream freq;
-        std::ofstream plsr;
-        ampr.open( directory + "\\ampr.txt" );
-        phsr.open( directory + "\\phsr.txt" );
-        freq.open( directory + "\\freq.txt" );
-        plsr.open( directory + "\\plsr.txt" );
-
-        // frequency response
-        for( int i = 0 ; i < m_Fs * 0.5 ; i++ )
-        {
-            freq_ch( i );
-            ampr << m_Km << "\n";
-            phsr << m_pH << "\n";
-            freq << i    << "\n";
-        }
-
-        // pulse response:
-        for( int i = 0 ; i <= m_order ; i++ ) { plsr << m_buff_cx[i] << "\n"; }
-
-        // close files:
-        ampr.close();
-        phsr.close();
-        freq.close();
-        plsr.close();
-    }
-
-    #endif
-
-    // memory allocation:
-    __bool allocate()
-    {
-        // memory allocation:
-        m_buff_cx = ( __type* ) calloc( m_order + 1 , sizeof ( __type ) );
-        m_buff_sx.allocate( m_order + 2 );
-        // compute FIR filter coefficients:
-        coeff_calc();
-        return 1;
-    }
-
-    // memory deallocation:
-    __void deallocate()
-    {
-        if( m_buff_cx != 0 ) free( m_buff_cx );
-        m_buff_sx.deallocate();
-        m_wind_fcn.deallocate();
-    }
-
-    // initialization function:
-    __void init( __type Fs, __type Fn, __type F_stop, __ix32 order , __bool scale )
-    {
-        m_Fs      = Fs;
-        m_Fn      = Fn;
-        m_Fstop   = F_stop;
-        m_Ts      = 1 / m_Fs;
-        m_order   = order;
-        m_Ns      = m_order;
-        m_scale   = scale;
-        m_buff_cx = 0;
-        m_out     = 0;
-
-        // window function initialization:
-        m_wind_fcn.init( m_order + 1 );
-    }
-
-    // default constructor:
-    fir_lp()
-    {
-        m_Fs      = 4000;
-        m_Fn      = 50;
-        m_Fstop   = 100;
-        m_Ts      = 1 / m_Fs;
-        m_order   = 80;
-        m_Ns      = m_order;
-        m_scale   = false;
-        m_buff_cx = 0;
-        m_out     = 0;
-
-        // window function initialization:
-        m_wind_fcn.init( m_order + 1 );
-    }
-
-    // initializing constructor:
-    fir_lp( __type Fs, __type Fn, __type F_stop, __ix32 order , __bool scale ) { init( Fs , Fn , F_stop , order , scale ); }
-
-    // destructor:
-    ~fir_lp() { deallocate(); }
-
-    // filtering function:
-
-    // x32:
-    inline __type filt( __type *input )
-    {
-        m_buff_sx( input );
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
-        return m_out;
-    }
-
-    // x64:
-    inline __type filt( __fx64 *input )
-    {
-        m_buff_sx( input );
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
-        return m_out;
-    }
-
-    inline __type filt()
-    {
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
-        return m_out;
-    }
-
-    // operators:
-    inline __type operator() ( __type *input ) { return filt( input ); }
-    inline __type operator() ( __fx64 *input ) { return filt( input ); }
-    inline __type operator() () { return filt(); }
-};
-
-// float x64:
-template<> class fir_lp<__fx64>
+/*!
+  * \brief FIR digital lowpass filter coefficients computation function
+  * \param[Fs]     sampling frequency , Hz
+  * \param[Fc]     cut-off frequency  , Hz
+  * \param[N]      filter order
+  * \param[scale]  scaling factor ( scale = 0 - not-scaled coefficients , scale = 1 - scaled coefficients )
+  * \param[wind]   input window function object
+  * \return The function returns digital lowpass FIR filter coefficients buffer. \newline
+  *         Even order FIR filter coefficients are computed as follows:
+  * \f[
+  *     Fc = \frac{ Fc }{ Fs }
+  *     n \in \left[ 0 ; \frac{ N }{ 2 } \right]       \newline
+  *     k   = \left | n - \frac{ N + 1 }{ 2 } \right | \newline
+  *     a_k = \begin{cases}
+  *             2 * F_c * w_i \quad , \quad n = 0
+  *             \\
+  *             2 * Fc * \frac{ \sin{ ( 2 * \pi * n * F_c ) } }{ 2 * \pi * n * F_c } \quad , \quad n > 0
+  *             \\
+  *             a_{N-k} = a_k , \quad , \quad n > 0
+  *           \end{cases}
+  * \f]
+  *         Odd order FIR filter coefficients are computed as follows:
+  * \f[
+  *         Fc = \frac{ Fc }{ Fs }
+  *         n \in \left[ 0 ; \frac{ N }{ 2 } \right]            \newline
+  *         k   = \left | n - \frac{ N + 1 }{ 2 } \right |      \newline
+  *         r   = ceil \left( \frac{N}{2} \right) - \frac{N}{2} \newline
+  *         a_k = 2 * F_c * \frac{ \sin{ ( 2 * \pi * F_c * ( n + r ) ) } }{ 2 * \pi * F_c * ( n + r ) } \newline
+  *         a_{N-k} = a_k
+  * \f]
+  *
+  *         If the flag scale = 1, then coefficients are scaled as follows:
+  * \f[
+  *         n \in \left[ 0 ; N \right]                          \newline
+  *         a_n = \frac{ a_n }{ \left| W(j*\omega) \right| }
+  * \f]
+  *
+*/
+template< typename T > T* __fir_wind_digital_lp__( __fx64 Fs , __fx64 Fc , __ix32 N , bool scale , wind_fcn &wind )
 {
-    typedef __fx64 __type ;
-    typedef bool   __bool ;
-    typedef void   __void ;
+    typedef T __type;
 
-    // system variables:
-    __type m_Ts;
-    __type m_Fs;
-    __type m_Fn;
-    __type m_Fstop;
-    __type m_Ns;
-    __ix32 m_order;
-    __bool m_scale;
+    // check if the window is ready to use:
+    if ( wind.is_ready() == 0 ) wind.Chebyshev(100);
 
-    // coefficients:
-    __type *m_buff_cx;
+    // coefficients buffer memory allocation:
+    __type *cfbuff = ( __type* ) calloc( N + 1 , sizeof ( __type ) );
 
-public:
+    // coefficients computation:
+    __ix32 k = 0;
+    Fc /= Fs;
 
-    __type m_pH;
-    __type m_Km;
-    __type m_out;
-
-    // buffers:
-    mirror_ring_buffer< __type > m_buff_sx;
-
-    // window function object:
-    wind_fcn m_wind_fcn;
-
-    // coefficients computation function:
-    __void coeff_calc()
+    if ( N % 2 == 0) // even order filter coefficients computation
     {
-        // check if the window is ready to use:
-        if ( m_wind_fcn.is_ready() == 0 ) m_wind_fcn.Chebyshev(100);
-
-        // coefficients computation:
-        __ix32 k = 0;
-        m_Fstop /= m_Fs;
-
-        if (m_order % 2 == 0) // even order filter coefficients computation
+        for ( __ix32 n = 0; n <= N / 2; n++)
         {
-            for ( __ix32 n = 0; n <= m_order / 2; n++)
-            {
-                k = abs(n - (m_order + 1) / 2);
-
-                if (n == 0)
-                {
-                    m_buff_cx[k] = 2 * m_Fstop * m_wind_fcn[k];
-                }
-                else
-                {
-                    m_buff_cx[k] = 2 * m_Fstop * sin(n * PI2 * m_Fstop) / (n * PI2 * m_Fstop) * m_wind_fcn[k];
-                    m_buff_cx[m_order - k] = m_buff_cx[k];
-                }
-            }
-        }
-        else if (m_order % 2 != 0) // odd order filter coefficients computation
-        {
-            __type rem = ceil((__type)m_order / 2) - (__type)m_order / 2;
-            for ( __ix32 n = 0; n <= ceil(m_order / 2); n++)
-            {
-                k = abs(n - m_order / 2);
-                m_buff_cx[k] = 2 * m_Fstop * sin((n + rem) * PI2 * m_Fstop) / ((n + rem) * PI2 * m_Fstop) * m_wind_fcn[k];
-                m_buff_cx[m_order - k] = m_buff_cx[k];
-            }
-        }
-
-        // filter pulse characteristic normalization:
-        if ( m_scale )
-        {
-            freq_ch(0);
-            for ( __ix32 n = 0; n <= m_order; n++) m_buff_cx[n] = m_buff_cx[n] / m_Km;
-            freq_ch(m_Fn);
-        }
-
-        // deallocate the window function:
-        m_wind_fcn.deallocate();
-    }
-
-    // Frequency characteristics:
-    __void freq_ch( __type F )
-    {
-        __type m_W_re = 0;
-        __type m_W_im = 0;
-        for ( __ix32 n = 0; n <= m_order; n++)
-        {
-            m_W_re = m_W_re + cos(-PI2 * n * F * m_Ts) * m_buff_cx[n];
-            m_W_im = m_W_im + sin(-PI2 * n * F * m_Ts) * m_buff_cx[n];
-        }
-        m_pH   = atan2( m_W_im , m_W_im );
-        m_Km   = sqrt (m_W_re * m_W_re + m_W_im * m_W_im);
-    }
-
-    #ifndef __ALG_PLATFORM
-
-    // filter response store to a text files:
-    __void freq_rp( std::string directory )
-    {
-        // open files:
-        std::ofstream ampr;
-        std::ofstream phsr;
-        std::ofstream freq;
-        std::ofstream plsr;
-        ampr.open( directory + "\\ampr.txt" );
-        phsr.open( directory + "\\phsr.txt" );
-        freq.open( directory + "\\freq.txt" );
-        plsr.open( directory + "\\plsr.txt" );
-
-        // frequency response
-        for( int i = 0 ; i < m_Fs * 0.5 ; i++ )
-        {
-            freq_ch( i );
-            ampr << m_Km << "\n";
-            phsr << m_pH << "\n";
-            freq << i    << "\n";
-        }
-
-        // pulse response:
-        for( int i = 0 ; i <= m_order ; i++ ) { plsr << m_buff_cx[i] << "\n"; }
-
-        // close files:
-        ampr.close();
-        phsr.close();
-        freq.close();
-        plsr.close();
-    }
-
-    #endif
-
-    // memory allocation:
-    __bool allocate()
-    {
-        // memory allocation:
-        m_buff_cx = ( __type* ) calloc( m_order + 1 , sizeof ( __type ) );
-        m_buff_sx.allocate( m_order + 2 );
-        // compute FIR filter coefficients:
-        coeff_calc();
-        return 1;
-    }
-
-    // memory deallocation:
-    __void deallocate()
-    {
-        if( m_buff_cx != 0 ) free( m_buff_cx );
-        m_buff_sx.deallocate();
-        m_wind_fcn.deallocate();
-    }
-
-    // initialization function:
-    __void init( __type Fs, __type Fn, __type F_stop, __ix32 order , __bool scale )
-    {
-        m_Fs      = Fs;
-        m_Fn      = Fn;
-        m_Fstop   = F_stop;
-        m_Ts      = 1 / m_Fs;
-        m_order   = order;
-        m_Ns      = m_order;
-        m_scale   = scale;
-        m_buff_cx = 0;
-        m_out     = 0;
-
-        // window function initialization:
-        m_wind_fcn.init( m_order + 1 );
-    }
-
-    // default constructor:
-    fir_lp()
-    {
-        m_Fs      = 4000;
-        m_Fn      = 50;
-        m_Fstop   = 100;
-        m_Ts      = 1 / m_Fs;
-        m_order   = 80;
-        m_Ns      = m_order;
-        m_scale   = false;
-        m_buff_cx = 0;
-        m_out     = 0;
-
-        // window function initialization:
-        m_wind_fcn.init( m_order + 1 );
-    }
-
-    // initializing constructor:
-    fir_lp( __type Fs, __type Fn, __type F_stop, __ix32 order , __bool scale ) { init( Fs , Fn , F_stop , order , scale ); }
-
-    // destructor:
-    ~fir_lp() { deallocate(); }
-
-    // filtering function:
-
-    // x32:
-    inline __type filt( __type *input )
-    {
-        m_buff_sx( input );
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
-        return m_out;
-    }
-
-    inline __type filt()
-    {
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
-        return m_out;
-    }
-
-    // operators:
-    inline __type operator() ( __type *input ) { return filt( input ); }
-    inline __type operator() () { return filt(); }
-};
-
-// highpass fir implemetations:
-
-// float x32:
-template<> class fir_hp<__fx32>
-{
-    typedef __fx32 __type ;
-    typedef bool   __bool ;
-    typedef void   __void ;
-
-    // system variables:
-    __type m_Ts;
-    __type m_Fs;
-    __type m_Fn;
-    __type m_Fstop;
-    __type m_Ns;
-    __ix32 m_order;
-    __bool m_scale;
-
-    // coefficients:
-    __type *m_buff_cx;
-
-public:
-
-    __type m_pH;
-    __type m_Km;
-    __type m_out;
-
-    // buffers:
-    mirror_ring_buffer< __type > m_buff_sx;
-
-    // window function object:
-    wind_fcn m_wind_fcn;
-
-    // coefficients computation function:
-    __void coeff_calc()
-    {
-        // check if the window is ready to use:
-        if ( m_wind_fcn.is_ready() == 0 ) m_wind_fcn.Chebyshev(100);
-
-        // coefficients computation:
-        __ix32 k = 0;
-        m_Fstop /= m_Fs;
-
-        if (m_order % 2 == 0) // even order highpass
-        {
-            for ( __ix32 n = 0; n <= m_order / 2; n++)
-            {
-                k = abs(n - (m_order + 1) / 2);
-
-                if (n == 0)
-                {
-                    m_buff_cx[k] = (1 - 2 * m_Fstop) * m_wind_fcn[k];
-                }
-                else
-                {
-                    m_buff_cx[k] = -2 * m_Fstop * sin(n * PI2 * m_Fstop) / (n * PI2 * m_Fstop) * m_wind_fcn[k];
-                    m_buff_cx[m_order - k] = m_buff_cx[k];
-                }
-            }
-        }
-        else if (m_order % 2 != 0) // odd order highpass
-        {
-            __type rem = ceil((__type)m_order / 2) - (__type)m_order / 2;
-            for ( __ix32 n = 0; n <= ceil(m_order / 2); n++)
-            {
-                k = abs(n - m_order / 2);
-                m_buff_cx[k]           = -pow(-1 , n) * 2 * (0.5-m_Fstop) * sin((n + rem) * PI2 * (0.5-m_Fstop) ) / ((n + rem) * PI2 * (0.5 - m_Fstop) )* m_wind_fcn[k];
-                m_buff_cx[m_order - k] = -m_buff_cx[k];
-            }
-        }
-
-        // filter pulse characteristic normalization:
-        if ( m_scale )
-        {
-            freq_ch( m_Fs / 2 );
-            for ( __ix32 n = 0; n <= m_order; n++) m_buff_cx[n] = m_buff_cx[n] / m_Km;
-            freq_ch(m_Fn);
-        }
-
-        // deallocate the window function:
-        m_wind_fcn.deallocate();
-    }
-
-    // Frequency characteristics:
-    __void freq_ch( __type F )
-    {
-        __type m_W_re = 0;
-        __type m_W_im = 0;
-        for ( __ix32 n = 0; n <= m_order ; n++)
-        {
-            m_W_re = m_W_re + cos(-PI2 * n * F * m_Ts) * m_buff_cx[n];
-            m_W_im = m_W_im + sin(-PI2 * n * F * m_Ts) * m_buff_cx[n];
-        }
-        m_pH   = atan2( m_W_im , m_W_im );
-        m_Km   = sqrt (m_W_re * m_W_re + m_W_im * m_W_im);
-    }
-
-    #ifndef __ALG_PLATFORM
-
-    // filter response store to a text files:
-    __void freq_rp( std::string directory )
-    {
-        // open files:
-        std::ofstream ampr;
-        std::ofstream phsr;
-        std::ofstream freq;
-        std::ofstream plsr;
-        ampr.open( directory + "\\ampr.txt" );
-        phsr.open( directory + "\\phsr.txt" );
-        freq.open( directory + "\\freq.txt" );
-        plsr.open( directory + "\\plsr.txt" );
-
-        // frequency response
-        for( int i = 0 ; i < m_Fs * 0.5 ; i++ )
-        {
-            freq_ch( i );
-            ampr << m_Km << "\n";
-            phsr << m_pH << "\n";
-            freq << i    << "\n";
-        }
-
-        // pulse response:
-        for( int i = 0 ; i <= m_order ; i++ ) { plsr << m_buff_cx[i] << "\n"; }
-
-        // close files:
-        ampr.close();
-        phsr.close();
-        freq.close();
-        plsr.close();
-    }
-
-    #endif
-
-    // memory allocation:
-    __bool allocate()
-    {
-        // memory allocation:
-        m_buff_cx = ( __type* ) calloc( m_order + 1 , sizeof ( __type ) );
-        m_buff_sx.allocate( m_order + 2 );
-        // compute FIR filter coefficients:
-        coeff_calc();
-        return 1;
-    }
-
-    // memory deallocation:
-    __void deallocate()
-    {
-        if( m_buff_cx != 0 ) free( m_buff_cx );
-        m_buff_sx.deallocate();
-        m_wind_fcn.deallocate();
-    }
-
-    // initialization function:
-    __void init( __type Fs, __type Fn, __type F_stop, __ix32 order , __bool scale )
-    {
-        m_Fs      = Fs;
-        m_Fn      = Fn;
-        m_Fstop   = F_stop;
-        m_Ts      = 1 / m_Fs;
-        m_order   = order;
-        m_Ns      = m_order;
-        m_scale   = scale;
-        m_buff_cx = 0;
-        m_out     = 0;
-
-        // window function initialization:
-        m_wind_fcn.init( m_order + 1 );
-    }
-
-    // default constructor:
-    fir_hp()
-    {
-        m_Fs      = 4000;
-        m_Fn      = 50;
-        m_Fstop   = 100;
-        m_Ts      = 1 / m_Fs;
-        m_order   = 80;
-        m_Ns      = m_order;
-        m_scale   = false;
-        m_buff_cx = 0;
-        m_out     = 0;
-
-        // window function initialization:
-        m_wind_fcn.init( m_order + 1 );
-    }
-
-    // initializing constructor:
-    fir_hp( __type Fs, __type Fn, __type F_stop, __ix32 order , __bool scale ) { init( Fs , Fn , F_stop , order , scale ); }
-
-    // destructor:
-    ~fir_hp() { deallocate(); }
-
-    // filtering function:
-
-    // x32:
-    inline __type filt( __type *input )
-    {
-        m_buff_sx( input );
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
-        return m_out;
-    }
-
-    // x64 input ( CAUTION !!! ROUNDING ERROR OCCURS !!! )
-    inline __type filt( __fx64 *input )
-    {
-        m_buff_sx( input );
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
-        return m_out;
-    }
-
-    inline __type filt()
-    {
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
-        return m_out;
-    }
-
-    // operators:
-    inline __type operator() ( __type *input ) { return filt( input ); }
-    inline __type operator() ( __fx64 *input ) { return filt( input ); }
-    inline __type operator() () { return filt(); }
-};
-
-// float x64:
-template<> class fir_hp<__fx64>
-{
-    typedef __fx64 __type ;
-    typedef bool   __bool ;
-    typedef void   __void ;
-
-    // system variables:
-    __type m_Ts;
-    __type m_Fs;
-    __type m_Fn;
-    __type m_Fstop;
-    __type m_Ns;
-    __type m_pH;
-    __type m_Km;
-    __type m_out;
-    __ix32 m_order;
-    __bool m_scale;
-
-    // coefficients:
-    __type *m_buff_cx;
-
-public:
-
-    // buffers:
-    mirror_ring_buffer< __type > m_buff_sx;
-
-    // window function object:
-    wind_fcn m_wind_fcn;
-
-    // coefficients computation function:
-    __void coeff_calc()
-    {
-        // check if the window is ready to use:
-        if ( m_wind_fcn.is_ready() == 0 ) m_wind_fcn.Chebyshev(100);
-
-        // coefficients computation:
-        __ix32 k = 0;
-        m_Fstop /= m_Fs;
-
-        if (m_order % 2 == 0) // even order highpass
-        {
-            for ( __ix32 n = 0; n <= m_order / 2; n++)
-            {
-                k = abs(n - (m_order + 1) / 2);
-
-                if (n == 0)
-                {
-                    m_buff_cx[k] = (1 - 2 * m_Fstop) * m_wind_fcn[k];
-                }
-                else
-                {
-                    m_buff_cx[k] = -2 * m_Fstop * sin(n * PI2 * m_Fstop) / (n * PI2 * m_Fstop) * m_wind_fcn[k];
-                    m_buff_cx[m_order - k] = m_buff_cx[k];
-                }
-            }
-        }
-        else if (m_order % 2 != 0) // odd order highpass
-        {
-            __type rem = ceil((__type)m_order / 2) - (__type)m_order / 2;
-            for ( __ix32 n = 0; n <= ceil(m_order / 2); n++)
-            {
-                k = abs(n - m_order / 2);
-                m_buff_cx[k]           = -pow(-1 , n) * 2 * (0.5-m_Fstop) * sin((n + rem) * PI2 * (0.5-m_Fstop) ) / ((n + rem) * PI2 * (0.5 - m_Fstop) )* m_wind_fcn[k];
-                m_buff_cx[m_order - k] = -m_buff_cx[k];
-            }
-        }
-
-        // filter pulse characteristic normalization:
-        if ( m_scale )
-        {
-            freq_ch( m_Fs / 2 );
-            for ( __ix32 n = 0; n <= m_order; n++) m_buff_cx[n] = m_buff_cx[n] / m_Km;
-            freq_ch(m_Fn);
-        }
-
-        // deallocate the window function:
-        m_wind_fcn.deallocate();
-    }
-
-    // Frequency characteristics:
-    __void freq_ch( __type F )
-    {
-        __type m_W_re = 0;
-        __type m_W_im = 0;
-        for ( __ix32 n = 0; n <= m_order ; n++)
-        {
-            m_W_re = m_W_re + cos(-PI2 * n * F * m_Ts) * m_buff_cx[n];
-            m_W_im = m_W_im + sin(-PI2 * n * F * m_Ts) * m_buff_cx[n];
-        }
-        m_pH   = atan2( m_W_im , m_W_im );
-        m_Km   = sqrt (m_W_re * m_W_re + m_W_im * m_W_im);
-    }
-
-    #ifndef __ALG_PLATFORM
-
-    // filter response store to a text files:
-    __void freq_rp( std::string directory )
-    {
-        // open files:
-        std::ofstream ampr;
-        std::ofstream phsr;
-        std::ofstream freq;
-        std::ofstream plsr;
-        ampr.open( directory + "\\ampr.txt" );
-        phsr.open( directory + "\\phsr.txt" );
-        freq.open( directory + "\\freq.txt" );
-        plsr.open( directory + "\\plsr.txt" );
-
-        // frequency response
-        for( int i = 0 ; i < m_Fs * 0.5 ; i++ )
-        {
-            freq_ch( i );
-            ampr << m_Km << "\n";
-            phsr << m_pH << "\n";
-            freq << i    << "\n";
-        }
-
-        // pulse response:
-        for( int i = 0 ; i <= m_order ; i++ ) { plsr << m_buff_cx[i] << "\n"; }
-
-        // close files:
-        ampr.close();
-        phsr.close();
-        freq.close();
-        plsr.close();
-    }
-
-    #endif
-
-    // memory allocation:
-    __bool allocate()
-    {
-        // memory allocation:
-        m_buff_cx = ( __type* ) calloc( m_order + 1 , sizeof ( __type ) );
-        m_buff_sx.allocate( m_order + 2 );
-        // compute FIR filter coefficients:
-        coeff_calc();
-        return 1;
-    }
-
-    // memory deallocation:
-    __void deallocate()
-    {
-        if( m_buff_cx != 0 ) free( m_buff_cx );
-        m_buff_sx.deallocate();
-        m_wind_fcn.deallocate();
-    }
-
-    // initialization function:
-    __void init( __type Fs, __type Fn, __type F_stop, __ix32 order , __bool scale )
-    {
-        m_Fs      = Fs;
-        m_Fn      = Fn;
-        m_Fstop   = F_stop;
-        m_Ts      = 1 / m_Fs;
-        m_order   = order;
-        m_Ns      = m_order;
-        m_scale   = scale;
-        m_buff_cx = 0;
-        m_out     = 0;
-
-        // window function initialization:
-        m_wind_fcn.init( m_order + 1 );
-    }
-
-    // default constructor:
-    fir_hp()
-    {
-        m_Fs      = 4000;
-        m_Fn      = 50;
-        m_Fstop   = 100;
-        m_Ts      = 1 / m_Fs;
-        m_order   = 80;
-        m_Ns      = m_order;
-        m_scale   = false;
-        m_buff_cx = 0;
-        m_out     = 0;
-
-        // window function initialization:
-        m_wind_fcn.init( m_order + 1 );
-    }
-
-    // initializing constructor:
-    fir_hp( __type Fs, __type Fn, __type F_stop, __ix32 order , __bool scale ) { init( Fs , Fn , F_stop , order , scale ); }
-
-    // destructor:
-    ~fir_hp() { deallocate(); }
-
-    // filtering function:
-
-    // x32:
-    inline __type filt( __type *input )
-    {
-        m_buff_sx( input );
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
-        return m_out;
-    }
-
-    inline __type filt()
-    {
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
-        return m_out;
-    }
-
-    // operators:
-    inline __type operator() ( __type *input ) { return filt( input ); }
-    inline __type operator() () { return filt(); }
-};
-
-// bandpass implementations:
-
-// float x32:
-template<> class fir_bp<__fx32>
-{
-    typedef __fx32 __type ;
-    typedef bool   __bool ;
-    typedef void   __void ;
-
-    // system variables:
-    __type m_Ts;
-    __type m_Fs;
-    __type m_Fn;
-    __type m_Fstop1;
-    __type m_Fstop2;
-    __type m_Ns;
-    __ix32 m_order;
-    __bool m_scale;
-
-    // coefficients:
-    __type *m_buff_cx;
-
-public:
-
-    __type m_pH;
-    __type m_Km;
-    __type m_out;
-
-    // buffers:
-    mirror_ring_buffer< __type > m_buff_sx;
-
-    // window function object:
-    wind_fcn m_wind_fcn;
-
-    // coefficients computation function:
-    __void coeff_calc()
-    {
-        // check if the window is ready to use:
-        if ( m_wind_fcn.is_ready() == 0 ) m_wind_fcn.Chebyshev(100);
-
-        // coefficients computation:
-        __ix32 k = 0;
-        m_Fstop1 /= m_Fs;
-        m_Fstop2 /= m_Fs;
-
-        if (m_order % 2 == 0) // считаем ПФ четного порядка
-        {
-            for (int n = 0; n <= m_order / 2; n++)
-            {
-                k = abs(n - (m_order + 1) / 2);
-
-                if (n == 0)
-                {
-                    m_buff_cx[k] = 2 * (m_Fstop2 - m_Fstop1) * m_wind_fcn[k];
-                }
-                else
-                {
-                    m_buff_cx[k] = 2 * (m_Fstop2 * sin(n * PI2 * m_Fstop2) / (n * PI2 * m_Fstop2) - m_Fstop1 * sin(n * PI2 * m_Fstop1) / (n * PI2 * m_Fstop1)) * m_wind_fcn[k];
-                    m_buff_cx[m_order - k] = m_buff_cx[k];
-                }
-            }
-        }
-        else if (m_order % 2 != 0) // считаем ПФ нечетного порядка
-        {
-            double rem = ceil((double)m_order / 2) - (double)m_order / 2;
-            for (int n = 0; n <= ceil(m_order / 2); n++)
-            {
-                k = abs(n - m_order / 2);
-                m_buff_cx[k] = 2 * (m_Fstop2 * sin((n + rem) * PI2 * m_Fstop2) / ((n + rem) * PI2 * m_Fstop2) - m_Fstop1 * sin((n + rem) * PI2 * m_Fstop1) / ((n + rem) * PI2 * m_Fstop1)) * m_wind_fcn[k];
-                m_buff_cx[m_order - k] = m_buff_cx[k];
-            }
-        }
-
-        // filter pulse characteristic normalization:
-        if ( m_scale )
-        {
-            freq_ch( ( m_Fstop1 + 0.5 * ( m_Fstop2 - m_Fstop1 ) ) * m_Fs );
-            for ( __ix32 n = 0; n <= m_order; n++) m_buff_cx[n] = m_buff_cx[n] / m_Km;
-            freq_ch(m_Fn);
-        }
-
-        // deallocate the window function:
-        m_wind_fcn.deallocate();
-    }
-
-    // Frequency characteristics:
-    __void freq_ch( __type F )
-    {
-        __type m_W_re = 0;
-        __type m_W_im = 0;
-        for ( __ix32 n = 0; n <= m_order ; n++)
-        {
-            m_W_re = m_W_re + cos(-PI2 * n * F * m_Ts) * m_buff_cx[n];
-            m_W_im = m_W_im + sin(-PI2 * n * F * m_Ts) * m_buff_cx[n];
-        }
-        m_pH   = atan2( m_W_im , m_W_im );
-        m_Km   = sqrt (m_W_re * m_W_re + m_W_im * m_W_im);
-    }
-
-    #ifndef __ALG_PLATFORM
-
-    // filter response store to a text files:
-    __void freq_rp( std::string directory )
-    {
-        // open files:
-        std::ofstream ampr;
-        std::ofstream phsr;
-        std::ofstream freq;
-        std::ofstream plsr;
-        ampr.open( directory + "\\ampr.txt" );
-        phsr.open( directory + "\\phsr.txt" );
-        freq.open( directory + "\\freq.txt" );
-        plsr.open( directory + "\\plsr.txt" );
-
-        // frequency response
-        for( int i = 0 ; i < m_Fs * 0.5 ; i++ )
-        {
-            freq_ch( i );
-            ampr << m_Km << "\n";
-            phsr << m_pH << "\n";
-            freq << i    << "\n";
-        }
-
-        // pulse response:
-        for( int i = 0 ; i <= m_order ; i++ ) { plsr << m_buff_cx[i] << "\n"; }
-
-        // close files:
-        ampr.close();
-        phsr.close();
-        freq.close();
-        plsr.close();
-    }
-
-    #endif
-
-    // memory allocation:
-    __bool allocate()
-    {
-        // memory allocation:
-        m_buff_cx = ( __type* ) calloc( m_order + 1 , sizeof ( __type ) );
-        m_buff_sx.allocate( m_order + 2 );
-        // compute FIR filter coefficients:
-        coeff_calc();
-        return 1;
-    }
-
-    // memory deallocation:
-    __void deallocate()
-    {
-        if( m_buff_cx != 0 ) free( m_buff_cx );
-        m_buff_sx.deallocate();
-        m_wind_fcn.deallocate();
-    }
-
-    // initialization function:
-    __void init( __type Fs, __type Fn, __type F_stop , __type BandWidth , __ix32 order , __bool scale )
-    {
-        m_Fs      = Fs;
-        m_Fn      = Fn;
-        m_Fstop1  = F_stop;
-        m_Fstop2  = F_stop + BandWidth;
-        m_Ts      = 1 / m_Fs;
-        m_order   = order;
-        m_Ns      = m_order;
-        m_scale   = scale;
-        m_buff_cx = 0;
-        m_out     = 0;
-
-        // window function initialization:
-        m_wind_fcn.init( m_order + 1 );
-    }
-
-    // default constructor:
-    fir_bp()
-    {
-        m_Fs      = 4000;
-        m_Fn      = 50;
-        m_Fstop1  = 100;
-        m_Fstop1  = 200;
-        m_Ts      = 1 / m_Fs;
-        m_order   = 80;
-        m_Ns      = m_order;
-        m_scale   = false;
-        m_buff_cx = 0;
-        m_out     = 0;
-
-        // window function initialization:
-        m_wind_fcn.init( m_order + 1 );
-    }
-
-    // initializing constructor:
-    fir_bp( __type Fs, __type Fn, __type F_stop , __type BandWidth , __ix32 order , __bool scale ) { init( Fs , Fn , F_stop , BandWidth , order , scale ); }
-
-    // destructor:
-    ~fir_bp() { deallocate(); }
-
-    // filtering function:
-
-    // x32:
-    inline __type filt( __type *input )
-    {
-        m_buff_sx( input );
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
-        return m_out;
-    }
-
-    // x64:
-    inline __type filt( __fx64 *input )
-    {
-        m_buff_sx( input );
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
-        return m_out;
-    }
-
-    inline __type filt()
-    {
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
-        return m_out;
-    }
-
-    // operators:
-    inline __type operator() ( __type *input ) { return filt( input ); }
-    inline __type operator() ( __fx64 *input ) { return filt( input ); }
-    inline __type operator() () { return filt(); }
-};
-
-// float x64:
-template<> class fir_bp<__fx64>
-{
-    typedef __fx64 __type ;
-    typedef bool   __bool ;
-    typedef void   __void ;
-
-    // system variables:
-    __type m_Ts;
-    __type m_Fs;
-    __type m_Fn;
-    __type m_Fstop1;
-    __type m_Fstop2;
-    __type m_Ns;
-    __ix32 m_order;
-    __bool m_scale;
-
-    // coefficients:
-    __type *m_buff_cx;
-
-public:
-
-    __type m_pH;
-    __type m_Km;
-    __type m_out;
-
-    // buffers:
-    mirror_ring_buffer< __type > m_buff_sx;
-
-    // window function object:
-    wind_fcn m_wind_fcn;
-
-    // coefficients computation function:
-    __void coeff_calc()
-    {
-        // check if the window is ready to use:
-        if ( m_wind_fcn.is_ready() == 0 ) m_wind_fcn.Chebyshev(100);
-
-        // coefficients computation:
-        __ix32 k = 0;
-        m_Fstop1 /= m_Fs;
-        m_Fstop2 /= m_Fs;
-
-        if (m_order % 2 == 0) // считаем ПФ четного порядка
-        {
-            for (int n = 0; n <= m_order / 2; n++)
-            {
-                k = abs(n - (m_order + 1) / 2);
-
-                if (n == 0)
-                {
-                    m_buff_cx[k] = 2 * (m_Fstop2 - m_Fstop1) * m_wind_fcn[k];
-                }
-                else
-                {
-                    m_buff_cx[k] = 2 * (m_Fstop2 * sin(n * PI2 * m_Fstop2) / (n * PI2 * m_Fstop2) - m_Fstop1 * sin(n * PI2 * m_Fstop1) / (n * PI2 * m_Fstop1)) * m_wind_fcn[k];
-                    m_buff_cx[m_order - k] = m_buff_cx[k];
-                }
-            }
-        }
-        else if (m_order % 2 != 0) // считаем ПФ нечетного порядка
-        {
-            double rem = ceil((double)m_order / 2) - (double)m_order / 2;
-            for (int n = 0; n <= ceil(m_order / 2); n++)
-            {
-                k = abs(n - m_order / 2);
-                m_buff_cx[k] = 2 * (m_Fstop2 * sin((n + rem) * PI2 * m_Fstop2) / ((n + rem) * PI2 * m_Fstop2) - m_Fstop1 * sin((n + rem) * PI2 * m_Fstop1) / ((n + rem) * PI2 * m_Fstop1)) * m_wind_fcn[k];
-                m_buff_cx[m_order - k] = m_buff_cx[k];
-            }
-        }
-
-        // filter pulse characteristic normalization:
-        if ( m_scale )
-        {
-            freq_ch( ( m_Fstop1 + 0.5 * ( m_Fstop2 - m_Fstop1 ) ) * m_Fs );
-            for ( __ix32 n = 0; n <= m_order; n++) m_buff_cx[n] = m_buff_cx[n] / m_Km;
-            freq_ch(m_Fn);
-        }
-
-        // deallocate the window function:
-        m_wind_fcn.deallocate();
-    }
-
-    // Frequency characteristics:
-    __void freq_ch( __type F )
-    {
-        __type m_W_re = 0;
-        __type m_W_im = 0;
-        for ( __ix32 n = 0; n <= m_order ; n++)
-        {
-            m_W_re = m_W_re + cos(-PI2 * n * F * m_Ts) * m_buff_cx[n];
-            m_W_im = m_W_im + sin(-PI2 * n * F * m_Ts) * m_buff_cx[n];
-        }
-        m_pH   = atan2( m_W_im , m_W_im );
-        m_Km   = sqrt (m_W_re * m_W_re + m_W_im * m_W_im);
-    }
-
-    #ifndef __ALG_PLATFORM
-
-    // filter response store to a text files:
-    __void freq_rp( std::string directory )
-    {
-        // open files:
-        std::ofstream ampr;
-        std::ofstream phsr;
-        std::ofstream freq;
-        std::ofstream plsr;
-        ampr.open( directory + "\\ampr.txt" );
-        phsr.open( directory + "\\phsr.txt" );
-        freq.open( directory + "\\freq.txt" );
-        plsr.open( directory + "\\plsr.txt" );
-
-        // frequency response
-        for( int i = 0 ; i < m_Fs * 0.5 ; i++ )
-        {
-            freq_ch( i );
-            ampr << m_Km << "\n";
-            phsr << m_pH << "\n";
-            freq << i    << "\n";
-        }
-
-        // pulse response:
-        for( int i = 0 ; i <= m_order ; i++ ) { plsr << m_buff_cx[i] << "\n"; }
-
-        // close files:
-        ampr.close();
-        phsr.close();
-        freq.close();
-        plsr.close();
-    }
-
-    #endif
-
-    // memory allocation:
-    __bool allocate()
-    {
-        // memory allocation:
-        m_buff_cx = ( __type* ) calloc( m_order + 1 , sizeof ( __type ) );
-        m_buff_sx.allocate( m_order + 2 );
-        // compute FIR filter coefficients:
-        coeff_calc();
-        return 1;
-    }
-
-    // memory deallocation:
-    __void deallocate()
-    {
-        if( m_buff_cx != 0 ) free( m_buff_cx );
-        m_buff_sx.deallocate();
-        m_wind_fcn.deallocate();
-    }
-
-    // initialization function:
-    __void init( __type Fs, __type Fn, __type F_stop , __type BandWidth , __ix32 order , __bool scale )
-    {
-        m_Fs      = Fs;
-        m_Fn      = Fn;
-        m_Fstop1  = F_stop;
-        m_Fstop2  = F_stop + BandWidth;
-        m_Ts      = 1 / m_Fs;
-        m_order   = order;
-        m_Ns      = m_order;
-        m_scale   = scale;
-        m_buff_cx = 0;
-        m_out     = 0;
-
-        // window function initialization:
-        m_wind_fcn.init( m_order + 1 );
-    }
-
-    // default constructor:
-    fir_bp()
-    {
-        m_Fs      = 4000;
-        m_Fn      = 50;
-        m_Fstop1  = 100;
-        m_Fstop1  = 200;
-        m_Ts      = 1 / m_Fs;
-        m_order   = 80;
-        m_Ns      = m_order;
-        m_scale   = false;
-        m_buff_cx = 0;
-        m_out     = 0;
-
-        // window function initialization:
-        m_wind_fcn.init( m_order + 1 );
-    }
-
-    // initializing constructor:
-    fir_bp( __type Fs, __type Fn, __type F_stop , __type BandWidth , __ix32 order , __bool scale ) { init( Fs , Fn , F_stop , BandWidth , order , scale ); }
-
-    // destructor:
-    ~fir_bp() { deallocate(); }
-
-    // filtering function:
-
-    // x32:
-    inline __type filt( __type *input )
-    {
-        m_buff_sx( input );
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
-        return m_out;
-    }
-
-    inline __type filt()
-    {
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
-        return m_out;
-    }
-
-    // operators:
-    inline __type operator() ( __type *input ) { return filt( input ); }
-    inline __type operator() () { return filt(); }
-};
-
-// bandstop implementations:
-
-// float x64:
-template<> class fir_bs<__fx32>
-{
-    typedef __fx32 __type ;
-    typedef bool   __bool ;
-    typedef void   __void ;
-
-    // system variables:
-    __type m_Ts;
-    __type m_Fs;
-    __type m_Fn;
-    __type m_Fstop1;
-    __type m_Fstop2;
-    __type m_Ns;
-    __ix32 m_order;
-    __bool m_scale;
-
-    // coefficients:
-    __type *m_buff_cx;
-
-public:
-
-    __type m_pH;
-    __type m_Km;
-    __type m_out;
-
-    // buffers:
-    mirror_ring_buffer< __type > m_buff_sx;
-
-    // window function object:
-    wind_fcn m_wind_fcn;
-
-    // coefficients computation function:
-    __void coeff_calc()
-    {
-        // check if the window is ready to use:
-        if ( m_wind_fcn.is_ready() == 0 ) m_wind_fcn.Chebyshev(100);
-
-        // coefficients computation:
-        __ix32 k = 0;
-        m_Fstop1 /= m_Fs;
-        m_Fstop2 /= m_Fs;
-
-        for (int n = 0; n <= m_order / 2; n++)
-        {
-            k = abs(n - (m_order + 1) / 2);
-
+            k = abs(n - (N + 1) / 2);
             if (n == 0)
             {
-                m_buff_cx[k] = 1 - 2 * (m_Fstop2 - m_Fstop1) * m_wind_fcn[k];
+                cfbuff[k] = 2 * Fc * wind[k];
             }
             else
             {
-                m_buff_cx[k] = 2 * (m_Fstop1 * sin(n * PI2 * m_Fstop1) / (n * PI2 * m_Fstop1) - m_Fstop2 * sin(n * PI2 * m_Fstop2) / (n * PI2 * m_Fstop2)) * m_wind_fcn[k];
-                m_buff_cx[m_order - k] = m_buff_cx[k];
+                cfbuff[k] = 2 * Fc * sin(n * PI2 * Fc ) / (n * PI2 * Fc ) * wind[k];
+                cfbuff[N - k] = cfbuff[k];
             }
         }
-
-        // filter pulse characteristic normalization:
-        if ( m_scale )
+    }
+    else if ( N % 2 != 0) // odd order filter coefficients computation
+    {
+        __type rem = ceil( (__type)N / 2) - (__type)N / 2;
+        for ( __ix32 n = 0; n <= ceil(N / 2); n++)
         {
-            freq_ch(0);
-            for ( __ix32 n = 0; n <= m_order; n++) m_buff_cx[n] = m_buff_cx[n] / m_Km;
-            freq_ch(m_Fn);
+            k = abs(n - N / 2);
+            cfbuff[k] = 2 * Fc * sin((n + rem) * PI2 * Fc ) / ((n + rem) * PI2 * Fc ) * wind[k];
+            cfbuff[ N - k] = cfbuff[k];
+        }
+    }
+
+    // filter pulse characteristic normalization:
+    if ( scale )
+    {
+        fir_fr< __type > fr = __fir_freq_resp__< __type , __type>( Fs , 0 , N , cfbuff );
+        for ( __ix32 n = 0; n <= N; n++) cfbuff[n] /= fr.Km;
+    }
+
+    // deallocate the window function:
+    wind.deallocate();
+
+    // returning the result
+    return cfbuff;
+}
+
+/*!
+  * \brief FIR digital highpass filter coefficients computation function
+  * \param[Fs]     sampling frequency , Hz
+  * \param[Fp]     pass frequency     , Hz
+  * \param[N]      filter order
+  * \param[scale]  scaling factor ( scale = 0 - not-scaled coefficients , scale = 1 - scaled coefficients )
+  * \param[wind]   input window function object
+  * \return The function returns digital lowpass FIR filter coefficients buffer.
+  *         Even order FIR highpass filter coefficients are computed as follows:
+  *
+  *         \f[
+  *             Fp = \frac{ Fp }{ Fs }
+  *             n \in \left[ 0 ; \frac{ N }{ 2 } \right]       \newline
+  *             k   = \left | n - \frac{ N + 1 }{ 2 } \right | \newline
+  *             a_k = \begin{cases}
+  *                   ( 1 - 2 * F_p ) * w_i \quad , \quad n = 0
+  *                   \\
+  *                   ( 1 - 2 * F_p ) * \frac{ \sin{ ( 2 * \pi * n * F_p ) } }{ 2 * \pi * n * F_p } * w_i \quad , \quad n > 0
+  *                   \end{cases}
+  *                   a_{N-k} = a_k \quad , \quad n > 0
+  *         \f]
+  *
+  *         Odd order FIR highpass filter coefficients are computed as follows:
+  *
+  *         \f[
+  *             Fp = \frac{ Fp }{ Fs }
+  *             n \in \left[ 0 ; \frac{ N }{ 2 } \right]                \newline
+  *             k   = \left | n - \frac{ N + 1 }{ 2 } \right |          \newline
+  *             r   = ceil \left( n - \frac{N}{2} \right) - \frac{N}{2} \newline
+  *             a_k = -1^{n} * 2 * \left[ 0.5 - F_p \right]
+  *                    * \frac{ \sin{ \left[ ( n + r ) * 2 * \pi * ( 0.5 - F_p ) \right] } }{ \left[ ( n + r ) * 2 * \pi * ( 0.5 - F_p ) \right] }
+  *         \f]
+  *
+  *         If the flag scale = 1, then coefficients are scaled as follows:
+  *
+  *         \f[
+  *             n \in \left[ 0 ; N \right]                          \newline
+  *             a_n = \frac{ a_n }{ \left| W(j*\omega) \right| }
+  *         \f]
+*/
+template< typename T > T* __fir_wind_digital_hp__( __fx64 Fs , __fx64 Fp , __ix32 N , bool scale , wind_fcn &wind )
+{
+    typedef T __type;
+
+    // check if the window is ready to use:
+    if ( wind.is_ready() == 0 ) wind.Chebyshev(100);
+
+    // coefficients buffer memory allocation:
+    __type *cfbuff = ( __type* ) calloc( N + 1 , sizeof ( __type ) );
+
+    // coefficients computation:
+    __ix32 k = 0;
+    Fp /= Fs;
+
+    if ( N % 2 == 0) // even order highpass
+    {
+        for ( __ix32 n = 0; n <= N / 2; n++)
+        {
+            k = abs(n - ( N + 1) / 2);
+
+            if (n == 0)
+            {
+                cfbuff[k] = (1 - 2 * Fp) * wind[k];
+            }
+            else
+            {
+                cfbuff[k] = -2 * Fp * sin(n * PI2 * Fp ) / (n * PI2 * Fp ) * wind[k];
+                cfbuff[N - k] = cfbuff[k];
+            }
+        }
+    }
+    else if (N % 2 != 0) // odd order highpass
+    {
+        __type rem = ceil( (__type)N / 2) - (__type)N / 2;
+        for ( __ix32 n = 0; n <= ceil(N / 2); n++)
+        {
+            k = abs(n - N / 2);
+            cfbuff[k]     = -pow(-1 , n) * 2 * (0.5-Fp) * sin((n + rem) * PI2 * (0.5-Fp) ) / ((n + rem) * PI2 * (0.5 - Fp) )* wind[k];
+            cfbuff[N - k] = -cfbuff[k];
+        }
+    }
+
+    // filter pulse characteristic scaling:
+    if ( scale )
+    {
+        fir_fr< __type > fr = __fir_freq_resp__< __type , __type >( Fs , Fs / 2 , N , cfbuff );
+        for ( __ix32 n = 0; n <= N; n++) cfbuff[n] /= fr.Km;
+    }
+
+    // deallocate the window function:
+    wind.deallocate();
+
+    // returning the result
+    return cfbuff;
+}
+
+/*!
+  * \brief FIR digital bandpass filter coefficients computation function
+  * \param[Fs]     sampling frequency , Hz
+  * \param[Fp]     pass frequency     , Hz
+  * \param[BW]     bandpass width     , Hz
+  * \param[N]      filter order
+  * \param[scale]  scaling factor ( scale = 0 - not-scaled coefficients , scale = 1 - scaled coefficients )
+  * \param[wind]   input window function object
+  * \return The function returns digital highpass FIR filter coefficients buffer.
+  *         Even order FIR bandpass filter coefficients are computed as follows:
+  *
+  *         \f[
+  *             F_{p1} = \frac{ F_{p1} }{ Fs }                 \newline
+  *             F_{p2} = \frac{ F_{p1}+BW }{ Fs }              \newline
+  *             n \in \left[ 0 ; \frac{ N }{ 2 } \right]       \newline
+  *             k   = \left | n - \frac{ N + 1 }{ 2 } \right | \newline
+  *
+  *             a_k = \begin{cases}
+  *                   2 * ( F_{p1} - F_{p2} ) * w_i \quad , \quad n = 0
+  *                   \\
+  *                   2 * \left[ F_{p2} * \frac{ \sin{ ( 2 * \pi * F_{p2} * n ) } }{ 2 * \pi * F_{p2} * n } -
+  *                              F_{p1} * \frac{ \sin{ ( 2 * \pi * F_{p1} * n ) } }{ 2 * \pi * F_{p1} * n }
+  *                       \right] * w_i \quad , \quad n > 0
+  *                   \\
+  *                   a_{N-k} = a_k \quad , \quad n > 0
+  *                   \end{cases}
+  *         \f]
+  *
+  *         Odd order FIR bandpass filter coefficients are computed as follows:
+  *
+  *         \f[
+  *             F_{p1} = \frac{ F_{p1} }{ Fs }                          \newline
+  *             F_{p2} = \frac{ F_{p1}+BW }{ Fs }                       \newline
+  *             n \in \left[ 0 ; \frac{ N }{ 2 } \right]                \newline
+  *             k   = \left | n - \frac{ N + 1 }{ 2 } \right |          \newline
+  *             r   = ceil\left(n - \frac{N}{2} \right) - \frac{N}{2}   \newline
+  *
+  *             a_k = 2 * \left[ F_{p2} * \frac{ \sin{ ( 2 * \pi * F_{p2} * ( n + r ) ) } }{ 2 * \pi * F_{p2} * ( n + r ) } -
+  *                              F_{p1} * \frac{ \sin{ ( 2 * \pi * F_{p1} * ( n + r ) ) } }{ 2 * \pi * F_{p1} * ( n + r ) }
+  *                      \right] * w_i \newline
+  *             a_{N-k} = a_k \quad , \quad n > 0
+  *         \f]
+  *
+  *         If the flag scale = 1, then coefficients are scaled as follows:
+  *
+  *         \f[
+  *             n \in \left[ 0 ; N \right]                          \newline
+  *             a_n = \frac{ a_n }{ \left| W(j*\omega) \right| }
+  *         \f]
+*/
+template< typename T > T* __fir_wind_digital_bp__( __fx64 Fs , __fx64 Fp , __fx64 BW , __ix32 N , bool scale , wind_fcn &wind )
+{
+    typedef T __type;
+
+    // check if the window is ready to use:
+    if ( wind.is_ready() == 0 ) wind.Chebyshev(100);
+
+    // coefficients buffer memory allocation:
+    __type *cfbuff = ( __type* ) calloc( N + 1 , sizeof ( __type ) );
+
+    // coefficients computation:
+    __ix32 k = 0;
+    __fx64 Fp1 = Fp / Fs , Fp2 = ( Fp + BW )/ Fs;
+
+    if ( N % 2 == 0) // even order bandpass
+    {
+        for ( __ix32 n = 0; n <= N / 2; n++)
+        {
+            k = abs(n - ( N + 1) / 2);
+
+            if (n == 0)
+            {
+                cfbuff[k] = 2 * ( Fp2 - Fp1) * wind[k];
+            }
+            else
+            {
+                cfbuff[k] = 2 * (Fp2 * sin(n * PI2 * Fp2) / (n * PI2 * Fp2) - Fp1 * sin(n * PI2 * Fp1) / (n * PI2 * Fp1)) * wind[k];
+                cfbuff[N - k] = cfbuff[k];
+            }
+        }
+    }
+    else if (N % 2 != 0) // odd order bandpass
+    {
+        __type rem = ceil((__type)N / 2) - (__type)N / 2;
+        for ( __ix32 n = 0; n <= ceil(N / 2); n++)
+        {
+            k = abs(n - N / 2);
+            cfbuff[k] = 2 * (Fp2 * sin((n + rem) * PI2 * Fp2) / ((n + rem) * PI2 * Fp2) - Fp1 * sin((n + rem) * PI2 * Fp1) / ((n + rem) * PI2 * Fp1)) * wind[k];
+            cfbuff[N - k] = cfbuff[k];
+        }
+    }
+
+    // filter pulse characteristic normalization:
+    if ( scale )
+    {
+        fir_fr< __type > fr = __fir_freq_resp__< __type , __type >( Fs , ( ( Fp1 + 0.5 * ( Fp2 - Fp1 ) ) * Fs ) , N , cfbuff );
+        for ( __ix32 n = 0; n <= N; n++) cfbuff[n] /= fr.Km;
+    }
+
+    // deallocate the window function:
+    wind.deallocate();
+
+    // returning the result:
+    return cfbuff;
+}
+
+/*!
+  * \brief FIR digital bandstop filter coefficients computation function
+  * \param[Fs]     sampling frequency , Hz
+  * \param[Fc]     cut-off frequency  , Hz
+  * \param[BW]     bandstop width     , Hz
+  * \param[N]      filter order
+  * \param[scale]  scaling factor ( scale = 0 - not-scaled coefficients , scale = 1 - scaled coefficients )
+  * \param[wind]   input window function object
+  * \return The function returns digital bandstop FIR filter coefficients buffer.
+  *         \f[
+  *             F_{c1} = \frac{ F_{c1} }{ Fs }                 \newline
+  *             F_{c2} = \frac{ F_{c1}+BW }{ Fs }              \newline
+  *             n \in \left[ 0 ; \frac{ N }{ 2 } \right]       \newline
+  *             k   = \left | n - \frac{ N + 1 }{ 2 } \right | \newline
+  *             a_k = \begin{cases}
+  *                   1 - 2 * ( F_{c2} - F_{c1} ) * w_k \quad , \quad n = 0
+  *                   \\
+  *                   2 * \left[ F_{c1} * \frac{ \sin{ ( 2 * \pi * n * F_{c1} ) } }{ 2 * \pi * n * F_{c1} } -
+  *                              F_{c2} * \frac{ \sin{ ( 2 * \pi * n * F_{c2} ) } }{ 2 * \pi * n * F_{c2} }
+  *                       \right] * w_k \quad , \quad n > 0
+  *                   \end{cases}
+  *         \f]
+  *
+  *         If the flag scale = 1, then coefficients are scaled as follows:
+  *
+  *         \f[
+  *             n \in \left[ 0 ; N \right]                          \newline
+  *             a_n = \frac{ a_n }{ \left| W(j*\omega) \right| }
+  *         \f]
+*/
+template< typename T > T* __fir_wind_digital_bs__( __fx64 Fs , __fx64 Fc , __fx64 BW , __ix32 N , bool scale , wind_fcn &wind )
+{
+    typedef T __type;
+
+    // check if the window is ready to use:
+    if ( wind.is_ready() == 0 ) wind.Chebyshev(100);
+
+    // coefficients buffer memory allocation:
+    __type *cfbuff = ( __type* ) calloc( N + 1 , sizeof ( __type ) );
+
+    // coefficients computation:
+    __ix32 k = 0;
+    __fx64 Fc1 = Fc / Fs , Fc2 = ( Fc + BW ) / Fs;
+
+    for (int n = 0; n <= N / 2; n++)
+    {
+        k = abs(n - ( N + 1) / 2);
+
+        if (n == 0)
+        {
+            cfbuff[k] = 1 - 2 * ( Fc2 - Fc1 ) * wind[k];
+        }
+        else
+        {
+            cfbuff[k] = 2 * ( Fc1 * sin(n * PI2 * Fc1) / (n * PI2 * Fc1 ) - Fc2 * sin(n * PI2 * Fc2) / (n * PI2 * Fc2) ) * wind[k];
+            cfbuff[ N - k] = cfbuff[k];
+        }
+    }
+
+    // filter pulse characteristic normalization:
+    if ( scale )
+    {
+        fir_fr< __type > fr = __fir_freq_resp__< __type , __type >( Fs , 0 , N , cfbuff );
+        for ( __ix32 n = 0; n <= N; n++) cfbuff[n] /= fr.Km;
+    }
+
+    // deallocate the window function:
+    wind.deallocate();
+
+    // return the result:
+    return cfbuff;
+}
+
+/*! \brief template FIR class */
+template< typename T > class fir;
+
+/*! \brief 32-bit floating point FIR */
+template<> class fir<__fx32>
+{
+    typedef __fx32 __type ;
+    typedef bool   __bool ;
+    typedef void   __void ;
+
+    /*! \brief lowpass specification data structure */
+    fir_sp  m_sp;
+
+    /*! \brief lowpass coefficients buffer */
+    __type *m_cf;
+
+    /*! \brief lowpass input buffer */
+    mirror_ring_buffer< __type > m_bx;
+
+public:
+
+    /*! \brief lowpass output */
+    __type m_out;
+
+   /*! \brief lowpass window function object */
+    wind_fcn m_wind;
+
+    /*! \brief lowpass memory allocation function */
+    __ix32 allocate()
+    {
+        switch ( m_sp.type )
+        {
+            case fir_type::lowpass_fir:
+            m_cf = __fir_wind_digital_lp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , m_sp.scale , m_wind );
+            break;
+
+            case fir_type::highpass_fir:
+            m_cf = __fir_wind_digital_hp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , m_sp.scale , m_wind );
+            break;
+
+            case fir_type::bandpass_fir:
+            m_cf = __fir_wind_digital_bp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , m_sp.scale , m_wind );
+            break;
+
+            case fir_type::bandstop_fir:
+            m_cf = __fir_wind_digital_bs__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , m_sp.scale , m_wind );
+            break;
         }
 
-        // deallocate the window function:
-        m_wind_fcn.deallocate();
+        m_bx.allocate( m_sp.N + 1 );
+        return ( m_cf != 0 );
     }
 
-    // Frequency characteristics:
-    __void freq_ch( __type F )
-    {
-        __type m_W_re = 0;
-        __type m_W_im = 0;
-        for ( __ix32 n = 0; n <= m_order ; n++)
-        {
-            m_W_re = m_W_re + cos(-PI2 * n * F * m_Ts) * m_buff_cx[n];
-            m_W_im = m_W_im + sin(-PI2 * n * F * m_Ts) * m_buff_cx[n];
-        }
-        m_pH   = atan2( m_W_im , m_W_im );
-        m_Km   = sqrt (m_W_re * m_W_re + m_W_im * m_W_im);
-    }
-
-    #ifndef __ALG_PLATFORM // identify if the compilation is for ProsoftSystems IDE
-
-    // filter response store to a text files:
-    __void freq_rp( std::string directory )
-    {
-        // open files:
-        std::ofstream ampr;
-        std::ofstream phsr;
-        std::ofstream freq;
-        std::ofstream plsr;
-        ampr.open( directory + "\\ampr.txt" );
-        phsr.open( directory + "\\phsr.txt" );
-        freq.open( directory + "\\freq.txt" );
-        plsr.open( directory + "\\plsr.txt" );
-
-        // frequency response
-        for( int i = 0 ; i < m_Fs * 0.5 ; i++ )
-        {
-            freq_ch( i );
-            ampr << m_Km << "\n";
-            phsr << m_pH << "\n";
-            freq << i    << "\n";
-        }
-
-        // pulse response:
-        for( int i = 0 ; i <= m_order ; i++ ) { plsr << m_buff_cx[i] << "\n"; }
-
-        // close files:
-        ampr.close();
-        phsr.close();
-        freq.close();
-        plsr.close();
-    }
-
-    #endif
-
-    // memory allocation:
-    __bool allocate()
-    {
-        // memory allocation:
-        m_buff_cx = ( __type* ) calloc( m_order + 1 , sizeof ( __type ) );
-        m_buff_sx.allocate( m_order + 2 );
-        // compute FIR filter coefficients:
-        coeff_calc();
-        return 1;
-    }
-
-    // memory deallocation:
+    /*! \brief lowpass memory deallocation function */
     __void deallocate()
     {
-        if( m_buff_cx != 0 ) free( m_buff_cx );
-        m_buff_sx.deallocate();
-        m_wind_fcn.deallocate();
+        if( m_cf != 0 ) free( m_cf );
+        m_bx.deallocate();
+        m_wind.deallocate();
     }
 
-    // initialization function:
-    __void init( __type Fs, __type Fn, __type F_stop , __type BandWidth , __ix32 order , __bool scale )
+    /*! \brief Lowpass initialization function
+     *  \details the function initializes lowpass FIR filter
+     *  \param[Fs]      - sampling frequency , Hz
+     *  \param[Fn]      - nominal frequency  , Hz
+     *  \param[Fc]      - cut-off frequency  , Hz
+     *  \param[order]   - filter order
+     *  \param[scale]   - filter scaling flag ( 0 - not-scaled filter , 1 - scaled filter )
+    */
+    __void lp_init( __type Fs, __type Fn, __type Fc, __ix32 order , __bool scale )
     {
-        m_Fs      = Fs;
-        m_Fn      = Fn;
-        m_Fstop1  = F_stop;
-        m_Fstop2  = F_stop + BandWidth;
-        m_Ts      = 1 / m_Fs;
-        m_order   = order;
-        m_Ns      = m_order;
-        m_scale   = scale;
-        m_buff_cx = 0;
-        m_out     = 0;
-
-        // window function initialization:
-        m_wind_fcn.init( m_order + 1 );
+        m_sp  = fir_sp{ Fs , Fn , Fc , -1 , 1 / Fs , order , order + 1 , scale , fir_type::lowpass_fir };
+        m_cf  = 0;
+        m_out = 0;
+        m_wind.init( m_sp.N );
     }
 
-    // default constructor:
-    fir_bs()
+    /*! \brief Highpass initialization function
+     *  \details the function initializes highpass FIR filter
+     *  \param[Fs]      - sampling frequency , Hz
+     *  \param[Fn]      - nominal frequency  , Hz
+     *  \param[Fp]      - pass frequency     , Hz
+     *  \param[order]   - filter order
+     *  \param[scale]   - filter scaling flag ( 0 - not-scaled filter , 1 - scaled filter )
+    */
+    __void hp_init( __type Fs, __type Fn, __type Fp , __ix32 order , __bool scale )
     {
-        m_Fs      = 4000;
-        m_Fn      = 50;
-        m_Fstop1  = 100;
-        m_Fstop1  = 200;
-        m_Ts      = 1 / m_Fs;
-        m_order   = 80;
-        m_Ns      = m_order;
-        m_scale   = false;
-        m_buff_cx = 0;
-        m_out     = 0;
-
-        // window function initialization:
-        m_wind_fcn.init( m_order + 1 );
+        m_sp  = fir_sp{ Fs , Fn , Fp , -1 , 1 / Fs , order , order + 1 , scale , fir_type::highpass_fir };
+        m_cf  = 0;
+        m_out = 0;
+        m_wind.init( m_sp.N );
     }
 
-    // initializing constructor:
-    fir_bs( __type Fs, __type Fn, __type F_stop , __type BandWidth , __ix32 order , __bool scale ) { init( Fs , Fn , F_stop , BandWidth , order , scale ); }
+    /*! \brief Bandpass initialization function
+     *  \details the function initializes bandpass FIR filter
+     *  \param[Fs]      - sampling frequency , Hz
+     *  \param[Fn]      - nominal frequency  , Hz
+     *  \param[Fp]      - cut-off frequency  , Hz
+     *  \param[BW]      - pass bandwidth     , Hz
+     *  \param[order]   - filter order
+     *  \param[scale]   - filter scaling flag ( 0 - not-scaled filter , 1 - scaled filter )
+    */
+    __void bp_init( __type Fs, __type Fn, __type Fp , __fx64 BW , __ix32 order , __bool scale )
+    {
+        m_sp  = fir_sp{ Fs , Fn , Fp , BW , 1 / Fs , order , order + 1 , scale , fir_type::bandpass_fir };
+        m_cf  = 0;
+        m_out = 0;
+        m_wind.init( m_sp.N );
+    }
 
-    // destructor:
-    ~fir_bs() { deallocate(); }
+    /*! \brief Bandstop initialization function
+     *  \details The function initializes bandstop FIR filter
+     *  \param[Fs]      - sampling frequency , Hz
+     *  \param[Fn]      - nominal frequency  , Hz
+     *  \param[Fc]      - cut-off frequency  , Hz
+     *  \param[BW]      - stop bandwidth     , Hz
+     *  \param[order]   - filter order
+     *  \param[scale]   - filter scaling flag ( 0 - not-scaled filter , 1 - scaled filter )
+    */
+    __void bs_init( __type Fs, __type Fn, __type Fc , __fx64 BW , __ix32 order , __bool scale )
+    {
+        m_sp  = fir_sp{ Fs , Fn , Fc , BW , 1 / Fs , order , order + 1 , scale , fir_type::bandstop_fir };
+        m_cf  = 0;
+        m_out = 0;
+        m_wind.init( m_sp.N );
+    }
 
-    // filtering function:
+    /*! \brief default constructor */
+    fir()
+    {
+        m_sp  = fir_sp{ 4000 , 50 , 100 , -1 , 1 / 4000 , 80 , 80 + 1 , 1 , fir_type::lowpass_fir };
+        m_cf  = 0;
+        m_out = 0;
+        m_wind.init( m_sp.N  );
+    }
 
-    // x32:
+    /*! \brief  destructor */
+    ~fir() { deallocate(); }
+
+    /*!
+     *  \brief  frequency response computation function
+     *  \param[F] input frequency
+     *  \return the function returns fir_fr data structure
+    */
+    inline fir_fr< __fx64 > freq_resp( __fx64 F ) { return __fir_freq_resp__< __fx64 , __type >( m_sp.Fs , F , m_sp.order , m_cf ); }
+
+    /*!
+     *  \brief  FIR pulse response getting function
+     *  \param[F] pulse response sample number
+     *  \return the function returns FIR impulse response sample
+    */
+    inline __type get_coeff( __ix32 n ) { return ( n <= m_sp.order ) ? m_cf[ n ] : 1e6; }
+
+    /*!
+     *  \brief  FIR filtering function
+     *  \param[input] pointer to the input data array
+     *  \return the function returns FIR filtering result
+    */
     inline __type filt( __type *input )
     {
-        m_buff_sx( input );
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
+        m_bx( input ); m_out = 0;
+        for ( __ix32 n = m_sp.order ; n >= 0; n--) m_out += m_bx[ n ] * m_cf[n];
         return m_out;
     }
 
-    // x64:
-    inline __type filt( __fx64 *input )
-    {
-        m_buff_sx( input );
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
-        return m_out;
-    }
-
+    /*!
+     *  \brief  FIR filtering function
+     *  \return the function returns FIR filtering result
+    */
     inline __type filt()
     {
         m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[ n ] * m_buff_cx[n];
+        for ( __ix32 n = m_sp.order ; n >= 0; n--) m_out += m_bx[ n ] * m_cf[n];
         return m_out;
     }
 
-    // operators:
+    /*!
+     *  \brief  FIR filtering () operator
+     *  \param[input] pointer to the input data
+     *  \return the () operator calls filt( __type *input ) function that returns FIR filtering result
+    */
     inline __type operator() ( __type *input ) { return filt( input ); }
-    inline __type operator() ( __fx64 *input ) { return filt( input ); }
-    inline __type operator() () { return filt(); }
 };
 
-// float x32:
-template<> class fir_bs<__fx64>
+/*! \brief 64-bit floating point FIR */
+template<> class fir<__fx64>
 {
     typedef __fx64 __type ;
     typedef bool   __bool ;
     typedef void   __void ;
 
-    // system variables:
-    __type m_Ts;
-    __type m_Fs;
-    __type m_Fn;
-    __type m_Fstop1;
-    __type m_Fstop2;
-    __type m_Ns;
-    __ix32 m_order;
-    __bool m_scale;
+    /*! \brief lowpass specification data structure */
+    fir_sp  m_sp;
 
-    // coefficients:
-    __type *m_buff_cx;
+    /*! \brief lowpass coefficients buffer */
+    __type *m_cf;
+
+    /*! \brief lowpass input buffer */
+    mirror_ring_buffer< __type > m_bx;
 
 public:
 
-    __type m_pH;
-    __type m_Km;
+    /*! \brief lowpass output */
     __type m_out;
 
-    // buffers:
-    mirror_ring_buffer< __type > m_buff_sx;
+   /*! \brief lowpass window function object */
+    wind_fcn m_wind;
 
-    // window function object:
-    wind_fcn m_wind_fcn;
-
-    // coefficients computation function:
-    __void coeff_calc()
+    /*! \brief lowpass memory allocation function */
+    __ix32 allocate()
     {
-        // check if the window is ready to use:
-        if ( m_wind_fcn.is_ready() == 0 ) m_wind_fcn.Chebyshev(100);
-
-        // coefficients computation:
-        __ix32 k = 0;
-        m_Fstop1 /= m_Fs;
-        m_Fstop2 /= m_Fs;
-
-        for (int n = 0; n <= m_order / 2; n++)
+        switch ( m_sp.type )
         {
-            k = abs(n - (m_order + 1) / 2);
+            case fir_type::lowpass_fir:
+            m_cf = __fir_wind_digital_lp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , m_sp.scale , m_wind );
+            break;
 
-            if (n == 0)
-            {
-                m_buff_cx[k] = 1 - 2 * (m_Fstop2 - m_Fstop1) * m_wind_fcn[k];
-            }
-            else
-            {
-                m_buff_cx[k] = 2 * (m_Fstop1 * sin(n * PI2 * m_Fstop1) / (n * PI2 * m_Fstop1) - m_Fstop2 * sin(n * PI2 * m_Fstop2) / (n * PI2 * m_Fstop2)) * m_wind_fcn[k];
-                m_buff_cx[m_order - k] = m_buff_cx[k];
-            }
+            case fir_type::highpass_fir:
+            m_cf = __fir_wind_digital_hp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , m_sp.scale , m_wind );
+            break;
+
+            case fir_type::bandpass_fir:
+            m_cf = __fir_wind_digital_bp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , m_sp.scale , m_wind );
+            break;
+
+            case fir_type::bandstop_fir:
+            m_cf = __fir_wind_digital_bs__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , m_sp.scale , m_wind );
+            break;
         }
 
-        // filter pulse characteristic normalization:
-        if ( m_scale )
-        {
-            freq_ch(0);
-            for ( __ix32 n = 0; n <= m_order; n++) m_buff_cx[n] = m_buff_cx[n] / m_Km;
-            freq_ch(m_Fn);
-        }
-
-        // deallocate the window function:
-        m_wind_fcn.deallocate();
+        m_bx.allocate( m_sp.N + 1 );
+        return ( m_cf != 0 );
     }
 
-    // Frequency characteristics:
-    __void freq_ch( __type F )
-    {
-        __type m_W_re = 0;
-        __type m_W_im = 0;
-        for ( __ix32 n = 0; n <= m_order ; n++)
-        {
-            m_W_re = m_W_re + cos(-PI2 * n * F * m_Ts) * m_buff_cx[n];
-            m_W_im = m_W_im + sin(-PI2 * n * F * m_Ts) * m_buff_cx[n];
-        }
-        m_pH   = atan2( m_W_im , m_W_im );
-        m_Km   = sqrt (m_W_re * m_W_re + m_W_im * m_W_im);
-    }
-
-    #ifndef __ALG_PLATFORM
-
-    // filter response store to a text files:
-    __void freq_rp( std::string directory )
-    {
-        // open files:
-        std::ofstream ampr;
-        std::ofstream phsr;
-        std::ofstream freq;
-        std::ofstream plsr;
-        ampr.open( directory + "\\ampr.txt" );
-        phsr.open( directory + "\\phsr.txt" );
-        freq.open( directory + "\\freq.txt" );
-        plsr.open( directory + "\\plsr.txt" );
-
-        // frequency response
-        for( int i = 0 ; i < m_Fs * 0.5 ; i++ )
-        {
-            freq_ch( i );
-            ampr << m_Km << "\n";
-            phsr << m_pH << "\n";
-            freq << i    << "\n";
-        }
-
-        // pulse response:
-        for( int i = 0 ; i <= m_order ; i++ ) { plsr << m_buff_cx[i] << "\n"; }
-
-        // close files:
-        ampr.close();
-        phsr.close();
-        freq.close();
-        plsr.close();
-    }
-
-    #endif
-
-    // memory allocation:
-    __bool allocate()
-    {
-        // memory allocation:
-        m_buff_cx = ( __type* ) calloc( m_order + 1 , sizeof ( __type ) );
-        m_buff_sx.allocate( m_order + 2 );
-        // compute FIR filter coefficients:
-        coeff_calc();
-        return 1;
-    }
-
-    // memory deallocation:
+    /*! \brief lowpass memory deallocation function */
     __void deallocate()
     {
-        if( m_buff_cx != 0 ) free( m_buff_cx );
-        m_buff_sx.deallocate();
-        m_wind_fcn.deallocate();
+        if( m_cf != 0 ) free( m_cf );
+        m_bx.deallocate();
+        m_wind.deallocate();
     }
 
-    // initialization function:
-    __void init( __type Fs, __type Fn, __type F_stop , __type BandWidth , __ix32 order , __bool scale )
+    /*! \brief Lowpass initialization function
+     *  \details the function initializes lowpass FIR filter
+     *  \param[Fs]      - sampling frequency , Hz
+     *  \param[Fn]      - nominal frequency  , Hz
+     *  \param[Fc]      - cut-off frequency  , Hz
+     *  \param[order]   - filter order
+     *  \param[scale]   - filter scaling flag ( 0 - not-scaled filter , 1 - scaled filter )
+    */
+    __void lp_init( __type Fs, __type Fn, __type Fc, __ix32 order , __bool scale )
     {
-        m_Fs      = Fs;
-        m_Fn      = Fn;
-        m_Fstop1  = F_stop;
-        m_Fstop2  = F_stop + BandWidth;
-        m_Ts      = 1 / m_Fs;
-        m_order   = ( order % 2 != 0) ? ( order + 1 ) : order;
-        m_Ns      = m_order;
-        m_scale   = scale;
-        m_buff_cx = 0;
-        m_out     = 0;
-
-        // window function initialization:
-        m_wind_fcn.init( m_order + 1 );
+        m_sp  = fir_sp{ Fs , Fn , Fc , -1 , 1 / Fs , order , order + 1 , scale , fir_type::lowpass_fir };
+        m_cf  = 0;
+        m_out = 0;
+        m_wind.init( m_sp.N );
     }
 
-    // default constructor:
-    fir_bs()
+    /*! \brief Highpass initialization function
+     *  \details the function initializes highpass FIR filter
+     *  \param[Fs]      - sampling frequency , Hz
+     *  \param[Fn]      - nominal frequency  , Hz
+     *  \param[Fp]      - pass frequency     , Hz
+     *  \param[order]   - filter order
+     *  \param[scale]   - filter scaling flag ( 0 - not-scaled filter , 1 - scaled filter )
+    */
+    __void hp_init( __type Fs, __type Fn, __type Fp , __ix32 order , __bool scale )
     {
-        m_Fs      = 4000;
-        m_Fn      = 50;
-        m_Fstop1  = 100;
-        m_Fstop1  = 200;
-        m_Ts      = 1 / m_Fs;
-        m_order   = 80;
-        m_Ns      = m_order;
-        m_scale   = false;
-        m_buff_cx = 0;
-        m_out     = 0;
-
-        // window function initialization:
-        m_wind_fcn.init( m_order + 1 );
+        m_sp  = fir_sp{ Fs , Fn , Fp , -1 , 1 / Fs , order , order + 1 , scale , fir_type::highpass_fir };
+        m_cf  = 0;
+        m_out = 0;
+        m_wind.init( m_sp.N );
     }
 
-    // initializing constructor:
-    fir_bs( __type Fs, __type Fn, __type F_stop , __type BandWidth , __ix32 order , __bool scale ) { init( Fs , Fn , F_stop , BandWidth , order , scale ); }
+    /*! \brief Bandpass initialization function
+     *  \details the function initializes bandpass FIR filter
+     *  \param[Fs]      - sampling frequency , Hz
+     *  \param[Fn]      - nominal frequency  , Hz
+     *  \param[Fp]      - cut-off frequency  , Hz
+     *  \param[BW]      - pass bandwidth     , Hz
+     *  \param[order]   - filter order
+     *  \param[scale]   - filter scaling flag ( 0 - not-scaled filter , 1 - scaled filter )
+    */
+    __void bp_init( __type Fs, __type Fn, __type Fp , __fx64 BW , __ix32 order , __bool scale )
+    {
+        m_sp  = fir_sp{ Fs , Fn , Fp , BW , 1 / Fs , order , order + 1 , scale , fir_type::bandpass_fir };
+        m_cf  = 0;
+        m_out = 0;
+        m_wind.init( m_sp.N );
+    }
 
-    // destructor:
-    ~fir_bs() { deallocate(); }
+    /*! \brief Bandstop initialization function
+     *  \details The function initializes bandstop FIR filter
+     *  \param[Fs]      - sampling frequency , Hz
+     *  \param[Fn]      - nominal frequency  , Hz
+     *  \param[Fc]      - cut-off frequency  , Hz
+     *  \param[BW]      - stop bandwidth     , Hz
+     *  \param[order]   - filter order
+     *  \param[scale]   - filter scaling flag ( 0 - not-scaled filter , 1 - scaled filter )
+    */
+    __void bs_init( __type Fs, __type Fn, __type Fc , __fx64 BW , __ix32 order , __bool scale )
+    {
+        m_sp  = fir_sp{ Fs , Fn , Fc , BW , 1 / Fs , order , order + 1 , scale , fir_type::bandstop_fir };
+        m_cf  = 0;
+        m_out = 0;
+        m_wind.init( m_sp.N );
+    }
 
-    // filtering function:
+    /*! \brief default constructor */
+    fir()
+    {
+        m_sp  = fir_sp{ 4000 , 50 , 100 , -1 , 1 / 4000 , 80 , 80 + 1 , 1 , fir_type::lowpass_fir };
+        m_cf  = 0;
+        m_out = 0;
+        m_wind.init( m_sp.N  );
+    }
 
-    // x32:
+    /*! \brief  destructor */
+    ~fir() { deallocate(); }
+
+    /*!
+     *  \brief  frequency response computation function
+     *  \param[F] input frequency
+     *  \return the function returns fir_fr data structure
+    */
+    inline fir_fr< __fx64 > freq_resp( __type F ) { return __fir_freq_resp__< __fx64 , __type >( m_sp.Fs , F , m_sp.order , m_cf ); }
+
+    /*!
+     *  \brief  FIR pulse response getting function
+     *  \param[F] pulse response sample number
+     *  \return the function returns FIR impulse response sample
+    */
+    inline __type get_coeff( __ix32 n ) { return ( n <= m_sp.order ) ? m_cf[ n ] : 1e6; }
+
+    /*!
+     *  \brief  FIR filtering function
+     *  \param[input] pointer to the input data array
+     *  \return the function returns FIR filtering result
+    */
     inline __type filt( __type *input )
     {
-        m_buff_sx( input );
-        m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[n] * m_buff_cx[n];
+        m_bx( input ); m_out = 0;
+        for ( __ix32 n = m_sp.order ; n >= 0; n--) m_out += m_bx[ n ] * m_cf[n];
         return m_out;
     }
 
+    /*!
+     *  \brief  FIR filtering function
+     *  \return the function returns FIR filtering result
+    */
     inline __type filt()
     {
         m_out = 0;
-        for ( __ix32 n = m_order; n >= 0; n--) m_out += m_buff_sx[n] * m_buff_cx[n];
+        for ( __ix32 n = m_sp.order ; n >= 0; n--) m_out += m_bx[ n ] * m_cf[n];
         return m_out;
     }
 
-    // operators:
+    /*!
+     *  \brief  FIR filtering () operator
+     *  \param[input] pointer to the input data
+     *  \return the () operator calls filt( __type *input ) function that returns FIR filtering result
+    */
     inline __type operator() ( __type *input ) { return filt( input ); }
-    inline __type operator() () { return filt(); }
 };
+
+/*! @} */
 
 #undef __fx32
 #undef __fx64

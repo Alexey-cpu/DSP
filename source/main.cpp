@@ -113,14 +113,13 @@ int test0()
 // complex arithmetic check:
 int test1()
 {
-    complex<double> z0( 1.0 , 2.0 );
-    complex<double> z1( 2.0 , 0.5 );
-    complex<double> z2( 3.5 , 4.5 );
+    complex<double> z0( 1.0 , 2.0 ) , z1( 2.0 , 0.5 ) , z2( 3.5 , 4.5 );
 
     printf( "complex math functions check: \n" );
     printf( "z0 = %.4f \t %.4f \n" , z0.m_re , z0.m_im );
     printf( "z1 = %.4f \t %.4f \n" , z1.m_re , z1.m_im );
     printf( "z2 = %.4f \t %.4f \n" , z2.m_re , z2.m_im );
+    printf( "\n\n");
 
     printf( "arithmetics: \n" );
     printf( "sqrt( z0 )       = %.4f \t %.4f \n" , __sqrtf__(z0).m_re , __sqrtf__(z0).m_im );
@@ -131,19 +130,22 @@ int test1()
     printf( "( z0 = z0 + z2 ) = %.4f \t %.4f \n" , ( z0 += z2 ).m_re , ( z0 += z2 ).m_im );
     printf( "( z1 = z1 * z2 ) = %.4f \t %.4f \n" , ( z1 *= z2 ).m_re , ( z1 *= z2 ).m_im );
     printf( "( z2 = z2 / z1 ) = %.4f \t %.4f \n" , ( z2 /= z1 ).m_re , ( z2 /= z1 ).m_im );
+    printf( "\n\n");
 
-    printf( "functions : \n" );
+    printf( " complex functions : \n" );
+    printf( " sinh( z0 )       = %.4f \t %.4f \n" , __sinhf__(z0).m_re , __sinhf__(z0).m_im );
+    printf( " cosh( z0 )       = %.4f \t %.4f \n" , __coshf__(z0).m_re , __coshf__(z0).m_im );
+    printf( " tanh( z0 )       = %.4f \t %.4f \n" , __tanhf__(z0).m_re , __tanhf__(z0).m_im );
+    printf( " ctnh( z0 )       = %.4f \t %.4f \n" , __ctnhf__(z0).m_re , __ctnhf__(z0).m_im );
+    printf( " conj( z0 )       = %.4f \t %.4f \n" , __conjf__(z0).m_re , __conjf__(z0).m_im );
+    printf( " norm( z0 )       = %.4f \t %.4f \n" , __normf__(z0).m_re , __normf__(z0).m_im );
+    printf( " z0*rot( 60 , 1 ) = %.4f \t %.4f \n" , ( z0 *=__rotf__( 60.0 , 1) ).m_re , ( z0 *=__rotf__( 60.0 , 1) ).m_im );
+    printf( "\n\n");
 
+    printf( " scalar functions : \n" );
+    printf( " abs( z0 )  = %.4f \n" , __absf__(z0) );
+    printf( " arg( z0 )  = %.4f \n" , __argf__(z0) * 180 / 3.14 );
 
-    std::cout << " sinh( z0 )    =  " << __sinhf__(z0).m_re << "\t" << __sinhf__(z0).m_im  << "\n";
-    std::cout << " cosh( z0 )    =  " << __coshf__(z0).m_re << "\t" << __coshf__(z0).m_im  << "\n";
-    std::cout << " tanh( z0 )    =  " << __tanhf__(z0).m_re << "\t" << __tanhf__(z0).m_im  << "\n";
-    std::cout << " ctnh( z0 )    =  " << __ctnhf__(z0).m_re << "\t" << __ctnhf__(z0).m_im  << "\n";
-    std::cout << " abs( z0 )    =  " << __absf__(z0) << "\n";
-    std::cout << " arg( z0 )    =  " << __argf__(z0) * 180 / 3.14 << "\n";
-    std::cout << " conj( z0 )    =  " << __conjf__(z0).m_re << "\t\t" << __conjf__(z0).m_im << "\n";
-    std::cout << " norm( z0 )    =  " << __normf__(z0).m_re << "\t\t" << __normf__(z0).m_im << "\n";
-    std::cout << " z0*rot( 60 , 1 )    =  " << ( z0 *=__rotf__( 60.0 , 1) ).m_re << "\t\t" << (  z0 ).m_im << "\n";
     return 0;
 }
 
@@ -151,25 +153,23 @@ int test1()
 int test2()
 {
     typedef double __type;
-    int N0 = 15;
-    int N1 = 10;
-    __type *a = new __type [N0];
+    int N0 = 15 , N1 = 10;
 
+    __type *a = (__type*)calloc( N0 , sizeof ( __type ) );
     mirror_ring_buffer<__type> buff;
     buff.allocate( N1 );
 
-    std::cout << "a: " << "\n";
-    for( int i = 0 ; i < N0 ; i++ ) std::cout << ( a[i] = i ) << "\t";
-    std::cout << "\n";
-
+    printf(  "a: \n" );
+    for( int i = 0 ; i < N0 ; i++ ) { printf( "%f \t " , ( a[i] = i ) ); }
     for( int i = 0 ; i < N0 ; i++ ) { buff.fill_buff( &a[i] ); }
+    printf(  "\n" );
 
-    std::cout << "buffer: " << "\n";
-    for( int i = 0 ; i < N1 ; i++ ) std::cout <<  buff[i] << "\t";
-    std::cout << "\n";
+
+    printf(  "buffer: \n" );
+    for( int i = 0 ; i < N1 ; i++ ) { printf("%.4f \t" , buff[i] ); }
 
     buff.deallocate();
-    delete [] a;
+    free(a);
     a = nullptr;
 
     return 0;
@@ -178,7 +178,7 @@ int test2()
 // fir lowpass test:
 int test3()
 {
-    QElapsedTimer timer;
+    typedef float __type ;
 
     // log directory:
     std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
@@ -186,225 +186,73 @@ int test3()
     // files:
     std::ofstream yt;
     std::ofstream ft;
+    std::ofstream Km;
+    std::ofstream pH;
+    std::ofstream FF;
+    std::ofstream tt;
+    std::ofstream cf;
     yt.open( directory + "\\yt.txt" );
     ft.open( directory + "\\ft.txt" );
+    Km.open( directory + "\\Km.txt" );
+    pH.open( directory + "\\pH.txt" );
+    FF.open( directory + "\\FF.txt" );
+    cf.open( directory + "\\cf.txt" );
+    tt.open( directory + "\\tt.txt" );
+
+    __type Fs = 4000 , Fn = 50;
 
     // signal generator:
-    sgen<double> gen;
+    sgen<__type> gen;
 
     // filter configuration:
-    fir_lp<float> FLP;
-    FLP.init( 4000 , 50 , 100 , 80 , 1 );
-    FLP.m_wind_fcn.Chebyshev(60);
+    fir<__type> FLP;
+    // FLP.lp_init( Fs , 50 , 100 , 80 , 1 );
+    // FLP.hp_init( Fs , 50 , 100 , 80 , 1 );
+    // FLP.bp_init( Fs , 50 , 100 , 100 , 80 , 1 );
+     FLP.bs_init( Fs , 50 , 100 , 100 , 80 , 1 );
+
+    // window construction:
+    FLP.m_wind.Chebyshev(60);
     FLP.allocate();
-    FLP.freq_rp( directory );
 
     // emulation:
     int cycles_num       = 10;
     int frames_per_cycle = 20;
-    int cnt = 0;
-    double dt = 0;
+
+    double time = 0;
 
     for( int i = 0 ; i < cycles_num ; i++ )
     {
         for( int j = 0 ; j < frames_per_cycle ; j++ )
         {
             // signal generation and filtering:
-            gen( 1 , 50 , 0 , 4000 );
-
-            timer.start();
+            gen( 1 , Fn , 0 , Fs );
             FLP( &gen.m_out );
-            cnt++;
-            dt += timer.nsecsElapsed()/1e9;
 
             // store signal and filter output:
             yt << gen.m_out << "\n";
             ft << FLP.m_out << "\n";
+            tt << ( time += 1 / Fs ) << "\n";
         }
     }
 
-    std::cout << "dt_av = " << dt / (double)cnt << "\n";
-
-    // close files:
-    yt.close();
-    ft.close();
-
-    // memory deallocation:
-    FLP.deallocate();
-    return 0;
-}
-
-// fir highpass test:
-int test4()
-{
-    QElapsedTimer timer;
-
-    // log directory:
-    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
-
-    // files:
-    std::ofstream yt;
-    std::ofstream ft;
-    yt.open( directory + "\\yt.txt" );
-    ft.open( directory + "\\ft.txt" );
-
-    // signal generator:
-    sgen<double> gen;
-
-    // filter configuration:
-    fir_hp<float> FLP;
-    FLP.init( 4000 , 50 , 100 , 80 , 1 );
-    FLP.m_wind_fcn.Chebyshev(60);
-    FLP.allocate();
-    FLP.freq_rp( directory );
-
-    // emulation:
-    int cycles_num       = 10;
-    int frames_per_cycle = 20;
-    int cnt = 0;
-    double dt = 0;
-
-    for( int i = 0 ; i < cycles_num ; i++ )
+    // filter frequency response computation:
+    for( int i = 0 ; i < Fs / 2 ; i++ )
     {
-        for( int j = 0 ; j < frames_per_cycle ; j++ )
-        {
-            // signal generation and filtering:
-            gen( 1 , 50 , 0 , 4000 );
-
-            timer.start();
-            FLP( &gen.m_out );
-            cnt++;
-            dt += timer.nsecsElapsed()/1e9;
-
-            // store signal and filter output:
-            yt << gen.m_out << "\n";
-            ft << FLP.m_out << "\n";
-        }
+        fir_fr< double > fr = FLP.freq_resp( i );
+        Km << fr.Km << "\n";
+        pH << fr.pH << "\n";
+        FF << i << "\n";
     }
-
-    std::cout << "dt_av = " << dt / (double)cnt << "\n";
 
     // close files:
     yt.close();
     ft.close();
-
-    // memory deallocation:
-    FLP.deallocate();
-    return 0;
-}
-
-// fir bandpass test:
-int test5()
-{
-    QElapsedTimer timer;
-
-    // log directory:
-    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
-
-    // files:
-    std::ofstream yt;
-    std::ofstream ft;
-    yt.open( directory + "\\yt.txt" );
-    ft.open( directory + "\\ft.txt" );
-
-    // signal generator:
-    sgen<double> gen;
-
-    // filter configuration:
-    fir_bp<float> FLP;
-    FLP.init( 4000 , 50 , 100 , 100 , 80 , 1 );
-    FLP.m_wind_fcn.Chebyshev(60);
-    FLP.allocate();
-    FLP.freq_rp( directory );
-
-    // emulation:
-    int cycles_num       = 10;
-    int frames_per_cycle = 20;
-    int cnt = 0;
-    double dt = 0;
-
-    for( int i = 0 ; i < cycles_num ; i++ )
-    {
-        for( int j = 0 ; j < frames_per_cycle ; j++ )
-        {
-            // signal generation and filtering:
-            gen( 1 , 50 , 0 , 4000 );
-
-            timer.start();
-            FLP( &gen.m_out );
-            cnt++;
-            dt += timer.nsecsElapsed()/1e9;
-
-            // store signal and filter output:
-            yt << gen.m_out << "\n";
-            ft << FLP.m_out << "\n";
-        }
-    }
-
-    std::cout << "dt_av = " << dt / (double)cnt << "\n";
-
-    // close files:
-    yt.close();
-    ft.close();
-
-    // memory deallocation:
-    FLP.deallocate();
-    return 0;
-}
-
-// fir bandstop test:
-int test6()
-{
-    QElapsedTimer timer;
-
-    // log directory:
-    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
-
-    // files:
-    std::ofstream yt;
-    std::ofstream ft;
-    yt.open( directory + "\\yt.txt" );
-    ft.open( directory + "\\ft.txt" );
-
-    // signal generator:
-    sgen<double> gen;
-
-    // filter configuration:
-    fir_bs<float> FLP;
-    FLP.init( 4000 , 50 , 100 , 100 , 80 , 1 );
-    FLP.m_wind_fcn.Chebyshev(60);
-    FLP.allocate();
-    FLP.freq_rp( directory );
-
-    // emulation:
-    int cycles_num       = 10;
-    int frames_per_cycle = 20;
-    int cnt = 0;
-    double dt = 0;
-
-    for( int i = 0 ; i < cycles_num ; i++ )
-    {
-        for( int j = 0 ; j < frames_per_cycle ; j++ )
-        {
-            // signal generation and filtering:
-            gen( 1 , 50 , 0 , 4000 );
-
-            timer.start();
-            FLP( &gen.m_out );
-            cnt++;
-            dt += timer.nsecsElapsed()/1e9;
-
-            // store signal and filter output:
-            yt << gen.m_out << "\n";
-            ft << FLP.m_out << "\n";
-        }
-    }
-
-    std::cout << "dt_av = " << dt / (double)cnt << "\n";
-
-    // close files:
-    yt.close();
-    ft.close();
+    Km.close();
+    pH.close();
+    FF.close();
+    cf.close();
+    tt.close();
 
     // memory deallocation:
     FLP.deallocate();
@@ -495,7 +343,7 @@ int test7()
     // frequency response computation :
     for( int i = 0 ; i < Fs / 2 ; i++ )
     {
-        iir_fr< double > fr = __freq_resp__( coeffs.cfnum , coeffs.cfden , coeffs.gains , coeffs.N , Fs , i );
+        iir_fr< double > fr = __iir_freq_resp__( coeffs.cfnum , coeffs.cfden , coeffs.gains , coeffs.N , Fs , i );
         Km << fr.Km << "\n";
         pH << fr.pH << "\n";
         FF << i     << "\n";
@@ -529,12 +377,14 @@ int test7()
 
 int main()
 {
+    std::cout << __DBL_MIN__ << "\n";
+
     // test1(); // comlex arithmetic test
     // test3(); // fir lowpass test
     // test4(); // fir highpass test
     // test5(); // fir bandpass test
     // test6(); // fir bandstop test
-     test7(); // iir filters test
+    // test7(); // iir filters test
 
     return 0;
 }

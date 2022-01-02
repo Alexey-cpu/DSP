@@ -1,115 +1,223 @@
-//------------------------------------------------------------------------------------------------------------
-// A.Tykvinskiy , 23.12.2021
-//------------------------------------------------------------------------------------------------------------
-// INFINITE IMPULSE RESPONSE FILTERS
-//------------------------------------------------------------------------------------------------------------
-/*
-    Naming conventions:
-
-    IIR - infinite impulse response
-
-    plp   - poles of the normalized lowpass analogue prototype
-    zlp   - zeros of the normalized lowpass analogue prototype
-    glp   - gains of the normalized lowpass analogue prototype
-    pbp   - poles of the bandpass analogue/digital prototype
-    zbp   - zeros of the bandpass analogue/digital prototype
-    gbp   - gains of the bandpass analogue/digital prototype
-    pbs   - poles of the bandstop analogue/digital prototype
-    zbs   - zeros of the bandstop analogue/digital prototype
-    gbs   - gains of the bandstop analogue/digital prototype
-    L     - complex conjugate poles / zeros second order sections number
-    R     - real odd second order section identifier
-    N     - second order sections total numbeer
-    Fs    - sampling frequecny        , Hz
-    Ts    - sampling period           , s
-    Fn    - nominal frequency         , Hz
-    Fc    - cutoff frequency          , Hz
-    BW    - stopband / passband width , Hz
-    Gs    - stopband attenuation      , Db
-    Gp    - passband attenuation      , Db
-    order - IIR filter order
-    type  - IIR filter type ( 0 - lowpass , 1 - highpass , 2 - bandpass , 3 - bandstop )
-    cfnum - second order sections numeator coefficients
-    cfden - second order sections denominator coefficients
-    gains - second order sections gains ( including filter output gain )
-    bx    - second order sections input  buffers
-    by    - second order sections output buffers
-    Km    - filter amplitude frequency response
-    pH    - filter phase frequency response
-
+/*!
+ * \file
+ * \brief   IIR filters
+ * \authors A.Tykvinskiy
+ * \date    21.12.2021
+ * \version 1.0
+ *
+ * The header declares IIR filters
 */
 
 #ifndef IIR_H
 #define IIR_H
 
-#ifndef __ALG_PLATFORM // identify if the compilation is for ProsoftSystems IDE
+/*! \brief defines if the compilation is implemented for Prosoft-Systems IDE */
+#ifndef __ALG_PLATFORM
 #include "cmath"
 #include "math.h"
 #include <iostream>
-
-#define DEBUG
-
 #endif
+
+/*! \defgroup <IIR_fcn> ( IIR filters )
+ *  \brief the module contains IIR filter template class and it's auxiliary functions
+    @{
+*/
 
 #include "buffer.h"
 #include "complex.h"
 #include "special_functions.h"
 
+/*! \brief defines 32-bit floating point type */
 #ifndef __fx32
 #define __fx32 float
 #endif
 
+/*! \brief defines 64-bit floating point type */
 #ifndef __fx64
 #define __fx64 double
 #endif
 
+/*! \brief defines extended 64-bit floating point type */
 #ifndef __fxx64
 #define __fxx64 long double
 #endif
 
+/*! \brief defines 32-bit integer type */
 #ifndef __ix32
 #define __ix32 int
 #endif
 
-// customized PI:
+/*! \brief defines pi */
 #ifndef PI0
 #define PI0 3.1415926535897932384626433832795
 #endif
 
+/*! \brief defines 2*pi */
 #ifndef PI2
 #define PI2 6.283185307179586476925286766559
 #endif
 
-// IIR template zeros / poles data structure:
+/*! \brief template IIR filter zeros / poles data structure */
 template < typename T > struct iir_zp;
+/*!
+ *  \brief 32-bit floating point IIR filter zeros / poles data structure
+ *  \param[plp] pointer to the IIR filter nomrmalized analogue lowpass prototype  poles pairs
+ *  \param[zlp] pointer to the IIR filter nomrmalized analogue lowpass prototype  zeros pairs
+ *  \param[glp] pointer to the IIR filter nomrmalized analogue lowpass prototype  second order sections gains ( size is N + 1 , N-th element is the output gain )
+ *  \param[L]   number of the complex conjugate pairs of poles
+ *  \param[R]   real odd pole existance flag
+ *  \param[N]   number of the IIR filter coefficients
+*/
 template<> struct iir_zp< __fx32  > { complex< __fx32  > *plp , *zlp , *glp; __ix32 L , R , N; };
+/*!
+ *  \brief 64-bit floating point IIR filter zeros / poles data structure
+ *  \param[plp] pointer to the IIR filter nomrmalized analogue lowpass prototype  poles pairs
+ *  \param[zlp] pointer to the IIR filter nomrmalized analogue lowpass prototype  zeros pairs
+ *  \param[glp] pointer to the IIR filter nomrmalized analogue lowpass prototype  second order sections gains ( size is N + 1 , N-th element is the output gain )
+ *  \param[L]   number of the complex conjugate pairs of poles
+ *  \param[R]   real odd pole existance flag
+ *  \param[N]   number of the IIR filter coefficients
+*/
 template<> struct iir_zp< __fx64  > { complex< __fx64  > *plp , *zlp , *glp; __ix32 L , R , N; };
+/*!
+ *  \brief extended 64-bit floating point IIR filter zeros / poles data structure
+ *  \param[plp] pointer to the IIR filter nomrmalized analogue lowpass prototype poles pairs
+ *  \param[zlp] pointer to the IIR filter nomrmalized analogue lowpass prototype  zeros pairs
+ *  \param[glp] pointer to the IIR filter nomrmalized analogue lowpass prototype  second order sections gains ( size is N + 1 , N-th element is the output gain )
+ *  \param[L]   number of the complex conjugate pairs of poles
+ *  \param[R]   real odd pole existance flag
+ *  \param[N]   number of the IIR filter coefficients
+*/
 template<> struct iir_zp< __fxx64 > { complex< __fxx64 > *plp , *zlp , *glp; __ix32 L , R , N; };
 
-// IIR template coefficients and gains data structure:
+/*! \brief template IIR filter coefficients matrix data structure */
 template < typename T > struct iir_cf;
+/*!
+ *  \brief 32-bit floating point IIR filter coefficients matrix data structure
+ *  \param[cfnum] pointer to the IIR filter numerator coefficicents matrix
+ *  \param[cfden] pointer to the IIR filter denominator coefficicents matrix
+ *  \param[gains] pointer to the IIR filter second order sections gains ( size is N + 1 , N-th element is the output gain )
+ *  \param[L]   number of the complex conjugate pairs of poles
+ *  \param[R]   real odd pole existance flag
+ *  \param[N]   number of the IIR filter coefficients
+*/
 template<> struct iir_cf< __fx32  > { __fx32  *cfnum , *cfden , *gains; __ix32 L , R , N; };
+/*!
+ *  \brief 64-bit floating point IIR filter coefficients matrix data structure
+ *  \param[cfnum] pointer to the IIR filter numerator coefficicents matrix
+ *  \param[cfden] pointer to the IIR filter denominator coefficicents matrix
+ *  \param[gains] pointer to the IIR filter second order sections gains ( size is N + 1 , N-th element is the output gain )
+ *  \param[L]   number of the complex conjugate pairs of poles
+ *  \param[R]   real odd pole existance flag
+ *  \param[N]   number of the IIR filter coefficients
+*/
 template<> struct iir_cf< __fx64  > { __fx64  *cfnum , *cfden , *gains; __ix32 L , R , N; };
+/*!
+ *  \brief extended 64-bit floating point IIR filter coefficients matrix data structure
+ *  \param[cfnum] pointer to the IIR filter numerator coefficicents matrix
+ *  \param[cfden] pointer to the IIR filter denominator coefficicents matrix
+ *  \param[gains] pointer to the IIR filter second order sections gains ( size is N + 1 , N-th element is the output gain )
+ *  \param[L]   number of the complex conjugate pairs of poles
+ *  \param[R]   real odd pole existance flag
+ *  \param[N]   number of the IIR filter coefficients
+*/
 template<> struct iir_cf< __fxx64 > { __fxx64 *cfnum , *cfden , *gains; __ix32 L , R , N; };
 
-// IIR template buffers data structure:
+/*! \brief template IIR filter second order sections input / output buffers */
 template< typename T > struct iir_bf;
+/*!
+ *  \brief 32-bit floating point IIR filter coefficients matrix data structure
+ *  \param[bx] pointer to the IIR filter second order sections input buffers
+ *  \param[by] pointer to the IIR filter second order sections output buffers
+ *  \param[N]  number of the IIR filter coefficients
+*/
 template<> struct iir_bf< __fx32  >{ mirror_ring_buffer< __fx32  > *bx , *by; __ix32 N; };
+/*!
+ *  \brief 64-bit floating point IIR filter coefficients matrix data structure
+ *  \param[bx] pointer to the IIR filter second order sections input buffers
+ *  \param[by] pointer to the IIR filter second order sections output buffers
+ *  \param[N]  number of the IIR filter coefficients
+*/
 template<> struct iir_bf< __fx64  >{ mirror_ring_buffer< __fx64  > *bx , *by; __ix32 N; };
+/*!
+ *  \brief extended 64-bit floating point IIR filter coefficients matrix data structure
+ *  \param[bx] pointer to the IIR filter second order sections input buffers
+ *  \param[by] pointer to the IIR filter second order sections output buffers
+ *  \param[N]  number of the IIR filter coefficients
+*/
 template<> struct iir_bf< __fxx64 >{ mirror_ring_buffer< __fxx64 > *bx , *by; __ix32 N; };
 
-// IIR template frequency response data structure:
+/*! \brief template IIR filter frequency response data structure */
 template < typename T > struct iir_fr;
+/*!
+ *  \brief 32-bit floating point IIR filter frequency response data structure
+ *  \param[Km] IIR filter amplitude response , p.u.
+ *  \param[pH] IIR filter phase response
+*/
 template<> struct iir_fr< __fx32  > { __fx32  Km , pH; };
+/*!
+ *  \brief 64-bit floating point IIR filter frequency response data structure
+ *  \param[Km] IIR filter amplitude response , p.u.
+ *  \param[pH] IIR filter phase response
+*/
 template<> struct iir_fr< __fx64  > { __fx64  Km , pH; };
+/*!
+ *  \brief extended 64-bit floating point IIR filter frequency response data structure
+ *  \param[Km] IIR filter amplitude response , p.u.
+ *  \param[pH] IIR filter phase response
+*/
 template<> struct iir_fr< __fxx64 > { __fxx64 Km , pH; };
 
-// IIR specification data structure:
+/*!
+ *  \brief IIR filter specification data structure
+ *  \param[Fs]      samping frequency       , Hz
+ *  \param[Ts]      sampling period         , s
+ *  \param[Fn]      nominal frequency       , Hz
+ *  \param[Fc]      cut-off frequency       , Hz
+ *  \param[BW]      bandpass/bandstop width , Hz
+ *  \param[Gs]      bandstop attenuation    , Db
+ *  \param[Gp]      bandpass attenuation    , Db
+ *  \param[order]   filter order
+ *  \param[type]    dilter type( 0 - lowpass , 1 - highpass , 2 - bandpass , 3 - bandstop )
+*/
 struct iir_sp { __fx64 Fs , Ts , Fn , Fc , BW , Gs , Gp; __ix32 order , type; };
 
-// IIR ZEROS / POLES PLAIN COMPUTATION FUNCTIONS:
+/*!
+ *  \brief IIR types enumeration
+ *  \param[lowpass_iir ] lowpass  IIR
+ *  \param[highpass_iir] highpass IIR
+ *  \param[bandpass_iir] bandpass IIR
+ *  \param[bandstop_iir] bandstop IIR
+*/
+enum iir_type { lowpass_iir  , highpass_iir , bandpass_iir , bandstop_iir };
 
-// Butterworth lowpass analogue normalized zeros/poles plain computation:
+/*!
+ * \brief Butterworth lowpass analogue prototype zeros/poles plain computation function
+ * \param[g_stop] stopband attenuation , Db
+ * \param[order]  filter order
+ * \return   The function computes Butterworth zeros/poles pairs of the Butterworth lowpass
+ *           analogue prototype. It also compute zero frequency gains. All the data is stored
+ *           within iir_zp data structure and returned. As Butterworth filter has unit numerator
+ *           transfer function , it does not have zeros.
+ *           Poles are computed as follows:
+ *
+ *           \f[
+ *                  N     = L + R                                                                       \newline
+ *                  \beta = \frac{1}{ \sqrt{ G_s^{ \frac{1}{order} } } }                                \newline
+ *                  i \in [ 0 ; L )                                                                     \newline
+ *                  \alpha = \frac{ ( 2 * ( i + 1 ) - 1 ) * \pi }{ 2 * order }                          \newline
+ *                  p_i = -\frac{1}{\beta}*\sin{ ( \alpha ) } + j*\frac{1}{\beta}*\cos{ ( \alpha ) }    \newline
+ *                  g_i = p_i * conj \left( p_i \right)                                                 \newline
+ *                  g_N = 1                                                                             \newline
+ *           \f]
+ *
+ *           Real odd pole:
+ *
+ *           \f[
+ *                  p_{L+R-1} = -\frac{1}{\beta} + j * 0 \newline
+ *                  g_{L+R-1} = p_{L+R-1}                \newline
+ *           \f]
+*/
 template< typename T > iir_zp< T > __butt_zeros_poles_plain__ ( __ix32 order , __fx64 g_stop )
 {
     // number of zeros, poles, coeffs:
@@ -148,7 +256,34 @@ template< typename T > iir_zp< T > __butt_zeros_poles_plain__ ( __ix32 order , _
     return iir_zp< T > { plp , zlp , glp , L , R , N };
 }
 
-// Chebyshev type I lowpass analogue normalized zeros/poles plain computation:
+/*!
+ * \brief Chebyshev I lowpass analogue prototype zeros/poles plain computation function
+ * \param[g_stop] stopband attenuation , Db
+ * \param[order]  filter order
+ * \return   The function computes Chebyshev I zeros/poles pairs of the Butterworth lowpass
+ *           analogue prototype. It also compute zero frequency gains. All the data is stored
+ *           within iir_zp data structure and returned. As Chebyshev I filter has unit numerator
+ *           transfer function , it does not have zeros.
+ *           Poles are computed as follows:
+ *
+ *           \f[
+ *                  N     = L + R                                                                       \newline
+ *                  \beta = \frac{1}{ \sqrt{ G_s^{ \frac{1}{order} } } }                                \newline
+ *                  i \in [ 0 ; L )                                                                     \newline
+ *                  \alpha = \frac{ ( 2 * ( i + 1 ) - 1 ) * \pi }{ 2 * order }                          \newline
+ *                  p_i = -\sin{ ( \alpha ) } * sinh( \beta ) + j*\cos{ ( \alpha ) } * cosh( \beta )    \newline
+ *                  g_i = p_i * conj \left( p_i \right)                                                 \newline
+ *                  g_N = \sqrt{ \frac{ 1 }{ 1 + \epsilon_s^2 } } \quad , \quad R < 1                     \newline
+ *                  \epsilon_s = \sqrt{ 10^{ \frac{G_s}{10} } - 1 }
+ *           \f]
+ *
+ *           Real odd pole:
+ *
+ *           \f[
+ *                  p_{L+R-1} = +\sinh{ \beta }+ j * 0   \newline
+ *                  g_{L+R-1} = -p_{L+R-1}                \newline
+ *           \f]
+*/
 template< typename T > iir_zp< T > __cheb1_zeros_poles_plain__( __ix32 order , __fx64 g_stop )
 {
     // number of zeros, poles, coeffs:
@@ -187,11 +322,41 @@ template< typename T > iir_zp< T > __cheb1_zeros_poles_plain__( __ix32 order , _
     return iir_zp< T >{ plp , zlp , glp , L , R , N };
 }
 
-// Chebyshev type II lowpass analogue normalized zeros/poles plain computation:
+/*!
+ * \brief Chebyshev II lowpass analogue prototype zeros/poles plain computation function
+ * \param[g_stop] stopband attenuation , Db
+ * \param[order]  filter order
+ * \return   The function computes Chebyshev II zeros/poles pairs of the Butterworth lowpass
+ *           analogue prototype. It also compute zero frequency gains. All the data is stored
+ *           within iir_zp data structure and returned. As Chebyshev I filter has unit numerator
+ *           transfer function , it does not have zeros.
+ *           Poles are computed as follows:
+ *
+ *           \f[
+ *                  N = L + R                                                               \newline
+ *                  L = trunc\left( \frac{order}{2} \right)                                 \newline
+ *                  R = N - 2*L                                                             \newline
+ *                  \epsilon_s = \sqrt{ 10^{ \frac{G_s}{10} } - 1 }                         \newline
+ *                  \beta  = \frac{ asinh( \epsilon_s ) }{ order }                          \newline
+ *                  i \in [ 0 ; L )                                                         \newline
+ *                  \alpha = \frac{ \left[ 2 * ( i + 1 ) - 1 \right] * \pi }{ 2 * order }   \newline
+ *                  z_i = 0 + j * \frac{ 1 }{ \cos{ \alpha } }                              \newline
+ *                  p_i = \frac{ -\sin{ \alpha } * sinh(\beta) + j * cos(\alpha)*cosh(\alpha) }
+ *                             { cos(\alpha)^2*cosh(\beta)^2 + sin(\alpha)^2*sinh(\beta)^2 }    \newline
+ *                  g_i = \frac{ 1 + j * 0 }
+ *                  { \left[ \frac{ z_i * conj( z_i ) }{ p_i * conj( p_i ) } \right] }          \newline
+ *
+ *           \f]
+ *
+ *           Real odd pole:
+ *
+ *           \f[
+ *                  R       = \frac{ -1 }{ sinh( \beta ) } + j * 0  \newline
+ *                  g_{ N } = -R                                    \newline
+ *           \f]
+*/
 template< typename T > iir_zp< T > __cheb2_zeros_poles_plain__( __ix32 order , __fx64 g_stop )
 {
-    // INITIALIZATION:
-
     // stopband attenuation:
     __fx64 epsilon_stop = sqrt(pow(10, g_stop / 10) - 1);
 
@@ -243,7 +408,30 @@ template< typename T > iir_zp< T > __cheb2_zeros_poles_plain__( __ix32 order , _
     return iir_zp< T >{ plp , zlp , glp , L , R , N };
 }
 
-// Elliptic lowpass analogue normalized zeros/poles plain computation:
+/*!
+ * \brief Elliptic lowpass analogue prototype zeros/poles plain computation function
+ * \param[g_stop] stopband attenuation , Db
+ * \param[order]  filter order
+ * \return   The function computes Elliptic zeros/poles pairs of the Butterworth lowpass
+ *           analogue prototype. It also compute zero frequency gains. All the data is stored
+ *           within iir_zp data structure and returned. As Chebyshev I filter has unit numerator
+ *           transfer function , it does not have zeros.
+ *           Poles are computed as follows:
+ *
+ *           \f[
+ *                  N = L + R                                        \newline
+ *                  L = trunc\left( \frac{order}{2} \right)          \newline
+ *                  R = N - 2*L                                      \newline
+ *                  \epsilon_s = \sqrt{ 10^{ \frac{G_s}{10} } - 1 }  \newline
+ *                  \epsilon_p = \sqrt{ 10^{ \frac{G_p}{10} } - 1 }  \newline
+ *
+ *           \f]
+ *
+ *           Real odd pole:
+ *
+ *           \f[
+ *           \f]
+*/
 template< typename T > iir_zp< T > __ellip_zeros_poles_plain__( __ix32 order ,  __fx64 g_pass , __fx64 g_stop )
 {
     // INITIALIZATION:
@@ -1459,7 +1647,7 @@ template< typename T > void __iir_cf_free__( iir_cf< T > cf )
 }
 
 // filtering template function:
-template< typename T > extern T __filt__( T *input , T *cfnum , T *cfden , T *gains  , __ix32 N ,  mirror_ring_buffer< T > *buff_sx , mirror_ring_buffer< T > *buff_sy )
+template< typename T > extern inline __attribute__( (always_inline) ) T __filt__( T *input , T *cfnum , T *cfden , T *gains  , __ix32 N ,  mirror_ring_buffer< T > *buff_sx , mirror_ring_buffer< T > *buff_sy )
 {
     // initialization:
     T sum_num = 0 , sum_den = 0 , out = 0;
@@ -1478,7 +1666,7 @@ template< typename T > extern T __filt__( T *input , T *cfnum , T *cfden , T *ga
 }
 
 // frequency response computation function:
-template< typename T > iir_fr< T > __freq_resp__( T *cfnum , T *cfden , T *gains , __ix32 N , __fx64 Fs , __fx64 F )
+template< typename T > iir_fr< T > __iir_freq_resp__( T *cfnum , T *cfden , T *gains , __ix32 N , __fx64 Fs , __fx64 F )
 {
     // sampling period:
     T Ts = 1 / Fs;
@@ -1538,19 +1726,19 @@ template < typename T > void __show_iir__( iir_sp sp , iir_cf<T> cf , const char
 
     switch ( sp.type )
     {
-        case 0:
+        case iir_type::lowpass_iir:
         printf( "lowpass specifications: \n" );
         break;
 
-        case 1:
+        case iir_type::highpass_iir:
         printf( "highpass specifications: \n" );
         break;
 
-        case 2:
+        case iir_type::bandpass_iir:
         printf( "bandpass specifications: \n" );
         break;
 
-        case 3:
+        case iir_type::bandstop_iir:
         printf( "bandstop specifications: \n" );
         break;
     }
@@ -1594,145 +1782,145 @@ template < typename T > void __show_iir__( iir_sp sp , iir_cf<T> cf , const char
 // template Butterworth filter:
 template < typename T > class butterworth
 {
+    typedef T __type ;
 public:
     // filter specification , coefficients and buffers:
-    iir_sp      m_sp;
-    iir_cf< T > m_cf;
-    iir_bf< T > m_bf;
+    iir_sp           m_sp;
+    iir_cf< __type > m_cf;
+    iir_bf< __type > m_bf;
 public:
 
     // filter output:
-    T m_out , m_Km , m_pH;
+    __type m_out , m_Km , m_pH;
 
     // initializations:
-    void lp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 1 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , -1 , order , 0 }; }
-    void hp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 1 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , -1 , order , 1 }; }
-    void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , 2 }; }
-    void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , 3 }; }
+    void lp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 1 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , -1 , order , iir_type::lowpass_iir  }; }
+    void hp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 1 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , -1 , order , iir_type::highpass_iir }; }
+    void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , iir_type::bandpass_iir }; }
+    void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , iir_type::bandstop_iir }; }
 
     // memory allocation function:
     __ix32 allocate()
     {
         switch ( m_sp.type )
         {
-            case 0: // lowpass computation
-            m_cf = __butt_cheb1_digital_lp__< T >( m_sp.Fs , m_sp.Fc , m_sp.order , 0 , m_sp.Gs );
+            case iir_type::lowpass_iir:
+            m_cf = __butt_cheb1_digital_lp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , 0 , m_sp.Gs );
             break;
 
-            case 1: // highpass computation:
-            m_cf = __butt_cheb1_digital_hp__< T >( m_sp.Fs , m_sp.Fc , m_sp.order , 0 , m_sp.Gs );
+            case iir_type::highpass_iir:
+            m_cf = __butt_cheb1_digital_hp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , 0 , m_sp.Gs );
             break;
 
-            case 2: // bandpass computation
-            m_cf = __butt_cheb1_digital_bp__< T >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 0 , m_sp.Gs );
+            case iir_type::bandpass_iir:
+            m_cf = __butt_cheb1_digital_bp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 0 , m_sp.Gs );
             break;
 
-            case 3: // bandstop computation
-            m_cf = __butt_cheb1_digital_bs__< T >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 0 , m_sp.Gs );
+            case iir_type::bandstop_iir:
+            m_cf = __butt_cheb1_digital_bs__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 0 , m_sp.Gs );
             break;
         }
 
-        m_bf = ( ( m_cf.cfnum != 0 ) && ( m_cf.cfden != 0 ) && ( m_cf.gains != 0 ) ) ? __iir_bf_alloc__< T >( m_cf.N ) : iir_bf< T >{ 0 , 0 , -1 } ;
+        m_bf = ( ( m_cf.cfnum != 0 ) && ( m_cf.cfden != 0 ) && ( m_cf.gains != 0 ) ) ? __iir_bf_alloc__< __type >( m_cf.N ) : iir_bf< __type >{ 0 , 0 , -1 } ;
         return ( m_bf.bx != 0 && m_bf.by != 0 );
     }
 
     // memory deallocation function:
     void deallocate()
     {
-        __iir_bf_free__< T >( m_bf );
-        __iir_cf_free__< T >( m_cf );
+        __iir_bf_free__< __type >( m_bf );
+        __iir_cf_free__< __type >( m_cf );
     }
 
     // default constructor:
     butterworth()
     {
-        m_cf = iir_cf<T>{ 0 , 0 , 0 , -1 , -1 , -1 };
-        m_bf = iir_bf<T>{ 0 , 0 , -1 };
-        m_sp = iir_sp   { 4000 , 1 / 4000 , 50 , 100 , -1 , 1 , -1 , 4 , 0 };
+        m_cf = iir_cf<__type>{ 0 , 0 , 0 , -1 , -1 , -1 };
+        m_bf = iir_bf<__type>{ 0 , 0 , -1 };
+        m_sp = iir_sp        { 4000 , 1 / 4000 , 50 , 100 , -1 , 1 , -1 , 4 , 0 };
     }
 
     // default destructor:
     ~butterworth(){ deallocate(); }
 
-    // coefficients computation virtual function:
-
     // filtering function:
-    T filt( T *input ) { return ( m_out = __filt__< T >( input , m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_bf.bx , m_bf.by ) ); }
+    __type filt( __type *input ) { return ( m_out = __filt__< __type >( input , m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_bf.bx , m_bf.by ) ); }
 
-    inline T operator () (  T *input  ) { return filt( input ); }
+    // operators:
+    inline __type operator () (  __type *input  ) { return filt( input ); }
 
     #ifndef __ALG_PLATFORM
-    void show_properties() { __show_iir__< T >( m_sp , m_cf , "Butterworth" ); }
+    void show_properties() { __show_iir__< __type >( m_sp , m_cf , "Butterworth" ); }
     #endif
 };
 
 // template Chebyshev type I filter:
 template < typename T > class chebyshev_1
 {
+    typedef T __type ;
 public:
     // filter specification , coefficients and buffers:
-    iir_sp      m_sp;
-    iir_cf< T > m_cf;
-    iir_bf< T > m_bf;
+    iir_sp           m_sp;
+    iir_cf< __type > m_cf;
+    iir_bf< __type > m_bf;
 public:
 
     // filter output:
-    T m_out , m_Km , m_pH;
+    __type m_out;
 
     // initializations:
-    void lp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 1 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , -1 , order , 0 }; }
-    void hp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 1 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , -1 , order , 1 }; }
-    void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , 2 }; }
-    void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , 3 }; }
+    void lp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 1 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , -1 , order , iir_type::lowpass_iir  }; }
+    void hp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 1 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , -1 , order , iir_type::highpass_iir }; }
+    void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , iir_type::bandpass_iir }; }
+    void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , iir_type::bandstop_iir }; }
 
     __ix32 allocate()
     {
         switch ( m_sp.type )
         {
-            case 0: // lowpass computation
-            m_cf = __butt_cheb1_digital_lp__< T >( m_sp.Fs , m_sp.Fc , m_sp.order , 1 , m_sp.Gs );
+            case iir_type::lowpass_iir:
+            m_cf = __butt_cheb1_digital_lp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , 1 , m_sp.Gs );
             break;
 
-            case 1: // highpass computation:
-            m_cf = __butt_cheb1_digital_hp__< T >( m_sp.Fs , m_sp.Fc , m_sp.order , 1 , m_sp.Gs );
+            case iir_type::highpass_iir:
+            m_cf = __butt_cheb1_digital_hp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , 1 , m_sp.Gs );
             break;
 
-            case 2: // bandpass computation
-            m_cf = __butt_cheb1_digital_bp__< T >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 1 , m_sp.Gs );
+            case iir_type::bandpass_iir:
+            m_cf = __butt_cheb1_digital_bp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 1 , m_sp.Gs );
             break;
 
-            case 3: // bandstop computation
-            m_cf = __butt_cheb1_digital_bs__< T >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 1 , m_sp.Gs );
+            case iir_type::bandstop_iir:
+            m_cf = __butt_cheb1_digital_bs__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 1 , m_sp.Gs );
             break;
         }
 
-        m_bf = ( ( m_cf.cfnum != 0 ) && ( m_cf.cfden != 0 ) && ( m_cf.gains != 0 ) ) ? __iir_bf_alloc__< T >( m_cf.N ) : iir_bf< T >{ 0 , 0 , -1 } ;
+        m_bf = ( ( m_cf.cfnum != 0 ) && ( m_cf.cfden != 0 ) && ( m_cf.gains != 0 ) ) ? __iir_bf_alloc__< __type >( m_cf.N ) : iir_bf< __type >{ 0 , 0 , -1 } ;
         return ( m_bf.bx != 0 && m_bf.by != 0 );
     }
 
     void deallocate()
     {
-        __iir_bf_free__< T >( m_bf );
-        __iir_cf_free__< T >( m_cf );
+        __iir_bf_free__< __type >( m_bf );
+        __iir_cf_free__< __type >( m_cf );
     }
 
     // default constructor:
     chebyshev_1()
     {
-        m_cf = iir_cf<T>{ 0 , 0 , 0 , -1 , -1 , -1 };
-        m_bf = iir_bf<T>{ 0 , 0 , -1 };
-        m_sp = iir_sp   { 4000 , 1 / 4000 , 50 , 100 , -1 , 1 , -1 , 4 , 0 };
+        m_cf = iir_cf< __type >{ 0 , 0 , 0 , -1 , -1 , -1 };
+        m_bf = iir_bf< __type >{ 0 , 0 , -1 };
+        m_sp = iir_sp          { 4000 , 1 / 4000 , 50 , 100 , -1 , 1 , -1 , 4 , 0 };
     }
 
     // default destructor:
     ~chebyshev_1(){ deallocate(); }
 
-    // coefficients computation virtual function:
-
     // filtering function:
-    T filt( T *input ) { return ( m_out = __filt__< T >( input , m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_bf.bx , m_bf.by ) ); }
+    __type filt( __type *input ) { return ( m_out = __filt__< __type >( input , m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_bf.bx , m_bf.by ) ); }
 
-    inline T operator () (  T *input  ) { return filt( input ); }
+    // operators:
+    inline __type operator () (  __type *input  ) { return filt( input ); }
 
     #ifndef __ALG_PLATFORM
     void show_properties() { __show_iir__< T >( m_sp , m_cf , "Chebyshev_I" ); }
@@ -1742,134 +1930,135 @@ public:
 // template Chebyshev type II filter:
 template < typename T > class chebyshev_2
 {
+    typedef T __type ;
 public:
     // filter specification , coefficients and buffers:
-    iir_sp      m_sp;
-    iir_cf< T > m_cf;
-    iir_bf< T > m_bf;
+    iir_sp           m_sp;
+    iir_cf< __type > m_cf;
+    iir_bf< __type > m_bf;
 public:
 
     // filter output:
-    T m_out , m_Km , m_pH;
+    __type m_out;
 
     // initializations:
-    void lp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , Gp , order , 0 }; }
-    void hp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , Gp , order , 1 }; }
-    void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , Gp , order , 2 }; }
-    void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , Gp , order , 3 }; }
+    void lp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 80 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , 1 , order , iir_type::lowpass_iir  }; }
+    void hp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 80 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , 1 , order , iir_type::highpass_iir }; }
+    void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , 1 , order , iir_type::bandpass_iir }; }
+    void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , 1 , order , iir_type::bandstop_iir }; }
 
     __ix32 allocate()
     {
         switch ( m_sp.type )
         {
-            case 0: // lowpass computation
-            m_cf = __cheb2_ellip_digital_lp__< T >( m_sp.Fs , m_sp.Fc , m_sp.order , 0 , m_sp.Gp , m_sp.Gs );
+            case iir_type::lowpass_iir:
+            m_cf = __cheb2_ellip_digital_lp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , 0 , m_sp.Gp , m_sp.Gs );
             break;
 
-            case 1: // highpass computation:
-            m_cf = __cheb2_ellip_digital_hp__< T >( m_sp.Fs , m_sp.Fc , m_sp.order , 0 , m_sp.Gp , m_sp.Gs );
+            case iir_type::highpass_iir:
+            m_cf = __cheb2_ellip_digital_hp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , 0 , m_sp.Gp , m_sp.Gs );
             break;
 
-            case 2: // bandpass computation
-            m_cf = __cheb2_ellip_digital_bp__< T >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 0 , m_sp.Gp , m_sp.Gs );
+            case iir_type::bandpass_iir:
+            m_cf = __cheb2_ellip_digital_bp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 0 , m_sp.Gp , m_sp.Gs );
             break;
 
-            case 3: // bandstop computation
-            m_cf = __cheb2_ellip_digital_bs__< T >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 0 , m_sp.Gp , m_sp.Gs );
+            case iir_type::bandstop_iir:
+            m_cf = __cheb2_ellip_digital_bs__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 0 , m_sp.Gp , m_sp.Gs );
             break;
         }
 
-        m_bf = ( ( m_cf.cfnum != 0 ) && ( m_cf.cfden != 0 ) && ( m_cf.gains != 0 ) ) ? __iir_bf_alloc__< T >( m_cf.N ) : iir_bf< T >{ 0 , 0 , -1 } ;
+        m_bf = ( ( m_cf.cfnum != 0 ) && ( m_cf.cfden != 0 ) && ( m_cf.gains != 0 ) ) ? __iir_bf_alloc__< __type >( m_cf.N ) : iir_bf< __type >{ 0 , 0 , -1 } ;
         return ( m_bf.bx != 0 && m_bf.by != 0 );
     }
 
     void deallocate()
     {
-        __iir_bf_free__< T >( m_bf );
-        __iir_cf_free__< T >( m_cf );
+        __iir_bf_free__< __type >( m_bf );
+        __iir_cf_free__< __type >( m_cf );
     }
 
     // default constructor:
     chebyshev_2()
     {
-        m_cf = iir_cf<T>{ 0 , 0 , 0 , -1 , -1 , -1 };
-        m_bf = iir_bf<T>{ 0 , 0 , -1 };
-        m_sp = iir_sp   { 4000 , 1 / 4000 , 50 , 100 , -1 , 1 , 80 , 4 , 0 };
+        m_cf = iir_cf< __type > { 0 , 0 , 0 , -1 , -1 , -1 };
+        m_bf = iir_bf< __type > { 0 , 0 , -1 };
+        m_sp = iir_sp           { 4000 , 1 / 4000 , 50 , 100 , -1 , 1 , 80 , 4 , 0 };
     }
 
     // default destructor:
     ~chebyshev_2(){ deallocate(); }
 
-    // coefficients computation virtual function:
-
     // filtering function:
-    T filt( T *input ) { return ( m_out = __filt__< T >( input , m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_bf.bx , m_bf.by ) ); }
+    __type filt( __type *input ) { return ( m_out = __filt__< __type >( input , m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_bf.bx , m_bf.by ) ); }
 
-    inline T operator () (  T *input  ) { return filt( input ); }
+    // operators:
+    inline __type operator () (  __type *input  ) { return filt( input ); }
 
     #ifndef __ALG_PLATFORM
-    void show_properties() { __show_iir__< T >( m_sp , m_cf , "Chebyshev_II" ); }
+    void show_properties() { __show_iir__< __type >( m_sp , m_cf , "Chebyshev_II" ); }
     #endif
 };
 
 // template Chebyshev type II filter:
 template < typename T > class elliptic
 {
+    typedef T __type ;
 public:
     // filter specification , coefficients and buffers:
-    iir_sp      m_sp;
-    iir_cf< T > m_cf;
-    iir_bf< T > m_bf;
+    iir_sp           m_sp;
+    iir_cf< __type > m_cf;
+    iir_bf< __type > m_bf;
 public:
 
     // filter output:
-    T m_out , m_Km , m_pH;
+    __type m_out;
 
     // initializations:
-    void lp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , Gp , order , 0 }; }
-    void hp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , Gp , order , 1 }; }
-    void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , Gp , order , 2 }; }
-    void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , Gp , order , 3 }; }
+    void lp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , Gp , order , iir_type::lowpass_iir  }; }
+    void hp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 )             { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , Gp , order , iir_type::highpass_iir }; }
+    void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , Gp , order , iir_type::bandpass_iir }; }
+    void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , Gp , order , iir_type::bandstop_iir }; }
 
     // memory allocation function:
     __ix32 allocate()
     {
         switch ( m_sp.type )
         {
-            case 0: // lowpass computation
-            m_cf = __cheb2_ellip_digital_lp__< T >( m_sp.Fs , m_sp.Fc , m_sp.order , 1 , m_sp.Gp , m_sp.Gs );
+            case iir_type::lowpass_iir:
+            m_cf = __cheb2_ellip_digital_lp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , 1 , m_sp.Gp , m_sp.Gs );
             break;
 
-            case 1: // highpass computation:
-            m_cf = __cheb2_ellip_digital_hp__< T >( m_sp.Fs , m_sp.Fc , m_sp.order , 1 , m_sp.Gp , m_sp.Gs );
+            case iir_type::highpass_iir:
+            m_cf = __cheb2_ellip_digital_hp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , 1 , m_sp.Gp , m_sp.Gs );
             break;
 
-            case 2: // bandpass computation
-            m_cf = __cheb2_ellip_digital_bp__< T >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 1 , m_sp.Gp , m_sp.Gs );
+            case iir_type::bandpass_iir:
+            m_cf = __cheb2_ellip_digital_bp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 1 , m_sp.Gp , m_sp.Gs );
             break;
 
-            case 3: // bandstop computation
-            m_cf = __cheb2_ellip_digital_bs__< T >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 1 , m_sp.Gp , m_sp.Gs );
+            case iir_type::bandstop_iir:
+            m_cf = __cheb2_ellip_digital_bs__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 1 , m_sp.Gp , m_sp.Gs );
             break;
         }
 
-        m_bf = ( ( m_cf.cfnum != 0 ) && ( m_cf.cfden != 0 ) && ( m_cf.gains != 0 ) ) ? __iir_bf_alloc__< T >( m_cf.N ) : iir_bf< T >{ 0 , 0 , -1 } ;
+        m_bf = ( ( m_cf.cfnum != 0 ) && ( m_cf.cfden != 0 ) && ( m_cf.gains != 0 ) ) ? __iir_bf_alloc__< __type >( m_cf.N ) : iir_bf< __type >{ 0 , 0 , -1 } ;
         return ( m_bf.bx != 0 && m_bf.by != 0 );
     }
 
     // memory deallocation function:
     void deallocate()
     {
-        __iir_bf_free__< T >( m_bf );
-        __iir_cf_free__< T >( m_cf );
+        __iir_bf_free__< __type >( m_bf );
+        __iir_cf_free__< __type >( m_cf );
     }
 
     // default constructor:
     elliptic()
     {
-        m_cf = iir_cf<T>{ 0 , 0 , 0 , -1 , -1 , -1 };
-        m_bf = iir_bf<T>{ 0 , 0 , -1 };
-        m_sp = iir_sp   { 4000 , 1 / 4000 , 50 , 100 , -1 , 1 , 80 , 4 , 0 };
+        m_cf = iir_cf< __type >{ 0 , 0 , 0 , -1 , -1 , -1 };
+        m_bf = iir_bf< __type >{ 0 , 0 , -1 };
+        m_sp = iir_sp          { 4000 , 1 / 4000 , 50 , 100 , -1 , 1 , 80 , 4 , 0 };
     }
 
     // default destructor:
@@ -1877,15 +2066,18 @@ public:
 
 
     // filtering function:
-    T filt( T *input ) { return ( m_out = __filt__< T >( input , m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_bf.bx , m_bf.by ) ); }
+    __type filt( __type *input ) { return ( m_out = __filt__< __type >( input , m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_bf.bx , m_bf.by ) ); }
 
-    inline T operator () (  T *input  ) { return filt( input ); }
+    // operators:
+    inline __type operator () (  __type *input  ) { return filt( input ); }
 
     // debugging function:
     #ifndef __ALG_PLATFORM
     void show_properties() { __show_iir__< T >( m_sp , m_cf , "Chebyshev_II" ); }
     #endif
 };
+
+/*! @} */
 
 // customized macros exclusion to avoid aliases during compilation:
 #undef __fx32

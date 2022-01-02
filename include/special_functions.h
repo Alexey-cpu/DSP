@@ -128,7 +128,7 @@
 
 /*! \brief defines 64-bit floating point type lower limit */
 #ifndef __min_fx64
-#define __min_fx64 1.7976931348623158e+308
+#define __min_fx64 2.22507e-308
 #endif
 
 /*! \brief defines 16-bit integer type lower limit */

@@ -11,6 +11,11 @@
 #ifndef COMPLEX_H
 #define COMPLEX_H
 
+/*! \defgroup <Complex_fcn> ( Complex numbers functions )
+ *  \brief the module describes complex numbers functions
+    @{
+*/
+
 // standart headers
 #ifndef __ALG_PLATFORM
 #include "cmath"
@@ -26,53 +31,55 @@
 #define __TO_RADIANS(x) ( (x) * 0.01745329251994329576923690768489)
 #endif
 
-// customized C data types:
+/*! \brief defines 16-bit integer type */
 #ifndef __ix16
 #define __ix16 short
 #endif
 
+/*! \brief defines 32-bit integer type */
 #ifndef __ix32
 #define __ix32 int
 #endif
 
+/*! \brief defines 64-bit integer type */
 #ifndef __ix64
 #define __ix64 long long
 #endif
 
+/*! \brief defines 32-bit floating point type */
 #ifndef __fx32
 #define __fx32 float
 #endif
 
+/*! \brief defines 64-bit floating point type */
 #ifndef __fx64
 #define __fx64 double
 #endif
 
+/*! \brief defines extended 64-bit floating point type */
 #ifndef __fxx64
 #define __fxx64 long double
 #endif
 
-// customized upper limits:
+/*! \brief defines upper limit of 32-bit floating point type */
 #ifndef __max_fx32
 #define __max_fx32 3.402823466e+38
 #endif
 
+/*! \brief defines upper limit of 64-bit floating point type */
 #ifndef __max_fx64
 #define __max_fx64 1.7976931348623158e+308
 #endif
 
-// customized lower limits:
+/*! \brief defines lower limit of 32-bit floating point type */
 #ifndef __min_fx32
 #define __min_fx32 1.175494351e-38
 #endif
 
+/*! \brief defines lower limit of 64-bit floating point type */
 #ifndef __min_fx64
-#define __min_fx64 1.7976931348623158e+308
+#define __min_fx64 2.22507e-308
 #endif
-
-/*! \defgroup <Complex_fcn> ( Complex numbers functions )
- *  \brief the module describes complex numbers functions
-    @{
-*/
 
 // template complex number structure:
 template< typename T > struct fcomplex;
@@ -145,9 +152,7 @@ template< typename T>  fcomplex< T > __cdiv__( T re0 , T im0 , T re1 , T im1 , T
 
 /* template complex number class */
 
-/*!
-*   \brief complex number template class
-  */
+/*! \brief complex number template class */
 
 // complex number type:
 template< typename T > class complex
