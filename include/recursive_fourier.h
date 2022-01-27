@@ -1,8 +1,12 @@
-//--------------------------------------------------------------------------------
-//A.M.Tykvinsky, 21.12.2021
-//--------------------------------------------------------------------------------
-// TEMPLATE RECURSIVE FOURIER CLASS
-//--------------------------------------------------------------------------------
+/*!
+ * \file
+ * \brief   Recursive Fourier
+ * \authors A.Tykvinskiy
+ * \date    21.01.2022
+ * \version 1.0
+ *
+ * The header declares template recursive discrete Fourier transformation
+*/
 
 #ifndef RECURSIVE_FOURIER_H
 #define RECURSIVE_FOURIER_H
@@ -12,82 +16,124 @@
 #include "cmath"
 #endif
 
+/*! \defgroup <RECURSIVE_FIR> ( Recursive FIR )
+ *  \brief the module contains reursive FIR filters template classes
+    @{
+*/
+
 #include "buffer.h"
 
-// customized C data types definition:
+/*! \brief defines 16-bit integer type */
 #ifndef __ix16
 #define __ix16 short
 #endif
 
+/*! \brief defines 32-bit integer type */
 #ifndef __ix32
 #define __ix32 int
 #endif
 
+/*! \brief defines 64-bit integer type */
 #ifndef __ix64
 #define __ix64 long long
 #endif
 
+/*! \brief defines 16-bit unsigned integer type */
 #ifndef __uix16
 #define __uix16 unsigned short
 #endif
 
+/*! \brief defines 32-bit unsigned integer type */
 #ifndef __uix32
 #define __uix32 unsigned int
 #endif
 
+/*! \brief defines 64-bit unsigned integer type */
 #ifndef __uix64
 #define __uix64 unsigned long long
 #endif
 
+/*! \brief defines 32-bit floating point type */
 #ifndef __fx32
 #define __fx32 float
 #endif
 
+/*! \brief defines 64-bit floating point type */
 #ifndef __fx64
 #define __fx64 double
 #endif
 
-// customized math constants:
+/*! \brief defines Pi */
 #ifndef PI0 // PI
 #define PI0 3.1415926535897932384626433832795
 #endif
 
+/*! \brief defines  2*Pi */
 #ifndef PI2 // 2*PI
 #define PI2 6.283185307179586476925286766559
 #endif
 
-// recursive Fourier
+/*! \brief recursive discrete Fourier transformation template class */
 template< typename T > class recursive_fourier;
 
 // Recursive Fourier implementations:
 
-// float x32:
+/*! \brief recursive discrete Fourier transformation 32-bit floating point implementation */
 template<> class recursive_fourier<__fx32>
 {
     typedef __fx32 __type;
 
-    // system variables:
+private:
+    /*! \brief nominal input signal frequency , Hz */
     __type m_Fn;
+    /*! \brief input signal sampling frequency , Hz */
     __type m_Fs;
+    /*! \brief input signal sampling period , s */
     __type m_Ts;
+    /*! \brief recursive Fourier filter gain */
     __type m_Gain;
+    /*! \brief recursive Fourier filter buffer size */
     __type m_Ns;
+    /*! \brief computed harmonic number */
     __type m_hnum;
-    __type m_a0 , m_Ks , m_Kc;
+    /*! \brief auxiliary variable */
+    __type m_a0;
+    /*! \brief auxiliary variable */
+    __type m_Ks;
+    /*! \brief auxiliary variable */
+    __type m_Kc;
+    /*! \brief recursive Fourier filter order */
     __ix32 m_order;
 
-    // buffer:
+    /*! \brief recursive Fourier filter buffer */
     mirror_ring_buffer<__type> m_buffer_sx;
 
 public:
-    // filter output:
-    __type m_a , m_b , m_Km , m_pH;
+     /*! \brief harmonic real output component */
+    __type m_a;
+    /*! \brief harmonic imaginary output component */
+    __type m_b;
+    /*! \brief recursive Fourier filter frequency amplitude response */
+    __type m_Km;
+    /*! \brief recursive Fourier filter frequency phase response */
+    __type m_pH;
 
-    // memory allocation and deallocation functions:
+     /*! \brief  recursive Fourier filter memory allocation function
+      *  \return the function allocates memory for the recursive Fourier filter buffer
+    */
     __ix32  allocate() { return ( m_buffer_sx.allocate( m_order + 2 ) ); }
+
+    /*! \brief  recursive Fourier filter memory deallocation function
+     *  \return the function deallocates memory of the recursive Fourier buffer
+   */
     void deallocate() { m_buffer_sx.deallocate(); }
 
-    // initialization function:
+    /*! \brief  recursive Fourier filter initialization function
+     *  \param[Fn  ] - input signal nominal frequency  , Hz
+     *  \param[Fs  ] - input signal sampling frequency , hz
+     *  \param[hnum] - number of computed harmonic
+     *  \return the function initializes recursive Fourier filter
+   */
     void init( __type Fn , __type Fs , __ix32 hnum )
     {
         // system variables initialization:
@@ -109,7 +155,7 @@ public:
         m_pH = 0;
     }
 
-    // default constructor:
+    /*! \brief  recursive Fourier filter default constructor */
     recursive_fourier()
     {
         // system variables initialization:
@@ -131,15 +177,21 @@ public:
         m_pH = 0;
     };
 
-    // constructor with initiallization:
+    /*! \brief  recursive Fourier filter initializing constructor
+     *  \param[Fn  ] - input signal nominal frequency  , Hz
+     *  \param[Fs  ] - input signal sampling frequency , hz
+     *  \param[hnum] - number of computed harmonic
+     *  \return This constructor calls initialization function
+    */
     recursive_fourier( __type Fn , __type Fs , __ix32 hnum ) { init( Fn , Fs , hnum ); }
 
-    // default destructor:
+    /*! \brief  recursive Fourier filter default destructor */
     ~recursive_fourier(){ deallocate(); }
 
-    // filtering function:
-
-    // float x32 input:
+    /*! \brief  32-bit recursive Fourier filter filtering function
+     *  \param[input] - pointer to the nput signal frames
+     *  \return The function computes real and imaginary harmonic component
+    */
     inline void filt ( __type *input )
     {
         m_buffer_sx.fill_buff( input );
@@ -148,7 +200,10 @@ public:
         m_b  = m_a0 * m_Ks + m_b * m_Kc;
     }
 
-    // float x64 input ( CAUTION !!! ROUNDING ERROR OCCURS !!! )
+    /*! \brief  64-bit recursive Fourier filter filtering function
+     *  \param[input] - pointer to the nput signal frames
+     *  \return The function computes real and imaginary harmonic component
+    */
     inline void filt ( __fx64 *input )
     {
         m_buffer_sx.fill_buff( input );
@@ -157,7 +212,10 @@ public:
         m_b  = m_a0 * m_Ks + m_b * m_Kc;
     }
 
-    // Frequency characteristics computation function:
+    /*! \brief recursive Fourier filter frequency response computation function
+     *  \param[F] - input signal frequency , Hz
+     *  \return The function computes phase and amplitude frequency response for the signal having frequency F
+    */
     __ix32 FreqCharacteristics( __type F )
     {
         // complex frequency coeffs:
@@ -184,42 +242,75 @@ public:
         return 0;
     }
 
-    // operators:
-
-    // x32:
+    /*! \brief  32-bit recursive Fourier filter filtering operator
+     *  \param[input] - pointer to the nput signal frames
+     *  \return The operator calls the function that computes real and imaginary harmonic component
+    */
     inline void operator () ( __type *input ){ filt ( input ); }
 
-    // x64:
+    /*! \brief  64-bit recursive Fourier filter filtering operator
+     *  \param[input] - pointer to the nput signal frames
+     *  \return The operator calls the function that computes real and imaginary harmonic component
+    */
     inline void operator () ( __fx64 *input ){ filt ( input ); }
 };
 
-// float x64:
+/*! \brief recursive discrete Fourier transformation 64-bit floating point implementation */
 template<> class recursive_fourier<__fx64>
 {
     typedef __fx64 __type;
 
-    // system variables:
+private:
+    /*! \brief nominal input signal frequency , Hz */
     __type m_Fn;
+    /*! \brief input signal sampling frequency , Hz */
     __type m_Fs;
+    /*! \brief input signal sampling period , s */
     __type m_Ts;
+    /*! \brief recursive Fourier filter gain */
     __type m_Gain;
+    /*! \brief recursive Fourier filter buffer size */
     __type m_Ns;
+    /*! \brief computed harmonic number */
     __type m_hnum;
-    __type m_a0 , m_Ks , m_Kc;
+    /*! \brief auxiliary variable */
+    __type m_a0;
+    /*! \brief auxiliary variable */
+    __type m_Ks;
+    /*! \brief auxiliary variable */
+    __type m_Kc;
+    /*! \brief recursive Fourier filter order */
     __ix32 m_order;
 
-    // buffer:
+    /*! \brief recursive Fourier filter buffer */
     mirror_ring_buffer<__type> m_buffer_sx;
 
 public:
-    // filter output:
-    __type m_a , m_b , m_Km , m_pH;
+    /*! \brief harmonic real output component */
+   __type m_a;
+   /*! \brief harmonic imaginary output component */
+   __type m_b;
+   /*! \brief recursive Fourier filter frequency amplitude response */
+   __type m_Km;
+   /*! \brief recursive Fourier filter frequency phase response */
+   __type m_pH;
 
-    // memory allocation and deallocation functions:
+   /*! \brief  recursive Fourier filter memory allocation function
+    *  \return the function allocates memory for the recursive Fourier filter buffer
+  */
     int  allocate() { return ( m_buffer_sx.allocate( m_order + 2 ) ); }
+
+    /*! \brief  recursive Fourier filter memory deallocation function
+     *  \return the function deallocates memory of the recursive Fourier buffer
+   */
     void deallocate() { m_buffer_sx.deallocate(); }
 
-    // initialization function:
+    /*! \brief  recursive Fourier filter initialization function
+     *  \param[Fn  ] - input signal nominal frequency  , Hz
+     *  \param[Fs  ] - input signal sampling frequency , hz
+     *  \param[hnum] - number of computed harmonic
+     *  \return the function initializes recursive Fourier filter
+   */
     void init( __type Fn , __type Fs , __ix32 hnum )
     {
         // system variables initialization:
@@ -241,7 +332,7 @@ public:
         m_pH = 0;
     }
 
-    // default constructor:
+    /*! \brief  recursive Fourier filter default constructor */
     recursive_fourier()
     {
         // system variables initialization:
@@ -263,13 +354,21 @@ public:
         m_pH = 0;
     };
 
-    // constructor with initiallization:
+    /*! \brief  recursive Fourier filter initializing constructor
+     *  \param[Fn  ] - input signal nominal frequency  , Hz
+     *  \param[Fs  ] - input signal sampling frequency , hz
+     *  \param[hnum] - number of computed harmonic
+     *  \return This constructor calls initialization function
+    */
     recursive_fourier( __type Fn , __type Fs , __ix32 hnum ) { init( Fn , Fs , hnum ); }
 
-    // default destructor:
+    /*! \brief  recursive Fourier filter default destructor */
     ~recursive_fourier(){ deallocate(); }
 
-    // Frequency characteristics computation function:
+    /*! \brief  32-bit recursive Fourier filter filtering function
+     *  \param[input] - pointer to the nput signal frames
+     *  \return The function computes real and imaginary harmonic component
+    */
     __ix32 FreqCharacteristics( __type F )
     {
         // complex frequency coeffs:
@@ -296,7 +395,10 @@ public:
         return 0;
     }
 
-    // filtering function:
+    /*! \brief  64-bit recursive Fourier filter filtering function
+     *  \param[input] - pointer to the nput signal frames
+     *  \return The function computes real and imaginary harmonic component
+    */
     inline void filt ( __type *input )
     {
         m_buffer_sx.fill_buff( input );
@@ -305,11 +407,14 @@ public:
         m_b  = m_a0 * m_Ks + m_b * m_Kc;
     }
 
-    // operators:
-
-    // initialization operator:
+    /*! \brief  64-bit recursive Fourier filter filtering operator
+     *  \param[input] - pointer to the nput signal frames
+     *  \return The operator calls the function that computes real and imaginary harmonic component
+    */
     inline void operator () ( __type *input ){ filt ( input ); }
 };
+
+/*! @} */
 
 // customized data types exclusion to avoid aliases:
 #undef __ix16

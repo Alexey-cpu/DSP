@@ -130,7 +130,7 @@ $(function() {
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    __type gen( __type amp , __type fn , __type phs , __type fs )</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    {</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        <span class="comment">// signal generation:</span></div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        m_out = amp * sin( fn * <a class="code hl_define" href="group___f_i_r__fcn.html#ga2750dfdda752269a036f487a4a34b849">PI2</a> * m_t + <a class="code hl_define" href="group___complex__fcn.html#gad37ddbd09cea5e81546e591a81209377">__TO_RADIANS</a>( phs ) );</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        m_out = amp * sin( fn * <a class="code hl_define" href="group___f_i_r___f_i_l_t_e_r_s.html#ga2750dfdda752269a036f487a4a34b849">PI2</a> * m_t + <a class="code hl_define" href="group___complex__fcn.html#gad37ddbd09cea5e81546e591a81209377">__TO_RADIANS</a>( phs ) );</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        <span class="comment">// time increment:</span></div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        <span class="keywordflow">if</span>( ( fn &gt; 0 ) &amp;&amp; ( m_t == 1 ) ) m_t = 0;</div>
@@ -154,7 +154,7 @@ $(function() {
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasssgen_html"><div class="ttname"><a href="classsgen.html">sgen</a></div><div class="ttdef"><b>Definition:</b> sgen.h:37</div></div>
 <div class="ttc" id="agroup___complex__fcn_html_gad37ddbd09cea5e81546e591a81209377"><div class="ttname"><a href="group___complex__fcn.html#gad37ddbd09cea5e81546e591a81209377">__TO_RADIANS</a></div><div class="ttdeci">#define __TO_RADIANS(x)</div><div class="ttdoc">converts degrees to radians</div><div class="ttdef"><b>Definition:</b> complex.h:31</div></div>
-<div class="ttc" id="agroup___f_i_r__fcn_html_ga2750dfdda752269a036f487a4a34b849"><div class="ttname"><a href="group___f_i_r__fcn.html#ga2750dfdda752269a036f487a4a34b849">PI2</a></div><div class="ttdeci">#define PI2</div><div class="ttdoc">defines 2*pi</div><div class="ttdef"><b>Definition:</b> FIR.h:54</div></div>
+<div class="ttc" id="agroup___f_i_r___f_i_l_t_e_r_s_html_ga2750dfdda752269a036f487a4a34b849"><div class="ttname"><a href="group___f_i_r___f_i_l_t_e_r_s.html#ga2750dfdda752269a036f487a4a34b849">PI2</a></div><div class="ttdeci">#define PI2</div><div class="ttdoc">defines 2*pi</div><div class="ttdef"><b>Definition:</b> FIR.h:54</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

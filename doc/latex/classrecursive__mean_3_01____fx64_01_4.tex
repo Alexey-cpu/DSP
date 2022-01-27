@@ -1,41 +1,182 @@
 \hypertarget{classrecursive__mean_3_01____fx64_01_4}{}\doxysection{recursive\+\_\+mean\texorpdfstring{$<$}{<} \+\_\+\+\_\+fx64 \texorpdfstring{$>$}{>} Class Reference}
 \label{classrecursive__mean_3_01____fx64_01_4}\index{recursive\_mean$<$ \_\_fx64 $>$@{recursive\_mean$<$ \_\_fx64 $>$}}
+
+
+recursive mean template class 64-\/bit floating point implementation  
+
+
+
+
+{\ttfamily \#include $<$recursive\+\_\+mean.\+h$>$}
+
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_acc2f490d8ff07689f8ff2e8a9fb6aebb}\label{classrecursive__mean_3_01____fx64_01_4_acc2f490d8ff07689f8ff2e8a9fb6aebb}} 
-\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} {\bfseries allocate} ()
-\item 
-\mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_a747e9975ac74d609d90af2fbbcf4ea24}\label{classrecursive__mean_3_01____fx64_01_4_a747e9975ac74d609d90af2fbbcf4ea24}} 
-void {\bfseries deallocate} ()
-\item 
-\mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_ab8f85e1c47fe6f3111147cca3b6b6661}\label{classrecursive__mean_3_01____fx64_01_4_ab8f85e1c47fe6f3111147cca3b6b6661}} 
-void {\bfseries init} (\+\_\+\+\_\+type Fn, \+\_\+\+\_\+type Fs, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order)
-\item 
-\mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_a1591f0baf5c4b11427833649d04cc0fb}\label{classrecursive__mean_3_01____fx64_01_4_a1591f0baf5c4b11427833649d04cc0fb}} 
-{\bfseries recursive\+\_\+mean} (\+\_\+\+\_\+type Fn, \+\_\+\+\_\+type Fs, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order)
-\item 
-\mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_afa4d6f41cb245dc6cc5618f4132a1cd5}\label{classrecursive__mean_3_01____fx64_01_4_afa4d6f41cb245dc6cc5618f4132a1cd5}} 
-\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} {\bfseries Freq\+Characteristics} (\+\_\+\+\_\+type F)
-\item 
-\mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_a14c848c36406b1fc114aa6feb11479cf}\label{classrecursive__mean_3_01____fx64_01_4_a14c848c36406b1fc114aa6feb11479cf}} 
-void {\bfseries filt} (\+\_\+\+\_\+type $\ast$input)
-\item 
-\mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_a86873ea191e9f5f6c158ff359c476531}\label{classrecursive__mean_3_01____fx64_01_4_a86873ea191e9f5f6c158ff359c476531}} 
-void {\bfseries operator()} (\+\_\+\+\_\+type $\ast$input)
-\end{DoxyCompactItemize}
+\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{classrecursive__mean_3_01____fx64_01_4_acc2f490d8ff07689f8ff2e8a9fb6aebb}{allocate}} ()
+\begin{DoxyCompactList}\small\item\em recursive mean filter memory allocation function \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classrecursive__mean_3_01____fx64_01_4_a747e9975ac74d609d90af2fbbcf4ea24}{deallocate}} ()
+\begin{DoxyCompactList}\small\item\em recursive mean filter memory deallocation function \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classrecursive__mean_3_01____fx64_01_4_ab8f85e1c47fe6f3111147cca3b6b6661}{init}} (\+\_\+\+\_\+type Fn, \+\_\+\+\_\+type Fs, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order)
+\begin{DoxyCompactList}\small\item\em recursive mean filter initialization function \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_ae61c2c4fb96af1b04a8fa316de82ba9d}\label{classrecursive__mean_3_01____fx64_01_4_ae61c2c4fb96af1b04a8fa316de82ba9d}} 
+{\bfseries recursive\+\_\+mean} ()
+\begin{DoxyCompactList}\small\item\em recursive mean filter default constructor \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classrecursive__mean_3_01____fx64_01_4_a1591f0baf5c4b11427833649d04cc0fb}{recursive\+\_\+mean}} (\+\_\+\+\_\+type Fn, \+\_\+\+\_\+type Fs, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order)
+\begin{DoxyCompactList}\small\item\em recursive Fourier filter initializing constructor \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_af579c1a5ece1fc766896e591362625f4}\label{classrecursive__mean_3_01____fx64_01_4_af579c1a5ece1fc766896e591362625f4}} 
+{\bfseries $\sim$recursive\+\_\+mean} ()
+\begin{DoxyCompactList}\small\item\em recursive mean filter default destructor \end{DoxyCompactList}\item 
+\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{classrecursive__mean_3_01____fx64_01_4_afa4d6f41cb245dc6cc5618f4132a1cd5}{Freq\+Characteristics}} (\+\_\+\+\_\+type F)
+\begin{DoxyCompactList}\small\item\em recursive mean filter frequency response computation function \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classrecursive__mean_3_01____fx64_01_4_a14c848c36406b1fc114aa6feb11479cf}{filt}} (\+\_\+\+\_\+type $\ast$input)
+\begin{DoxyCompactList}\small\item\em 32-\/bit recursive mean filter filtering function \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classrecursive__mean_3_01____fx64_01_4_a86873ea191e9f5f6c158ff359c476531}{operator()}} (\+\_\+\+\_\+type $\ast$input)
+\begin{DoxyCompactList}\small\item\em 64-\/bit recursive mean filter filtering operator \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_ac66e9c91c48c1a2421916ea251ee9e2e}\label{classrecursive__mean_3_01____fx64_01_4_ac66e9c91c48c1a2421916ea251ee9e2e}} 
 \+\_\+\+\_\+type {\bfseries m\+\_\+out}
-\item 
+\begin{DoxyCompactList}\small\item\em recursive mean filter output \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_a741ea5a90a2cbdce80cd8c300e535fac}\label{classrecursive__mean_3_01____fx64_01_4_a741ea5a90a2cbdce80cd8c300e535fac}} 
 \+\_\+\+\_\+type {\bfseries m\+\_\+\+Km}
-\item 
+\begin{DoxyCompactList}\small\item\em recursive mean filter frequency amplitude response \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_a69a3f727543f1574eb10984be5209b19}\label{classrecursive__mean_3_01____fx64_01_4_a69a3f727543f1574eb10984be5209b19}} 
 \+\_\+\+\_\+type {\bfseries m\+\_\+pH}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em recursive mean filter frequency amplitude response \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+recursive mean template class 64-\/bit floating point implementation 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_a1591f0baf5c4b11427833649d04cc0fb}\label{classrecursive__mean_3_01____fx64_01_4_a1591f0baf5c4b11427833649d04cc0fb}} 
+\index{recursive\_mean$<$ \_\_fx64 $>$@{recursive\_mean$<$ \_\_fx64 $>$}!recursive\_mean@{recursive\_mean}}
+\index{recursive\_mean@{recursive\_mean}!recursive\_mean$<$ \_\_fx64 $>$@{recursive\_mean$<$ \_\_fx64 $>$}}
+\doxysubsubsection{\texorpdfstring{recursive\_mean()}{recursive\_mean()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classrecursive__mean}{recursive\+\_\+mean}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$\+::\mbox{\hyperlink{classrecursive__mean}{recursive\+\_\+mean}} (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type}]{Fn,  }\item[{\+\_\+\+\_\+type}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+recursive Fourier filter initializing constructor 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fn} & \mbox{]} -\/ input signal nominal frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fs} & \mbox{]} -\/ input signal sampling frequency , hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & -\/ recursive mean filter order \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+This constructor calls initialization function 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_acc2f490d8ff07689f8ff2e8a9fb6aebb}\label{classrecursive__mean_3_01____fx64_01_4_acc2f490d8ff07689f8ff2e8a9fb6aebb}} 
+\index{recursive\_mean$<$ \_\_fx64 $>$@{recursive\_mean$<$ \_\_fx64 $>$}!allocate@{allocate}}
+\index{allocate@{allocate}!recursive\_mean$<$ \_\_fx64 $>$@{recursive\_mean$<$ \_\_fx64 $>$}}
+\doxysubsubsection{\texorpdfstring{allocate()}{allocate()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{classrecursive__mean}{recursive\+\_\+mean}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$\+::allocate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+recursive mean filter memory allocation function 
+
+\begin{DoxyReturn}{Returns}
+the function allocates memory for the recursive mean filter buffer 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_a747e9975ac74d609d90af2fbbcf4ea24}\label{classrecursive__mean_3_01____fx64_01_4_a747e9975ac74d609d90af2fbbcf4ea24}} 
+\index{recursive\_mean$<$ \_\_fx64 $>$@{recursive\_mean$<$ \_\_fx64 $>$}!deallocate@{deallocate}}
+\index{deallocate@{deallocate}!recursive\_mean$<$ \_\_fx64 $>$@{recursive\_mean$<$ \_\_fx64 $>$}}
+\doxysubsubsection{\texorpdfstring{deallocate()}{deallocate()}}
+{\footnotesize\ttfamily void \mbox{\hyperlink{classrecursive__mean}{recursive\+\_\+mean}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$\+::deallocate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+recursive mean filter memory deallocation function 
+
+\begin{DoxyReturn}{Returns}
+the function deallocates memory of the recursive mean buffer 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_a14c848c36406b1fc114aa6feb11479cf}\label{classrecursive__mean_3_01____fx64_01_4_a14c848c36406b1fc114aa6feb11479cf}} 
+\index{recursive\_mean$<$ \_\_fx64 $>$@{recursive\_mean$<$ \_\_fx64 $>$}!filt@{filt}}
+\index{filt@{filt}!recursive\_mean$<$ \_\_fx64 $>$@{recursive\_mean$<$ \_\_fx64 $>$}}
+\doxysubsubsection{\texorpdfstring{filt()}{filt()}}
+{\footnotesize\ttfamily void \mbox{\hyperlink{classrecursive__mean}{recursive\+\_\+mean}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$\+::filt (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type $\ast$}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+32-\/bit recursive mean filter filtering function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}input\mbox{]}} & -\/ pointer to the nput signal frames \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes recursive mean fiter output 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_afa4d6f41cb245dc6cc5618f4132a1cd5}\label{classrecursive__mean_3_01____fx64_01_4_afa4d6f41cb245dc6cc5618f4132a1cd5}} 
+\index{recursive\_mean$<$ \_\_fx64 $>$@{recursive\_mean$<$ \_\_fx64 $>$}!FreqCharacteristics@{FreqCharacteristics}}
+\index{FreqCharacteristics@{FreqCharacteristics}!recursive\_mean$<$ \_\_fx64 $>$@{recursive\_mean$<$ \_\_fx64 $>$}}
+\doxysubsubsection{\texorpdfstring{FreqCharacteristics()}{FreqCharacteristics()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{classrecursive__mean}{recursive\+\_\+mean}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$\+::Freq\+Characteristics (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type}]{F }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+recursive mean filter frequency response computation function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+F\mbox{]}} & -\/ input signal frequency , Hz \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes phase and amplitude frequency response for the signal having frequency F 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_ab8f85e1c47fe6f3111147cca3b6b6661}\label{classrecursive__mean_3_01____fx64_01_4_ab8f85e1c47fe6f3111147cca3b6b6661}} 
+\index{recursive\_mean$<$ \_\_fx64 $>$@{recursive\_mean$<$ \_\_fx64 $>$}!init@{init}}
+\index{init@{init}!recursive\_mean$<$ \_\_fx64 $>$@{recursive\_mean$<$ \_\_fx64 $>$}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily void \mbox{\hyperlink{classrecursive__mean}{recursive\+\_\+mean}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$\+::init (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type}]{Fn,  }\item[{\+\_\+\+\_\+type}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+recursive mean filter initialization function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fn} & \mbox{]} -\/ input signal nominal frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fs} & \mbox{]} -\/ input signal sampling frequency , hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & -\/ recursive mean filter order \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function initializes recursive mean filter 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classrecursive__mean_3_01____fx64_01_4_a86873ea191e9f5f6c158ff359c476531}\label{classrecursive__mean_3_01____fx64_01_4_a86873ea191e9f5f6c158ff359c476531}} 
+\index{recursive\_mean$<$ \_\_fx64 $>$@{recursive\_mean$<$ \_\_fx64 $>$}!operator()@{operator()}}
+\index{operator()@{operator()}!recursive\_mean$<$ \_\_fx64 $>$@{recursive\_mean$<$ \_\_fx64 $>$}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}}
+{\footnotesize\ttfamily void \mbox{\hyperlink{classrecursive__mean}{recursive\+\_\+mean}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$\+::operator() (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type $\ast$}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+64-\/bit recursive mean filter filtering operator 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}input\mbox{]}} & -\/ pointer to the nput signal frames \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The operator calls the function that computes real and imaginary harmonic component 
+\end{DoxyReturn}
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}

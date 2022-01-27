@@ -43,7 +43,7 @@ struct \mbox{\hyperlink{structiir__fr_3_01____fxx64_01_4}{iir\+\_\+fr$<$ \+\_\+\
 struct \mbox{\hyperlink{structiir__sp}{iir\+\_\+sp}}
 \begin{DoxyCompactList}\small\item\em IIR filter specification data structure. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classbutterworth}{butterworth$<$ T $>$}}
-\item 
+\begin{DoxyCompactList}\small\item\em 32-\/bit integer mirror ring buffer \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classchebyshev__1}{chebyshev\+\_\+1$<$ T $>$}}
 \item 
 class \mbox{\hyperlink{classchebyshev__2}{chebyshev\+\_\+2$<$ T $>$}}
@@ -91,54 +91,40 @@ enum \mbox{\hyperlink{group___i_i_r__fcn_ga841e49b038c67ff60d39a3ec715d7967}{iir
 \begin{DoxyCompactList}\small\item\em Chebyshev II lowpass analogue prototype zeros/poles plain computation function. \end{DoxyCompactList}\item 
 {\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}}$<$ T $>$ \mbox{\hyperlink{group___i_i_r__fcn_ga9a66e73e0afa0273502327903ec8dae8}{\+\_\+\+\_\+ellip\+\_\+zeros\+\_\+poles\+\_\+plain\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+pass, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop)
 \begin{DoxyCompactList}\small\item\em Elliptic lowpass analogue prototype zeros/poles plain computation function. \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{group___i_i_r__fcn_ga3f6ca52d15d3b61e15d40cc2fa4d8c47}\label{group___i_i_r__fcn_ga3f6ca52d15d3b61e15d40cc2fa4d8c47}} 
-{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+butt\+\_\+cheb1\+\_\+digital\+\_\+lp\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=1)
-\item 
-\mbox{\Hypertarget{group___i_i_r__fcn_gafd651b49ba3e0c5c381a9b6e15a7ce6c}\label{group___i_i_r__fcn_gafd651b49ba3e0c5c381a9b6e15a7ce6c}} 
-{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+butt\+\_\+cheb1\+\_\+digital\+\_\+hp\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fp, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=1)
-\item 
-\mbox{\Hypertarget{group___i_i_r__fcn_gab203c206bf50b01f24d76efa38e1ae35}\label{group___i_i_r__fcn_gab203c206bf50b01f24d76efa38e1ae35}} 
-{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+butt\+\_\+cheb1\+\_\+digital\+\_\+bp\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fp, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Band\+Width, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=1)
-\item 
-\mbox{\Hypertarget{group___i_i_r__fcn_ga778e1087868676b92982082362dfa021}\label{group___i_i_r__fcn_ga778e1087868676b92982082362dfa021}} 
-{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+butt\+\_\+cheb1\+\_\+digital\+\_\+bs\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Band\+Width, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=1)
-\item 
-\mbox{\Hypertarget{group___i_i_r__fcn_ga83ac960f934ab4dedb6757a4e73b2b87}\label{group___i_i_r__fcn_ga83ac960f934ab4dedb6757a4e73b2b87}} 
-{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+cheb2\+\_\+ellip\+\_\+digital\+\_\+lp\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+pass=1, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=80)
-\item 
-\mbox{\Hypertarget{group___i_i_r__fcn_gaeaa4ea6d0934e4e4cf0e4c6949ff13b1}\label{group___i_i_r__fcn_gaeaa4ea6d0934e4e4cf0e4c6949ff13b1}} 
-{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+cheb2\+\_\+ellip\+\_\+digital\+\_\+hp\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+pass=1, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=80)
-\item 
-\mbox{\Hypertarget{group___i_i_r__fcn_gafc8560db045ea10aa1c4d6fbc42b9d20}\label{group___i_i_r__fcn_gafc8560db045ea10aa1c4d6fbc42b9d20}} 
-{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+cheb2\+\_\+ellip\+\_\+digital\+\_\+bp\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fp, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Band\+Width, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+pass=1, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=80)
-\item 
-\mbox{\Hypertarget{group___i_i_r__fcn_ga4ae7624e549d0417717d815518b124db}\label{group___i_i_r__fcn_ga4ae7624e549d0417717d815518b124db}} 
-{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+cheb2\+\_\+ellip\+\_\+digital\+\_\+bs\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fp, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Band\+Width, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+pass=1, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=80)
-\item 
-\mbox{\Hypertarget{group___i_i_r__fcn_ga8bbbc908d9fb64dea8d44f4760a15333}\label{group___i_i_r__fcn_ga8bbbc908d9fb64dea8d44f4760a15333}} 
-{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__bf}{iir\+\_\+bf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+iir\+\_\+bf\+\_\+alloc\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} N)
-\item 
-\mbox{\Hypertarget{group___i_i_r__fcn_ga85a8ff10c75900cb1614098d6d42f9df}\label{group___i_i_r__fcn_ga85a8ff10c75900cb1614098d6d42f9df}} 
-{\footnotesize template$<$typename T $>$ }\\void {\bfseries \+\_\+\+\_\+iir\+\_\+bf\+\_\+free\+\_\+\+\_\+} (\mbox{\hyperlink{structiir__bf}{iir\+\_\+bf}}$<$ T $>$ bf)
-\item 
-\mbox{\Hypertarget{group___i_i_r__fcn_ga5b0b97fc4412395fbd392a7640dca89e}\label{group___i_i_r__fcn_ga5b0b97fc4412395fbd392a7640dca89e}} 
-{\footnotesize template$<$typename T $>$ }\\void {\bfseries \+\_\+\+\_\+iir\+\_\+zp\+\_\+free\+\_\+\+\_\+} (\mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}}$<$ T $>$ zp)
-\item 
-\mbox{\Hypertarget{group___i_i_r__fcn_ga34d1bdcbfc730b8e21185d65b4fe6154}\label{group___i_i_r__fcn_ga34d1bdcbfc730b8e21185d65b4fe6154}} 
-{\footnotesize template$<$typename T $>$ }\\void {\bfseries \+\_\+\+\_\+iir\+\_\+cf\+\_\+free\+\_\+\+\_\+} (\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ cf)
-\item 
-\mbox{\Hypertarget{group___i_i_r__fcn_gabb0aa52631831c32935998e75deb3185}\label{group___i_i_r__fcn_gabb0aa52631831c32935998e75deb3185}} 
-{\footnotesize template$<$typename T $>$ }\\{\bfseries \+\_\+\+\_\+attribute\+\_\+\+\_\+} ((always\+\_\+inline)) T \+\_\+\+\_\+filt\+\_\+\+\_\+(T $\ast$input
-\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ \mbox{\hyperlink{group___i_i_r__fcn_ga3f6ca52d15d3b61e15d40cc2fa4d8c47}{\+\_\+\+\_\+butt\+\_\+cheb1\+\_\+digital\+\_\+lp\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=1)
+\begin{DoxyCompactList}\small\item\em Butterworth or Chebyshev I digital lowpass filter coefficients computation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ \mbox{\hyperlink{group___i_i_r__fcn_gafd651b49ba3e0c5c381a9b6e15a7ce6c}{\+\_\+\+\_\+butt\+\_\+cheb1\+\_\+digital\+\_\+hp\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fp, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=1)
+\begin{DoxyCompactList}\small\item\em Butterworth or Chebyshev I digital highpass filter coefficients computation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ \mbox{\hyperlink{group___i_i_r__fcn_gab203c206bf50b01f24d76efa38e1ae35}{\+\_\+\+\_\+butt\+\_\+cheb1\+\_\+digital\+\_\+bp\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fp, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Band\+Width, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=1)
+\begin{DoxyCompactList}\small\item\em Butterworth or Chebyshev I digital bandpass filter coefficients computation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ \mbox{\hyperlink{group___i_i_r__fcn_ga778e1087868676b92982082362dfa021}{\+\_\+\+\_\+butt\+\_\+cheb1\+\_\+digital\+\_\+bs\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Band\+Width, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=1)
+\begin{DoxyCompactList}\small\item\em Butterworth or Chebyshev I digital bandstop filter coefficients computation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ \mbox{\hyperlink{group___i_i_r__fcn_ga83ac960f934ab4dedb6757a4e73b2b87}{\+\_\+\+\_\+cheb2\+\_\+ellip\+\_\+digital\+\_\+lp\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+pass=1, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=80)
+\begin{DoxyCompactList}\small\item\em Chebyshev II or Elliptic digital lowpass filter coefficients computation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ \mbox{\hyperlink{group___i_i_r__fcn_gaeaa4ea6d0934e4e4cf0e4c6949ff13b1}{\+\_\+\+\_\+cheb2\+\_\+ellip\+\_\+digital\+\_\+hp\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+pass=1, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=80)
+\begin{DoxyCompactList}\small\item\em Chebyshev II or Elliptic digital highpass filter coefficients computation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ \mbox{\hyperlink{group___i_i_r__fcn_gafc8560db045ea10aa1c4d6fbc42b9d20}{\+\_\+\+\_\+cheb2\+\_\+ellip\+\_\+digital\+\_\+bp\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fp, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Band\+Width, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+pass=1, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=80)
+\begin{DoxyCompactList}\small\item\em Chebyshev II or Elliptic digital bandpass filter coefficients computation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ \mbox{\hyperlink{group___i_i_r__fcn_ga3a18cab6e26d13bf47de2aa036dbbe42}{\+\_\+\+\_\+cheb2\+\_\+ellip\+\_\+digital\+\_\+bs\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Band\+Width, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+pass=1, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=80)
+\begin{DoxyCompactList}\small\item\em Chebyshev II or Elliptic digital bandstop filter coefficients computation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__bf}{iir\+\_\+bf}}$<$ T $>$ \mbox{\hyperlink{group___i_i_r__fcn_ga8bbbc908d9fb64dea8d44f4760a15333}{\+\_\+\+\_\+iir\+\_\+bf\+\_\+alloc\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} N)
+\begin{DoxyCompactList}\small\item\em IIR filter input/output buffers memory allocation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \mbox{\hyperlink{group___i_i_r__fcn_ga85a8ff10c75900cb1614098d6d42f9df}{\+\_\+\+\_\+iir\+\_\+bf\+\_\+free\+\_\+\+\_\+}} (\mbox{\hyperlink{structiir__bf}{iir\+\_\+bf}}$<$ T $>$ bf)
+\begin{DoxyCompactList}\small\item\em IIR filter input/output buffers memory deallocation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \mbox{\hyperlink{group___i_i_r__fcn_ga5b0b97fc4412395fbd392a7640dca89e}{\+\_\+\+\_\+iir\+\_\+zp\+\_\+free\+\_\+\+\_\+}} (\mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}}$<$ T $>$ zp)
+\begin{DoxyCompactList}\small\item\em IIR filter zeros/poles plain memory allocation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \mbox{\hyperlink{group___i_i_r__fcn_ga34d1bdcbfc730b8e21185d65b4fe6154}{\+\_\+\+\_\+iir\+\_\+cf\+\_\+free\+\_\+\+\_\+}} (\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ cf)
+\begin{DoxyCompactList}\small\item\em IIR filter coefficients memory allocation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{group___i_i_r__fcn_gabb0aa52631831c32935998e75deb3185}{\+\_\+\+\_\+attribute\+\_\+\+\_\+}} ((always\+\_\+inline)) T \+\_\+\+\_\+filt\+\_\+\+\_\+(T $\ast$input
+\begin{DoxyCompactList}\small\item\em IIR filter template filtering function. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{group___i_i_r__fcn_ga3d7701b9282ebcc00822f8d82188aa31}\label{group___i_i_r__fcn_ga3d7701b9282ebcc00822f8d82188aa31}} 
 buff\+\_\+sx\mbox{[}0\mbox{]} {\bfseries fill\+\_\+buff} (input)
 \item 
 \mbox{\Hypertarget{group___i_i_r__fcn_ga836a345f03f16fe5b0effc9c26c439b6}\label{group___i_i_r__fcn_ga836a345f03f16fe5b0effc9c26c439b6}} 
 {\bfseries for} (\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} i=0 ;i$<$ N ;i++)
 \item 
-\mbox{\Hypertarget{group___i_i_r__fcn_ga76957da8640c656da7405dcde989377b}\label{group___i_i_r__fcn_ga76957da8640c656da7405dcde989377b}} 
-{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__fr}{iir\+\_\+fr}}$<$ T $>$ {\bfseries \+\_\+\+\_\+iir\+\_\+freq\+\_\+resp\+\_\+\+\_\+} (T $\ast$cfnum, T $\ast$cfden, T $\ast$gains, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} N, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} F)
-\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__fr}{iir\+\_\+fr}}$<$ T $>$ \mbox{\hyperlink{group___i_i_r__fcn_ga76957da8640c656da7405dcde989377b}{\+\_\+\+\_\+iir\+\_\+freq\+\_\+resp\+\_\+\+\_\+}} (T $\ast$cfnum, T $\ast$cfden, T $\ast$gains, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} N, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} F)
+\begin{DoxyCompactList}\small\item\em IIR filter template frequency response computation function. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{group___i_i_r__fcn_ga75e38d28adff392fc2535b5b3feaf88c}\label{group___i_i_r__fcn_ga75e38d28adff392fc2535b5b3feaf88c}} 
 {\footnotesize template$<$typename T $>$ }\\void {\bfseries \+\_\+\+\_\+show\+\_\+coeffs\+\_\+\+\_\+} (\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ coeffs)
 \item 
@@ -200,6 +186,149 @@ IIR types enumeration.
 
 
 \doxysubsection{Function Documentation}
+\mbox{\Hypertarget{group___i_i_r__fcn_gabb0aa52631831c32935998e75deb3185}\label{group___i_i_r__fcn_gabb0aa52631831c32935998e75deb3185}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_attribute\_\_@{\_\_attribute\_\_}}
+\index{\_\_attribute\_\_@{\_\_attribute\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_attribute\_\_()}{\_\_attribute\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\+\_\+\+\_\+attribute\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{(always\+\_\+inline)}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+IIR filter template filtering function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}input} & \mbox{]} -\/ input samples \\
+\hline
+{\em \mbox{[}cfnum} & \mbox{]} -\/ IIR numerator second order sections coefficients \\
+\hline
+{\em \mbox{[}cfden} & \mbox{]} -\/ IIR denominator second order sections coefficients \\
+\hline
+{\em \mbox{[}gains} & \mbox{]} -\/ IIR second order sections gains \\
+\hline
+{\em \mbox{[}N} & \mbox{]} -\/ IIR order \\
+\hline
+{\em \mbox{[}buff\+\_\+sx\mbox{]}} & -\/ IIR second order sections input buffers \\
+\hline
+{\em \mbox{[}buff\+\_\+sy\mbox{]}} & -\/ IIR second order sections output buffers \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function implements input signal filtering using the IIR second order sections coefficients, gains and input/output buffers 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___i_i_r__fcn_gab203c206bf50b01f24d76efa38e1ae35}\label{group___i_i_r__fcn_gab203c206bf50b01f24d76efa38e1ae35}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_butt\_cheb1\_digital\_bp\_\_@{\_\_butt\_cheb1\_digital\_bp\_\_}}
+\index{\_\_butt\_cheb1\_digital\_bp\_\_@{\_\_butt\_cheb1\_digital\_bp\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_butt\_cheb1\_digital\_bp\_\_()}{\_\_butt\_cheb1\_digital\_bp\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ \+\_\+\+\_\+butt\+\_\+cheb1\+\_\+digital\+\_\+bp\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fp,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Band\+Width,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{type = {\ttfamily 0},  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+stop = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+
+
+Butterworth or Chebyshev I digital bandpass filter coefficients computation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs\mbox{]}} & sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fp\mbox{]}} & pass frequency , Hz \\
+\hline
+{\em \mbox{[}\+Band\+Width\mbox{]}} & passband width , Hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & filter order \\
+\hline
+{\em \mbox{[}type\mbox{]}} & filter type ( 0 -\/ Butterworth , 1 -\/ Chebyshev\+\_\+I ) \\
+\hline
+{\em \mbox{[}g\+\_\+stop\mbox{]}} & stopband attenuation , Db \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes Butterworth or Chebyshev I digital bandpass filter coefficients that are represented in the way of second order sections and their gains. All the data is stored within \mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}} data structure and returned. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___i_i_r__fcn_ga778e1087868676b92982082362dfa021}\label{group___i_i_r__fcn_ga778e1087868676b92982082362dfa021}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_butt\_cheb1\_digital\_bs\_\_@{\_\_butt\_cheb1\_digital\_bs\_\_}}
+\index{\_\_butt\_cheb1\_digital\_bs\_\_@{\_\_butt\_cheb1\_digital\_bs\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_butt\_cheb1\_digital\_bs\_\_()}{\_\_butt\_cheb1\_digital\_bs\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ \+\_\+\+\_\+butt\+\_\+cheb1\+\_\+digital\+\_\+bs\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fc,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Band\+Width,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}}}]{type = {\ttfamily 0},  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+stop = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+
+
+Butterworth or Chebyshev I digital bandstop filter coefficients computation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs\mbox{]}} & sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fc\mbox{]}} & cut-\/off frequency , Hz \\
+\hline
+{\em \mbox{[}\+Band\+Width\mbox{]}} & cut-\/off bandwidth , Hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & filter order \\
+\hline
+{\em \mbox{[}type\mbox{]}} & filter type ( 0 -\/ Butterworth , 1 -\/ Chebyshev\+\_\+I ) \\
+\hline
+{\em \mbox{[}g\+\_\+stop\mbox{]}} & stopband attenuation , Db \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes Butterworth or Chebyshev I digital bandstop filter coefficients that are represented in the way of second order sections and their gains. All the data is stored within \mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}} data structure and returned. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___i_i_r__fcn_gafd651b49ba3e0c5c381a9b6e15a7ce6c}\label{group___i_i_r__fcn_gafd651b49ba3e0c5c381a9b6e15a7ce6c}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_butt\_cheb1\_digital\_hp\_\_@{\_\_butt\_cheb1\_digital\_hp\_\_}}
+\index{\_\_butt\_cheb1\_digital\_hp\_\_@{\_\_butt\_cheb1\_digital\_hp\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_butt\_cheb1\_digital\_hp\_\_()}{\_\_butt\_cheb1\_digital\_hp\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ \+\_\+\+\_\+butt\+\_\+cheb1\+\_\+digital\+\_\+hp\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fp,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{type = {\ttfamily 0},  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+stop = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+
+
+Butterworth or Chebyshev I digital highpass filter coefficients computation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs\mbox{]}} & sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fp\mbox{]}} & pass frequency , Hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & filter order \\
+\hline
+{\em \mbox{[}type\mbox{]}} & filter type ( 0 -\/ Butterworth , 1 -\/ Chebyshev\+\_\+I ) \\
+\hline
+{\em \mbox{[}g\+\_\+stop\mbox{]}} & stopband attenuation , Db \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes Butterworth or Chebyshev I digital highpass filter coefficients that are represented in the way of second order sections and their gains. All the data is stored within \mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}} data structure and returned. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___i_i_r__fcn_ga3f6ca52d15d3b61e15d40cc2fa4d8c47}\label{group___i_i_r__fcn_ga3f6ca52d15d3b61e15d40cc2fa4d8c47}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_butt\_cheb1\_digital\_lp\_\_@{\_\_butt\_cheb1\_digital\_lp\_\_}}
+\index{\_\_butt\_cheb1\_digital\_lp\_\_@{\_\_butt\_cheb1\_digital\_lp\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_butt\_cheb1\_digital\_lp\_\_()}{\_\_butt\_cheb1\_digital\_lp\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ \+\_\+\+\_\+butt\+\_\+cheb1\+\_\+digital\+\_\+lp\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fc,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{type = {\ttfamily 0},  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+stop = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+
+
+Butterworth or Chebyshev I digital lowpass filter coefficients computation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs\mbox{]}} & sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fc\mbox{]}} & cut-\/off frequency , Hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & filter order \\
+\hline
+{\em \mbox{[}type\mbox{]}} & filter type ( 0 -\/ Butterworth , 1 -\/ Chebyshev\+\_\+I ) \\
+\hline
+{\em \mbox{[}g\+\_\+stop\mbox{]}} & stopband attenuation , Db \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes Butterworth or Chebyshev I digital lowpass filter coefficients that are represented in the way of second order sections and their gains. All the data is stored within \mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}} data structure and returned. 
+\end{DoxyReturn}
 \mbox{\Hypertarget{group___i_i_r__fcn_ga56d4dc488aa9ffe114609dfcd22104b5}\label{group___i_i_r__fcn_ga56d4dc488aa9ffe114609dfcd22104b5}} 
 \index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_butt\_zeros\_poles\_plain\_\_@{\_\_butt\_zeros\_poles\_plain\_\_}}
 \index{\_\_butt\_zeros\_poles\_plain\_\_@{\_\_butt\_zeros\_poles\_plain\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
@@ -219,13 +348,9 @@ Butterworth lowpass analogue prototype zeros/poles plain computation function.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-The function computes Butterworth zeros/poles pairs of the Butterworth lowpass analogue prototype. It also compute zero frequency gains. All the data is stored within \mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}} data structure and returned. As Butterworth filter has unit numerator transfer function , it does not have zeros. Poles are computed as follows\+:
+The function computes Butterworth zeros/poles pairs of the Butterworth lowpass analogue prototype. It also compute zero frequency gains. All the data is stored within \mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}} data structure and returned. 
 \end{DoxyReturn}
-\[ N = L + R \newline \beta = \frac{1}{ \sqrt{ G_s^{ \frac{1}{order} } } } \newline i \in [ 0 ; L ) \newline \alpha = \frac{ ( 2 * ( i + 1 ) - 1 ) * \pi }{ 2 * order } \newline p_i = -\frac{1}{\beta}*\sin{ ( \alpha ) } + j*\frac{1}{\beta}*\cos{ ( \alpha ) } \newline g_i = p_i * conj \left( p_i \right) \newline g_N = 1 \newline \]
-
-Real odd pole\+:
-
-\[ p_{L+R-1} = -\frac{1}{\beta} + j * 0 \newline g_{L+R-1} = p_{L+R-1} \newline \] \mbox{\Hypertarget{group___i_i_r__fcn_ga95c7ffc230af84452ba72b6a055fd8d1}\label{group___i_i_r__fcn_ga95c7ffc230af84452ba72b6a055fd8d1}} 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga95c7ffc230af84452ba72b6a055fd8d1}\label{group___i_i_r__fcn_ga95c7ffc230af84452ba72b6a055fd8d1}} 
 \index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_cheb1\_zeros\_poles\_plain\_\_@{\_\_cheb1\_zeros\_poles\_plain\_\_}}
 \index{\_\_cheb1\_zeros\_poles\_plain\_\_@{\_\_cheb1\_zeros\_poles\_plain\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
 \doxysubsubsection{\texorpdfstring{\_\_cheb1\_zeros\_poles\_plain\_\_()}{\_\_cheb1\_zeros\_poles\_plain\_\_()}}
@@ -244,13 +369,129 @@ Chebyshev I lowpass analogue prototype zeros/poles plain computation function.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-The function computes Chebyshev I zeros/poles pairs of the Butterworth lowpass analogue prototype. It also compute zero frequency gains. All the data is stored within \mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}} data structure and returned. As Chebyshev I filter has unit numerator transfer function , it does not have zeros. Poles are computed as follows\+:
+The function computes Chebyshev I zeros/poles pairs of the Butterworth lowpass analogue prototype. It also compute zero frequency gains. All the data is stored within \mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}} data structure and returned. 
 \end{DoxyReturn}
-\[ N = L + R \newline \beta = \frac{1}{ \sqrt{ G_s^{ \frac{1}{order} } } } \newline i \in [ 0 ; L ) \newline \alpha = \frac{ ( 2 * ( i + 1 ) - 1 ) * \pi }{ 2 * order } \newline p_i = -\sin{ ( \alpha ) } * sinh( \beta ) + j*\cos{ ( \alpha ) } * cosh( \beta ) \newline g_i = p_i * conj \left( p_i \right) \newline g_N = \sqrt{ \frac{ 1 }{ 1 + \epsilon_s^2 } } \quad , \quad R < 1 \newline \epsilon_s = \sqrt{ 10^{ \frac{G_s}{10} } - 1 } \]
+\mbox{\Hypertarget{group___i_i_r__fcn_gafc8560db045ea10aa1c4d6fbc42b9d20}\label{group___i_i_r__fcn_gafc8560db045ea10aa1c4d6fbc42b9d20}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_cheb2\_ellip\_digital\_bp\_\_@{\_\_cheb2\_ellip\_digital\_bp\_\_}}
+\index{\_\_cheb2\_ellip\_digital\_bp\_\_@{\_\_cheb2\_ellip\_digital\_bp\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_cheb2\_ellip\_digital\_bp\_\_()}{\_\_cheb2\_ellip\_digital\_bp\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ \+\_\+\+\_\+cheb2\+\_\+ellip\+\_\+digital\+\_\+bp\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fp,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Band\+Width,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{type = {\ttfamily 0},  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+pass = {\ttfamily 1},  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+stop = {\ttfamily 80} }\end{DoxyParamCaption})}
 
-Real odd pole\+:
 
-\[ p_{L+R-1} = +\sinh{ \beta }+ j * 0 \newline g_{L+R-1} = -p_{L+R-1} \newline \] \mbox{\Hypertarget{group___i_i_r__fcn_ga9bc4b73039224517adaab0efeabc1ba5}\label{group___i_i_r__fcn_ga9bc4b73039224517adaab0efeabc1ba5}} 
+
+Chebyshev II or Elliptic digital bandpass filter coefficients computation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs\mbox{]}} & sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fp\mbox{]}} & pass frequency , Hz \\
+\hline
+{\em \mbox{[}\+Band\+Width\mbox{]}} & passband width , Hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & filter order \\
+\hline
+{\em \mbox{[}type\mbox{]}} & filter type ( 0 -\/ Chebyshev II , 1 -\/ Elliptic ) \\
+\hline
+{\em \mbox{[}g\+\_\+stop\mbox{]}} & stopband attenuation , Db \\
+\hline
+{\em \mbox{[}g\+\_\+pass\mbox{]}} & passband attenuation , Db \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes Chebyshev II or Elliptic digital bandpass filter coefficients that are represented in the way of second order sections and their gains. All the data is stored within \mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}} data structure and returned. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___i_i_r__fcn_ga3a18cab6e26d13bf47de2aa036dbbe42}\label{group___i_i_r__fcn_ga3a18cab6e26d13bf47de2aa036dbbe42}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_cheb2\_ellip\_digital\_bs\_\_@{\_\_cheb2\_ellip\_digital\_bs\_\_}}
+\index{\_\_cheb2\_ellip\_digital\_bs\_\_@{\_\_cheb2\_ellip\_digital\_bs\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_cheb2\_ellip\_digital\_bs\_\_()}{\_\_cheb2\_ellip\_digital\_bs\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ \+\_\+\+\_\+cheb2\+\_\+ellip\+\_\+digital\+\_\+bs\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fc,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Band\+Width,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{type = {\ttfamily 0},  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+pass = {\ttfamily 1},  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+stop = {\ttfamily 80} }\end{DoxyParamCaption})}
+
+
+
+Chebyshev II or Elliptic digital bandstop filter coefficients computation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs\mbox{]}} & sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fc\mbox{]}} & cut-\/off frequency , Hz \\
+\hline
+{\em \mbox{[}\+Band\+Width\mbox{]}} & stopband width , Hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & filter order \\
+\hline
+{\em \mbox{[}type\mbox{]}} & filter type ( 0 -\/ Chebyshev II , 1 -\/ Elliptic ) \\
+\hline
+{\em \mbox{[}g\+\_\+stop\mbox{]}} & stopband attenuation , Db \\
+\hline
+{\em \mbox{[}g\+\_\+pass\mbox{]}} & passband attenuation , Db \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes Chebyshev II or Elliptic digital bandstop filter coefficients that are represented in the way of second order sections and their gains. All the data is stored within \mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}} data structure and returned. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___i_i_r__fcn_gaeaa4ea6d0934e4e4cf0e4c6949ff13b1}\label{group___i_i_r__fcn_gaeaa4ea6d0934e4e4cf0e4c6949ff13b1}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_cheb2\_ellip\_digital\_hp\_\_@{\_\_cheb2\_ellip\_digital\_hp\_\_}}
+\index{\_\_cheb2\_ellip\_digital\_hp\_\_@{\_\_cheb2\_ellip\_digital\_hp\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_cheb2\_ellip\_digital\_hp\_\_()}{\_\_cheb2\_ellip\_digital\_hp\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ \+\_\+\+\_\+cheb2\+\_\+ellip\+\_\+digital\+\_\+hp\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fc,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{type = {\ttfamily 0},  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+pass = {\ttfamily 1},  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+stop = {\ttfamily 80} }\end{DoxyParamCaption})}
+
+
+
+Chebyshev II or Elliptic digital highpass filter coefficients computation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs\mbox{]}} & sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fp\mbox{]}} & pass frequency , Hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & filter order \\
+\hline
+{\em \mbox{[}type\mbox{]}} & filter type ( 0 -\/ Chebyshev II , 1 -\/ Elliptic ) \\
+\hline
+{\em \mbox{[}g\+\_\+stop\mbox{]}} & stopband attenuation , Db \\
+\hline
+{\em \mbox{[}g\+\_\+pass\mbox{]}} & passband attenuation , Db \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes Chebyshev II or Elliptic digital lowpass filter coefficients that are represented in the way of second order sections and their gains. All the data is stored within \mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}} data structure and returned. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___i_i_r__fcn_ga83ac960f934ab4dedb6757a4e73b2b87}\label{group___i_i_r__fcn_ga83ac960f934ab4dedb6757a4e73b2b87}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_cheb2\_ellip\_digital\_lp\_\_@{\_\_cheb2\_ellip\_digital\_lp\_\_}}
+\index{\_\_cheb2\_ellip\_digital\_lp\_\_@{\_\_cheb2\_ellip\_digital\_lp\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_cheb2\_ellip\_digital\_lp\_\_()}{\_\_cheb2\_ellip\_digital\_lp\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ \+\_\+\+\_\+cheb2\+\_\+ellip\+\_\+digital\+\_\+lp\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fc,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{type = {\ttfamily 0},  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+pass = {\ttfamily 1},  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+stop = {\ttfamily 80} }\end{DoxyParamCaption})}
+
+
+
+Chebyshev II or Elliptic digital lowpass filter coefficients computation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs\mbox{]}} & sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fc\mbox{]}} & cut-\/off frequency , Hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & filter order \\
+\hline
+{\em \mbox{[}type\mbox{]}} & filter type ( 0 -\/ Chebyshev II , 1 -\/ Elliptic ) \\
+\hline
+{\em \mbox{[}g\+\_\+stop\mbox{]}} & stopband attenuation , Db \\
+\hline
+{\em \mbox{[}g\+\_\+pass\mbox{]}} & passband attenuation , Db \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes Chebyshev II or Elliptic digital lowpass filter coefficients that are represented in the way of second order sections and their gains. All the data is stored within \mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}} data structure and returned. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___i_i_r__fcn_ga9bc4b73039224517adaab0efeabc1ba5}\label{group___i_i_r__fcn_ga9bc4b73039224517adaab0efeabc1ba5}} 
 \index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_cheb2\_zeros\_poles\_plain\_\_@{\_\_cheb2\_zeros\_poles\_plain\_\_}}
 \index{\_\_cheb2\_zeros\_poles\_plain\_\_@{\_\_cheb2\_zeros\_poles\_plain\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
 \doxysubsubsection{\texorpdfstring{\_\_cheb2\_zeros\_poles\_plain\_\_()}{\_\_cheb2\_zeros\_poles\_plain\_\_()}}
@@ -269,13 +510,9 @@ Chebyshev II lowpass analogue prototype zeros/poles plain computation function.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-The function computes Chebyshev II zeros/poles pairs of the Butterworth lowpass analogue prototype. It also compute zero frequency gains. All the data is stored within \mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}} data structure and returned. As Chebyshev I filter has unit numerator transfer function , it does not have zeros. Poles are computed as follows\+:
+The function computes Chebyshev II zeros/poles pairs of the Butterworth lowpass analogue prototype. It also compute zero frequency gains. All the data is stored within \mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}} data structure and returned. 
 \end{DoxyReturn}
-\[ N = L + R \newline L = trunc\left( \frac{order}{2} \right) \newline R = N - 2*L \newline \epsilon_s = \sqrt{ 10^{ \frac{G_s}{10} } - 1 } \newline \beta = \frac{ asinh( \epsilon_s ) }{ order } \newline i \in [ 0 ; L ) \newline \alpha = \frac{ \left[ 2 * ( i + 1 ) - 1 \right] * \pi }{ 2 * order } \newline z_i = 0 + j * \frac{ 1 }{ \cos{ \alpha } } \newline p_i = \frac{ -\sin{ \alpha } * sinh(\beta) + j * cos(\alpha)*cosh(\alpha) } { cos(\alpha)^2*cosh(\beta)^2 + sin(\alpha)^2*sinh(\beta)^2 } \newline g_i = \frac{ 1 + j * 0 } { \left[ \frac{ z_i * conj( z_i ) }{ p_i * conj( p_i ) } \right] } \newline \]
-
-Real odd pole\+:
-
-\[ R = \frac{ -1 }{ sinh( \beta ) } + j * 0 \newline g_{ N } = -R \newline \] \mbox{\Hypertarget{group___i_i_r__fcn_ga9a66e73e0afa0273502327903ec8dae8}\label{group___i_i_r__fcn_ga9a66e73e0afa0273502327903ec8dae8}} 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga9a66e73e0afa0273502327903ec8dae8}\label{group___i_i_r__fcn_ga9a66e73e0afa0273502327903ec8dae8}} 
 \index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_ellip\_zeros\_poles\_plain\_\_@{\_\_ellip\_zeros\_poles\_plain\_\_}}
 \index{\_\_ellip\_zeros\_poles\_plain\_\_@{\_\_ellip\_zeros\_poles\_plain\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
 \doxysubsubsection{\texorpdfstring{\_\_ellip\_zeros\_poles\_plain\_\_()}{\_\_ellip\_zeros\_poles\_plain\_\_()}}
@@ -294,13 +531,116 @@ Elliptic lowpass analogue prototype zeros/poles plain computation function.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-The function computes Elliptic zeros/poles pairs of the Butterworth lowpass analogue prototype. It also compute zero frequency gains. All the data is stored within \mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}} data structure and returned. First, the suppression transient factor is computed as follows\+:
+The function computes Elliptic zeros/poles pairs of the Butterworth lowpass analogue prototype. It also compute zero frequency gains. All the data is stored within \mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}} data structure and returned. 
 \end{DoxyReturn}
-\[ N = L + R \newline L = trunc\left( \frac{order}{2} \right) \newline R = N - 2*L \newline \epsilon_s = \sqrt{ 10^{ \frac{G_s}{10} } - 1 } \newline \epsilon_p = \sqrt{ 10^{ \frac{G_p}{10} } - 1 } \newline K_e = \epsilon_p / \epsilon_s \newline m = \sqrt{ 1 - K_e^2 } \newline Kp = 1 \newline i \in [ 0 ; L ) \newline \alpha = \frac{ ( 2 * ( i + 1 ) - 1 ) }{ order } \newline KE = ellipk( m ) \newline SN = sn( \alpha * KE , m ) \newline K_p = K_p * SN^4 \newline K_w = \sqrt{ 1 - K_p * K_p } \newline \]
+\mbox{\Hypertarget{group___i_i_r__fcn_ga8bbbc908d9fb64dea8d44f4760a15333}\label{group___i_i_r__fcn_ga8bbbc908d9fb64dea8d44f4760a15333}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_iir\_bf\_alloc\_\_@{\_\_iir\_bf\_alloc\_\_}}
+\index{\_\_iir\_bf\_alloc\_\_@{\_\_iir\_bf\_alloc\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_iir\_bf\_alloc\_\_()}{\_\_iir\_bf\_alloc\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structiir__bf}{iir\+\_\+bf}}$<$ T $>$ \+\_\+\+\_\+iir\+\_\+bf\+\_\+alloc\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{N }\end{DoxyParamCaption})}
 
-\textbackslash{}quad \textbackslash{}quad Real odd pole\+:
 
-\[ \] 
+
+IIR filter input/output buffers memory allocation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+N\mbox{]}} & IIR filer input/output buffers size \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function allocates memory for IIR filter input/output buffers 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___i_i_r__fcn_ga85a8ff10c75900cb1614098d6d42f9df}\label{group___i_i_r__fcn_ga85a8ff10c75900cb1614098d6d42f9df}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_iir\_bf\_free\_\_@{\_\_iir\_bf\_free\_\_}}
+\index{\_\_iir\_bf\_free\_\_@{\_\_iir\_bf\_free\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_iir\_bf\_free\_\_()}{\_\_iir\_bf\_free\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void \+\_\+\+\_\+iir\+\_\+bf\+\_\+free\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structiir__bf}{iir\+\_\+bf}}$<$ T $>$}]{bf }\end{DoxyParamCaption})}
+
+
+
+IIR filter input/output buffers memory deallocation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}bf\mbox{]}} & IIR filer input/output buffers data structure \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function deallocates memory for IIR filter input/output buffers 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___i_i_r__fcn_ga34d1bdcbfc730b8e21185d65b4fe6154}\label{group___i_i_r__fcn_ga34d1bdcbfc730b8e21185d65b4fe6154}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_iir\_cf\_free\_\_@{\_\_iir\_cf\_free\_\_}}
+\index{\_\_iir\_cf\_free\_\_@{\_\_iir\_cf\_free\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_iir\_cf\_free\_\_()}{\_\_iir\_cf\_free\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void \+\_\+\+\_\+iir\+\_\+cf\+\_\+free\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$}]{cf }\end{DoxyParamCaption})}
+
+
+
+IIR filter coefficients memory allocation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}cf\mbox{]}} & IIR filer coefficients data structure \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function allocates memory for IIR filter coefficients 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___i_i_r__fcn_ga76957da8640c656da7405dcde989377b}\label{group___i_i_r__fcn_ga76957da8640c656da7405dcde989377b}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_iir\_freq\_resp\_\_@{\_\_iir\_freq\_resp\_\_}}
+\index{\_\_iir\_freq\_resp\_\_@{\_\_iir\_freq\_resp\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_iir\_freq\_resp\_\_()}{\_\_iir\_freq\_resp\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structiir__fr}{iir\+\_\+fr}}$<$ T $>$ \+\_\+\+\_\+iir\+\_\+freq\+\_\+resp\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{T $\ast$}]{cfnum,  }\item[{T $\ast$}]{cfden,  }\item[{T $\ast$}]{gains,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{N,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{F }\end{DoxyParamCaption})}
+
+
+
+IIR filter template frequency response computation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}input} & \mbox{]} -\/ input samples \\
+\hline
+{\em \mbox{[}cfnum} & \mbox{]} -\/ IIR numerator second order sections coefficients \\
+\hline
+{\em \mbox{[}cfden} & \mbox{]} -\/ IIR denominator second order sections coefficients \\
+\hline
+{\em \mbox{[}gains} & \mbox{]} -\/ IIR second order sections gains \\
+\hline
+{\em \mbox{[}N} & \mbox{]} -\/ IIR order \\
+\hline
+{\em \mbox{[}\+Fs} & \mbox{]} -\/ sampling frequency , Hz \\
+\hline
+{\em \mbox{[}F} & \mbox{]} -\/ input signal frequency , Hz \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function implements IIR filter frequency response for the predefined input signal frequency and sampling rate. The function operates using IIR second order sections coefficients and gains. Frequency resopnse computation result is stored within \mbox{\hyperlink{structiir__fr}{iir\+\_\+fr}} data structure. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___i_i_r__fcn_ga5b0b97fc4412395fbd392a7640dca89e}\label{group___i_i_r__fcn_ga5b0b97fc4412395fbd392a7640dca89e}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_iir\_zp\_free\_\_@{\_\_iir\_zp\_free\_\_}}
+\index{\_\_iir\_zp\_free\_\_@{\_\_iir\_zp\_free\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_iir\_zp\_free\_\_()}{\_\_iir\_zp\_free\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void \+\_\+\+\_\+iir\+\_\+zp\+\_\+free\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}}$<$ T $>$}]{zp }\end{DoxyParamCaption})}
+
+
+
+IIR filter zeros/poles plain memory allocation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}zp\mbox{]}} & IIR filer zeros/poles plain data structure \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function allocates memory for IIR filter zeros/poles plain 
+\end{DoxyReturn}
+
 
 \doxysubsection{Variable Documentation}
 \mbox{\Hypertarget{group___i_i_r__fcn_ga40be891e6193006af0f74ded573daf1d}\label{group___i_i_r__fcn_ga40be891e6193006af0f74ded573daf1d}} 

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['_7efir_0',['~fir',['../classfir_3_01____fx32_01_4.html#a2a1cf5869f0c6bd078f1a607f6c71819',1,'fir&lt; __fx32 &gt;::~fir()'],['../classfir_3_01____fx64_01_4.html#a858370746fe7d285a1b292e73e01c5f6',1,'fir&lt; __fx64 &gt;::~fir()']]],
-  ['_7emirror_5fring_5fbuffer_1',['~mirror_ring_buffer',['../classmirror__ring__buffer_3_01____fx32_01_4.html#ac1b2deb2e307fc4190abcca7c1d9b7e1',1,'mirror_ring_buffer&lt; __fx32 &gt;::~mirror_ring_buffer()'],['../classmirror__ring__buffer_3_01____fx64_01_4.html#ab270c3b25184a464496197180144e414',1,'mirror_ring_buffer&lt; __fx64 &gt;::~mirror_ring_buffer()'],['../classmirror__ring__buffer_3_01____ix32_01_4.html#a3114586f264b7b5b800978d5b1828bc2',1,'mirror_ring_buffer&lt; __ix32 &gt;::~mirror_ring_buffer()'],['../classmirror__ring__buffer_3_01____ix64_01_4.html#ae772c4826fae9f44bf08cd7bfdac056a',1,'mirror_ring_buffer&lt; __ix64 &gt;::~mirror_ring_buffer()']]]
+  ['show_5fproperties_0',['show_properties',['../classbutterworth.html#ab036e3f8a28a98fdd815da353e967a42',1,'butterworth::show_properties()'],['../classchebyshev__1.html#ac98d7e475927d13a3f0f20d80b319deb',1,'chebyshev_1::show_properties()'],['../classchebyshev__2.html#a0d64565a91ca1759c6f0a44832f2ffc4',1,'chebyshev_2::show_properties()'],['../classelliptic.html#a8290a3f16c90a2f348827e9057456007',1,'elliptic::show_properties()']]],
+  ['sr_5ftrig_1',['sr_trig',['../classtriggers.html#a408ae8ee52e73c5eb88b190028b6632b',1,'triggers']]]
 ];

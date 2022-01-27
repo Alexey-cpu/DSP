@@ -55,37 +55,64 @@
 #define PI2 6.283185307179586476925286766559
 #endif
 
-// recursive root mean square
+/*! \defgroup <RECURSIVE_FIR> ( Recursive FIR )
+ *  \brief the module contains reursive FIR filters template classes
+    @{
+*/
+
+/*! \brief recursive root mean square template class */
 template< typename T > class recursive_rms;
 
-// Recursive RMS implementation:
 
-// float x32:
+/*! \brief recursive root mean square template class 32-bit floating point implementation */
 template<> class recursive_rms<__fx32>
 {
     typedef __fx32 __type;
-    // system variables:
+private:
+    /*! \brief nominal input signal frequency , Hz */
     __type m_Fn;
+    /*! \brief input signal sampling frequency , Hz */
     __type m_Fs;
+    /*! \brief input signal sampling period , s */
     __type m_Ts;
+    /*! \brief recursive root mean square filter gain */
     __type m_Gain;
+     /*! \brief recursive root mean square filter buffer size */
     __type m_Ns;
+     /*! \brief auxiliary variable */
     __type m_auxv;
-	__type m_y;
+    /*! \brief auxiliary variable */
+    __type m_y;
+    /*! \brief recursive root mean square filter order */
     __ix32 m_order;
 
-    // buffer:
+    /*! \brief recursive root mean square filter buffer */
     mirror_ring_buffer<__type> m_buffer_sx;
 
 public:
-    // filter output:
-    __type m_out , m_Km , m_pH;
+    /*! \brief recursive root mean square filter output */
+    __type m_out;
+    /*! \brief recursive root mean square filter frequency amplitude response */
+    __type m_Km ;
+    /*! \brief recursive root mean square filter frequency amplitude response */
+    __type m_pH ;
 
-    // memory allocation and deallocation functions:
+    /*! \brief  recursive root mean square filter memory allocation function
+     *  \return the function allocates memory for the recursive rott mean square filter buffer
+   */
     __ix32 allocate() { return ( m_buffer_sx.allocate( m_order + 2 ) ); }
+
+    /*! \brief  recursive root mean square filter memory deallocation function
+     *  \return the function deallocates memory for the recursive root mean square filter buffer
+   */
     void deallocate() { m_buffer_sx.deallocate(); }
 
-    // initialization function:
+    /*! \brief  recursive root mean square filter initialization function
+     *  \param[Fn  ]  - input signal nominal frequency  , Hz
+     *  \param[Fs  ]  - input signal sampling frequency , hz
+     *  \param[order] - recursive mean filter order
+     *  \return the function initializes recursive root mean square filter
+   */
     void init( __type Fn , __type Fs , __ix32 order )
     {
         m_Fs      = Fs;
@@ -98,7 +125,7 @@ public:
 		m_out     = 0;
     }
 
-    // default constructor:
+    /*! \brief  recursive root mean square filter default constructor */
     recursive_rms()
     {
         m_Fs      = 4000;
@@ -111,13 +138,21 @@ public:
 		m_out     = 0;
     };
 
-    // constructor with initiallization:
+    /*! \brief  recursive root mean square filter initializing constructor
+     *  \param[Fn  ]  - input signal nominal frequency  , Hz
+     *  \param[Fs  ]  - input signal sampling frequency , hz
+     *  \param[order] - recursive mean filter order
+     *  \return This constructor calls initialization function
+    */
     recursive_rms( __type Fn , __type Fs , __ix32 order ) { init( Fn , Fs , order ); }
 
-    // default destructor:
+    /*! \brief  recursive root mean square filter default destructor */
     ~recursive_rms(){ deallocate(); }
 
-    // Frequency characteristics computation function:
+    /*! \brief recursive root mean square filter frequency response computation function
+     *  \param[F] - input signal frequency , Hz
+     *  \return The function computes phase and amplitude frequency response for the signal having frequency F
+    */
     __ix32 FreqCharacteristics( __type F )
     {
         __type Re_nom = 0 , Im_nom = 0 , Re_den = 0 , Im_den = 0 , Re = 0 , Im = 0;
@@ -132,9 +167,11 @@ public:
         return 0;
     }
 
-    // filtering function:
 
-    // float x32 input:
+    /*! \brief  32-bit recursive root mean square filter filtering function
+     *  \param[input] - pointer to the nput signal frames
+     *  \return The function computes recursive mean fiter output
+    */
     inline void filt ( __type *input )
     {
         m_auxv = ( *input ) * ( *input );
@@ -143,7 +180,10 @@ public:
         m_out =  ( m_y <= 0 ) ? 0 : sqrtf( m_y );
     }
 
-    // float x64 input ( CAUTION !!! ROUNDING ERROR OCCURS !!! ):
+    /*! \brief  64-bit recursive root mean square filter filtering function
+     *  \param[input] - pointer to the nput signal frames
+     *  \return The function computes recursive mean fiter output
+    */
     inline void filt ( __fx64 *input )
     {
         m_auxv = ( *input ) * ( *input );
@@ -152,39 +192,68 @@ public:
         m_out =  ( m_y <= 0 ) ? 0 : sqrtf( m_y );
     }
 
-    // operators:
-
-    // initialization operator:
+    /*! \brief  32-bit recursive root mean square filter filtering operator
+     *  \param[input] - pointer to the nput signal frames
+     *  \return The operator calls the function that computes recursive mean fiter output
+    */
     inline void operator () ( __type *input ){ filt ( input ); }
+
+    /*! \brief  64-bit recursive root mean square filter filtering operator
+     *  \param[input] - pointer to the nput signal frames
+     *  \return The operator calls the function that computes recursive mean fiter output
+    */
     inline void operator () ( __fx64 *input ){ filt ( input ); }
 };
 
-// float x64:
+/*! \brief recursive root mean square template class 64-bit floating point implementation */
 template<> class recursive_rms<__fx64>
 {
     typedef __fx64 __type;
-    // system variables:
+private:
+    /*! \brief nominal input signal frequency , Hz */
     __type m_Fn;
+    /*! \brief input signal sampling frequency , Hz */
     __type m_Fs;
+    /*! \brief input signal sampling period , s */
     __type m_Ts;
+    /*! \brief recursive root mean square filter gain */
     __type m_Gain;
+     /*! \brief recursive root mean square filter buffer size */
     __type m_Ns;
+     /*! \brief auxiliary variable */
     __type m_auxv;
-	__type m_y;
+    /*! \brief auxiliary variable */
+    __type m_y;
+    /*! \brief recursive root mean square filter order */
     __ix32 m_order;
 
-    // buffer:
+    /*! \brief recursive root mean square filter buffer */
     mirror_ring_buffer<__type> m_buffer_sx;
 
 public:
-    // filter output:
-    __type m_out , m_Km , m_pH;
+    /*! \brief recursive root mean square filter output */
+    __type m_out;
+    /*! \brief recursive root mean square filter frequency amplitude response */
+    __type m_Km ;
+    /*! \brief recursive root mean square filter frequency amplitude response */
+    __type m_pH ;
 
-    // memory allocation and deallocation functions:
+    /*! \brief  recursive root mean square filter memory allocation function
+     *  \return the function allocates memory for the recursive rott mean square filter buffer
+   */
     __ix32 allocate() { return ( m_buffer_sx.allocate( m_order + 2 ) ); }
+
+    /*! \brief  recursive root mean square filter memory deallocation function
+     *  \return the function deallocates memory for the recursive root mean square filter buffer
+   */
     void deallocate() { m_buffer_sx.deallocate(); }
 
-    // initialization function:
+    /*! \brief  recursive root mean square filter initialization function
+     *  \param[Fn  ]  - input signal nominal frequency  , Hz
+     *  \param[Fs  ]  - input signal sampling frequency , hz
+     *  \param[order] - recursive mean filter order
+     *  \return the function initializes recursive root mean square filter
+   */
     void init( __type Fn , __type Fs , __ix32 order )
     {
         m_Fs      = Fs;
@@ -193,11 +262,11 @@ public:
         m_Ns      = m_order;
         m_Ts      = 1 / m_Fs;
         m_Gain    = 1 / m_Ns;
-		m_y		  = 0;
-		m_out     = 0;
+        m_y		  = 0;
+        m_out     = 0;
     }
 
-    // default constructor:
+    /*! \brief  recursive root mean square filter default constructor */
     recursive_rms()
     {
         m_Fs      = 4000;
@@ -206,17 +275,25 @@ public:
         m_Ns      = m_order;
         m_Ts      = 1 / m_Fs;
         m_Gain    = 1 / m_Ns;
-		m_y		  = 0;
-		m_out     = 0;
+        m_y		  = 0;
+        m_out     = 0;
     };
 
-    // constructor with initiallization:
+    /*! \brief  recursive root mean square filter initializing constructor
+     *  \param[Fn  ]  - input signal nominal frequency  , Hz
+     *  \param[Fs  ]  - input signal sampling frequency , hz
+     *  \param[order] - recursive mean filter order
+     *  \return This constructor calls initialization function
+    */
     recursive_rms( __type Fn , __type Fs , __ix32 order ) { init( Fn , Fs , order ); }
 
-    // default destructor:
+    /*! \brief  recursive root mean square filter default destructor */
     ~recursive_rms(){ deallocate(); }
 
-    // Frequency characteristics computation function:
+    /*! \brief recursive root mean square filter frequency response computation function
+     *  \param[F] - input signal frequency , Hz
+     *  \return The function computes phase and amplitude frequency response for the signal having frequency F
+    */
     __ix32 FreqCharacteristics( __type F )
     {
         __type Re_nom = 0 , Im_nom = 0 , Re_den = 0 , Im_den = 0 , Re = 0 , Im = 0;
@@ -231,9 +308,10 @@ public:
         return 0;
     }
 
-    // filtering function:
-
-    // float x32 input:
+    /*! \brief  64-bit recursive root mean square filter filtering function
+     *  \param[input] - pointer to the nput signal frames
+     *  \return The function computes recursive mean fiter output
+    */
     inline void filt ( __type *input )
     {
         m_auxv = ( *input ) * ( *input );
@@ -242,11 +320,14 @@ public:
         m_out =  ( m_y <= 0 ) ? 0 : sqrtf( m_y );
     }
 
-    // operators:
-
-    // initialization operator:
+    /*! \brief  64-bit recursive root mean square filter filtering operator
+     *  \param[input] - pointer to the nput signal frames
+     *  \return The operator calls the function that computes recursive mean fiter output
+    */
     inline void operator () ( __type *input ){ filt ( input ); }
 };
+
+/*! @} */
 
 // customized data types exclusion to avoid aliases:
 #undef __ix16

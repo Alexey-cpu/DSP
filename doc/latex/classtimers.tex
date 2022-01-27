@@ -1,28 +1,146 @@
 \hypertarget{classtimers}{}\doxysection{timers Class Reference}
 \label{classtimers}\index{timers@{timers}}
+
+
+timers class  
+
+
+
+
+{\ttfamily \#include $<$logical.\+h$>$}
+
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classtimers_a078fa58db65fd0d71d1816dd49ba1c4e}\label{classtimers_a078fa58db65fd0d71d1816dd49ba1c4e}} 
-\+\_\+\+\_\+void {\bfseries init} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} Frames\+Per\+Cycle)
-\item 
-\mbox{\Hypertarget{classtimers_a7f436d6c85268a8b57ddbda56c2d50d8}\label{classtimers_a7f436d6c85268a8b57ddbda56c2d50d8}} 
-\+\_\+\+\_\+bool {\bfseries ton} (\+\_\+\+\_\+bool S, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} dT)
-\item 
-\mbox{\Hypertarget{classtimers_a91085f68cbb616239f22eb03ecf264a5}\label{classtimers_a91085f68cbb616239f22eb03ecf264a5}} 
-\+\_\+\+\_\+bool {\bfseries tof} (\+\_\+\+\_\+bool S, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} dT)
-\item 
-\mbox{\Hypertarget{classtimers_a672bf5e4eadf2ffec37d5d66abc54675}\label{classtimers_a672bf5e4eadf2ffec37d5d66abc54675}} 
-\+\_\+\+\_\+bool {\bfseries tp} (\+\_\+\+\_\+bool S, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} dT)
-\item 
+\mbox{\Hypertarget{classtimers_a5726ffea5766f5d322858a942bc06204}\label{classtimers_a5726ffea5766f5d322858a942bc06204}} 
+{\bfseries timers} ()
+\begin{DoxyCompactList}\small\item\em default constructor \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classtimers_ada69d4de945393a13295b3aaf3d8bbb9}\label{classtimers_ada69d4de945393a13295b3aaf3d8bbb9}} 
+{\bfseries $\sim$timers} ()
+\begin{DoxyCompactList}\small\item\em default destructor \end{DoxyCompactList}\item 
+\+\_\+\+\_\+void \mbox{\hyperlink{classtimers_a078fa58db65fd0d71d1816dd49ba1c4e}{init}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} Frames\+Per\+Cycle)
+\begin{DoxyCompactList}\small\item\em timers class initialization function \end{DoxyCompactList}\item 
+\+\_\+\+\_\+bool \mbox{\hyperlink{classtimers_a7f436d6c85268a8b57ddbda56c2d50d8}{ton}} (\+\_\+\+\_\+bool S, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} dT)
+\begin{DoxyCompactList}\small\item\em timer \char`\"{}on\char`\"{} function \end{DoxyCompactList}\item 
+\+\_\+\+\_\+bool \mbox{\hyperlink{classtimers_a91085f68cbb616239f22eb03ecf264a5}{tof}} (\+\_\+\+\_\+bool S, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} dT)
+\begin{DoxyCompactList}\small\item\em timer \char`\"{}off\char`\"{} function \end{DoxyCompactList}\item 
+\+\_\+\+\_\+bool \mbox{\hyperlink{classtimers_a672bf5e4eadf2ffec37d5d66abc54675}{tp}} (\+\_\+\+\_\+bool S, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} dT)
+\begin{DoxyCompactList}\small\item\em pulse timer function \end{DoxyCompactList}\item 
+\+\_\+\+\_\+bool \mbox{\hyperlink{classtimers_ab42e2d7d4a11245e884fd26ecde8521d}{get\+State}} ()
+\begin{DoxyCompactList}\small\item\em timer state control function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{classtimers_a21b66bddcfd373134cc5f6eff7c33697}{get\+Time}} ()
+\begin{DoxyCompactList}\small\item\em timer time control function \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+timers class 
+
+\doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classtimers_ab42e2d7d4a11245e884fd26ecde8521d}\label{classtimers_ab42e2d7d4a11245e884fd26ecde8521d}} 
-\+\_\+\+\_\+bool {\bfseries get\+State} ()
-\item 
+\index{timers@{timers}!getState@{getState}}
+\index{getState@{getState}!timers@{timers}}
+\doxysubsubsection{\texorpdfstring{getState()}{getState()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+bool timers\+::get\+State (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+timer state control function 
+
+\begin{DoxyReturn}{Returns}
+The function returns current timer object state 
+\end{DoxyReturn}
 \mbox{\Hypertarget{classtimers_a21b66bddcfd373134cc5f6eff7c33697}\label{classtimers_a21b66bddcfd373134cc5f6eff7c33697}} 
-\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} {\bfseries get\+Time} ()
-\end{DoxyCompactItemize}
+\index{timers@{timers}!getTime@{getTime}}
+\index{getTime@{getTime}!timers@{timers}}
+\doxysubsubsection{\texorpdfstring{getTime()}{getTime()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} timers\+::get\+Time (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+timer time control function 
+
+\begin{DoxyReturn}{Returns}
+The function returns current timer time 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classtimers_a078fa58db65fd0d71d1816dd49ba1c4e}\label{classtimers_a078fa58db65fd0d71d1816dd49ba1c4e}} 
+\index{timers@{timers}!init@{init}}
+\index{init@{init}!timers@{timers}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+void timers\+::init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{Frames\+Per\+Cycle }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+timers class initialization function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs} & \mbox{]} -\/ sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Frames\+Per\+Cycle\mbox{]}} & -\/ number frames per IDE cycle \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classtimers_a91085f68cbb616239f22eb03ecf264a5}\label{classtimers_a91085f68cbb616239f22eb03ecf264a5}} 
+\index{timers@{timers}!tof@{tof}}
+\index{tof@{tof}!timers@{timers}}
+\doxysubsubsection{\texorpdfstring{tof()}{tof()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+bool timers\+::tof (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+bool}]{S,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{dT }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+timer \char`\"{}off\char`\"{} function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & S \mbox{]} -\/ controlled logical input signal \\
+\hline
+{\em \mbox{[}} & dT \mbox{]} -\/ time to wait , s \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns true if the input signal S is true. If the input S drops to false the true output exists during the time dT. Then, if dT has expired and the input signal S is false -\/ the function output becomes false. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classtimers_a7f436d6c85268a8b57ddbda56c2d50d8}\label{classtimers_a7f436d6c85268a8b57ddbda56c2d50d8}} 
+\index{timers@{timers}!ton@{ton}}
+\index{ton@{ton}!timers@{timers}}
+\doxysubsubsection{\texorpdfstring{ton()}{ton()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+bool timers\+::ton (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+bool}]{S,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{dT }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+timer \char`\"{}on\char`\"{} function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & S \mbox{]} -\/ controlled logical input signal \\
+\hline
+{\em \mbox{[}} & dT \mbox{]} -\/ time to wait , s \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns true if the input signal S stays true within the time greater than dT. The function returns false if the input signal S stays true within the time less than dT. The true output is dropped if the input S becomes false. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classtimers_a672bf5e4eadf2ffec37d5d66abc54675}\label{classtimers_a672bf5e4eadf2ffec37d5d66abc54675}} 
+\index{timers@{timers}!tp@{tp}}
+\index{tp@{tp}!timers@{timers}}
+\doxysubsubsection{\texorpdfstring{tp()}{tp()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+bool timers\+::tp (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+bool}]{S,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{dT }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+pulse timer function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & S \mbox{]} -\/ controlled logical input signal \\
+\hline
+{\em \mbox{[}} & dT \mbox{]} -\/ time to wait , s \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function outputs true if the input signal changes from 0 to 1. The true output exists untill time dT is expired 
+\end{DoxyReturn}
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-C\+:/\+Qt\+\_\+projects/\+Digital\+Filters\+\_\+x32/include/logical.\+h\end{DoxyCompactItemize}
+C\+:/\+Qt\+\_\+projects/\+Digital\+Filters\+\_\+x32/include/\mbox{\hyperlink{logical_8h}{logical.\+h}}\end{DoxyCompactItemize}

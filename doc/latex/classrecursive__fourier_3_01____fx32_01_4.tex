@@ -1,49 +1,227 @@
 \hypertarget{classrecursive__fourier_3_01____fx32_01_4}{}\doxysection{recursive\+\_\+fourier\texorpdfstring{$<$}{<} \+\_\+\+\_\+fx32 \texorpdfstring{$>$}{>} Class Reference}
 \label{classrecursive__fourier_3_01____fx32_01_4}\index{recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}}
+
+
+recursive discrete Fourier transformation 32-\/bit floating point implementation  
+
+
+
+
+{\ttfamily \#include $<$recursive\+\_\+fourier.\+h$>$}
+
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a1d87015649c4ec92b55394c9e6903b6f}\label{classrecursive__fourier_3_01____fx32_01_4_a1d87015649c4ec92b55394c9e6903b6f}} 
-\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} {\bfseries allocate} ()
-\item 
-\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a12316239f6fcfd0fb88abb643825c608}\label{classrecursive__fourier_3_01____fx32_01_4_a12316239f6fcfd0fb88abb643825c608}} 
-void {\bfseries deallocate} ()
-\item 
-\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a8f299f81df1ef8882a7b490f7004ffeb}\label{classrecursive__fourier_3_01____fx32_01_4_a8f299f81df1ef8882a7b490f7004ffeb}} 
-void {\bfseries init} (\+\_\+\+\_\+type Fn, \+\_\+\+\_\+type Fs, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} hnum)
-\item 
-\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a7aef4864cc61940f247f42bc97676e2b}\label{classrecursive__fourier_3_01____fx32_01_4_a7aef4864cc61940f247f42bc97676e2b}} 
-{\bfseries recursive\+\_\+fourier} (\+\_\+\+\_\+type Fn, \+\_\+\+\_\+type Fs, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} hnum)
-\item 
-\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a3920b42029d07cdbc4017c10e5623ceb}\label{classrecursive__fourier_3_01____fx32_01_4_a3920b42029d07cdbc4017c10e5623ceb}} 
-void {\bfseries filt} (\+\_\+\+\_\+type $\ast$input)
-\item 
-\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a2350072a8c11a3393f4d3732cf5e348f}\label{classrecursive__fourier_3_01____fx32_01_4_a2350072a8c11a3393f4d3732cf5e348f}} 
-void {\bfseries filt} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $\ast$input)
-\item 
-\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a7b03c6dc92748104cbd347042d32fa23}\label{classrecursive__fourier_3_01____fx32_01_4_a7b03c6dc92748104cbd347042d32fa23}} 
-\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} {\bfseries Freq\+Characteristics} (\+\_\+\+\_\+type F)
-\item 
-\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_abc0bc943301307fc1b098a6233b57fbf}\label{classrecursive__fourier_3_01____fx32_01_4_abc0bc943301307fc1b098a6233b57fbf}} 
-void {\bfseries operator()} (\+\_\+\+\_\+type $\ast$input)
-\end{DoxyCompactItemize}
+\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{classrecursive__fourier_3_01____fx32_01_4_a1d87015649c4ec92b55394c9e6903b6f}{allocate}} ()
+\begin{DoxyCompactList}\small\item\em recursive Fourier filter memory allocation function \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classrecursive__fourier_3_01____fx32_01_4_a12316239f6fcfd0fb88abb643825c608}{deallocate}} ()
+\begin{DoxyCompactList}\small\item\em recursive Fourier filter memory deallocation function \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classrecursive__fourier_3_01____fx32_01_4_a8f299f81df1ef8882a7b490f7004ffeb}{init}} (\+\_\+\+\_\+type Fn, \+\_\+\+\_\+type Fs, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} hnum)
+\begin{DoxyCompactList}\small\item\em recursive Fourier filter initialization function \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a2657bcc5a5903a81ea02e8b38cf2c9f9}\label{classrecursive__fourier_3_01____fx32_01_4_a2657bcc5a5903a81ea02e8b38cf2c9f9}} 
+{\bfseries recursive\+\_\+fourier} ()
+\begin{DoxyCompactList}\small\item\em recursive Fourier filter default constructor \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classrecursive__fourier_3_01____fx32_01_4_a7aef4864cc61940f247f42bc97676e2b}{recursive\+\_\+fourier}} (\+\_\+\+\_\+type Fn, \+\_\+\+\_\+type Fs, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} hnum)
+\begin{DoxyCompactList}\small\item\em recursive Fourier filter initializing constructor \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_afed7d8ec5f156eaeb29d767b097b1eea}\label{classrecursive__fourier_3_01____fx32_01_4_afed7d8ec5f156eaeb29d767b097b1eea}} 
+{\bfseries $\sim$recursive\+\_\+fourier} ()
+\begin{DoxyCompactList}\small\item\em recursive Fourier filter default destructor \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classrecursive__fourier_3_01____fx32_01_4_a3920b42029d07cdbc4017c10e5623ceb}{filt}} (\+\_\+\+\_\+type $\ast$input)
+\begin{DoxyCompactList}\small\item\em 32-\/bit recursive Fourier filter filtering function \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classrecursive__fourier_3_01____fx32_01_4_a2350072a8c11a3393f4d3732cf5e348f}{filt}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $\ast$input)
+\begin{DoxyCompactList}\small\item\em 64-\/bit recursive Fourier filter filtering function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{classrecursive__fourier_3_01____fx32_01_4_a7b03c6dc92748104cbd347042d32fa23}{Freq\+Characteristics}} (\+\_\+\+\_\+type F)
+\begin{DoxyCompactList}\small\item\em recursive Fourier filter frequency response computation function \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classrecursive__fourier_3_01____fx32_01_4_abc0bc943301307fc1b098a6233b57fbf}{operator()}} (\+\_\+\+\_\+type $\ast$input)
+\begin{DoxyCompactList}\small\item\em 32-\/bit recursive Fourier filter filtering operator \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classrecursive__fourier_3_01____fx32_01_4_a3664da2d534d756d456a3cbcb32adeed}{operator()}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $\ast$input)
+\begin{DoxyCompactList}\small\item\em 64-\/bit recursive Fourier filter filtering operator \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_aa007c2c206a29ae6061a3e679fe2677e}\label{classrecursive__fourier_3_01____fx32_01_4_aa007c2c206a29ae6061a3e679fe2677e}} 
 \+\_\+\+\_\+type {\bfseries m\+\_\+a}
-\item 
+\begin{DoxyCompactList}\small\item\em harmonic real output component \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a73bbd6c2d8d75c54b3c999c643d86e05}\label{classrecursive__fourier_3_01____fx32_01_4_a73bbd6c2d8d75c54b3c999c643d86e05}} 
 \+\_\+\+\_\+type {\bfseries m\+\_\+b}
-\item 
+\begin{DoxyCompactList}\small\item\em harmonic imaginary output component \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a73e16c47a3b67a9488113fc8a9602641}\label{classrecursive__fourier_3_01____fx32_01_4_a73e16c47a3b67a9488113fc8a9602641}} 
 \+\_\+\+\_\+type {\bfseries m\+\_\+\+Km}
-\item 
+\begin{DoxyCompactList}\small\item\em recursive Fourier filter frequency amplitude response \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_aa50b51aa9e380e02b8819cc0b585bec0}\label{classrecursive__fourier_3_01____fx32_01_4_aa50b51aa9e380e02b8819cc0b585bec0}} 
 \+\_\+\+\_\+type {\bfseries m\+\_\+pH}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em recursive Fourier filter frequency phase response \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+recursive discrete Fourier transformation 32-\/bit floating point implementation 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a7aef4864cc61940f247f42bc97676e2b}\label{classrecursive__fourier_3_01____fx32_01_4_a7aef4864cc61940f247f42bc97676e2b}} 
+\index{recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}!recursive\_fourier@{recursive\_fourier}}
+\index{recursive\_fourier@{recursive\_fourier}!recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{recursive\_fourier()}{recursive\_fourier()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classrecursive__fourier}{recursive\+\_\+fourier}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::\mbox{\hyperlink{classrecursive__fourier}{recursive\+\_\+fourier}} (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type}]{Fn,  }\item[{\+\_\+\+\_\+type}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{hnum }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+recursive Fourier filter initializing constructor 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fn} & \mbox{]} -\/ input signal nominal frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fs} & \mbox{]} -\/ input signal sampling frequency , hz \\
+\hline
+{\em \mbox{[}hnum\mbox{]}} & -\/ number of computed harmonic \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+This constructor calls initialization function 
+\end{DoxyReturn}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a1d87015649c4ec92b55394c9e6903b6f}\label{classrecursive__fourier_3_01____fx32_01_4_a1d87015649c4ec92b55394c9e6903b6f}} 
+\index{recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}!allocate@{allocate}}
+\index{allocate@{allocate}!recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{allocate()}{allocate()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{classrecursive__fourier}{recursive\+\_\+fourier}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::allocate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+recursive Fourier filter memory allocation function 
+
+\begin{DoxyReturn}{Returns}
+the function allocates memory for the recursive Fourier filter buffer 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a12316239f6fcfd0fb88abb643825c608}\label{classrecursive__fourier_3_01____fx32_01_4_a12316239f6fcfd0fb88abb643825c608}} 
+\index{recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}!deallocate@{deallocate}}
+\index{deallocate@{deallocate}!recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{deallocate()}{deallocate()}}
+{\footnotesize\ttfamily void \mbox{\hyperlink{classrecursive__fourier}{recursive\+\_\+fourier}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::deallocate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+recursive Fourier filter memory deallocation function 
+
+\begin{DoxyReturn}{Returns}
+the function deallocates memory of the recursive Fourier buffer 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a2350072a8c11a3393f4d3732cf5e348f}\label{classrecursive__fourier_3_01____fx32_01_4_a2350072a8c11a3393f4d3732cf5e348f}} 
+\index{recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}!filt@{filt}}
+\index{filt@{filt}!recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{filt()}{filt()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void \mbox{\hyperlink{classrecursive__fourier}{recursive\+\_\+fourier}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::filt (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $\ast$}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+64-\/bit recursive Fourier filter filtering function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}input\mbox{]}} & -\/ pointer to the nput signal frames \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes real and imaginary harmonic component 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a3920b42029d07cdbc4017c10e5623ceb}\label{classrecursive__fourier_3_01____fx32_01_4_a3920b42029d07cdbc4017c10e5623ceb}} 
+\index{recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}!filt@{filt}}
+\index{filt@{filt}!recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{filt()}{filt()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void \mbox{\hyperlink{classrecursive__fourier}{recursive\+\_\+fourier}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::filt (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type $\ast$}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+32-\/bit recursive Fourier filter filtering function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}input\mbox{]}} & -\/ pointer to the nput signal frames \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes real and imaginary harmonic component 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a7b03c6dc92748104cbd347042d32fa23}\label{classrecursive__fourier_3_01____fx32_01_4_a7b03c6dc92748104cbd347042d32fa23}} 
+\index{recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}!FreqCharacteristics@{FreqCharacteristics}}
+\index{FreqCharacteristics@{FreqCharacteristics}!recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{FreqCharacteristics()}{FreqCharacteristics()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{classrecursive__fourier}{recursive\+\_\+fourier}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::Freq\+Characteristics (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type}]{F }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+recursive Fourier filter frequency response computation function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+F\mbox{]}} & -\/ input signal frequency , Hz \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes phase and amplitude frequency response for the signal having frequency F 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a8f299f81df1ef8882a7b490f7004ffeb}\label{classrecursive__fourier_3_01____fx32_01_4_a8f299f81df1ef8882a7b490f7004ffeb}} 
+\index{recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}!init@{init}}
+\index{init@{init}!recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily void \mbox{\hyperlink{classrecursive__fourier}{recursive\+\_\+fourier}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::init (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type}]{Fn,  }\item[{\+\_\+\+\_\+type}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{hnum }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+recursive Fourier filter initialization function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fn} & \mbox{]} -\/ input signal nominal frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fs} & \mbox{]} -\/ input signal sampling frequency , hz \\
+\hline
+{\em \mbox{[}hnum\mbox{]}} & -\/ number of computed harmonic \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function initializes recursive Fourier filter 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_a3664da2d534d756d456a3cbcb32adeed}\label{classrecursive__fourier_3_01____fx32_01_4_a3664da2d534d756d456a3cbcb32adeed}} 
+\index{recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}!operator()@{operator()}}
+\index{operator()@{operator()}!recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void \mbox{\hyperlink{classrecursive__fourier}{recursive\+\_\+fourier}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::operator() (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $\ast$}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+64-\/bit recursive Fourier filter filtering operator 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}input\mbox{]}} & -\/ pointer to the nput signal frames \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The operator calls the function that computes real and imaginary harmonic component 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classrecursive__fourier_3_01____fx32_01_4_abc0bc943301307fc1b098a6233b57fbf}\label{classrecursive__fourier_3_01____fx32_01_4_abc0bc943301307fc1b098a6233b57fbf}} 
+\index{recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}!operator()@{operator()}}
+\index{operator()@{operator()}!recursive\_fourier$<$ \_\_fx32 $>$@{recursive\_fourier$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void \mbox{\hyperlink{classrecursive__fourier}{recursive\+\_\+fourier}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::operator() (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type $\ast$}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+32-\/bit recursive Fourier filter filtering operator 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}input\mbox{]}} & -\/ pointer to the nput signal frames \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The operator calls the function that computes real and imaginary harmonic component 
+\end{DoxyReturn}
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-C\+:/\+Qt\+\_\+projects/\+Digital\+Filters\+\_\+x32/include/recursive\+\_\+fourier.\+h\end{DoxyCompactItemize}
+C\+:/\+Qt\+\_\+projects/\+Digital\+Filters\+\_\+x32/include/\mbox{\hyperlink{recursive__fourier_8h}{recursive\+\_\+fourier.\+h}}\end{DoxyCompactItemize}

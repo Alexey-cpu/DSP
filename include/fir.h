@@ -16,7 +16,7 @@
 #include <fstream>
 #endif
 
-/*! \defgroup <FIR_fcn> ( FIR filters )
+/*! \defgroup <FIR_FILTERS> ( FIR filters )
  *  \brief the module contains FIR filter template class and it's auxiliary functions
     @{
 */

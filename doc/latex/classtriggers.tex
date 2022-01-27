@@ -1,28 +1,155 @@
 \hypertarget{classtriggers}{}\doxysection{triggers Class Reference}
 \label{classtriggers}\index{triggers@{triggers}}
+
+
+triggers class  
+
+
+
+
+{\ttfamily \#include $<$logical.\+h$>$}
+
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classtriggers_a7cc5d3c88cac25d700fd52507745e532}\label{classtriggers_a7cc5d3c88cac25d700fd52507745e532}} 
-\+\_\+\+\_\+bool {\bfseries get\+\_\+\+State} ()
-\item 
-\mbox{\Hypertarget{classtriggers_a35bd3291755687500e120c8933752f3c}\label{classtriggers_a35bd3291755687500e120c8933752f3c}} 
-\+\_\+\+\_\+bool {\bfseries rr\+\_\+trig} (\+\_\+\+\_\+bool CLK)
-\item 
+\mbox{\Hypertarget{classtriggers_a78c7df1ef8186d7680da9d541bae24b3}\label{classtriggers_a78c7df1ef8186d7680da9d541bae24b3}} 
+{\bfseries triggers} ()
+\begin{DoxyCompactList}\small\item\em default trigger constructor \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classtriggers_a01cbfd749b7baae01ff810ee6283aff1}\label{classtriggers_a01cbfd749b7baae01ff810ee6283aff1}} 
+{\bfseries $\sim$triggers} ()
+\begin{DoxyCompactList}\small\item\em default trigger destructor \end{DoxyCompactList}\item 
+\+\_\+\+\_\+bool \mbox{\hyperlink{classtriggers_a35bd3291755687500e120c8933752f3c}{rr\+\_\+trig}} (\+\_\+\+\_\+bool CLK)
+\begin{DoxyCompactList}\small\item\em rising edge detecting function \end{DoxyCompactList}\item 
+\+\_\+\+\_\+bool \mbox{\hyperlink{classtriggers_a74b828504f911a760bc25010703210f4}{ff\+\_\+trig}} (\+\_\+\+\_\+bool CLK)
+\begin{DoxyCompactList}\small\item\em falling edge detecting function \end{DoxyCompactList}\item 
+\+\_\+\+\_\+bool \mbox{\hyperlink{classtriggers_a00cfa075f039b474dc418ec0f0063b24}{rs\+\_\+trig}} (\+\_\+\+\_\+bool S, \+\_\+\+\_\+bool R)
+\begin{DoxyCompactList}\small\item\em bistable RS trigger function \end{DoxyCompactList}\item 
+\+\_\+\+\_\+bool \mbox{\hyperlink{classtriggers_a408ae8ee52e73c5eb88b190028b6632b}{sr\+\_\+trig}} (\+\_\+\+\_\+bool S, \+\_\+\+\_\+bool R)
+\begin{DoxyCompactList}\small\item\em bistable SR trigger function \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\+\_\+\+\_\+bool \mbox{\hyperlink{classtriggers_adf623caba6d2c1b4dbb3609b86e132eb}{hit\+\_\+crossing}} (T input, T offset, \+\_\+\+\_\+bool falling)
+\begin{DoxyCompactList}\small\item\em bistable SR trigger function \end{DoxyCompactList}\item 
+\+\_\+\+\_\+bool \mbox{\hyperlink{classtriggers_a7cc5d3c88cac25d700fd52507745e532}{get\+\_\+\+State}} ()
+\begin{DoxyCompactList}\small\item\em trigger state control function \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+triggers class 
+
+\doxysubsection{Member Function Documentation}
 \mbox{\Hypertarget{classtriggers_a74b828504f911a760bc25010703210f4}\label{classtriggers_a74b828504f911a760bc25010703210f4}} 
-\+\_\+\+\_\+bool {\bfseries ff\+\_\+trig} (\+\_\+\+\_\+bool CLK)
-\item 
-\mbox{\Hypertarget{classtriggers_a00cfa075f039b474dc418ec0f0063b24}\label{classtriggers_a00cfa075f039b474dc418ec0f0063b24}} 
-\+\_\+\+\_\+bool {\bfseries rs\+\_\+trig} (\+\_\+\+\_\+bool S, \+\_\+\+\_\+bool R)
-\item 
-\mbox{\Hypertarget{classtriggers_a408ae8ee52e73c5eb88b190028b6632b}\label{classtriggers_a408ae8ee52e73c5eb88b190028b6632b}} 
-\+\_\+\+\_\+bool {\bfseries sr\+\_\+trig} (\+\_\+\+\_\+bool S, \+\_\+\+\_\+bool R)
-\item 
+\index{triggers@{triggers}!ff\_trig@{ff\_trig}}
+\index{ff\_trig@{ff\_trig}!triggers@{triggers}}
+\doxysubsubsection{\texorpdfstring{ff\_trig()}{ff\_trig()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+bool triggers\+::ff\+\_\+trig (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+bool}]{CLK }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+falling edge detecting function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+CLK\mbox{]}} & -\/ controlled logical input \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function returns true single frame ( IDE cycle ) pulse if the input changes from 1 to 0. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classtriggers_a7cc5d3c88cac25d700fd52507745e532}\label{classtriggers_a7cc5d3c88cac25d700fd52507745e532}} 
+\index{triggers@{triggers}!get\_State@{get\_State}}
+\index{get\_State@{get\_State}!triggers@{triggers}}
+\doxysubsubsection{\texorpdfstring{get\_State()}{get\_State()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+bool triggers\+::get\+\_\+\+State (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+trigger state control function 
+
+\begin{DoxyReturn}{Returns}
+The function returns current trigger state 
+\end{DoxyReturn}
 \mbox{\Hypertarget{classtriggers_adf623caba6d2c1b4dbb3609b86e132eb}\label{classtriggers_adf623caba6d2c1b4dbb3609b86e132eb}} 
-{\footnotesize template$<$typename T $>$ }\\\+\_\+\+\_\+bool {\bfseries hit\+\_\+crossing} (T input, T offset, \+\_\+\+\_\+bool falling)
-\end{DoxyCompactItemize}
+\index{triggers@{triggers}!hit\_crossing@{hit\_crossing}}
+\index{hit\_crossing@{hit\_crossing}!triggers@{triggers}}
+\doxysubsubsection{\texorpdfstring{hit\_crossing()}{hit\_crossing()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\+\_\+\+\_\+bool triggers\+::hit\+\_\+crossing (\begin{DoxyParamCaption}\item[{T}]{input,  }\item[{T}]{offset,  }\item[{\+\_\+\+\_\+bool}]{falling }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+bistable SR trigger function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}input\mbox{]}} & -\/ controlled input signal \\
+\hline
+{\em \mbox{[}offset\mbox{]}} & -\/ the input signal offset \\
+\hline
+{\em \mbox{[}falling\mbox{]}} & -\/ falling edge control flag \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+If falling == false\+: the function returns true if the input signal increases the offset. If falling == true \+: the function returns true if the input signal becomes bellow the offset. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classtriggers_a35bd3291755687500e120c8933752f3c}\label{classtriggers_a35bd3291755687500e120c8933752f3c}} 
+\index{triggers@{triggers}!rr\_trig@{rr\_trig}}
+\index{rr\_trig@{rr\_trig}!triggers@{triggers}}
+\doxysubsubsection{\texorpdfstring{rr\_trig()}{rr\_trig()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+bool triggers\+::rr\+\_\+trig (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+bool}]{CLK }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+rising edge detecting function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+CLK\mbox{]}} & -\/ controlled logical input \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function returns true single frame ( IDE cycle ) pulse if the input changes from 0 to 1. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classtriggers_a00cfa075f039b474dc418ec0f0063b24}\label{classtriggers_a00cfa075f039b474dc418ec0f0063b24}} 
+\index{triggers@{triggers}!rs\_trig@{rs\_trig}}
+\index{rs\_trig@{rs\_trig}!triggers@{triggers}}
+\doxysubsubsection{\texorpdfstring{rs\_trig()}{rs\_trig()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+bool triggers\+::rs\+\_\+trig (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+bool}]{S,  }\item[{\+\_\+\+\_\+bool}]{R }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+bistable RS trigger function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+S\mbox{]}} & -\/ controlled logical set input \\
+\hline
+{\em \mbox{[}\+R\mbox{]}} & -\/ controlled logical reset input \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function returns true if the input S is true. The output becomes false if the input R becomes false. If S and R inputs become true at the same time the output is false. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classtriggers_a408ae8ee52e73c5eb88b190028b6632b}\label{classtriggers_a408ae8ee52e73c5eb88b190028b6632b}} 
+\index{triggers@{triggers}!sr\_trig@{sr\_trig}}
+\index{sr\_trig@{sr\_trig}!triggers@{triggers}}
+\doxysubsubsection{\texorpdfstring{sr\_trig()}{sr\_trig()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+bool triggers\+::sr\+\_\+trig (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+bool}]{S,  }\item[{\+\_\+\+\_\+bool}]{R }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+bistable SR trigger function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+S\mbox{]}} & -\/ controlled logical set input \\
+\hline
+{\em \mbox{[}\+R\mbox{]}} & -\/ controlled logical reset input \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function returns true if the input S is true. The output becomes false if the input R becomes false. If S and R inputs become true at the same time the output is true. 
+\end{DoxyReturn}
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-C\+:/\+Qt\+\_\+projects/\+Digital\+Filters\+\_\+x32/include/logical.\+h\end{DoxyCompactItemize}
+C\+:/\+Qt\+\_\+projects/\+Digital\+Filters\+\_\+x32/include/\mbox{\hyperlink{logical_8h}{logical.\+h}}\end{DoxyCompactItemize}

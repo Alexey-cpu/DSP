@@ -1,56 +1,256 @@
 \hypertarget{classbutterworth}{}\doxysection{butterworth\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Class Template Reference}
 \label{classbutterworth}\index{butterworth$<$ T $>$@{butterworth$<$ T $>$}}
+
+
+Template Butterworth IIR filter class.  
+
+
+
+
+{\ttfamily \#include $<$iir.\+h$>$}
+
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\Hypertarget{classbutterworth_a582d4e1588911c5ac49c26ffbf5dcce3}\label{classbutterworth_a582d4e1588911c5ac49c26ffbf5dcce3}} 
-void {\bfseries lp\+\_\+init} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fn, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Gs=1)
-\item 
-\mbox{\Hypertarget{classbutterworth_a6dec1b57fc4e4ea8fb3401a5c056d4c6}\label{classbutterworth_a6dec1b57fc4e4ea8fb3401a5c056d4c6}} 
-void {\bfseries hp\+\_\+init} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fn, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Gs=1)
-\item 
-\mbox{\Hypertarget{classbutterworth_a7492baac759bfd50ff4f2c56042787ca}\label{classbutterworth_a7492baac759bfd50ff4f2c56042787ca}} 
-void {\bfseries bp\+\_\+init} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fn, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} BW, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Gs=1)
-\item 
-\mbox{\Hypertarget{classbutterworth_a22c6c7d6bbb70f3ee6a61034366ec4a7}\label{classbutterworth_a22c6c7d6bbb70f3ee6a61034366ec4a7}} 
-void {\bfseries bs\+\_\+init} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fn, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} BW, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Gs=1)
-\item 
-\mbox{\Hypertarget{classbutterworth_aa5f9eec924258c25f94b9bded1c8dad0}\label{classbutterworth_aa5f9eec924258c25f94b9bded1c8dad0}} 
-\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} {\bfseries allocate} ()
-\item 
-\mbox{\Hypertarget{classbutterworth_a66035c96de911342e4a290b9ae059ec4}\label{classbutterworth_a66035c96de911342e4a290b9ae059ec4}} 
-void {\bfseries deallocate} ()
-\item 
-\mbox{\Hypertarget{classbutterworth_af7c447943af2c814283be2df494cc015}\label{classbutterworth_af7c447943af2c814283be2df494cc015}} 
-\+\_\+\+\_\+type {\bfseries filt} (\+\_\+\+\_\+type $\ast$input)
-\item 
-\mbox{\Hypertarget{classbutterworth_a91260c86b759a3efa57b7936f306f68d}\label{classbutterworth_a91260c86b759a3efa57b7936f306f68d}} 
-\+\_\+\+\_\+type {\bfseries operator()} (\+\_\+\+\_\+type $\ast$input)
-\item 
-\mbox{\Hypertarget{classbutterworth_ab036e3f8a28a98fdd815da353e967a42}\label{classbutterworth_ab036e3f8a28a98fdd815da353e967a42}} 
-void {\bfseries show\+\_\+properties} ()
-\end{DoxyCompactItemize}
+void \mbox{\hyperlink{classbutterworth_a582d4e1588911c5ac49c26ffbf5dcce3}{lp\+\_\+init}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fn, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Gs=1)
+\begin{DoxyCompactList}\small\item\em Butterworth lowpass filter initialization function. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classbutterworth_aaf34aaa14b66aa9131316dcaafcec548}{hp\+\_\+init}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fn, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fp, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Gs=1)
+\begin{DoxyCompactList}\small\item\em Butterworth highpass filter initialization function. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classbutterworth_a9e3396b2e231221eb9e809c615965e50}{bp\+\_\+init}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fn, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fp, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} BW, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Gs=1)
+\begin{DoxyCompactList}\small\item\em Butterworth bandpass filter initialization function. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classbutterworth_a22c6c7d6bbb70f3ee6a61034366ec4a7}{bs\+\_\+init}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fn, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} BW, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Gs=1)
+\begin{DoxyCompactList}\small\item\em Butterworth bandstop filter initialization function. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{classbutterworth_aa5f9eec924258c25f94b9bded1c8dad0}{allocate}} ()
+\begin{DoxyCompactList}\small\item\em Butterworth IIR memory allocation function. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classbutterworth_a66035c96de911342e4a290b9ae059ec4}{deallocate}} ()
+\begin{DoxyCompactList}\small\item\em Butterworth IIR memory deallocation function. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classbutterworth_a22cf5cd3f79effe1d35efe054e7faacf}\label{classbutterworth_a22cf5cd3f79effe1d35efe054e7faacf}} 
+{\bfseries butterworth} ()
+\begin{DoxyCompactList}\small\item\em Butterworth IIR filter default constructor. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classbutterworth_aef3700af4757ca3ca2674a34c9daf13c}\label{classbutterworth_aef3700af4757ca3ca2674a34c9daf13c}} 
+{\bfseries $\sim$butterworth} ()
+\begin{DoxyCompactList}\small\item\em Butterworth IIR filter default destructor. \end{DoxyCompactList}\item 
+\+\_\+\+\_\+type \mbox{\hyperlink{classbutterworth_af7c447943af2c814283be2df494cc015}{filt}} (\+\_\+\+\_\+type $\ast$input)
+\begin{DoxyCompactList}\small\item\em Butterworth IIR filter filtering function. \end{DoxyCompactList}\item 
+\+\_\+\+\_\+type \mbox{\hyperlink{classbutterworth_a91260c86b759a3efa57b7936f306f68d}{operator()}} (\+\_\+\+\_\+type $\ast$input)
+\begin{DoxyCompactList}\small\item\em Butterworth IIR filter filtering operator. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classbutterworth_ab036e3f8a28a98fdd815da353e967a42}{show\+\_\+properties}} ()
+\begin{DoxyCompactList}\small\item\em Butterworth IIR filter properties show function. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\Hypertarget{classbutterworth_a44adae985d02cc6ed2d654c8e37c2a3f}\label{classbutterworth_a44adae985d02cc6ed2d654c8e37c2a3f}} 
 \mbox{\hyperlink{structiir__sp}{iir\+\_\+sp}} {\bfseries m\+\_\+sp}
-\item 
+\begin{DoxyCompactList}\small\item\em Butterworth filter specification data structure. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classbutterworth_aa0c88f27c3d9aeeb65233f9fb84528f1}\label{classbutterworth_aa0c88f27c3d9aeeb65233f9fb84528f1}} 
 \mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ \+\_\+\+\_\+type $>$ {\bfseries m\+\_\+cf}
-\item 
+\begin{DoxyCompactList}\small\item\em Butterworth filter second order sections coefficients data structure. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classbutterworth_a78a1248325c7301b3a1f4fe346f6bc6e}\label{classbutterworth_a78a1248325c7301b3a1f4fe346f6bc6e}} 
 \mbox{\hyperlink{structiir__bf}{iir\+\_\+bf}}$<$ \+\_\+\+\_\+type $>$ {\bfseries m\+\_\+bf}
-\item 
+\begin{DoxyCompactList}\small\item\em Butterworth filter second order sections input/output buffers data structure. \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classbutterworth_a345b086f891ad88645de5830d1a2a6e9}\label{classbutterworth_a345b086f891ad88645de5830d1a2a6e9}} 
 \+\_\+\+\_\+type {\bfseries m\+\_\+out}
-\item 
-\mbox{\Hypertarget{classbutterworth_a6ff4b22f74cfc03dd5edb3798a76602b}\label{classbutterworth_a6ff4b22f74cfc03dd5edb3798a76602b}} 
-\+\_\+\+\_\+type {\bfseries m\+\_\+\+Km}
-\item 
-\mbox{\Hypertarget{classbutterworth_a6d21c870bc910db6a239feac24e61d88}\label{classbutterworth_a6d21c870bc910db6a239feac24e61d88}} 
-\+\_\+\+\_\+type {\bfseries m\+\_\+pH}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Butterworth filter output. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+class butterworth$<$ T $>$}
+Template Butterworth IIR filter class. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classbutterworth_aa5f9eec924258c25f94b9bded1c8dad0}\label{classbutterworth_aa5f9eec924258c25f94b9bded1c8dad0}} 
+\index{butterworth$<$ T $>$@{butterworth$<$ T $>$}!allocate@{allocate}}
+\index{allocate@{allocate}!butterworth$<$ T $>$@{butterworth$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{allocate()}{allocate()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{classbutterworth}{butterworth}}$<$ T $>$\+::allocate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Butterworth IIR memory allocation function. 
+
+\begin{DoxyReturn}{Returns}
+The function implements Butterworth type IIR filter memory allocation and coefficients computation. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classbutterworth_a9e3396b2e231221eb9e809c615965e50}\label{classbutterworth_a9e3396b2e231221eb9e809c615965e50}} 
+\index{butterworth$<$ T $>$@{butterworth$<$ T $>$}!bp\_init@{bp\_init}}
+\index{bp\_init@{bp\_init}!butterworth$<$ T $>$@{butterworth$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{bp\_init()}{bp\_init()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void \mbox{\hyperlink{classbutterworth}{butterworth}}$<$ T $>$\+::bp\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fn,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fp,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{BW,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Gs = {\ttfamily 1} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Butterworth bandpass filter initialization function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs} & \mbox{]} -\/ sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fn} & \mbox{]} -\/ network nominal frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fp} & \mbox{]} -\/ filter pass frequency , Hz \\
+\hline
+{\em \mbox{[}\+BW} & \mbox{]} -\/ filter passband width , Hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & -\/ filter order \\
+\hline
+{\em \mbox{[}\+Gs} & \mbox{]} -\/ stopband attenuation , Db \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function implements Butterworth bandpass filter initialization. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classbutterworth_a22c6c7d6bbb70f3ee6a61034366ec4a7}\label{classbutterworth_a22c6c7d6bbb70f3ee6a61034366ec4a7}} 
+\index{butterworth$<$ T $>$@{butterworth$<$ T $>$}!bs\_init@{bs\_init}}
+\index{bs\_init@{bs\_init}!butterworth$<$ T $>$@{butterworth$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{bs\_init()}{bs\_init()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void \mbox{\hyperlink{classbutterworth}{butterworth}}$<$ T $>$\+::bs\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fn,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fc,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{BW,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Gs = {\ttfamily 1} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Butterworth bandstop filter initialization function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs} & \mbox{]} -\/ sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fn} & \mbox{]} -\/ network nominal frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fc} & \mbox{]} -\/ filter cut-\/off frequency , Hz \\
+\hline
+{\em \mbox{[}\+BW} & \mbox{]} -\/ filter passband width , Hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & -\/ filter order \\
+\hline
+{\em \mbox{[}\+Gs} & \mbox{]} -\/ stopband attenuation , Db \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function implements Butterworth bandstop filter initialization. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classbutterworth_a66035c96de911342e4a290b9ae059ec4}\label{classbutterworth_a66035c96de911342e4a290b9ae059ec4}} 
+\index{butterworth$<$ T $>$@{butterworth$<$ T $>$}!deallocate@{deallocate}}
+\index{deallocate@{deallocate}!butterworth$<$ T $>$@{butterworth$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{deallocate()}{deallocate()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void \mbox{\hyperlink{classbutterworth}{butterworth}}$<$ T $>$\+::deallocate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Butterworth IIR memory deallocation function. 
+
+\begin{DoxyReturn}{Returns}
+The function implements Butterworth type IIR filter memory deallocation. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classbutterworth_af7c447943af2c814283be2df494cc015}\label{classbutterworth_af7c447943af2c814283be2df494cc015}} 
+\index{butterworth$<$ T $>$@{butterworth$<$ T $>$}!filt@{filt}}
+\index{filt@{filt}!butterworth$<$ T $>$@{butterworth$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{filt()}{filt()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\+\_\+\+\_\+type \mbox{\hyperlink{classbutterworth}{butterworth}}$<$ T $>$\+::filt (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type $\ast$}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Butterworth IIR filter filtering function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}input\mbox{]}} & -\/ input samples \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function implements input samples filtering using Butterworth IIR filter second order sections coefficients and gains. The filtering result is returned. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classbutterworth_aaf34aaa14b66aa9131316dcaafcec548}\label{classbutterworth_aaf34aaa14b66aa9131316dcaafcec548}} 
+\index{butterworth$<$ T $>$@{butterworth$<$ T $>$}!hp\_init@{hp\_init}}
+\index{hp\_init@{hp\_init}!butterworth$<$ T $>$@{butterworth$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{hp\_init()}{hp\_init()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void \mbox{\hyperlink{classbutterworth}{butterworth}}$<$ T $>$\+::hp\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fn,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fp,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Gs = {\ttfamily 1} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Butterworth highpass filter initialization function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs} & \mbox{]} -\/ sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fn} & \mbox{]} -\/ network nominal frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fp} & \mbox{]} -\/ filter pass frequency , Hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & -\/ filter order \\
+\hline
+{\em \mbox{[}\+Gs} & \mbox{]} -\/ stopband attenuation , Db \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function implements Butterworth highpass filter initialization. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classbutterworth_a582d4e1588911c5ac49c26ffbf5dcce3}\label{classbutterworth_a582d4e1588911c5ac49c26ffbf5dcce3}} 
+\index{butterworth$<$ T $>$@{butterworth$<$ T $>$}!lp\_init@{lp\_init}}
+\index{lp\_init@{lp\_init}!butterworth$<$ T $>$@{butterworth$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{lp\_init()}{lp\_init()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void \mbox{\hyperlink{classbutterworth}{butterworth}}$<$ T $>$\+::lp\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fs,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fn,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Fc,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{Gs = {\ttfamily 1} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Butterworth lowpass filter initialization function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs} & \mbox{]} -\/ sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fn} & \mbox{]} -\/ network nominal frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fc} & \mbox{]} -\/ cut-\/off frequency , Hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & -\/ filter order \\
+\hline
+{\em \mbox{[}\+Gs} & \mbox{]} -\/ stopband attenuation , Db \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function implements Butterworth lowpass filter initialization. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classbutterworth_a91260c86b759a3efa57b7936f306f68d}\label{classbutterworth_a91260c86b759a3efa57b7936f306f68d}} 
+\index{butterworth$<$ T $>$@{butterworth$<$ T $>$}!operator()@{operator()}}
+\index{operator()@{operator()}!butterworth$<$ T $>$@{butterworth$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\+\_\+\+\_\+type \mbox{\hyperlink{classbutterworth}{butterworth}}$<$ T $>$\+::operator() (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type $\ast$}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Butterworth IIR filter filtering operator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}input\mbox{]}} & -\/ input samples \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The operator calls function that implements input samples filtering using Butterworth IIR filter second order sections coefficients and gains. The filtering result is returned. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classbutterworth_ab036e3f8a28a98fdd815da353e967a42}\label{classbutterworth_ab036e3f8a28a98fdd815da353e967a42}} 
+\index{butterworth$<$ T $>$@{butterworth$<$ T $>$}!show\_properties@{show\_properties}}
+\index{show\_properties@{show\_properties}!butterworth$<$ T $>$@{butterworth$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{show\_properties()}{show\_properties()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void \mbox{\hyperlink{classbutterworth}{butterworth}}$<$ T $>$\+::show\+\_\+properties (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Butterworth IIR filter properties show function. 
+
+\begin{DoxyReturn}{Returns}
+The operator calls function outputs Butterworth IIR filter specification and coefficients on the console 
+\end{DoxyReturn}
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}

@@ -1,14 +1,17 @@
 var searchData=
 [
   ['rectangular_0',['Rectangular',['../classwind__fcn.html#a027174bcf079b4a0bdde25b92256948d',1,'wind_fcn']]],
-  ['recursive_5ffourier_1',['recursive_fourier',['../classrecursive__fourier.html',1,'']]],
-  ['recursive_5ffourier_3c_20_5f_5ffx32_20_3e_2',['recursive_fourier&lt; __fx32 &gt;',['../classrecursive__fourier_3_01____fx32_01_4.html',1,'']]],
-  ['recursive_5ffourier_3c_20_5f_5ffx64_20_3e_3',['recursive_fourier&lt; __fx64 &gt;',['../classrecursive__fourier_3_01____fx64_01_4.html',1,'']]],
-  ['recursive_5fmean_4',['recursive_mean',['../classrecursive__mean.html',1,'']]],
-  ['recursive_5fmean_3c_20_5f_5ffx32_20_3e_5',['recursive_mean&lt; __fx32 &gt;',['../classrecursive__mean_3_01____fx32_01_4.html',1,'']]],
-  ['recursive_5fmean_3c_20_5f_5ffx64_20_3e_6',['recursive_mean&lt; __fx64 &gt;',['../classrecursive__mean_3_01____fx64_01_4.html',1,'']]],
-  ['recursive_5frms_7',['recursive_rms',['../classrecursive__rms.html',1,'']]],
-  ['recursive_5frms_3c_20_5f_5ffx32_20_3e_8',['recursive_rms&lt; __fx32 &gt;',['../classrecursive__rms_3_01____fx32_01_4.html',1,'']]],
-  ['recursive_5frms_3c_20_5f_5ffx64_20_3e_9',['recursive_rms&lt; __fx64 &gt;',['../classrecursive__rms_3_01____fx64_01_4.html',1,'']]],
-  ['ring_5fbuffer_10',['ring_buffer',['../classring__buffer.html',1,'']]]
+  ['recursive_5ffourier_1',['recursive_fourier',['../classrecursive__fourier.html',1,'recursive_fourier&lt; T &gt;'],['../classrecursive__fourier_3_01____fx32_01_4.html#a2657bcc5a5903a81ea02e8b38cf2c9f9',1,'recursive_fourier&lt; __fx32 &gt;::recursive_fourier()'],['../classrecursive__fourier_3_01____fx32_01_4.html#a7aef4864cc61940f247f42bc97676e2b',1,'recursive_fourier&lt; __fx32 &gt;::recursive_fourier(__type Fn, __type Fs, __ix32 hnum)'],['../classrecursive__fourier_3_01____fx64_01_4.html#a06ccd1e06f4cffb21c034b0bb1b9ea82',1,'recursive_fourier&lt; __fx64 &gt;::recursive_fourier()'],['../classrecursive__fourier_3_01____fx64_01_4.html#a02eddd5a1677d2f0157f4f2b30e32dfc',1,'recursive_fourier&lt; __fx64 &gt;::recursive_fourier(__type Fn, __type Fs, __ix32 hnum)']]],
+  ['recursive_5ffourier_2eh_2',['recursive_fourier.h',['../recursive__fourier_8h.html',1,'']]],
+  ['recursive_5ffourier_3c_20_5f_5ffx32_20_3e_3',['recursive_fourier&lt; __fx32 &gt;',['../classrecursive__fourier_3_01____fx32_01_4.html',1,'']]],
+  ['recursive_5ffourier_3c_20_5f_5ffx64_20_3e_4',['recursive_fourier&lt; __fx64 &gt;',['../classrecursive__fourier_3_01____fx64_01_4.html',1,'']]],
+  ['recursive_5fmean_5',['recursive_mean',['../classrecursive__mean.html',1,'recursive_mean&lt; T &gt;'],['../classrecursive__mean_3_01____fx32_01_4.html#ad356af0ce422e507351e28a5acd281c7',1,'recursive_mean&lt; __fx32 &gt;::recursive_mean()'],['../classrecursive__mean_3_01____fx32_01_4.html#adca8a57b012fe4254ad1ce21e36092eb',1,'recursive_mean&lt; __fx32 &gt;::recursive_mean(__type Fn, __type Fs, __ix32 order)'],['../classrecursive__mean_3_01____fx64_01_4.html#ae61c2c4fb96af1b04a8fa316de82ba9d',1,'recursive_mean&lt; __fx64 &gt;::recursive_mean()'],['../classrecursive__mean_3_01____fx64_01_4.html#a1591f0baf5c4b11427833649d04cc0fb',1,'recursive_mean&lt; __fx64 &gt;::recursive_mean(__type Fn, __type Fs, __ix32 order)']]],
+  ['recursive_5fmean_3c_20_5f_5ffx32_20_3e_6',['recursive_mean&lt; __fx32 &gt;',['../classrecursive__mean_3_01____fx32_01_4.html',1,'']]],
+  ['recursive_5fmean_3c_20_5f_5ffx64_20_3e_7',['recursive_mean&lt; __fx64 &gt;',['../classrecursive__mean_3_01____fx64_01_4.html',1,'']]],
+  ['recursive_5frms_8',['recursive_rms',['../classrecursive__rms.html',1,'recursive_rms&lt; T &gt;'],['../classrecursive__rms_3_01____fx32_01_4.html#a6023764f70d5a9a8457ff8cf8aa5dbc5',1,'recursive_rms&lt; __fx32 &gt;::recursive_rms()'],['../classrecursive__rms_3_01____fx32_01_4.html#a594681bf6b761246e3f82e6240029f8c',1,'recursive_rms&lt; __fx32 &gt;::recursive_rms(__type Fn, __type Fs, __ix32 order)'],['../classrecursive__rms_3_01____fx64_01_4.html#a113b1ba7b87f7609f5737918d76ca05f',1,'recursive_rms&lt; __fx64 &gt;::recursive_rms()'],['../classrecursive__rms_3_01____fx64_01_4.html#a895a7eb90862bf67e48826148b22fbd9',1,'recursive_rms&lt; __fx64 &gt;::recursive_rms(__type Fn, __type Fs, __ix32 order)']]],
+  ['recursive_5frms_3c_20_5f_5ffx32_20_3e_9',['recursive_rms&lt; __fx32 &gt;',['../classrecursive__rms_3_01____fx32_01_4.html',1,'']]],
+  ['recursive_5frms_3c_20_5f_5ffx64_20_3e_10',['recursive_rms&lt; __fx64 &gt;',['../classrecursive__rms_3_01____fx64_01_4.html',1,'']]],
+  ['ring_5fbuffer_11',['ring_buffer',['../classring__buffer.html',1,'']]],
+  ['rr_5ftrig_12',['rr_trig',['../classtriggers.html#a35bd3291755687500e120c8933752f3c',1,'triggers']]],
+  ['rs_5ftrig_13',['rs_trig',['../classtriggers.html#a00cfa075f039b474dc418ec0f0063b24',1,'triggers']]]
 ];

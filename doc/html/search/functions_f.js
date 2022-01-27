@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['rectangular_0',['Rectangular',['../classwind__fcn.html#a027174bcf079b4a0bdde25b92256948d',1,'wind_fcn']]]
+  ['parzen_0',['Parzen',['../classwind__fcn.html#aeb61805d1745fed8d9d077643a8c2ec3',1,'wind_fcn']]]
 ];
