@@ -188,6 +188,9 @@ public:
 
     // x32:
     inline void operator () ( __type *input ){ filt ( input ); }
+
+    // x64:
+    inline void operator () ( __fx64 *input ){ filt ( input ); }
 };
 
 // float x64:

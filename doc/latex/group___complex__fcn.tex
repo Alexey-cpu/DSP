@@ -1,0 +1,551 @@
+\hypertarget{group___complex__fcn}{}\doxysection{\texorpdfstring{$>$}{>} ( Complex numbers functions )}
+\label{group___complex__fcn}\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+
+
+the module describes complex numbers functions  
+
+
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structfcomplex}{fcomplex$<$ T $>$}}
+\item 
+struct \mbox{\hyperlink{structfcomplex_3_01____fx32_01_4}{fcomplex$<$ \+\_\+\+\_\+fx32 $>$}}
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex number data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structfcomplex_3_01____fx64_01_4}{fcomplex$<$ \+\_\+\+\_\+fx64 $>$}}
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex number data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structfcomplex_3_01____fxx64_01_4}{fcomplex$<$ \+\_\+\+\_\+fxx64 $>$}}
+\begin{DoxyCompactList}\small\item\em Extended 64-\/bit floating point complex number data structure. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classcomplex}{complex$<$ T $>$}}
+\begin{DoxyCompactList}\small\item\em complex number template class \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group___complex__fcn_ga622e34ee31440205cd52bec25721b9fa}\label{group___complex__fcn_ga622e34ee31440205cd52bec25721b9fa}} 
+\#define {\bfseries \+\_\+\+\_\+\+TO\+\_\+\+DEGREES}(x)~( (x) $\ast$ 57.\+295779513082320876798154814105)
+\begin{DoxyCompactList}\small\item\em converts radians to degrees \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___complex__fcn_gad37ddbd09cea5e81546e591a81209377}\label{group___complex__fcn_gad37ddbd09cea5e81546e591a81209377}} 
+\#define {\bfseries \+\_\+\+\_\+\+TO\+\_\+\+RADIANS}(x)~( (x) $\ast$ 0.\+01745329251994329576923690768489)
+\begin{DoxyCompactList}\small\item\em converts degrees to radians \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___complex__fcn_ga10e3f977135a26130c576559aa53da47}\label{group___complex__fcn_ga10e3f977135a26130c576559aa53da47}} 
+\#define {\bfseries \+\_\+\+\_\+ix16}~short
+\begin{DoxyCompactList}\small\item\em defines 16-\/bit integer type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___complex__fcn_ga7d1671ef10aab0922515d7ed25120d0e}\label{group___complex__fcn_ga7d1671ef10aab0922515d7ed25120d0e}} 
+\#define {\bfseries \+\_\+\+\_\+ix32}~int
+\begin{DoxyCompactList}\small\item\em defines 32-\/bit integer type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___complex__fcn_gacacb808424e710c3b69f94237e8bbcca}\label{group___complex__fcn_gacacb808424e710c3b69f94237e8bbcca}} 
+\#define {\bfseries \+\_\+\+\_\+ix64}~long long
+\begin{DoxyCompactList}\small\item\em defines 64-\/bit integer type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___complex__fcn_gabc3e3e3fbdd4de8d12c8a8e4057be945}\label{group___complex__fcn_gabc3e3e3fbdd4de8d12c8a8e4057be945}} 
+\#define {\bfseries \+\_\+\+\_\+fx32}~float
+\begin{DoxyCompactList}\small\item\em defines 32-\/bit floating point type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___complex__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}\label{group___complex__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}} 
+\#define {\bfseries \+\_\+\+\_\+fx64}~double
+\begin{DoxyCompactList}\small\item\em defines 64-\/bit floating point type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___complex__fcn_ga3aacdef884931407dac0c8d6208e647b}\label{group___complex__fcn_ga3aacdef884931407dac0c8d6208e647b}} 
+\#define {\bfseries \+\_\+\+\_\+fxx64}~long double
+\begin{DoxyCompactList}\small\item\em defines extended 64-\/bit floating point type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___complex__fcn_ga9855a8239f6c2aea5868ebcaa24008b4}\label{group___complex__fcn_ga9855a8239f6c2aea5868ebcaa24008b4}} 
+\#define {\bfseries \+\_\+\+\_\+max\+\_\+fx32}~3.\+402823466e+38
+\begin{DoxyCompactList}\small\item\em defines upper limit of 32-\/bit floating point type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___complex__fcn_ga458f38b851745c78be2093d4c6e1a6c8}\label{group___complex__fcn_ga458f38b851745c78be2093d4c6e1a6c8}} 
+\#define {\bfseries \+\_\+\+\_\+max\+\_\+fx64}~1.\+7976931348623158e+308
+\begin{DoxyCompactList}\small\item\em defines upper limit of 64-\/bit floating point type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___complex__fcn_gaec9413b89f4742c7efd5bd1b1bcfe206}\label{group___complex__fcn_gaec9413b89f4742c7efd5bd1b1bcfe206}} 
+\#define {\bfseries \+\_\+\+\_\+min\+\_\+fx32}~1.\+175494351e-\/38
+\begin{DoxyCompactList}\small\item\em defines lower limit of 32-\/bit floating point type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___complex__fcn_ga61cdb76bef3bae68814c74c808509e49}\label{group___complex__fcn_ga61cdb76bef3bae68814c74c808509e49}} 
+\#define {\bfseries \+\_\+\+\_\+min\+\_\+fx64}~2.\+22507e-\/308
+\begin{DoxyCompactList}\small\item\em defines lower limit of 64-\/bit floating point type \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structfcomplex}{fcomplex}}$<$ T $>$ \mbox{\hyperlink{group___complex__fcn_gabd6c2c7fa049c7ff93781149b9ae30ff}{\+\_\+\+\_\+cadd\+\_\+\+\_\+}} (T re0, T im0, T re1, T im1)
+\begin{DoxyCompactList}\small\item\em template complex numbers addition function \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structfcomplex}{fcomplex}}$<$ T $>$ \mbox{\hyperlink{group___complex__fcn_ga61a6df39f6cd03a9c3d5005b9c79b156}{\+\_\+\+\_\+csub\+\_\+\+\_\+}} (T re0, T im0, T re1, T im1)
+\begin{DoxyCompactList}\small\item\em template complex numbers substraction function \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structfcomplex}{fcomplex}}$<$ T $>$ \mbox{\hyperlink{group___complex__fcn_gab2906e26c35b93481ff10cb8543dd095}{\+\_\+\+\_\+cmul\+\_\+\+\_\+}} (T re0, T im0, T re1, T im1)
+\begin{DoxyCompactList}\small\item\em template complex numbers mutiplication function \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structfcomplex}{fcomplex}}$<$ T $>$ \mbox{\hyperlink{group___complex__fcn_ga78c1f8ad1626fccfbfe2eff61650f661}{\+\_\+\+\_\+cdiv\+\_\+\+\_\+}} (T re0, T im0, T re1, T im1, T max)
+\begin{DoxyCompactList}\small\item\em template complex numbers division function \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{group___complex__fcn_ga8da2ecad7e3a361f48cd300d54c18f7d}{\+\_\+\+\_\+sign\+\_\+\+\_\+}} (T input)
+\begin{DoxyCompactList}\small\item\em Template sign function. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} \mbox{\hyperlink{group___complex__fcn_ga0765799ca4abb9e483c3ef879af01fb6}{\+\_\+\+\_\+absf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex number modulus computation function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{group___complex__fcn_gae1074b74463552317e6343f9db131be8}{\+\_\+\+\_\+absf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex number modulus computation function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} \mbox{\hyperlink{group___complex__fcn_ga9d52070119bede5b645e38ff626ab49d}{\+\_\+\+\_\+argf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex number angle computation function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \mbox{\hyperlink{group___complex__fcn_ga97a6da6fc74d9148bf987e200cef73fb}{\+\_\+\+\_\+argf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex number angle computation function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\+\_\+\+\_\+sqrtf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex number square root computation function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \mbox{\hyperlink{group___complex__fcn_gae1899ec36517e8e719542d62a0653850}{\+\_\+\+\_\+sqrtf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex number square root computation function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\+\_\+\+\_\+conjf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex number conjugation functon \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \mbox{\hyperlink{group___complex__fcn_ga6466a2fb498e4f1a1e37e97e3459a580}{\+\_\+\+\_\+conjf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex number conjugation functon \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \mbox{\hyperlink{group___complex__fcn_gae6c8ecd4418446de7fe4d12e6e8f457b}{\+\_\+\+\_\+normf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex number normalization \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \mbox{\hyperlink{group___complex__fcn_gaafa06abf4305391fe6770104a80e705b}{\+\_\+\+\_\+normf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex number normalization \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \mbox{\hyperlink{group___complex__fcn_ga7c577c76d98370d99503202332669bba}{\+\_\+\+\_\+rotf\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} arg, bool mode)
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex rotation vector form function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \mbox{\hyperlink{group___complex__fcn_gae5c83acf9da5a0127399833249fe2d1b}{\+\_\+\+\_\+rotf\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} arg, bool mode)
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex rotation vector form function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \mbox{\hyperlink{group___complex__fcn_gaa5b90837465d875edbe8117632290f2d}{\+\_\+\+\_\+sinhf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex hyperbollic sinus function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \mbox{\hyperlink{group___complex__fcn_ga708deccce1973fa1175259a6926f5b50}{\+\_\+\+\_\+sinhf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex hyperbollic sinus function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \mbox{\hyperlink{group___complex__fcn_ga10fc6e162af5e694043ab86af22e8419}{\+\_\+\+\_\+coshf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex hyperbollic cos function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \mbox{\hyperlink{group___complex__fcn_ga03c37ec15766e2e11739e249f74847bf}{\+\_\+\+\_\+coshf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex hyperbollic cos function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \mbox{\hyperlink{group___complex__fcn_ga7320478bb00e242bc6212152d134d04d}{\+\_\+\+\_\+tanhf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex hyperbollic tan function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \mbox{\hyperlink{group___complex__fcn_ga3bbe03348afd2d8f88779eb6734d7924}{\+\_\+\+\_\+tanhf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex hyperbollic tan function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \mbox{\hyperlink{group___complex__fcn_ga0a844a6b442813ae92c0806fcfddc56c}{\+\_\+\+\_\+ctnhf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point complex hyperbollic catan function \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \mbox{\hyperlink{group___complex__fcn_gafbfd6964ab27d78b180a90f367679550}{\+\_\+\+\_\+ctnhf\+\_\+\+\_\+}} (\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+complex)
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point complex hyperbollic catan function \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+the module describes complex numbers functions 
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{group___complex__fcn_ga0765799ca4abb9e483c3ef879af01fb6}\label{group___complex__fcn_ga0765799ca4abb9e483c3ef879af01fb6}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_absf\_\_@{\_\_absf\_\_}}
+\index{\_\_absf\_\_@{\_\_absf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_absf\_\_()}{\_\_absf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} \+\_\+\+\_\+absf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+32-\/bit floating point complex number modulus computation function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns input 32-\/bit complex number modulus\+: \[ abs(z) = \sqrt{ real\left( z \right)^2 + imag\left( z \right)^2 } \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_gae1074b74463552317e6343f9db131be8}\label{group___complex__fcn_gae1074b74463552317e6343f9db131be8}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_absf\_\_@{\_\_absf\_\_}}
+\index{\_\_absf\_\_@{\_\_absf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_absf\_\_()}{\_\_absf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+absf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+64-\/bit floating point complex number modulus computation function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns input 64-\/bit complex number modulus\+: \[ abs(z) = \sqrt{ real\left( z \right)^2 + imag\left( z \right)^2 } \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_ga9d52070119bede5b645e38ff626ab49d}\label{group___complex__fcn_ga9d52070119bede5b645e38ff626ab49d}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_argf\_\_@{\_\_argf\_\_}}
+\index{\_\_argf\_\_@{\_\_argf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_argf\_\_()}{\_\_argf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} \+\_\+\+\_\+argf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+32-\/bit floating point complex number angle computation function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns input 32-\/bit complex number angle\+: \[ arg(z) = atan2\left( real\left( z \right) , imag\left( z \right) \right) \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_ga97a6da6fc74d9148bf987e200cef73fb}\label{group___complex__fcn_ga97a6da6fc74d9148bf987e200cef73fb}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_argf\_\_@{\_\_argf\_\_}}
+\index{\_\_argf\_\_@{\_\_argf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_argf\_\_()}{\_\_argf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} \+\_\+\+\_\+argf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+64-\/bit floating point complex number angle computation function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns input 64-\/bit complex number angle\+: \[ arg(z) = atan2\left( real\left( z \right) , imag\left( z \right) \right) \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_gabd6c2c7fa049c7ff93781149b9ae30ff}\label{group___complex__fcn_gabd6c2c7fa049c7ff93781149b9ae30ff}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_cadd\_\_@{\_\_cadd\_\_}}
+\index{\_\_cadd\_\_@{\_\_cadd\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_cadd\_\_()}{\_\_cadd\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structfcomplex}{fcomplex}}$<$ T $>$ \+\_\+\+\_\+cadd\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{T}]{re0,  }\item[{T}]{im0,  }\item[{T}]{re1,  }\item[{T}]{im1 }\end{DoxyParamCaption})}
+
+
+
+template complex numbers addition function 
+
+\begin{DoxyReturn}{Returns}
+template complex numbers addition function adds two complex numbers as follows\+: \[ z_1 + z_2 = ( real( z_1 ) + real(z_2) ) + j * ( imag( z_1 ) + imag(z_2) ) \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_ga78c1f8ad1626fccfbfe2eff61650f661}\label{group___complex__fcn_ga78c1f8ad1626fccfbfe2eff61650f661}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_cdiv\_\_@{\_\_cdiv\_\_}}
+\index{\_\_cdiv\_\_@{\_\_cdiv\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_cdiv\_\_()}{\_\_cdiv\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structfcomplex}{fcomplex}}$<$ T $>$ \+\_\+\+\_\+cdiv\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{T}]{re0,  }\item[{T}]{im0,  }\item[{T}]{re1,  }\item[{T}]{im1,  }\item[{T}]{max }\end{DoxyParamCaption})}
+
+
+
+template complex numbers division function 
+
+\begin{DoxyReturn}{Returns}
+template complex numbers division function divides two complex numbers as follows\+: \[ z_1 / z_2 = \frac{ ( real( z_1 ) * real(z_2) + imag( z_1 ) * imag(z_2) ) }{ real(z_2)^2 + imag(z_2)^2 } + j * \frac{ ( imag( z_1 ) * real(z_2) - real( z_1 ) * imag(z_2) ) }{ real(z_2)^2 + imag(z_2)^2 } \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_gab2906e26c35b93481ff10cb8543dd095}\label{group___complex__fcn_gab2906e26c35b93481ff10cb8543dd095}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_cmul\_\_@{\_\_cmul\_\_}}
+\index{\_\_cmul\_\_@{\_\_cmul\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_cmul\_\_()}{\_\_cmul\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structfcomplex}{fcomplex}}$<$ T $>$ \+\_\+\+\_\+cmul\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{T}]{re0,  }\item[{T}]{im0,  }\item[{T}]{re1,  }\item[{T}]{im1 }\end{DoxyParamCaption})}
+
+
+
+template complex numbers mutiplication function 
+
+\begin{DoxyReturn}{Returns}
+template complex numbers mutiplication function multiplies two complex numbers as follows\+: \[ z_1 * z_2 = ( real( z_1 ) * real(z_2) - imag( z_1 ) * imag(z_2) ) + j * ( imag( z_1 ) * real(z_2) + real( z_1 ) * imag(z_2) ) \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}\label{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_conjf\_\_@{\_\_conjf\_\_}}
+\index{\_\_conjf\_\_@{\_\_conjf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_conjf\_\_()}{\_\_conjf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+\+\_\+conjf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+32-\/bit floating point complex number conjugation functon 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns input 32-\/bit complex conjugated number\+: \[ conj(z) = real(z) + j * imag(z) \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_ga6466a2fb498e4f1a1e37e97e3459a580}\label{group___complex__fcn_ga6466a2fb498e4f1a1e37e97e3459a580}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_conjf\_\_@{\_\_conjf\_\_}}
+\index{\_\_conjf\_\_@{\_\_conjf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_conjf\_\_()}{\_\_conjf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+\+\_\+conjf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+64-\/bit floating point complex number conjugation functon 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns input 64-\/bit complex conjugated number\+: \[ conj(z) = real(z) + j * imag(z) \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_ga10fc6e162af5e694043ab86af22e8419}\label{group___complex__fcn_ga10fc6e162af5e694043ab86af22e8419}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_coshf\_\_@{\_\_coshf\_\_}}
+\index{\_\_coshf\_\_@{\_\_coshf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_coshf\_\_()}{\_\_coshf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+\+\_\+coshf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+32-\/bit floating point complex hyperbollic cos function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns 32-\/bit complex number hyperbollic cos\+: \[ cosh( z ) = \frac{ e^{z} + e^{-z} }{ 2 } \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_ga03c37ec15766e2e11739e249f74847bf}\label{group___complex__fcn_ga03c37ec15766e2e11739e249f74847bf}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_coshf\_\_@{\_\_coshf\_\_}}
+\index{\_\_coshf\_\_@{\_\_coshf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_coshf\_\_()}{\_\_coshf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+\+\_\+coshf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+64-\/bit floating point complex hyperbollic cos function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns 64-\/bit complex number hyperbollic cos\+: \[ cosh( z ) = \frac{ e^{z} + e^{-z} }{ 2 } \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_ga61a6df39f6cd03a9c3d5005b9c79b156}\label{group___complex__fcn_ga61a6df39f6cd03a9c3d5005b9c79b156}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_csub\_\_@{\_\_csub\_\_}}
+\index{\_\_csub\_\_@{\_\_csub\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_csub\_\_()}{\_\_csub\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structfcomplex}{fcomplex}}$<$ T $>$ \+\_\+\+\_\+csub\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{T}]{re0,  }\item[{T}]{im0,  }\item[{T}]{re1,  }\item[{T}]{im1 }\end{DoxyParamCaption})}
+
+
+
+template complex numbers substraction function 
+
+\begin{DoxyReturn}{Returns}
+template complex numbers add function sustracts two complex numbers as follows\+: \[ z_1 - z_2 = ( real( z_1 ) - real(z_2) ) + j * ( imag( z_1 ) - imag(z_2) ) \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_ga0a844a6b442813ae92c0806fcfddc56c}\label{group___complex__fcn_ga0a844a6b442813ae92c0806fcfddc56c}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_ctnhf\_\_@{\_\_ctnhf\_\_}}
+\index{\_\_ctnhf\_\_@{\_\_ctnhf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_ctnhf\_\_()}{\_\_ctnhf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+\+\_\+ctnhf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+32-\/bit floating point complex hyperbollic catan function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns 32-\/bit complex number hyperbollic catan\+: \[ catanh( z ) = \frac{ cosh(z) }{ snih(z) } \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_gafbfd6964ab27d78b180a90f367679550}\label{group___complex__fcn_gafbfd6964ab27d78b180a90f367679550}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_ctnhf\_\_@{\_\_ctnhf\_\_}}
+\index{\_\_ctnhf\_\_@{\_\_ctnhf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_ctnhf\_\_()}{\_\_ctnhf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+\+\_\+ctnhf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+64-\/bit floating point complex hyperbollic catan function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns 64-\/bit complex number hyperbollic catan\+: \[ catanh( z ) = \frac{ cosh(z) }{ snih(z) } \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_gae6c8ecd4418446de7fe4d12e6e8f457b}\label{group___complex__fcn_gae6c8ecd4418446de7fe4d12e6e8f457b}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_normf\_\_@{\_\_normf\_\_}}
+\index{\_\_normf\_\_@{\_\_normf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_normf\_\_()}{\_\_normf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+\+\_\+normf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+32-\/bit floating point complex number normalization 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns 32-\/bit normalized complex number\+: \[ norm(z) = \frac{ real(z) + j * imag(z) }{ abs( z ) } \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_gaafa06abf4305391fe6770104a80e705b}\label{group___complex__fcn_gaafa06abf4305391fe6770104a80e705b}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_normf\_\_@{\_\_normf\_\_}}
+\index{\_\_normf\_\_@{\_\_normf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_normf\_\_()}{\_\_normf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+\+\_\+normf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+64-\/bit floating point complex number normalization 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns 64-\/bit normalized complex number\+: \[ norm(z) = \frac{ real(z) + j * imag(z) }{ abs( z ) } \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_ga7c577c76d98370d99503202332669bba}\label{group___complex__fcn_ga7c577c76d98370d99503202332669bba}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_rotf\_\_@{\_\_rotf\_\_}}
+\index{\_\_rotf\_\_@{\_\_rotf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_rotf\_\_()}{\_\_rotf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+\+\_\+rotf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}}}]{arg,  }\item[{bool}]{mode }\end{DoxyParamCaption})}
+
+
+
+32-\/bit floating point complex rotation vector form function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & arg \mbox{]} input unit vector angle \\
+\hline
+{\em \mbox{[}} & mode \mbox{]} input unit vector angle format ( degrees / radians ) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns 32-\/bit unit vector represented by a complex number with argument arg\+: \[ rot( arg ) = \begin{cases} cos( arg ) + j*sin( arg ) \quad , \quad mode = 0 \\ cos( arg * \pi / 180 ) + j*sin( arg * \pi / 180 ) \quad , \quad mode = 1 \end{cases} \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_gae5c83acf9da5a0127399833249fe2d1b}\label{group___complex__fcn_gae5c83acf9da5a0127399833249fe2d1b}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_rotf\_\_@{\_\_rotf\_\_}}
+\index{\_\_rotf\_\_@{\_\_rotf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_rotf\_\_()}{\_\_rotf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+\+\_\+rotf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{arg,  }\item[{bool}]{mode }\end{DoxyParamCaption})}
+
+
+
+64-\/bit floating point complex rotation vector form function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & arg \mbox{]} input unit vector angle \\
+\hline
+{\em \mbox{[}} & mode \mbox{]} input unit vector angle format ( degrees / radians ) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns 64-\/bit unit vector represented by a complex number with argument arg\+: \[ rot( arg ) = \begin{cases} cos( arg ) + j*sin( arg ) \quad , \quad mode = 0 \\ cos( arg * \pi / 180 ) + j*sin( arg * \pi / 180 ) \quad , \quad mode = 1 \end{cases} \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_ga8da2ecad7e3a361f48cd300d54c18f7d}\label{group___complex__fcn_ga8da2ecad7e3a361f48cd300d54c18f7d}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_sign\_\_@{\_\_sign\_\_}}
+\index{\_\_sign\_\_@{\_\_sign\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_sign\_\_()}{\_\_sign\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \+\_\+\+\_\+sign\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{T}]{input }\end{DoxyParamCaption})}
+
+
+
+Template sign function. 
+
+the function returns 1 if the input is positive and -\/1 otherwise \mbox{\Hypertarget{group___complex__fcn_gaa5b90837465d875edbe8117632290f2d}\label{group___complex__fcn_gaa5b90837465d875edbe8117632290f2d}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_sinhf\_\_@{\_\_sinhf\_\_}}
+\index{\_\_sinhf\_\_@{\_\_sinhf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_sinhf\_\_()}{\_\_sinhf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+\+\_\+sinhf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+32-\/bit floating point complex hyperbollic sinus function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns 32-\/bit complex number hyperbollic sine\+: \[ snih( z ) = \frac{ e^{z} - e^{-z} }{ 2 } \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_ga708deccce1973fa1175259a6926f5b50}\label{group___complex__fcn_ga708deccce1973fa1175259a6926f5b50}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_sinhf\_\_@{\_\_sinhf\_\_}}
+\index{\_\_sinhf\_\_@{\_\_sinhf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_sinhf\_\_()}{\_\_sinhf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+\+\_\+sinhf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+64-\/bit floating point complex hyperbollic sinus function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns 64-\/bit complex number hyperbollic sine\+: \[ snih( z ) = \frac{ e^{z} - e^{-z} }{ 2 } \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}\label{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_sqrtf\_\_@{\_\_sqrtf\_\_}}
+\index{\_\_sqrtf\_\_@{\_\_sqrtf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_sqrtf\_\_()}{\_\_sqrtf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+\+\_\+sqrtf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+32-\/bit floating point complex number square root computation function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns input 32-\/bit complex number square root\+: \[ \sqrt{z} = \sqrt{ abs(z) } * cos( arg(z) ) + j*\sqrt{ abs(z) } * sin( arg(z) ) \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_gae1899ec36517e8e719542d62a0653850}\label{group___complex__fcn_gae1899ec36517e8e719542d62a0653850}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_sqrtf\_\_@{\_\_sqrtf\_\_}}
+\index{\_\_sqrtf\_\_@{\_\_sqrtf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_sqrtf\_\_()}{\_\_sqrtf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+\+\_\+sqrtf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+64-\/bit floating point complex number square root computation function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns input 64-\/bit complex number square root\+: \[ \sqrt{z} = \sqrt{ abs(z) } * cos( arg(z) ) + j*\sqrt{ abs(z) } * sin( arg(z) ) \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_ga7320478bb00e242bc6212152d134d04d}\label{group___complex__fcn_ga7320478bb00e242bc6212152d134d04d}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_tanhf\_\_@{\_\_tanhf\_\_}}
+\index{\_\_tanhf\_\_@{\_\_tanhf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_tanhf\_\_()}{\_\_tanhf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$ \+\_\+\+\_\+tanhf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+32-\/bit floating point complex hyperbollic tan function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns 32-\/bit complex number hyperbollic tan\+: \[ tanh( z ) = \frac{ snih(z) }{ cosh(z) } \] 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___complex__fcn_ga3bbe03348afd2d8f88779eb6734d7924}\label{group___complex__fcn_ga3bbe03348afd2d8f88779eb6734d7924}} 
+\index{$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}!\_\_tanhf\_\_@{\_\_tanhf\_\_}}
+\index{\_\_tanhf\_\_@{\_\_tanhf\_\_}!$>$ ( Complex numbers functions )@{$>$ ( Complex numbers functions )}}
+\doxysubsubsection{\texorpdfstring{\_\_tanhf\_\_()}{\_\_tanhf\_\_()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \+\_\+\+\_\+tanhf\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcomplex}{complex}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$}]{\+\_\+complex }\end{DoxyParamCaption})}
+
+
+
+64-\/bit floating point complex hyperbollic tan function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}} & \+\_\+complex \mbox{]} input complex number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns 64-\/bit complex number hyperbollic tan\+: \[ tanh( z ) = \frac{ snih(z) }{ cosh(z) } \] 
+\end{DoxyReturn}

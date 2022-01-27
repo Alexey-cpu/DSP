@@ -1,0 +1,4 @@
+var searchData=
+[
+  ['allocate_0',['allocate',['../classmirror__ring__buffer_3_01____fx32_01_4.html#a35602a12cb2240903f869f5fd98c74ce',1,'mirror_ring_buffer&lt; __fx32 &gt;::allocate()'],['../classmirror__ring__buffer_3_01____fx64_01_4.html#a4ea65c825e94d61f6c6ce21ce2304cd1',1,'mirror_ring_buffer&lt; __fx64 &gt;::allocate()'],['../classmirror__ring__buffer_3_01____ix32_01_4.html#a4be77f6bf3fda28a2753003e47186de2',1,'mirror_ring_buffer&lt; __ix32 &gt;::allocate()'],['../classmirror__ring__buffer_3_01____ix64_01_4.html#a21e7247ad5d37ef34c898ec8f91d19b0',1,'mirror_ring_buffer&lt; __ix64 &gt;::allocate()'],['../classfir_3_01____fx32_01_4.html#abb94d7e39016af6f9a49ec0aaa7f24bf',1,'fir&lt; __fx32 &gt;::allocate()'],['../classfir_3_01____fx64_01_4.html#aef44f5a265dc93900850e7cf820d09e8',1,'fir&lt; __fx64 &gt;::allocate()'],['../classwind__fcn.html#ab51ab640f96fa0711f15ecda6ad21b6e',1,'wind_fcn::allocate()']]]
+];

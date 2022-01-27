@@ -197,26 +197,7 @@ enum iir_type { lowpass_iir  , highpass_iir , bandpass_iir , bandstop_iir };
  * \param[order]  filter order
  * \return   The function computes Butterworth zeros/poles pairs of the Butterworth lowpass
  *           analogue prototype. It also compute zero frequency gains. All the data is stored
- *           within iir_zp data structure and returned. As Butterworth filter has unit numerator
- *           transfer function , it does not have zeros.
- *           Poles are computed as follows:
- *
- *           \f[
- *                  N     = L + R                                                                       \newline
- *                  \beta = \frac{1}{ \sqrt{ G_s^{ \frac{1}{order} } } }                                \newline
- *                  i \in [ 0 ; L )                                                                     \newline
- *                  \alpha = \frac{ ( 2 * ( i + 1 ) - 1 ) * \pi }{ 2 * order }                          \newline
- *                  p_i = -\frac{1}{\beta}*\sin{ ( \alpha ) } + j*\frac{1}{\beta}*\cos{ ( \alpha ) }    \newline
- *                  g_i = p_i * conj \left( p_i \right)                                                 \newline
- *                  g_N = 1                                                                             \newline
- *           \f]
- *
- *           Real odd pole:
- *
- *           \f[
- *                  p_{L+R-1} = -\frac{1}{\beta} + j * 0 \newline
- *                  g_{L+R-1} = p_{L+R-1}                \newline
- *           \f]
+ *           within iir_zp data structure and returned.
 */
 template< typename T > iir_zp< T > __butt_zeros_poles_plain__ ( __ix32 order , __fx64 g_stop )
 {
@@ -262,27 +243,7 @@ template< typename T > iir_zp< T > __butt_zeros_poles_plain__ ( __ix32 order , _
  * \param[order]  filter order
  * \return   The function computes Chebyshev I zeros/poles pairs of the Butterworth lowpass
  *           analogue prototype. It also compute zero frequency gains. All the data is stored
- *           within iir_zp data structure and returned. As Chebyshev I filter has unit numerator
- *           transfer function , it does not have zeros.
- *           Poles are computed as follows:
- *
- *           \f[
- *                  N     = L + R                                                                       \newline
- *                  \beta = \frac{1}{ \sqrt{ G_s^{ \frac{1}{order} } } }                                \newline
- *                  i \in [ 0 ; L )                                                                     \newline
- *                  \alpha = \frac{ ( 2 * ( i + 1 ) - 1 ) * \pi }{ 2 * order }                          \newline
- *                  p_i = -\sin{ ( \alpha ) } * sinh( \beta ) + j*\cos{ ( \alpha ) } * cosh( \beta )    \newline
- *                  g_i = p_i * conj \left( p_i \right)                                                 \newline
- *                  g_N = \sqrt{ \frac{ 1 }{ 1 + \epsilon_s^2 } } \quad , \quad R < 1                     \newline
- *                  \epsilon_s = \sqrt{ 10^{ \frac{G_s}{10} } - 1 }
- *           \f]
- *
- *           Real odd pole:
- *
- *           \f[
- *                  p_{L+R-1} = +\sinh{ \beta }+ j * 0   \newline
- *                  g_{L+R-1} = -p_{L+R-1}                \newline
- *           \f]
+ *           within iir_zp data structure and returned.
 */
 template< typename T > iir_zp< T > __cheb1_zeros_poles_plain__( __ix32 order , __fx64 g_stop )
 {
@@ -328,32 +289,7 @@ template< typename T > iir_zp< T > __cheb1_zeros_poles_plain__( __ix32 order , _
  * \param[order]  filter order
  * \return   The function computes Chebyshev II zeros/poles pairs of the Butterworth lowpass
  *           analogue prototype. It also compute zero frequency gains. All the data is stored
- *           within iir_zp data structure and returned. As Chebyshev I filter has unit numerator
- *           transfer function , it does not have zeros.
- *           Poles are computed as follows:
- *
- *           \f[
- *                  N = L + R                                                               \newline
- *                  L = trunc\left( \frac{order}{2} \right)                                 \newline
- *                  R = N - 2*L                                                             \newline
- *                  \epsilon_s = \sqrt{ 10^{ \frac{G_s}{10} } - 1 }                         \newline
- *                  \beta  = \frac{ asinh( \epsilon_s ) }{ order }                          \newline
- *                  i \in [ 0 ; L )                                                         \newline
- *                  \alpha = \frac{ \left[ 2 * ( i + 1 ) - 1 \right] * \pi }{ 2 * order }   \newline
- *                  z_i = 0 + j * \frac{ 1 }{ \cos{ \alpha } }                              \newline
- *                  p_i = \frac{ -\sin{ \alpha } * sinh(\beta) + j * cos(\alpha)*cosh(\alpha) }
- *                             { cos(\alpha)^2*cosh(\beta)^2 + sin(\alpha)^2*sinh(\beta)^2 }    \newline
- *                  g_i = \frac{ 1 + j * 0 }
- *                  { \left[ \frac{ z_i * conj( z_i ) }{ p_i * conj( p_i ) } \right] }          \newline
- *
- *           \f]
- *
- *           Real odd pole:
- *
- *           \f[
- *                  R       = \frac{ -1 }{ sinh( \beta ) } + j * 0  \newline
- *                  g_{ N } = -R                                    \newline
- *           \f]
+ *           within iir_zp data structure and returned.
 */
 template< typename T > iir_zp< T > __cheb2_zeros_poles_plain__( __ix32 order , __fx64 g_stop )
 {
@@ -414,23 +350,7 @@ template< typename T > iir_zp< T > __cheb2_zeros_poles_plain__( __ix32 order , _
  * \param[order]  filter order
  * \return   The function computes Elliptic zeros/poles pairs of the Butterworth lowpass
  *           analogue prototype. It also compute zero frequency gains. All the data is stored
- *           within iir_zp data structure and returned. As Chebyshev I filter has unit numerator
- *           transfer function , it does not have zeros.
- *           Poles are computed as follows:
- *
- *           \f[
- *                  N = L + R                                        \newline
- *                  L = trunc\left( \frac{order}{2} \right)          \newline
- *                  R = N - 2*L                                      \newline
- *                  \epsilon_s = \sqrt{ 10^{ \frac{G_s}{10} } - 1 }  \newline
- *                  \epsilon_p = \sqrt{ 10^{ \frac{G_p}{10} } - 1 }  \newline
- *
- *           \f]
- *
- *           Real odd pole:
- *
- *           \f[
- *           \f]
+ *           within iir_zp data structure and returned.
 */
 template< typename T > iir_zp< T > __ellip_zeros_poles_plain__( __ix32 order ,  __fx64 g_pass , __fx64 g_stop )
 {
@@ -571,7 +491,18 @@ template< typename T > iir_zp< T > __ellip_zeros_poles_plain__( __ix32 order ,  
     return iir_zp< T >{ plp , zlp , glp , L , R , N };
 }
 
-// UNIT NUMERATOR IIR COEFFICIENTS COMPUTATION:
+
+/*!
+ * \brief Butterworth or Chebyshev I digital lowpass filter coefficients computation function
+ * \param[Fs]     sampling frequency , Hz
+ * \param[Fc]     cut-off frequency , Hz
+ * \param[order]  filter order
+ * \param[type]   filter type ( 0 - Butterworth , 1 - Chebyshev_I )
+ * \param[g_stop] stopband attenuation , Db
+ * \return   The function computes Butterworth or Chebyshev I digital lowpass filter coefficients that are represented
+ *           in the way of second order sections and their gains. All the data is stored within iir_cf data structure
+ *           and returned.
+*/
 
 // Butterworth or Chebyshev I digital lowpass coefficients computation:
 template < typename T > iir_cf< T > __butt_cheb1_digital_lp__( __fx64 Fs , __fx64 Fc , __ix32 order , __ix32 type = 0 , __fx64 g_stop = 1 )

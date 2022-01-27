@@ -1,0 +1,245 @@
+\hypertarget{classfir_3_01____fx32_01_4}{}\doxysection{fir\texorpdfstring{$<$}{<} \+\_\+\+\_\+fx32 \texorpdfstring{$>$}{>} Class Reference}
+\label{classfir_3_01____fx32_01_4}\index{fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}}
+
+
+32-\/bit floating point FIR  
+
+
+
+
+{\ttfamily \#include $<$FIR.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classfir_3_01____fx32_01_4_abb94d7e39016af6f9a49ec0aaa7f24bf}\label{classfir_3_01____fx32_01_4_abb94d7e39016af6f9a49ec0aaa7f24bf}} 
+\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} {\bfseries allocate} ()
+\begin{DoxyCompactList}\small\item\em lowpass memory allocation function \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classfir_3_01____fx32_01_4_af485b812c32f00ea0da8d0a83c650d2a}\label{classfir_3_01____fx32_01_4_af485b812c32f00ea0da8d0a83c650d2a}} 
+\+\_\+\+\_\+void {\bfseries deallocate} ()
+\begin{DoxyCompactList}\small\item\em lowpass memory deallocation function \end{DoxyCompactList}\item 
+\+\_\+\+\_\+void \mbox{\hyperlink{classfir_3_01____fx32_01_4_a7505ff775812848fc7d2f3248e22cd29}{lp\+\_\+init}} (\+\_\+\+\_\+type Fs, \+\_\+\+\_\+type Fn, \+\_\+\+\_\+type Fc, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \+\_\+\+\_\+bool scale)
+\begin{DoxyCompactList}\small\item\em Lowpass initialization function. \end{DoxyCompactList}\item 
+\+\_\+\+\_\+void \mbox{\hyperlink{classfir_3_01____fx32_01_4_a0426a30f37968a1cb41fa40ea8090025}{hp\+\_\+init}} (\+\_\+\+\_\+type Fs, \+\_\+\+\_\+type Fn, \+\_\+\+\_\+type Fp, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \+\_\+\+\_\+bool scale)
+\begin{DoxyCompactList}\small\item\em Highpass initialization function. \end{DoxyCompactList}\item 
+\+\_\+\+\_\+void \mbox{\hyperlink{classfir_3_01____fx32_01_4_a5524592f5bbc985dbc30eb4ee667fe88}{bp\+\_\+init}} (\+\_\+\+\_\+type Fs, \+\_\+\+\_\+type Fn, \+\_\+\+\_\+type Fp, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} BW, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \+\_\+\+\_\+bool scale)
+\begin{DoxyCompactList}\small\item\em Bandpass initialization function. \end{DoxyCompactList}\item 
+\+\_\+\+\_\+void \mbox{\hyperlink{classfir_3_01____fx32_01_4_a51a697cb98cbe7f2a5337e0a4fced9a1}{bs\+\_\+init}} (\+\_\+\+\_\+type Fs, \+\_\+\+\_\+type Fn, \+\_\+\+\_\+type Fc, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} BW, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \+\_\+\+\_\+bool scale)
+\begin{DoxyCompactList}\small\item\em Bandstop initialization function. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classfir_3_01____fx32_01_4_a25f6e712c30bfc4ac3f3457624c74c42}\label{classfir_3_01____fx32_01_4_a25f6e712c30bfc4ac3f3457624c74c42}} 
+{\bfseries fir} ()
+\begin{DoxyCompactList}\small\item\em default constructor \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classfir_3_01____fx32_01_4_a2a1cf5869f0c6bd078f1a607f6c71819}\label{classfir_3_01____fx32_01_4_a2a1cf5869f0c6bd078f1a607f6c71819}} 
+{\bfseries $\sim$fir} ()
+\begin{DoxyCompactList}\small\item\em destructor \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structfir__fr}{fir\+\_\+fr}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \mbox{\hyperlink{classfir_3_01____fx32_01_4_a1977b8908c7cb85a2c207617035840e2}{freq\+\_\+resp}} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} F)
+\begin{DoxyCompactList}\small\item\em frequency response computation function \end{DoxyCompactList}\item 
+\+\_\+\+\_\+type \mbox{\hyperlink{classfir_3_01____fx32_01_4_af1af3709df2de6ac81ac4cb5102b6602}{get\+\_\+coeff}} (\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} n)
+\begin{DoxyCompactList}\small\item\em FIR pulse response getting function. \end{DoxyCompactList}\item 
+\+\_\+\+\_\+type \mbox{\hyperlink{classfir_3_01____fx32_01_4_ad2843e561dcefd53f1904c24c87608e1}{filt}} (\+\_\+\+\_\+type $\ast$input)
+\begin{DoxyCompactList}\small\item\em FIR filtering function. \end{DoxyCompactList}\item 
+\+\_\+\+\_\+type \mbox{\hyperlink{classfir_3_01____fx32_01_4_ab062dc85d1cc1d869dcbf92cdd00046e}{filt}} ()
+\begin{DoxyCompactList}\small\item\em FIR filtering function. \end{DoxyCompactList}\item 
+\+\_\+\+\_\+type \mbox{\hyperlink{classfir_3_01____fx32_01_4_a7185233e3a4559b5da4818a208c1bee3}{operator()}} (\+\_\+\+\_\+type $\ast$input)
+\begin{DoxyCompactList}\small\item\em FIR filtering () operator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classfir_3_01____fx32_01_4_a36011b51464fcbaafc15ff88f3999463}\label{classfir_3_01____fx32_01_4_a36011b51464fcbaafc15ff88f3999463}} 
+\+\_\+\+\_\+type {\bfseries m\+\_\+out}
+\begin{DoxyCompactList}\small\item\em lowpass output \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classfir_3_01____fx32_01_4_a65ec596b10e8cfa67175d9574b6791dc}\label{classfir_3_01____fx32_01_4_a65ec596b10e8cfa67175d9574b6791dc}} 
+\mbox{\hyperlink{classwind__fcn}{wind\+\_\+fcn}} {\bfseries m\+\_\+wind}
+\begin{DoxyCompactList}\small\item\em lowpass window function object \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+32-\/bit floating point FIR 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classfir_3_01____fx32_01_4_a5524592f5bbc985dbc30eb4ee667fe88}\label{classfir_3_01____fx32_01_4_a5524592f5bbc985dbc30eb4ee667fe88}} 
+\index{fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}!bp\_init@{bp\_init}}
+\index{bp\_init@{bp\_init}!fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{bp\_init()}{bp\_init()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+void \mbox{\hyperlink{classfir}{fir}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::bp\+\_\+init (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type}]{Fs,  }\item[{\+\_\+\+\_\+type}]{Fn,  }\item[{\+\_\+\+\_\+type}]{Fp,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{BW,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\+\_\+\+\_\+bool}]{scale }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Bandpass initialization function. 
+
+the function initializes bandpass FIR filter 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs\mbox{]}} & -\/ sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fn\mbox{]}} & -\/ nominal frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fp\mbox{]}} & -\/ cut-\/off frequency , Hz \\
+\hline
+{\em \mbox{[}\+BW\mbox{]}} & -\/ pass bandwidth , Hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & -\/ filter order \\
+\hline
+{\em \mbox{[}scale\mbox{]}} & -\/ filter scaling flag ( 0 -\/ not-\/scaled filter , 1 -\/ scaled filter ) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classfir_3_01____fx32_01_4_a51a697cb98cbe7f2a5337e0a4fced9a1}\label{classfir_3_01____fx32_01_4_a51a697cb98cbe7f2a5337e0a4fced9a1}} 
+\index{fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}!bs\_init@{bs\_init}}
+\index{bs\_init@{bs\_init}!fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{bs\_init()}{bs\_init()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+void \mbox{\hyperlink{classfir}{fir}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::bs\+\_\+init (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type}]{Fs,  }\item[{\+\_\+\+\_\+type}]{Fn,  }\item[{\+\_\+\+\_\+type}]{Fc,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{BW,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\+\_\+\+\_\+bool}]{scale }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Bandstop initialization function. 
+
+The function initializes bandstop FIR filter 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs\mbox{]}} & -\/ sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fn\mbox{]}} & -\/ nominal frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fc\mbox{]}} & -\/ cut-\/off frequency , Hz \\
+\hline
+{\em \mbox{[}\+BW\mbox{]}} & -\/ stop bandwidth , Hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & -\/ filter order \\
+\hline
+{\em \mbox{[}scale\mbox{]}} & -\/ filter scaling flag ( 0 -\/ not-\/scaled filter , 1 -\/ scaled filter ) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classfir_3_01____fx32_01_4_ab062dc85d1cc1d869dcbf92cdd00046e}\label{classfir_3_01____fx32_01_4_ab062dc85d1cc1d869dcbf92cdd00046e}} 
+\index{fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}!filt@{filt}}
+\index{filt@{filt}!fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{filt()}{filt()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \+\_\+\+\_\+type \mbox{\hyperlink{classfir}{fir}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::filt (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+FIR filtering function. 
+
+\begin{DoxyReturn}{Returns}
+the function returns FIR filtering result 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classfir_3_01____fx32_01_4_ad2843e561dcefd53f1904c24c87608e1}\label{classfir_3_01____fx32_01_4_ad2843e561dcefd53f1904c24c87608e1}} 
+\index{fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}!filt@{filt}}
+\index{filt@{filt}!fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{filt()}{filt()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \+\_\+\+\_\+type \mbox{\hyperlink{classfir}{fir}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::filt (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type $\ast$}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+FIR filtering function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}input\mbox{]}} & pointer to the input data array \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns FIR filtering result 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classfir_3_01____fx32_01_4_a1977b8908c7cb85a2c207617035840e2}\label{classfir_3_01____fx32_01_4_a1977b8908c7cb85a2c207617035840e2}} 
+\index{fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}!freq\_resp@{freq\_resp}}
+\index{freq\_resp@{freq\_resp}!fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{freq\_resp()}{freq\_resp()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structfir__fr}{fir\+\_\+fr}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$ \mbox{\hyperlink{classfir}{fir}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::freq\+\_\+resp (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{F }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+frequency response computation function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+F\mbox{]}} & input frequency \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns \mbox{\hyperlink{structfir__fr}{fir\+\_\+fr}} data structure 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classfir_3_01____fx32_01_4_af1af3709df2de6ac81ac4cb5102b6602}\label{classfir_3_01____fx32_01_4_af1af3709df2de6ac81ac4cb5102b6602}} 
+\index{fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}!get\_coeff@{get\_coeff}}
+\index{get\_coeff@{get\_coeff}!fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{get\_coeff()}{get\_coeff()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+type \mbox{\hyperlink{classfir}{fir}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::get\+\_\+coeff (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{n }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+FIR pulse response getting function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+F\mbox{]}} & pulse response sample number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the function returns FIR impulse response sample 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classfir_3_01____fx32_01_4_a0426a30f37968a1cb41fa40ea8090025}\label{classfir_3_01____fx32_01_4_a0426a30f37968a1cb41fa40ea8090025}} 
+\index{fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}!hp\_init@{hp\_init}}
+\index{hp\_init@{hp\_init}!fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{hp\_init()}{hp\_init()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+void \mbox{\hyperlink{classfir}{fir}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::hp\+\_\+init (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type}]{Fs,  }\item[{\+\_\+\+\_\+type}]{Fn,  }\item[{\+\_\+\+\_\+type}]{Fp,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\+\_\+\+\_\+bool}]{scale }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Highpass initialization function. 
+
+the function initializes highpass FIR filter 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs\mbox{]}} & -\/ sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fn\mbox{]}} & -\/ nominal frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fp\mbox{]}} & -\/ pass frequency , Hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & -\/ filter order \\
+\hline
+{\em \mbox{[}scale\mbox{]}} & -\/ filter scaling flag ( 0 -\/ not-\/scaled filter , 1 -\/ scaled filter ) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classfir_3_01____fx32_01_4_a7505ff775812848fc7d2f3248e22cd29}\label{classfir_3_01____fx32_01_4_a7505ff775812848fc7d2f3248e22cd29}} 
+\index{fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}!lp\_init@{lp\_init}}
+\index{lp\_init@{lp\_init}!fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{lp\_init()}{lp\_init()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+void \mbox{\hyperlink{classfir}{fir}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::lp\+\_\+init (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type}]{Fs,  }\item[{\+\_\+\+\_\+type}]{Fn,  }\item[{\+\_\+\+\_\+type}]{Fc,  }\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\+\_\+\+\_\+bool}]{scale }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Lowpass initialization function. 
+
+the function initializes lowpass FIR filter 
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}\+Fs\mbox{]}} & -\/ sampling frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fn\mbox{]}} & -\/ nominal frequency , Hz \\
+\hline
+{\em \mbox{[}\+Fc\mbox{]}} & -\/ cut-\/off frequency , Hz \\
+\hline
+{\em \mbox{[}order\mbox{]}} & -\/ filter order \\
+\hline
+{\em \mbox{[}scale\mbox{]}} & -\/ filter scaling flag ( 0 -\/ not-\/scaled filter , 1 -\/ scaled filter ) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classfir_3_01____fx32_01_4_a7185233e3a4559b5da4818a208c1bee3}\label{classfir_3_01____fx32_01_4_a7185233e3a4559b5da4818a208c1bee3}} 
+\index{fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}!operator()@{operator()}}
+\index{operator()@{operator()}!fir$<$ \_\_fx32 $>$@{fir$<$ \_\_fx32 $>$}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+type \mbox{\hyperlink{classfir}{fir}}$<$ \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} $>$\+::operator() (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type $\ast$}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+FIR filtering () operator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}input\mbox{]}} & pointer to the input data \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the () operator calls \mbox{\hyperlink{classfir_3_01____fx32_01_4_ad2843e561dcefd53f1904c24c87608e1}{filt( \+\_\+\+\_\+type $\ast$input )}} function that returns FIR filtering result 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Qt\+\_\+projects/\+Digital\+Filters\+\_\+x32/include/\mbox{\hyperlink{_f_i_r_8h}{FIR.\+h}}\end{DoxyCompactItemize}

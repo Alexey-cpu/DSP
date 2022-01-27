@@ -1,0 +1,318 @@
+\hypertarget{group___i_i_r__fcn}{}\doxysection{\texorpdfstring{$>$}{>} ( IIR filters )}
+\label{group___i_i_r__fcn}\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+
+
+defines if the compilation is implemented for Prosoft-\/\+Systems IDE  
+
+
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structiir__zp}{iir\+\_\+zp$<$ T $>$}}
+\begin{DoxyCompactList}\small\item\em template IIR filter zeros / poles data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structiir__zp_3_01____fx32_01_4}{iir\+\_\+zp$<$ \+\_\+\+\_\+fx32 $>$}}
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point IIR filter zeros / poles data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structiir__zp_3_01____fx64_01_4}{iir\+\_\+zp$<$ \+\_\+\+\_\+fx64 $>$}}
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point IIR filter zeros / poles data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structiir__zp_3_01____fxx64_01_4}{iir\+\_\+zp$<$ \+\_\+\+\_\+fxx64 $>$}}
+\begin{DoxyCompactList}\small\item\em extended 64-\/bit floating point IIR filter zeros / poles data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structiir__cf}{iir\+\_\+cf$<$ T $>$}}
+\begin{DoxyCompactList}\small\item\em template IIR filter coefficients matrix data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structiir__cf_3_01____fx32_01_4}{iir\+\_\+cf$<$ \+\_\+\+\_\+fx32 $>$}}
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point IIR filter coefficients matrix data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structiir__cf_3_01____fx64_01_4}{iir\+\_\+cf$<$ \+\_\+\+\_\+fx64 $>$}}
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point IIR filter coefficients matrix data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structiir__cf_3_01____fxx64_01_4}{iir\+\_\+cf$<$ \+\_\+\+\_\+fxx64 $>$}}
+\begin{DoxyCompactList}\small\item\em extended 64-\/bit floating point IIR filter coefficients matrix data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structiir__bf}{iir\+\_\+bf$<$ T $>$}}
+\begin{DoxyCompactList}\small\item\em template IIR filter second order sections input / output buffers \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structiir__bf_3_01____fx32_01_4}{iir\+\_\+bf$<$ \+\_\+\+\_\+fx32 $>$}}
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point IIR filter coefficients matrix data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structiir__bf_3_01____fx64_01_4}{iir\+\_\+bf$<$ \+\_\+\+\_\+fx64 $>$}}
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point IIR filter coefficients matrix data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structiir__bf_3_01____fxx64_01_4}{iir\+\_\+bf$<$ \+\_\+\+\_\+fxx64 $>$}}
+\begin{DoxyCompactList}\small\item\em extended 64-\/bit floating point IIR filter coefficients matrix data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structiir__fr}{iir\+\_\+fr$<$ T $>$}}
+\begin{DoxyCompactList}\small\item\em template IIR filter frequency response data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structiir__fr_3_01____fx32_01_4}{iir\+\_\+fr$<$ \+\_\+\+\_\+fx32 $>$}}
+\begin{DoxyCompactList}\small\item\em 32-\/bit floating point IIR filter frequency response data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structiir__fr_3_01____fx64_01_4}{iir\+\_\+fr$<$ \+\_\+\+\_\+fx64 $>$}}
+\begin{DoxyCompactList}\small\item\em 64-\/bit floating point IIR filter frequency response data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structiir__fr_3_01____fxx64_01_4}{iir\+\_\+fr$<$ \+\_\+\+\_\+fxx64 $>$}}
+\begin{DoxyCompactList}\small\item\em extended 64-\/bit floating point IIR filter frequency response data structure \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structiir__sp}{iir\+\_\+sp}}
+\begin{DoxyCompactList}\small\item\em IIR filter specification data structure. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classbutterworth}{butterworth$<$ T $>$}}
+\item 
+class \mbox{\hyperlink{classchebyshev__1}{chebyshev\+\_\+1$<$ T $>$}}
+\item 
+class \mbox{\hyperlink{classchebyshev__2}{chebyshev\+\_\+2$<$ T $>$}}
+\item 
+class \mbox{\hyperlink{classelliptic}{elliptic$<$ T $>$}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_gabc3e3e3fbdd4de8d12c8a8e4057be945}\label{group___i_i_r__fcn_gabc3e3e3fbdd4de8d12c8a8e4057be945}} 
+\#define {\bfseries \+\_\+\+\_\+fx32}~float
+\begin{DoxyCompactList}\small\item\em defines 32-\/bit floating point type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}\label{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}} 
+\#define {\bfseries \+\_\+\+\_\+fx64}~double
+\begin{DoxyCompactList}\small\item\em defines 64-\/bit floating point type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga3aacdef884931407dac0c8d6208e647b}\label{group___i_i_r__fcn_ga3aacdef884931407dac0c8d6208e647b}} 
+\#define {\bfseries \+\_\+\+\_\+fxx64}~long double
+\begin{DoxyCompactList}\small\item\em defines extended 64-\/bit floating point type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}\label{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}} 
+\#define {\bfseries \+\_\+\+\_\+ix32}~int
+\begin{DoxyCompactList}\small\item\em defines 32-\/bit integer type \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga6eaf18f28b8bcd8aa3e36d0e307afa0e}\label{group___i_i_r__fcn_ga6eaf18f28b8bcd8aa3e36d0e307afa0e}} 
+\#define {\bfseries PI0}~3.\+1415926535897932384626433832795
+\begin{DoxyCompactList}\small\item\em defines pi \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}\label{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}} 
+\#define {\bfseries PI2}~6.\+283185307179586476925286766559
+\begin{DoxyCompactList}\small\item\em defines 2$\ast$pi \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{group___i_i_r__fcn_ga841e49b038c67ff60d39a3ec715d7967}{iir\+\_\+type}} \{ {\bfseries lowpass\+\_\+iir}
+, {\bfseries highpass\+\_\+iir}
+, {\bfseries bandpass\+\_\+iir}
+, {\bfseries bandstop\+\_\+iir}
+ \}
+\begin{DoxyCompactList}\small\item\em IIR types enumeration. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}}$<$ T $>$ \mbox{\hyperlink{group___i_i_r__fcn_ga56d4dc488aa9ffe114609dfcd22104b5}{\+\_\+\+\_\+butt\+\_\+zeros\+\_\+poles\+\_\+plain\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop)
+\begin{DoxyCompactList}\small\item\em Butterworth lowpass analogue prototype zeros/poles plain computation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}}$<$ T $>$ \mbox{\hyperlink{group___i_i_r__fcn_ga95c7ffc230af84452ba72b6a055fd8d1}{\+\_\+\+\_\+cheb1\+\_\+zeros\+\_\+poles\+\_\+plain\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop)
+\begin{DoxyCompactList}\small\item\em Chebyshev I lowpass analogue prototype zeros/poles plain computation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}}$<$ T $>$ \mbox{\hyperlink{group___i_i_r__fcn_ga9bc4b73039224517adaab0efeabc1ba5}{\+\_\+\+\_\+cheb2\+\_\+zeros\+\_\+poles\+\_\+plain\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop)
+\begin{DoxyCompactList}\small\item\em Chebyshev II lowpass analogue prototype zeros/poles plain computation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}}$<$ T $>$ \mbox{\hyperlink{group___i_i_r__fcn_ga9a66e73e0afa0273502327903ec8dae8}{\+\_\+\+\_\+ellip\+\_\+zeros\+\_\+poles\+\_\+plain\+\_\+\+\_\+}} (\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+pass, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop)
+\begin{DoxyCompactList}\small\item\em Elliptic lowpass analogue prototype zeros/poles plain computation function. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga3f6ca52d15d3b61e15d40cc2fa4d8c47}\label{group___i_i_r__fcn_ga3f6ca52d15d3b61e15d40cc2fa4d8c47}} 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+butt\+\_\+cheb1\+\_\+digital\+\_\+lp\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=1)
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_gafd651b49ba3e0c5c381a9b6e15a7ce6c}\label{group___i_i_r__fcn_gafd651b49ba3e0c5c381a9b6e15a7ce6c}} 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+butt\+\_\+cheb1\+\_\+digital\+\_\+hp\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fp, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=1)
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_gab203c206bf50b01f24d76efa38e1ae35}\label{group___i_i_r__fcn_gab203c206bf50b01f24d76efa38e1ae35}} 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+butt\+\_\+cheb1\+\_\+digital\+\_\+bp\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fp, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Band\+Width, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=1)
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga778e1087868676b92982082362dfa021}\label{group___i_i_r__fcn_ga778e1087868676b92982082362dfa021}} 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+butt\+\_\+cheb1\+\_\+digital\+\_\+bs\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Band\+Width, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_abc3e3e3fbdd4de8d12c8a8e4057be945}{\+\_\+\+\_\+fx32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=1)
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga83ac960f934ab4dedb6757a4e73b2b87}\label{group___i_i_r__fcn_ga83ac960f934ab4dedb6757a4e73b2b87}} 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+cheb2\+\_\+ellip\+\_\+digital\+\_\+lp\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+pass=1, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=80)
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_gaeaa4ea6d0934e4e4cf0e4c6949ff13b1}\label{group___i_i_r__fcn_gaeaa4ea6d0934e4e4cf0e4c6949ff13b1}} 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+cheb2\+\_\+ellip\+\_\+digital\+\_\+hp\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fc, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+pass=1, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=80)
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_gafc8560db045ea10aa1c4d6fbc42b9d20}\label{group___i_i_r__fcn_gafc8560db045ea10aa1c4d6fbc42b9d20}} 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+cheb2\+\_\+ellip\+\_\+digital\+\_\+bp\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fp, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Band\+Width, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+pass=1, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=80)
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga4ae7624e549d0417717d815518b124db}\label{group___i_i_r__fcn_ga4ae7624e549d0417717d815518b124db}} 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+cheb2\+\_\+ellip\+\_\+digital\+\_\+bs\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fp, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Band\+Width, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} order, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} type=0, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+pass=1, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} g\+\_\+stop=80)
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga8bbbc908d9fb64dea8d44f4760a15333}\label{group___i_i_r__fcn_ga8bbbc908d9fb64dea8d44f4760a15333}} 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__bf}{iir\+\_\+bf}}$<$ T $>$ {\bfseries \+\_\+\+\_\+iir\+\_\+bf\+\_\+alloc\+\_\+\+\_\+} (\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} N)
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga85a8ff10c75900cb1614098d6d42f9df}\label{group___i_i_r__fcn_ga85a8ff10c75900cb1614098d6d42f9df}} 
+{\footnotesize template$<$typename T $>$ }\\void {\bfseries \+\_\+\+\_\+iir\+\_\+bf\+\_\+free\+\_\+\+\_\+} (\mbox{\hyperlink{structiir__bf}{iir\+\_\+bf}}$<$ T $>$ bf)
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga5b0b97fc4412395fbd392a7640dca89e}\label{group___i_i_r__fcn_ga5b0b97fc4412395fbd392a7640dca89e}} 
+{\footnotesize template$<$typename T $>$ }\\void {\bfseries \+\_\+\+\_\+iir\+\_\+zp\+\_\+free\+\_\+\+\_\+} (\mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}}$<$ T $>$ zp)
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga34d1bdcbfc730b8e21185d65b4fe6154}\label{group___i_i_r__fcn_ga34d1bdcbfc730b8e21185d65b4fe6154}} 
+{\footnotesize template$<$typename T $>$ }\\void {\bfseries \+\_\+\+\_\+iir\+\_\+cf\+\_\+free\+\_\+\+\_\+} (\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ cf)
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_gabb0aa52631831c32935998e75deb3185}\label{group___i_i_r__fcn_gabb0aa52631831c32935998e75deb3185}} 
+{\footnotesize template$<$typename T $>$ }\\{\bfseries \+\_\+\+\_\+attribute\+\_\+\+\_\+} ((always\+\_\+inline)) T \+\_\+\+\_\+filt\+\_\+\+\_\+(T $\ast$input
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga3d7701b9282ebcc00822f8d82188aa31}\label{group___i_i_r__fcn_ga3d7701b9282ebcc00822f8d82188aa31}} 
+buff\+\_\+sx\mbox{[}0\mbox{]} {\bfseries fill\+\_\+buff} (input)
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga836a345f03f16fe5b0effc9c26c439b6}\label{group___i_i_r__fcn_ga836a345f03f16fe5b0effc9c26c439b6}} 
+{\bfseries for} (\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} i=0 ;i$<$ N ;i++)
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga76957da8640c656da7405dcde989377b}\label{group___i_i_r__fcn_ga76957da8640c656da7405dcde989377b}} 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{structiir__fr}{iir\+\_\+fr}}$<$ T $>$ {\bfseries \+\_\+\+\_\+iir\+\_\+freq\+\_\+resp\+\_\+\+\_\+} (T $\ast$cfnum, T $\ast$cfden, T $\ast$gains, \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} N, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} Fs, \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} F)
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga75e38d28adff392fc2535b5b3feaf88c}\label{group___i_i_r__fcn_ga75e38d28adff392fc2535b5b3feaf88c}} 
+{\footnotesize template$<$typename T $>$ }\\void {\bfseries \+\_\+\+\_\+show\+\_\+coeffs\+\_\+\+\_\+} (\mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ coeffs)
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga3788e334dc89a8d2e9d33c5ff99597aa}\label{group___i_i_r__fcn_ga3788e334dc89a8d2e9d33c5ff99597aa}} 
+{\footnotesize template$<$typename T $>$ }\\void {\bfseries \+\_\+\+\_\+show\+\_\+iir\+\_\+\+\_\+} (\mbox{\hyperlink{structiir__sp}{iir\+\_\+sp}} sp, \mbox{\hyperlink{structiir__cf}{iir\+\_\+cf}}$<$ T $>$ cf, const char $\ast$name)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_gab7382119aae0b55564ec9ff29bf563af}\label{group___i_i_r__fcn_gab7382119aae0b55564ec9ff29bf563af}} 
+T $\ast$ {\bfseries cfnum}
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_gacb0944e5c6702c680b307058b14d93c5}\label{group___i_i_r__fcn_gacb0944e5c6702c680b307058b14d93c5}} 
+T T $\ast$ {\bfseries cfden}
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga5e52f4540b21d7f5266f7e40593e8b7c}\label{group___i_i_r__fcn_ga5e52f4540b21d7f5266f7e40593e8b7c}} 
+T T T $\ast$ {\bfseries gains}
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_gadffc120e53c0b2276a6fcf804956631b}\label{group___i_i_r__fcn_gadffc120e53c0b2276a6fcf804956631b}} 
+T T T \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} {\bfseries N}
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_ga1d7ee50ab41f704ce13731653ad57b49}\label{group___i_i_r__fcn_ga1d7ee50ab41f704ce13731653ad57b49}} 
+T T T \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{classmirror__ring__buffer}{mirror\+\_\+ring\+\_\+buffer}}$<$ T $>$ $\ast$ {\bfseries buff\+\_\+sx}
+\item 
+T T T \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{classmirror__ring__buffer}{mirror\+\_\+ring\+\_\+buffer}}$<$ T $>$ \mbox{\hyperlink{classmirror__ring__buffer}{mirror\+\_\+ring\+\_\+buffer}}$<$ T $>$ $\ast$ \mbox{\hyperlink{group___i_i_r__fcn_ga40be891e6193006af0f74ded573daf1d}{buff\+\_\+sy}}
+\item 
+\mbox{\Hypertarget{group___i_i_r__fcn_gab12e3dafb83432e63f02f6f4e626805c}\label{group___i_i_r__fcn_gab12e3dafb83432e63f02f6f4e626805c}} 
+return {\bfseries out}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+defines if the compilation is implemented for Prosoft-\/\+Systems IDE 
+
+the module contains IIR filter template class and it\textquotesingle{}s auxiliary functions 
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{group___i_i_r__fcn_ga841e49b038c67ff60d39a3ec715d7967}\label{group___i_i_r__fcn_ga841e49b038c67ff60d39a3ec715d7967}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!iir\_type@{iir\_type}}
+\index{iir\_type@{iir\_type}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{iir\_type}{iir\_type}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{group___i_i_r__fcn_ga841e49b038c67ff60d39a3ec715d7967}{iir\+\_\+type}}}
+
+
+
+IIR types enumeration. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}lowpass\+\_\+iir} & \mbox{]} lowpass IIR \\
+\hline
+{\em \mbox{[}highpass\+\_\+iir\mbox{]}} & highpass IIR \\
+\hline
+{\em \mbox{[}bandpass\+\_\+iir\mbox{]}} & bandpass IIR \\
+\hline
+{\em \mbox{[}bandstop\+\_\+iir\mbox{]}} & bandstop IIR \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{group___i_i_r__fcn_ga56d4dc488aa9ffe114609dfcd22104b5}\label{group___i_i_r__fcn_ga56d4dc488aa9ffe114609dfcd22104b5}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_butt\_zeros\_poles\_plain\_\_@{\_\_butt\_zeros\_poles\_plain\_\_}}
+\index{\_\_butt\_zeros\_poles\_plain\_\_@{\_\_butt\_zeros\_poles\_plain\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_butt\_zeros\_poles\_plain\_\_()}{\_\_butt\_zeros\_poles\_plain\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}}$<$ T $>$ \+\_\+\+\_\+butt\+\_\+zeros\+\_\+poles\+\_\+plain\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+stop }\end{DoxyParamCaption})}
+
+
+
+Butterworth lowpass analogue prototype zeros/poles plain computation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}g\+\_\+stop\mbox{]}} & stopband attenuation , Db \\
+\hline
+{\em \mbox{[}order\mbox{]}} & filter order \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes Butterworth zeros/poles pairs of the Butterworth lowpass analogue prototype. It also compute zero frequency gains. All the data is stored within \mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}} data structure and returned. As Butterworth filter has unit numerator transfer function , it does not have zeros. Poles are computed as follows\+:
+\end{DoxyReturn}
+\[ N = L + R \newline \beta = \frac{1}{ \sqrt{ G_s^{ \frac{1}{order} } } } \newline i \in [ 0 ; L ) \newline \alpha = \frac{ ( 2 * ( i + 1 ) - 1 ) * \pi }{ 2 * order } \newline p_i = -\frac{1}{\beta}*\sin{ ( \alpha ) } + j*\frac{1}{\beta}*\cos{ ( \alpha ) } \newline g_i = p_i * conj \left( p_i \right) \newline g_N = 1 \newline \]
+
+Real odd pole\+:
+
+\[ p_{L+R-1} = -\frac{1}{\beta} + j * 0 \newline g_{L+R-1} = p_{L+R-1} \newline \] \mbox{\Hypertarget{group___i_i_r__fcn_ga95c7ffc230af84452ba72b6a055fd8d1}\label{group___i_i_r__fcn_ga95c7ffc230af84452ba72b6a055fd8d1}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_cheb1\_zeros\_poles\_plain\_\_@{\_\_cheb1\_zeros\_poles\_plain\_\_}}
+\index{\_\_cheb1\_zeros\_poles\_plain\_\_@{\_\_cheb1\_zeros\_poles\_plain\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_cheb1\_zeros\_poles\_plain\_\_()}{\_\_cheb1\_zeros\_poles\_plain\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}}$<$ T $>$ \+\_\+\+\_\+cheb1\+\_\+zeros\+\_\+poles\+\_\+plain\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+stop }\end{DoxyParamCaption})}
+
+
+
+Chebyshev I lowpass analogue prototype zeros/poles plain computation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}g\+\_\+stop\mbox{]}} & stopband attenuation , Db \\
+\hline
+{\em \mbox{[}order\mbox{]}} & filter order \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes Chebyshev I zeros/poles pairs of the Butterworth lowpass analogue prototype. It also compute zero frequency gains. All the data is stored within \mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}} data structure and returned. As Chebyshev I filter has unit numerator transfer function , it does not have zeros. Poles are computed as follows\+:
+\end{DoxyReturn}
+\[ N = L + R \newline \beta = \frac{1}{ \sqrt{ G_s^{ \frac{1}{order} } } } \newline i \in [ 0 ; L ) \newline \alpha = \frac{ ( 2 * ( i + 1 ) - 1 ) * \pi }{ 2 * order } \newline p_i = -\sin{ ( \alpha ) } * sinh( \beta ) + j*\cos{ ( \alpha ) } * cosh( \beta ) \newline g_i = p_i * conj \left( p_i \right) \newline g_N = \sqrt{ \frac{ 1 }{ 1 + \epsilon_s^2 } } \quad , \quad R < 1 \newline \epsilon_s = \sqrt{ 10^{ \frac{G_s}{10} } - 1 } \]
+
+Real odd pole\+:
+
+\[ p_{L+R-1} = +\sinh{ \beta }+ j * 0 \newline g_{L+R-1} = -p_{L+R-1} \newline \] \mbox{\Hypertarget{group___i_i_r__fcn_ga9bc4b73039224517adaab0efeabc1ba5}\label{group___i_i_r__fcn_ga9bc4b73039224517adaab0efeabc1ba5}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_cheb2\_zeros\_poles\_plain\_\_@{\_\_cheb2\_zeros\_poles\_plain\_\_}}
+\index{\_\_cheb2\_zeros\_poles\_plain\_\_@{\_\_cheb2\_zeros\_poles\_plain\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_cheb2\_zeros\_poles\_plain\_\_()}{\_\_cheb2\_zeros\_poles\_plain\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}}$<$ T $>$ \+\_\+\+\_\+cheb2\+\_\+zeros\+\_\+poles\+\_\+plain\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+stop }\end{DoxyParamCaption})}
+
+
+
+Chebyshev II lowpass analogue prototype zeros/poles plain computation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}g\+\_\+stop\mbox{]}} & stopband attenuation , Db \\
+\hline
+{\em \mbox{[}order\mbox{]}} & filter order \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes Chebyshev II zeros/poles pairs of the Butterworth lowpass analogue prototype. It also compute zero frequency gains. All the data is stored within \mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}} data structure and returned. As Chebyshev I filter has unit numerator transfer function , it does not have zeros. Poles are computed as follows\+:
+\end{DoxyReturn}
+\[ N = L + R \newline L = trunc\left( \frac{order}{2} \right) \newline R = N - 2*L \newline \epsilon_s = \sqrt{ 10^{ \frac{G_s}{10} } - 1 } \newline \beta = \frac{ asinh( \epsilon_s ) }{ order } \newline i \in [ 0 ; L ) \newline \alpha = \frac{ \left[ 2 * ( i + 1 ) - 1 \right] * \pi }{ 2 * order } \newline z_i = 0 + j * \frac{ 1 }{ \cos{ \alpha } } \newline p_i = \frac{ -\sin{ \alpha } * sinh(\beta) + j * cos(\alpha)*cosh(\alpha) } { cos(\alpha)^2*cosh(\beta)^2 + sin(\alpha)^2*sinh(\beta)^2 } \newline g_i = \frac{ 1 + j * 0 } { \left[ \frac{ z_i * conj( z_i ) }{ p_i * conj( p_i ) } \right] } \newline \]
+
+Real odd pole\+:
+
+\[ R = \frac{ -1 }{ sinh( \beta ) } + j * 0 \newline g_{ N } = -R \newline \] \mbox{\Hypertarget{group___i_i_r__fcn_ga9a66e73e0afa0273502327903ec8dae8}\label{group___i_i_r__fcn_ga9a66e73e0afa0273502327903ec8dae8}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!\_\_ellip\_zeros\_poles\_plain\_\_@{\_\_ellip\_zeros\_poles\_plain\_\_}}
+\index{\_\_ellip\_zeros\_poles\_plain\_\_@{\_\_ellip\_zeros\_poles\_plain\_\_}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{\_\_ellip\_zeros\_poles\_plain\_\_()}{\_\_ellip\_zeros\_poles\_plain\_\_()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}}$<$ T $>$ \+\_\+\+\_\+ellip\+\_\+zeros\+\_\+poles\+\_\+plain\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{order,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+pass,  }\item[{\mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}}}]{g\+\_\+stop }\end{DoxyParamCaption})}
+
+
+
+Elliptic lowpass analogue prototype zeros/poles plain computation function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}g\+\_\+stop\mbox{]}} & stopband attenuation , Db \\
+\hline
+{\em \mbox{[}order\mbox{]}} & filter order \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The function computes Elliptic zeros/poles pairs of the Butterworth lowpass analogue prototype. It also compute zero frequency gains. All the data is stored within \mbox{\hyperlink{structiir__zp}{iir\+\_\+zp}} data structure and returned. First, the suppression transient factor is computed as follows\+:
+\end{DoxyReturn}
+\[ N = L + R \newline L = trunc\left( \frac{order}{2} \right) \newline R = N - 2*L \newline \epsilon_s = \sqrt{ 10^{ \frac{G_s}{10} } - 1 } \newline \epsilon_p = \sqrt{ 10^{ \frac{G_p}{10} } - 1 } \newline K_e = \epsilon_p / \epsilon_s \newline m = \sqrt{ 1 - K_e^2 } \newline Kp = 1 \newline i \in [ 0 ; L ) \newline \alpha = \frac{ ( 2 * ( i + 1 ) - 1 ) }{ order } \newline KE = ellipk( m ) \newline SN = sn( \alpha * KE , m ) \newline K_p = K_p * SN^4 \newline K_w = \sqrt{ 1 - K_p * K_p } \newline \]
+
+\textbackslash{}quad \textbackslash{}quad Real odd pole\+:
+
+\[ \] 
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{group___i_i_r__fcn_ga40be891e6193006af0f74ded573daf1d}\label{group___i_i_r__fcn_ga40be891e6193006af0f74ded573daf1d}} 
+\index{$>$ ( IIR filters )@{$>$ ( IIR filters )}!buff\_sy@{buff\_sy}}
+\index{buff\_sy@{buff\_sy}!$>$ ( IIR filters )@{$>$ ( IIR filters )}}
+\doxysubsubsection{\texorpdfstring{buff\_sy}{buff\_sy}}
+{\footnotesize\ttfamily T T T \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{classmirror__ring__buffer}{mirror\+\_\+ring\+\_\+buffer}}$<$ T $>$ \mbox{\hyperlink{classmirror__ring__buffer}{mirror\+\_\+ring\+\_\+buffer}}$<$ T $>$$\ast$ buff\+\_\+sy}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    T sum\_num = 0 , sum\_den = 0 , out = 0}
+
+\end{DoxyCode}

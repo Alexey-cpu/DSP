@@ -1,0 +1,1851 @@
+\hypertarget{iir_8h_source}{}\doxysection{iir.\+h}
+\label{iir_8h_source}\index{C:/Qt\_projects/DigitalFilters\_x32/include/iir.h@{C:/Qt\_projects/DigitalFilters\_x32/include/iir.h}}
+\mbox{\hyperlink{iir_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#ifndef IIR\_H}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#define IIR\_H}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#ifndef \_\_ALG\_PLATFORM}}
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include "{}cmath"{}}}
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#include "{}math.h"{}}}
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#include <iostream>}}
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{26 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{buffer_8h}{buffer.h}}"{}}}
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{complex_8h}{complex.h}}"{}}}
+\DoxyCodeLine{28 \textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{special__functions_8h}{special\_functions.h}}"{}}}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{31 \textcolor{preprocessor}{\#ifndef \_\_fx32}}
+\DoxyCodeLine{32 \textcolor{preprocessor}{\#define \_\_fx32 float}}
+\DoxyCodeLine{33 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{34 }
+\DoxyCodeLine{36 \textcolor{preprocessor}{\#ifndef \_\_fx64}}
+\DoxyCodeLine{37 \textcolor{preprocessor}{\#define \_\_fx64 double}}
+\DoxyCodeLine{38 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{39 }
+\DoxyCodeLine{41 \textcolor{preprocessor}{\#ifndef \_\_fxx64}}
+\DoxyCodeLine{42 \textcolor{preprocessor}{\#define \_\_fxx64 long double}}
+\DoxyCodeLine{43 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{44 }
+\DoxyCodeLine{46 \textcolor{preprocessor}{\#ifndef \_\_ix32}}
+\DoxyCodeLine{47 \textcolor{preprocessor}{\#define \_\_ix32 int}}
+\DoxyCodeLine{48 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{49 }
+\DoxyCodeLine{51 \textcolor{preprocessor}{\#ifndef PI0}}
+\DoxyCodeLine{52 \textcolor{preprocessor}{\#define PI0 3.1415926535897932384626433832795}}
+\DoxyCodeLine{53 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{54 }
+\DoxyCodeLine{56 \textcolor{preprocessor}{\#ifndef PI2}}
+\DoxyCodeLine{57 \textcolor{preprocessor}{\#define PI2 6.283185307179586476925286766559}}
+\DoxyCodeLine{58 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{59 }
+\DoxyCodeLine{61 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__zp}{iir\_zp}};}
+\DoxyCodeLine{71 \textcolor{keyword}{template}<> \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__zp}{iir\_zp}}< \mbox{\hyperlink{group___i_i_r__fcn_gabc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}}  > \{ \mbox{\hyperlink{classcomplex}{complex< \_\_fx32  >}} *plp , *zlp , *glp; \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L , R , N; \};}
+\DoxyCodeLine{81 \textcolor{keyword}{template}<> \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__zp}{iir\_zp}}< \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}}  > \{ \mbox{\hyperlink{classcomplex}{complex< \_\_fx64  >}} *plp , *zlp , *glp; \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L , R , N; \};}
+\DoxyCodeLine{91 \textcolor{keyword}{template}<> \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__zp}{iir\_zp}}< \mbox{\hyperlink{group___i_i_r__fcn_ga3aacdef884931407dac0c8d6208e647b}{\_\_fxx64}} > \{ \mbox{\hyperlink{classcomplex}{complex< \_\_fxx64 >}} *plp , *zlp , *glp; \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L , R , N; \};}
+\DoxyCodeLine{92 }
+\DoxyCodeLine{94 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__cf}{iir\_cf}};}
+\DoxyCodeLine{104 \textcolor{keyword}{template}<> \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__cf}{iir\_cf}}< \mbox{\hyperlink{group___i_i_r__fcn_gabc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}}  > \{ \mbox{\hyperlink{group___i_i_r__fcn_gabc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}}  *cfnum , *cfden , *gains; \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L , R , N; \};}
+\DoxyCodeLine{114 \textcolor{keyword}{template}<> \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__cf}{iir\_cf}}< \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}}  > \{ \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}}  *cfnum , *cfden , *gains; \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L , R , N; \};}
+\DoxyCodeLine{124 \textcolor{keyword}{template}<> \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__cf}{iir\_cf}}< \mbox{\hyperlink{group___i_i_r__fcn_ga3aacdef884931407dac0c8d6208e647b}{\_\_fxx64}} > \{ \mbox{\hyperlink{group___i_i_r__fcn_ga3aacdef884931407dac0c8d6208e647b}{\_\_fxx64}} *cfnum , *cfden , *gains; \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L , R , N; \};}
+\DoxyCodeLine{125 }
+\DoxyCodeLine{127 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__bf}{iir\_bf}};}
+\DoxyCodeLine{134 \textcolor{keyword}{template}<> \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__bf}{iir\_bf}}< \mbox{\hyperlink{group___i_i_r__fcn_gabc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}}  >\{ \mbox{\hyperlink{classmirror__ring__buffer_3_01____fx32_01_4}{mirror\_ring\_buffer< \_\_fx32  >}} *bx , *by; \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} N; \};}
+\DoxyCodeLine{141 \textcolor{keyword}{template}<> \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__bf}{iir\_bf}}< \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}}  >\{ \mbox{\hyperlink{classmirror__ring__buffer_3_01____fx64_01_4}{mirror\_ring\_buffer< \_\_fx64  >}} *bx , *by; \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} N; \};}
+\DoxyCodeLine{148 \textcolor{keyword}{template}<> \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__bf}{iir\_bf}}< \mbox{\hyperlink{group___i_i_r__fcn_ga3aacdef884931407dac0c8d6208e647b}{\_\_fxx64}} >\{ \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer< \_\_fxx64 >}} *bx , *by; \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} N; \};}
+\DoxyCodeLine{149 }
+\DoxyCodeLine{151 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__fr}{iir\_fr}};}
+\DoxyCodeLine{157 \textcolor{keyword}{template}<> \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__fr}{iir\_fr}}< \mbox{\hyperlink{group___i_i_r__fcn_gabc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}}  > \{ \mbox{\hyperlink{group___i_i_r__fcn_gabc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}}  Km , pH; \};}
+\DoxyCodeLine{163 \textcolor{keyword}{template}<> \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__fr}{iir\_fr}}< \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}}  > \{ \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}}  Km , pH; \};}
+\DoxyCodeLine{169 \textcolor{keyword}{template}<> \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__fr}{iir\_fr}}< \mbox{\hyperlink{group___i_i_r__fcn_ga3aacdef884931407dac0c8d6208e647b}{\_\_fxx64}} > \{ \mbox{\hyperlink{group___i_i_r__fcn_ga3aacdef884931407dac0c8d6208e647b}{\_\_fxx64}} Km , pH; \};}
+\DoxyCodeLine{170 }
+\DoxyCodeLine{183 \textcolor{keyword}{struct }\mbox{\hyperlink{structiir__sp}{iir\_sp}} \{ \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , Ts , Fn , Fc , BW , Gs , Gp; \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , type; \};}
+\DoxyCodeLine{184 }
+\DoxyCodeLine{192 \textcolor{keyword}{enum} \mbox{\hyperlink{group___i_i_r__fcn_ga841e49b038c67ff60d39a3ec715d7967}{iir\_type}} \{ lowpass\_iir  , highpass\_iir , bandpass\_iir , bandstop\_iir \};}
+\DoxyCodeLine{193 }
+\DoxyCodeLine{221 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \mbox{\hyperlink{structiir__zp}{iir\_zp< T >}} \mbox{\hyperlink{group___i_i_r__fcn_ga56d4dc488aa9ffe114609dfcd22104b5}{\_\_butt\_zeros\_poles\_plain\_\_}} ( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_stop )}
+\DoxyCodeLine{222 \{}
+\DoxyCodeLine{223     \textcolor{comment}{// number of zeros, poles, coeffs:}}
+\DoxyCodeLine{224     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L = trunc( order / 2 ) , R = order -\/ 2 * L , N = L + R;}
+\DoxyCodeLine{225 }
+\DoxyCodeLine{226     \textcolor{comment}{// stopband attenuation:}}
+\DoxyCodeLine{227     T epsilon\_stop = sqrt(pow(10, g\_stop / 10) -\/ 1);}
+\DoxyCodeLine{228 }
+\DoxyCodeLine{229     \textcolor{comment}{// memory allocation for the lowpass analogue prototype poles, zeros and gains:}}
+\DoxyCodeLine{230     \mbox{\hyperlink{classcomplex}{complex<T>}} *plp = ( \mbox{\hyperlink{classcomplex}{complex<T>}}* ) calloc( N+0 , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex<T>}} ) );}
+\DoxyCodeLine{231     \mbox{\hyperlink{classcomplex}{complex<T>}} *zlp = ( \mbox{\hyperlink{classcomplex}{complex<T>}}* ) calloc( N+0 , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex<T>}} ) );}
+\DoxyCodeLine{232     \mbox{\hyperlink{classcomplex}{complex<T>}} *glp = ( \mbox{\hyperlink{classcomplex}{complex<T>}}* ) calloc( N+1 , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex<T>}} ) );}
+\DoxyCodeLine{233 }
+\DoxyCodeLine{234     \textcolor{keywordflow}{if}( plp == 0 || zlp == 0 || glp == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__zp}{iir\_zp<T>}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{235 }
+\DoxyCodeLine{236     \textcolor{comment}{// complex-\/conjugate pairs:}}
+\DoxyCodeLine{237     T alpha = 0 , betta = 1 / sqrt( pow( epsilon\_stop , 1 / order ) );}
+\DoxyCodeLine{238 }
+\DoxyCodeLine{239     \textcolor{keywordflow}{for}( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0 ; i < L ; i++ )}
+\DoxyCodeLine{240     \{}
+\DoxyCodeLine{241         alpha = (2 * (i + 1) -\/ 1) * \mbox{\hyperlink{group___i_i_r__fcn_ga6eaf18f28b8bcd8aa3e36d0e307afa0e}{PI0}} / (2 * order);}
+\DoxyCodeLine{242         plp[i] = \mbox{\hyperlink{classcomplex}{complex<T>}}( ( -\/1 / betta * sin(alpha) ) , ( +1 / betta * cos(alpha) ) );}
+\DoxyCodeLine{243         glp[i] = plp[i] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( plp[i] ) ;}
+\DoxyCodeLine{244     \}}
+\DoxyCodeLine{245 }
+\DoxyCodeLine{246     \textcolor{comment}{// real odd pole:}}
+\DoxyCodeLine{247     \textcolor{keywordflow}{if}( R == 1 )}
+\DoxyCodeLine{248     \{}
+\DoxyCodeLine{249         plp[ N -\/ 1 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( ( -\/1 / betta ) , 0 );}
+\DoxyCodeLine{250         glp[ N -\/ 1 ] = -\/plp[ N -\/ 1 ].\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{251     \}}
+\DoxyCodeLine{252 }
+\DoxyCodeLine{253     \textcolor{comment}{// setting the output gain:}}
+\DoxyCodeLine{254     glp[ N ] = 1;}
+\DoxyCodeLine{255 }
+\DoxyCodeLine{256     \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__zp}{iir\_zp< T >}} \{ plp , zlp , glp , L , R , N \};}
+\DoxyCodeLine{257 \}}
+\DoxyCodeLine{258 }
+\DoxyCodeLine{287 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \mbox{\hyperlink{structiir__zp}{iir\_zp< T >}} \mbox{\hyperlink{group___i_i_r__fcn_ga95c7ffc230af84452ba72b6a055fd8d1}{\_\_cheb1\_zeros\_poles\_plain\_\_}}( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_stop )}
+\DoxyCodeLine{288 \{}
+\DoxyCodeLine{289     \textcolor{comment}{// number of zeros, poles, coeffs:}}
+\DoxyCodeLine{290     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L = trunc( order / 2 ) , R = order -\/ 2 * L , N = L + R;}
+\DoxyCodeLine{291 }
+\DoxyCodeLine{292     \textcolor{comment}{// stopband attenuation:}}
+\DoxyCodeLine{293     T epsilon\_stop = sqrt(pow(10, g\_stop / 10) -\/ 1);}
+\DoxyCodeLine{294 }
+\DoxyCodeLine{295     \textcolor{comment}{// memory allocation for the lowpass analogue prototype poles, zeros and gains:}}
+\DoxyCodeLine{296     \mbox{\hyperlink{classcomplex}{complex< T >}}  *plp = ( \mbox{\hyperlink{classcomplex}{complex<T>}}* ) calloc( N   , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{297     \mbox{\hyperlink{classcomplex}{complex< T >}}  *zlp = ( \mbox{\hyperlink{classcomplex}{complex<T>}}* ) calloc( N   , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{298     \mbox{\hyperlink{classcomplex}{complex< T >}}  *glp = ( \mbox{\hyperlink{classcomplex}{complex<T>}}* ) calloc( N+1 , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{299 }
+\DoxyCodeLine{300     \textcolor{keywordflow}{if}( plp == 0 || zlp == 0 || glp == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__zp}{iir\_zp< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{301 }
+\DoxyCodeLine{302     \textcolor{comment}{// complex conjugate pairs:}}
+\DoxyCodeLine{303     T alpha = 0 , betta = asinh( 1 / epsilon\_stop ) / order;}
+\DoxyCodeLine{304     \textcolor{keywordflow}{for} ( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0; i < L; i++)}
+\DoxyCodeLine{305     \{}
+\DoxyCodeLine{306         alpha = (2 * (i + 1) -\/ 1) * \mbox{\hyperlink{group___i_i_r__fcn_ga6eaf18f28b8bcd8aa3e36d0e307afa0e}{PI0}} / (2 * order);}
+\DoxyCodeLine{307         plp[i] = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/sin( alpha ) * sinh( betta ) , +cos( alpha ) * cosh( betta ) );}
+\DoxyCodeLine{308         glp[i] = plp[i] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( plp[i] );}
+\DoxyCodeLine{309     \}}
+\DoxyCodeLine{310 }
+\DoxyCodeLine{311     \textcolor{comment}{// real odd pole:}}
+\DoxyCodeLine{312     \textcolor{keywordflow}{if} ( R == 1 )}
+\DoxyCodeLine{313     \{}
+\DoxyCodeLine{314         plp[ N -\/ 1 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/sinh( betta ) , 0 );}
+\DoxyCodeLine{315         glp[ N -\/ 1 ] = -\/plp[ N -\/ 1 ].\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{316     \}}
+\DoxyCodeLine{317 }
+\DoxyCodeLine{318     \textcolor{comment}{// setting the output gain:}}
+\DoxyCodeLine{319     glp[N] = ( R < 1 ) ? ( sqrt(1 / (1 + epsilon\_stop * epsilon\_stop) ) ) : 1;}
+\DoxyCodeLine{320 }
+\DoxyCodeLine{321     \textcolor{comment}{// end the computation and return the filter info:}}
+\DoxyCodeLine{322     \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__zp}{iir\_zp< T >}}\{ plp , zlp , glp , L , R , N \};}
+\DoxyCodeLine{323 \}}
+\DoxyCodeLine{324 }
+\DoxyCodeLine{358 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \mbox{\hyperlink{structiir__zp}{iir\_zp< T >}} \mbox{\hyperlink{group___i_i_r__fcn_ga9bc4b73039224517adaab0efeabc1ba5}{\_\_cheb2\_zeros\_poles\_plain\_\_}}( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_stop )}
+\DoxyCodeLine{359 \{}
+\DoxyCodeLine{360     \textcolor{comment}{// stopband attenuation:}}
+\DoxyCodeLine{361     \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} epsilon\_stop = sqrt(pow(10, g\_stop / 10) -\/ 1);}
+\DoxyCodeLine{362 }
+\DoxyCodeLine{363     \textcolor{comment}{// identify the number of zeros and poles:}}
+\DoxyCodeLine{364     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L = trunc( order / 2 ) , R = order -\/ 2 * L , N = L + R;}
+\DoxyCodeLine{365 }
+\DoxyCodeLine{366     \textcolor{comment}{// allocate zeros and poles arrays:}}
+\DoxyCodeLine{367     \mbox{\hyperlink{classcomplex}{complex< T >}} *plp = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( N   , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{368     \mbox{\hyperlink{classcomplex}{complex< T >}} *zlp = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( N   , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{369     \mbox{\hyperlink{classcomplex}{complex< T >}} *glp = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( N+1 , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{370 }
+\DoxyCodeLine{371     \textcolor{keywordflow}{if}( plp == 0 || zlp == 0 || glp == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__zp}{iir\_zp< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{372 }
+\DoxyCodeLine{373     \textcolor{comment}{// ZEROS AND POLES COMPUTATION:}}
+\DoxyCodeLine{374 }
+\DoxyCodeLine{375     \textcolor{comment}{// complex conjugate pairs:}}
+\DoxyCodeLine{376 }
+\DoxyCodeLine{377     \textcolor{comment}{// auxiliary variables:}}
+\DoxyCodeLine{378     T alpha , betta = asinh( epsilon\_stop ) / order , re , im;}
+\DoxyCodeLine{379 }
+\DoxyCodeLine{380     \textcolor{comment}{// zeros , poles, gains computation:}}
+\DoxyCodeLine{381     \textcolor{keywordflow}{for} ( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0 ; i < L ; i++ )}
+\DoxyCodeLine{382     \{}
+\DoxyCodeLine{383         alpha = (2 * ( i + 1 ) -\/ 1) * \mbox{\hyperlink{group___i_i_r__fcn_ga6eaf18f28b8bcd8aa3e36d0e307afa0e}{PI0}} / ( 2 * order );}
+\DoxyCodeLine{384 }
+\DoxyCodeLine{385         \textcolor{comment}{// zeros:}}
+\DoxyCodeLine{386         zlp[i] = \mbox{\hyperlink{classcomplex}{complex< T >}}( 0 , 1 / cos( alpha ) );}
+\DoxyCodeLine{387 }
+\DoxyCodeLine{388         \textcolor{comment}{// poles:}}
+\DoxyCodeLine{389         re = -\/( sin( alpha ) * sinh( betta ) ) / ( cos( alpha ) * cos( alpha ) * cosh( betta ) * cosh( betta ) + sin( alpha ) * sin( alpha ) * sinh( betta ) * sinh( betta ) );}
+\DoxyCodeLine{390         im = +( cos( alpha ) * cosh( betta ) ) / ( cos( alpha ) * cos( alpha ) * cosh( betta ) * cosh( betta ) + sin( alpha ) * sin( alpha ) * sinh( betta ) * sinh( betta ) );}
+\DoxyCodeLine{391         plp[i] = \mbox{\hyperlink{classcomplex}{complex< T >}}( re , im );}
+\DoxyCodeLine{392 }
+\DoxyCodeLine{393         \textcolor{comment}{// gains:}}
+\DoxyCodeLine{394         glp[i] = ( zlp[i] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( zlp[i] ) ) / ( plp[i] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( plp[i] ) );}
+\DoxyCodeLine{395         glp[i] = \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) / glp[i];}
+\DoxyCodeLine{396     \}}
+\DoxyCodeLine{397 }
+\DoxyCodeLine{398     \textcolor{comment}{// real odd pole:}}
+\DoxyCodeLine{399     \textcolor{keywordflow}{if}( R >= 1 )}
+\DoxyCodeLine{400     \{}
+\DoxyCodeLine{401         plp[ N -\/ 1 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 / sinh( betta ) , 0 );}
+\DoxyCodeLine{402         glp[ N -\/ 1 ] = -\/plp[N-\/1].\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{403     \}}
+\DoxyCodeLine{404 }
+\DoxyCodeLine{405     \textcolor{comment}{// set the output gain:}}
+\DoxyCodeLine{406     glp[N] = 1;}
+\DoxyCodeLine{407 }
+\DoxyCodeLine{408     \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__zp}{iir\_zp< T >}}\{ plp , zlp , glp , L , R , N \};}
+\DoxyCodeLine{409 \}}
+\DoxyCodeLine{410 }
+\DoxyCodeLine{444 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \mbox{\hyperlink{structiir__zp}{iir\_zp< T >}} \mbox{\hyperlink{group___i_i_r__fcn_ga9a66e73e0afa0273502327903ec8dae8}{\_\_ellip\_zeros\_poles\_plain\_\_}}( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order ,  \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_pass , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_stop )}
+\DoxyCodeLine{445 \{}
+\DoxyCodeLine{446     \textcolor{comment}{// INITIALIZATION:}}
+\DoxyCodeLine{447 }
+\DoxyCodeLine{448     \textcolor{comment}{// stopband and passband attenuation:}}
+\DoxyCodeLine{449     \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} epsilon\_stop = sqrt(pow(10, g\_stop / 10) -\/ 1);}
+\DoxyCodeLine{450     \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} epsilon\_pass = sqrt(pow(10, g\_pass / 10) -\/ 1);}
+\DoxyCodeLine{451 }
+\DoxyCodeLine{452     \textcolor{comment}{// identify the number of zeros and poles:}}
+\DoxyCodeLine{453     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L = trunc( order / 2 ) , R = order -\/ 2 * L , N = L + R;}
+\DoxyCodeLine{454 }
+\DoxyCodeLine{455     \textcolor{comment}{// allocate zeros and poles arrays:}}
+\DoxyCodeLine{456     \mbox{\hyperlink{classcomplex}{complex< T >}} *plp = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( N   , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{457     \mbox{\hyperlink{classcomplex}{complex< T >}} *zlp = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( N   , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{458     \mbox{\hyperlink{classcomplex}{complex< T >}} *glp = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( N+1 , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{459 }
+\DoxyCodeLine{460     \textcolor{keywordflow}{if}( plp == 0 || zlp == 0 || glp == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__zp}{iir\_zp< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{461 }
+\DoxyCodeLine{462     \textcolor{comment}{// TRANSIENT SUPPRESSION FACTORS COMPUTATION:}}
+\DoxyCodeLine{463 }
+\DoxyCodeLine{464     \textcolor{comment}{// auxiliary variables:}}
+\DoxyCodeLine{465     T SN , KE;}
+\DoxyCodeLine{466     T Ke = epsilon\_pass / epsilon\_stop , Kp = 1;}
+\DoxyCodeLine{467     T m = sqrt( 1 -\/ Ke * Ke ) , alpha , Kw;}
+\DoxyCodeLine{468 }
+\DoxyCodeLine{469     \textcolor{comment}{// transient suppression factors computation:}}
+\DoxyCodeLine{470     \textcolor{keywordflow}{for} ( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0; i < L; i++ )}
+\DoxyCodeLine{471     \{}
+\DoxyCodeLine{472         alpha = (2 * ( i + 1 ) -\/ 1) / ( ( T )order);}
+\DoxyCodeLine{473         KE = \mbox{\hyperlink{group___elliptic__fcn_ga3fa06fe8d85507b8ee533ab4794902f6}{\_\_ellip\_k\_\_}}( m );}
+\DoxyCodeLine{474         SN = \mbox{\hyperlink{group___elliptic__fcn_ga73f108269c4fe5a4fc7084d663a54920}{\_\_sn\_\_}}( alpha * KE , m );}
+\DoxyCodeLine{475         Kp = Kp * SN*SN*SN*SN;}
+\DoxyCodeLine{476     \}}
+\DoxyCodeLine{477 }
+\DoxyCodeLine{478     Kp = pow( m , order) * Kp;}
+\DoxyCodeLine{479     Kw = sqrt(1 -\/ Kp * Kp);}
+\DoxyCodeLine{480 }
+\DoxyCodeLine{481     \textcolor{comment}{// ZEROS COMPUTATION:}}
+\DoxyCodeLine{482 }
+\DoxyCodeLine{483     KE = \mbox{\hyperlink{group___elliptic__fcn_ga3fa06fe8d85507b8ee533ab4794902f6}{\_\_ellip\_k\_\_}}( Kw );}
+\DoxyCodeLine{484     \textcolor{keywordflow}{if}( order \% 2 == 0 ) \textcolor{comment}{// even order filter}}
+\DoxyCodeLine{485     \{}
+\DoxyCodeLine{486         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0; i < L; i++)}
+\DoxyCodeLine{487         \{}
+\DoxyCodeLine{488             alpha = (2 * i + 1) / ( ( T )order) * KE;}
+\DoxyCodeLine{489             SN = \mbox{\hyperlink{group___elliptic__fcn_ga73f108269c4fe5a4fc7084d663a54920}{\_\_sn\_\_}}( alpha , Kw );}
+\DoxyCodeLine{490             zlp[i] = \mbox{\hyperlink{classcomplex}{complex< T >}}( 0 , 1 /( Kw * SN ) );}
+\DoxyCodeLine{491         \}}
+\DoxyCodeLine{492     \}}
+\DoxyCodeLine{493     \textcolor{keywordflow}{else} \textcolor{keywordflow}{if}( order \% 2 != 0 ) \textcolor{comment}{// odd order filter}}
+\DoxyCodeLine{494     \{}
+\DoxyCodeLine{495         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0; i < L; i++)}
+\DoxyCodeLine{496         \{}
+\DoxyCodeLine{497             alpha = (2 * i + 2) / ( ( T )order) * KE;}
+\DoxyCodeLine{498             SN = \mbox{\hyperlink{group___elliptic__fcn_ga73f108269c4fe5a4fc7084d663a54920}{\_\_sn\_\_}}( alpha , Kw );}
+\DoxyCodeLine{499             zlp[i] = \mbox{\hyperlink{classcomplex}{complex< T >}}( 0 , 1 /( Kw * SN ) );}
+\DoxyCodeLine{500         \}}
+\DoxyCodeLine{501     \}}
+\DoxyCodeLine{502 }
+\DoxyCodeLine{503     \textcolor{comment}{// POLES COMPUTATION:}}
+\DoxyCodeLine{504     T V0 = 0 , A = 0 , B = 0 , C = 0 , D = 0 , E = 0 , F = 0;}
+\DoxyCodeLine{505     V0 = -\/\mbox{\hyperlink{group___elliptic__fcn_ga3fa06fe8d85507b8ee533ab4794902f6}{\_\_ellip\_k\_\_}}( Kw ) * \mbox{\hyperlink{group___elliptic__fcn_gac134d47fba3ac51f40bf5b5f363c14b1}{\_\_isc\_\_}}(1 / epsilon\_pass, sqrt(1 -\/ Ke * Ke)) / ( \mbox{\hyperlink{group___elliptic__fcn_ga3fa06fe8d85507b8ee533ab4794902f6}{\_\_ellip\_k\_\_}}( Ke ) * ( ( T ) order ) );}
+\DoxyCodeLine{506     KE =  \mbox{\hyperlink{group___elliptic__fcn_ga3fa06fe8d85507b8ee533ab4794902f6}{\_\_ellip\_k\_\_}}( Kw );}
+\DoxyCodeLine{507 }
+\DoxyCodeLine{508     \textcolor{comment}{// complex conjugate pairs:}}
+\DoxyCodeLine{509     \textcolor{keywordflow}{for} ( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0; i < L; i++)}
+\DoxyCodeLine{510     \{}
+\DoxyCodeLine{511         \textcolor{keywordflow}{if}( order \% 2 == 0 ) \textcolor{comment}{// even order filter}}
+\DoxyCodeLine{512         \{}
+\DoxyCodeLine{513             alpha = (2 * i + 1) / ( ( T ) order ) * KE;}
+\DoxyCodeLine{514         \}}
+\DoxyCodeLine{515         \textcolor{keywordflow}{else} \textcolor{comment}{// odd order filter}}
+\DoxyCodeLine{516         \{}
+\DoxyCodeLine{517             alpha = (2 * i + 2) / ( ( T ) order ) * KE;}
+\DoxyCodeLine{518         \}}
+\DoxyCodeLine{519 }
+\DoxyCodeLine{520         \textcolor{comment}{// compute auxiliary variables:}}
+\DoxyCodeLine{521         A = \mbox{\hyperlink{group___elliptic__fcn_ga852068c36a4bce93e885484a85f154bf}{\_\_cn\_\_}}( alpha , Kw );}
+\DoxyCodeLine{522         B = \mbox{\hyperlink{group___elliptic__fcn_ga9f49e0deb7335a6c82defffdbd19918e}{\_\_dn\_\_}}( alpha , Kw );}
+\DoxyCodeLine{523         C = \mbox{\hyperlink{group___elliptic__fcn_ga73f108269c4fe5a4fc7084d663a54920}{\_\_sn\_\_}}( V0, sqrt( 1 -\/ Kw * Kw));}
+\DoxyCodeLine{524         D = sqrt(1 -\/ C * C);}
+\DoxyCodeLine{525         E = B * B;}
+\DoxyCodeLine{526         F = C * C;}
+\DoxyCodeLine{527 }
+\DoxyCodeLine{528         \textcolor{comment}{// pole real part:}}
+\DoxyCodeLine{529         plp[i].\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}} = A * B * C * D / (1 -\/ E * F);}
+\DoxyCodeLine{530 }
+\DoxyCodeLine{531         \textcolor{comment}{// compute auxiliary variables:}}
+\DoxyCodeLine{532         A = \mbox{\hyperlink{group___elliptic__fcn_ga73f108269c4fe5a4fc7084d663a54920}{\_\_sn\_\_}}( alpha, Kw );}
+\DoxyCodeLine{533         B = \mbox{\hyperlink{group___elliptic__fcn_ga9f49e0deb7335a6c82defffdbd19918e}{\_\_dn\_\_}}( V0 , sqrt(1 -\/ Kw * Kw ) );}
+\DoxyCodeLine{534         C = \mbox{\hyperlink{group___elliptic__fcn_ga9f49e0deb7335a6c82defffdbd19918e}{\_\_dn\_\_}}( alpha, Kw );}
+\DoxyCodeLine{535         D = \mbox{\hyperlink{group___elliptic__fcn_ga73f108269c4fe5a4fc7084d663a54920}{\_\_sn\_\_}}( V0, sqrt( 1 -\/ Kw * Kw ) );}
+\DoxyCodeLine{536         E = C * C;}
+\DoxyCodeLine{537         F = D * D;}
+\DoxyCodeLine{538 }
+\DoxyCodeLine{539         \textcolor{comment}{// pole imaginary part:}}
+\DoxyCodeLine{540         plp[i].\mbox{\hyperlink{classcomplex_af7f5cefe44ddd3394f231c1f3f10907f}{m\_im}} = A * B / (1 -\/ E * F);}
+\DoxyCodeLine{541     \}}
+\DoxyCodeLine{542 }
+\DoxyCodeLine{543     \textcolor{comment}{// real odd pole:}}
+\DoxyCodeLine{544     \textcolor{keywordflow}{if}( R >= 1 )}
+\DoxyCodeLine{545     \{}
+\DoxyCodeLine{546         \textcolor{comment}{// compute auxiliary variables:}}
+\DoxyCodeLine{547         A = \mbox{\hyperlink{group___elliptic__fcn_ga73f108269c4fe5a4fc7084d663a54920}{\_\_sn\_\_}}( V0 , sqrt( 1 -\/ Kw * Kw ) );}
+\DoxyCodeLine{548         B = \mbox{\hyperlink{group___elliptic__fcn_ga852068c36a4bce93e885484a85f154bf}{\_\_cn\_\_}}( V0 , sqrt( 1 -\/ Kw * Kw ) );}
+\DoxyCodeLine{549         C = A * A;}
+\DoxyCodeLine{550 }
+\DoxyCodeLine{551         \textcolor{comment}{// compute the real odd pole:}}
+\DoxyCodeLine{552         plp[ N -\/ 1 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( A * B / ( 1 -\/ C )  , 0 );}
+\DoxyCodeLine{553     \}}
+\DoxyCodeLine{554 }
+\DoxyCodeLine{555     \textcolor{comment}{// GAINS COMPUTATION:}}
+\DoxyCodeLine{556 }
+\DoxyCodeLine{557     \textcolor{comment}{// complex conjugate pairs:}}
+\DoxyCodeLine{558     \textcolor{keywordflow}{if}( R >= 1 )}
+\DoxyCodeLine{559     \{}
+\DoxyCodeLine{560         \textcolor{comment}{// complex conjugate pairs:}}
+\DoxyCodeLine{561         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0; i < L; i++)}
+\DoxyCodeLine{562         \{}
+\DoxyCodeLine{563             glp[i] = ( zlp[i] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( zlp[i] ) ) / ( plp[i] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( plp[i] ) );}
+\DoxyCodeLine{564             glp[i] = \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) / glp[i];}
+\DoxyCodeLine{565         \}}
+\DoxyCodeLine{566 }
+\DoxyCodeLine{567         \textcolor{comment}{// real odd pole:}}
+\DoxyCodeLine{568         glp[ N -\/ 1 ] = -\/plp[ N -\/ 1 ].\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{569 }
+\DoxyCodeLine{570         \textcolor{comment}{// output gain:}}
+\DoxyCodeLine{571         glp[N] = 1;}
+\DoxyCodeLine{572     \}}
+\DoxyCodeLine{573     \textcolor{keywordflow}{else}}
+\DoxyCodeLine{574     \{}
+\DoxyCodeLine{575         T a = sqrt( 1 / (1 + epsilon\_stop * epsilon\_stop) );}
+\DoxyCodeLine{576         glp[N] = pow ( a , 1 / ( ( T ) L ) );}
+\DoxyCodeLine{577         \textcolor{keywordflow}{for} ( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0; i < L; i++) glp[i] = glp[N];}
+\DoxyCodeLine{578     \}}
+\DoxyCodeLine{579 }
+\DoxyCodeLine{580     \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__zp}{iir\_zp< T >}}\{ plp , zlp , glp , L , R , N \};}
+\DoxyCodeLine{581 \}}
+\DoxyCodeLine{582 }
+\DoxyCodeLine{583 \textcolor{comment}{// UNIT NUMERATOR IIR COEFFICIENTS COMPUTATION:}}
+\DoxyCodeLine{584 }
+\DoxyCodeLine{585 \textcolor{comment}{// Butterworth or Chebyshev I digital lowpass coefficients computation:}}
+\DoxyCodeLine{586 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}} \_\_butt\_cheb1\_digital\_lp\_\_( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} type = 0 , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_stop = 1 )}
+\DoxyCodeLine{587 \{}
+\DoxyCodeLine{588     \textcolor{comment}{// Fs           -\/ sampling frequency}}
+\DoxyCodeLine{589     \textcolor{comment}{// Fstop        -\/ cutoff frequency}}
+\DoxyCodeLine{590     \textcolor{comment}{// order        -\/ filter order}}
+\DoxyCodeLine{591     \textcolor{comment}{// coeffs\_num   -\/ quadratic sections numerator coefficients}}
+\DoxyCodeLine{592     \textcolor{comment}{// coeffs\_den   -\/ quadratic sections denominator coefficients}}
+\DoxyCodeLine{593     \textcolor{comment}{// gains        -\/ quadratic sections gains}}
+\DoxyCodeLine{594     \textcolor{comment}{// type         -\/ filter type ( 0 -\/ Butterworth , 1 -\/ Chebyshev )}}
+\DoxyCodeLine{595     \textcolor{comment}{// g\_stop       -\/ stopband attenuation in Db}}
+\DoxyCodeLine{596 }
+\DoxyCodeLine{597     \textcolor{comment}{// COMPUTE LOWPASS ANALOGUE PROTOTYPE ZEROS, POLES AND GAINS:}}
+\DoxyCodeLine{598     \mbox{\hyperlink{structiir__zp}{iir\_zp< T >}} zp = ( !type ) ? \_\_butt\_zeros\_poles\_plain\_\_< T >( order , g\_stop ) : \_\_cheb1\_zeros\_poles\_plain\_\_< T >( order , g\_stop );}
+\DoxyCodeLine{599 }
+\DoxyCodeLine{600     \textcolor{comment}{// allocate zeros and poles arrays:}}
+\DoxyCodeLine{601     \mbox{\hyperlink{classcomplex}{complex< T >}} *plp = zp.plp;}
+\DoxyCodeLine{602     \mbox{\hyperlink{classcomplex}{complex< T >}} *zlp = zp.zlp;}
+\DoxyCodeLine{603     \mbox{\hyperlink{classcomplex}{complex< T >}} *glp = zp.glp;}
+\DoxyCodeLine{604     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L = zp.L , R = zp.R , N = L + R;}
+\DoxyCodeLine{605 }
+\DoxyCodeLine{606     \textcolor{keywordflow}{if}( plp == 0 || zlp == 0 || glp == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{607 }
+\DoxyCodeLine{608     \textcolor{comment}{// frequency deformation coefficient:}}
+\DoxyCodeLine{609     T K = tan( \mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * Fc / 2 / Fs );}
+\DoxyCodeLine{610 }
+\DoxyCodeLine{611     \textcolor{comment}{// coefficients matrix computation:}}
+\DoxyCodeLine{612     T *cfnum = ( T* )calloc( 3 * N , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{613     T *cfden = ( T* )calloc( 3 * N , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{614     T *gains = ( T* )calloc( N + 1 , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{615 }
+\DoxyCodeLine{616     \textcolor{keywordflow}{if}( cfnum == 0 || cfden == 0 || gains == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{617 }
+\DoxyCodeLine{618     \textcolor{comment}{// BILLINEAR LP-\/LP TRANSFORM:}}
+\DoxyCodeLine{619 }
+\DoxyCodeLine{620     \textcolor{comment}{// complex-\/conjugate pairs:}}
+\DoxyCodeLine{621     \textcolor{keywordflow}{for}( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0 ; i < L ; i++ )}
+\DoxyCodeLine{622     \{}
+\DoxyCodeLine{623         \textcolor{comment}{// quadratic section gain:}}
+\DoxyCodeLine{624         \mbox{\hyperlink{classcomplex}{complex< T >}} gain0 = glp[i];}
+\DoxyCodeLine{625         \mbox{\hyperlink{classcomplex}{complex< T >}} gain1 = \mbox{\hyperlink{classcomplex}{complex< T >}}( K * K , 0 );}
+\DoxyCodeLine{626         \mbox{\hyperlink{classcomplex}{complex< T >}} gain2 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ plp[i] * K ) * ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( plp[i] ) * K );}
+\DoxyCodeLine{627         gains[i] = ( gain0 * gain1 / gain2 ).m\_re;}
+\DoxyCodeLine{628 }
+\DoxyCodeLine{629         \textcolor{comment}{// zeros and poles transformation:}}
+\DoxyCodeLine{630         zlp[i] = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 , 0 );}
+\DoxyCodeLine{631         plp[i] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + plp[i] * K ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ plp[i] * K );}
+\DoxyCodeLine{632 }
+\DoxyCodeLine{633         \textcolor{comment}{// quadratic section numerator coefficients:}}
+\DoxyCodeLine{634         cfnum[ 3 * i + 0 ] = +1;}
+\DoxyCodeLine{635         cfnum[ 3 * i + 1 ] = +2;}
+\DoxyCodeLine{636         cfnum[ 3 * i + 2 ] = +1;}
+\DoxyCodeLine{637 }
+\DoxyCodeLine{638         \textcolor{comment}{// quadratic section denumerator coefficients:}}
+\DoxyCodeLine{639         cfden[ 3 * i + 0 ] = 1;}
+\DoxyCodeLine{640         cfden[ 3 * i + 1 ] = -\/( plp[i] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( plp[i] ) ).m\_re;}
+\DoxyCodeLine{641         cfden[ 3 * i + 2 ] = +( plp[i] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( plp[i] ) ).m\_re;}
+\DoxyCodeLine{642     \}}
+\DoxyCodeLine{643 }
+\DoxyCodeLine{644     \textcolor{comment}{// real odd pole:}}
+\DoxyCodeLine{645     \textcolor{keywordflow}{if} ( R == 1 )}
+\DoxyCodeLine{646     \{}
+\DoxyCodeLine{647         \textcolor{comment}{// quadratic section gain:}}
+\DoxyCodeLine{648         \mbox{\hyperlink{classcomplex}{complex< T >}} gain0 = glp[N-\/1];}
+\DoxyCodeLine{649         \mbox{\hyperlink{classcomplex}{complex< T >}} gain1 = \mbox{\hyperlink{classcomplex}{complex< T >}}( K , 0 );}
+\DoxyCodeLine{650         \mbox{\hyperlink{classcomplex}{complex< T >}} gain2 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ plp[N-\/1] * K );}
+\DoxyCodeLine{651         gains[N-\/1] = ( gain0 * gain1 / gain2 ).m\_re;}
+\DoxyCodeLine{652 }
+\DoxyCodeLine{653         \textcolor{comment}{// zeros and poles transformation:}}
+\DoxyCodeLine{654         zlp[ N -\/ 1 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 , 0 );}
+\DoxyCodeLine{655         plp[ N -\/ 1 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + plp[N-\/1] * K ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ plp[N-\/1] * K );}
+\DoxyCodeLine{656 }
+\DoxyCodeLine{657         \textcolor{comment}{// real odd pole section coefficients computation:}}
+\DoxyCodeLine{658 }
+\DoxyCodeLine{659         \textcolor{comment}{// numerator:}}
+\DoxyCodeLine{660         cfnum[ 3 * ( N -\/ 1 ) + 0 ] = 1;}
+\DoxyCodeLine{661         cfnum[ 3 * ( N -\/ 1 ) + 1 ] = -\/ zlp[ N -\/ 1 ].m\_re;}
+\DoxyCodeLine{662         cfnum[ 3 * ( N -\/ 1 ) + 2 ] = 0;}
+\DoxyCodeLine{663 }
+\DoxyCodeLine{664         \textcolor{comment}{// denominator:}}
+\DoxyCodeLine{665         cfden[ 3 * ( N -\/ 1 ) + 0 ] = 1;}
+\DoxyCodeLine{666         cfden[ 3 * ( N -\/ 1 ) + 1 ] = -\/plp[N-\/1].m\_re;}
+\DoxyCodeLine{667         cfden[ 3 * ( N -\/ 1 ) + 2 ] = 0;}
+\DoxyCodeLine{668     \}}
+\DoxyCodeLine{669 }
+\DoxyCodeLine{670     \textcolor{comment}{// setting filter output gain:}}
+\DoxyCodeLine{671     gains[N] = glp[N].\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{672 }
+\DoxyCodeLine{673 }
+\DoxyCodeLine{674     \textcolor{comment}{// memory free:}}
+\DoxyCodeLine{675     free( plp  );}
+\DoxyCodeLine{676     free( zlp  );}
+\DoxyCodeLine{677     free( glp  );}
+\DoxyCodeLine{678 }
+\DoxyCodeLine{679     \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ cfnum , cfden , gains , L , R , N \};}
+\DoxyCodeLine{680 \}}
+\DoxyCodeLine{681 }
+\DoxyCodeLine{682 \textcolor{comment}{// Butterworth or Chebyshev I digital highpass coefficients computation:}}
+\DoxyCodeLine{683 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}} \_\_butt\_cheb1\_digital\_hp\_\_( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fp , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} type = 0 , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_stop = 1 )}
+\DoxyCodeLine{684 \{}
+\DoxyCodeLine{685     \textcolor{comment}{// Fs           -\/ sampling frequency}}
+\DoxyCodeLine{686     \textcolor{comment}{// Fpass        -\/ cutoff frequency}}
+\DoxyCodeLine{687     \textcolor{comment}{// order        -\/ filter order}}
+\DoxyCodeLine{688     \textcolor{comment}{// coeffs\_num   -\/ quadratic sections numerator coefficients}}
+\DoxyCodeLine{689     \textcolor{comment}{// coeffs\_den   -\/ quadratic sections denominator coefficients}}
+\DoxyCodeLine{690     \textcolor{comment}{// gains        -\/ quadratic sections gains}}
+\DoxyCodeLine{691     \textcolor{comment}{// type         -\/ filter type ( 0 -\/ Butterworth , 1 -\/ Chebyshev )}}
+\DoxyCodeLine{692     \textcolor{comment}{// g\_stop       -\/ stopband attenuation in Db}}
+\DoxyCodeLine{693 }
+\DoxyCodeLine{694     \textcolor{comment}{// INITIALIZATION:}}
+\DoxyCodeLine{695     \mbox{\hyperlink{structiir__zp}{iir\_zp < T >}} zp = ( !type ) ? \_\_butt\_zeros\_poles\_plain\_\_< T >( order , g\_stop ) : \_\_cheb1\_zeros\_poles\_plain\_\_< T >( order , g\_stop );}
+\DoxyCodeLine{696     \mbox{\hyperlink{classcomplex}{complex< T >}} *plp = zp.plp;}
+\DoxyCodeLine{697     \mbox{\hyperlink{classcomplex}{complex< T >}} *zlp = zp.zlp;}
+\DoxyCodeLine{698     \mbox{\hyperlink{classcomplex}{complex< T >}} *glp = zp.glp;}
+\DoxyCodeLine{699     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L = zp.L , R = zp.R , N = L + R;}
+\DoxyCodeLine{700 }
+\DoxyCodeLine{701     \textcolor{keywordflow}{if}( plp == 0 || zlp == 0 || glp == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{702 }
+\DoxyCodeLine{703     \textcolor{comment}{// frequency deformation coefficient:}}
+\DoxyCodeLine{704     T w = tan( \mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * Fp / 2 / Fs );}
+\DoxyCodeLine{705 }
+\DoxyCodeLine{706     \textcolor{comment}{// coefficients matrix computation:}}
+\DoxyCodeLine{707     T *cfnum = ( T* )calloc( 3 * N , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{708     T *cfden = ( T* )calloc( 3 * N , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{709     T *gains = ( T* )calloc( N + 1 , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{710 }
+\DoxyCodeLine{711     \textcolor{keywordflow}{if}( cfnum == 0 || cfden == 0 || gains == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{712 }
+\DoxyCodeLine{713     \textcolor{comment}{// BILLINEAR LP-\/HP TRANSFORM:}}
+\DoxyCodeLine{714 }
+\DoxyCodeLine{715     \textcolor{comment}{// complex conjugate pairs:}}
+\DoxyCodeLine{716     \textcolor{keywordflow}{for} ( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0; i < L; i++)}
+\DoxyCodeLine{717     \{}
+\DoxyCodeLine{718         \textcolor{comment}{// gains compputation:}}
+\DoxyCodeLine{719         \mbox{\hyperlink{classcomplex}{complex< T >}} gain0 = glp[i];}
+\DoxyCodeLine{720         \mbox{\hyperlink{classcomplex}{complex< T >}} gain1 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ plp[i] / w ) * ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( plp[i] ) / w );}
+\DoxyCodeLine{721         gains[i] = ( gain0 / gain1 / w / w).m\_re;}
+\DoxyCodeLine{722         \textcolor{comment}{//gains[i] = ( gain0 * gain0 / gain1 / w / w).m\_re;}}
+\DoxyCodeLine{723 }
+\DoxyCodeLine{724         \textcolor{comment}{// zeros and poles transformation:}}
+\DoxyCodeLine{725         zlp[i] = \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 );}
+\DoxyCodeLine{726         plp[i] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + plp[i] / w ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ plp[i] / w ) * (-\/1);}
+\DoxyCodeLine{727 }
+\DoxyCodeLine{728         \textcolor{comment}{// digital highpass coefficients computation:}}
+\DoxyCodeLine{729 }
+\DoxyCodeLine{730         \textcolor{comment}{// numerator:}}
+\DoxyCodeLine{731         cfnum[3*i+0] = +1;}
+\DoxyCodeLine{732         cfnum[3*i+1] = -\/2;}
+\DoxyCodeLine{733         cfnum[3*i+2] = +1;}
+\DoxyCodeLine{734 }
+\DoxyCodeLine{735         \textcolor{comment}{// denominator:}}
+\DoxyCodeLine{736         cfden[3*i+0] = 1;}
+\DoxyCodeLine{737         cfden[3*i+1] = -\/( plp[i] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}(plp[i]) ).m\_re;}
+\DoxyCodeLine{738         cfden[3*i+2] = +( plp[i] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}(plp[i]) ).m\_re;}
+\DoxyCodeLine{739     \}}
+\DoxyCodeLine{740 }
+\DoxyCodeLine{741     \textcolor{comment}{// real odd pole:}}
+\DoxyCodeLine{742     \textcolor{keywordflow}{if} ( R == 1 )}
+\DoxyCodeLine{743     \{}
+\DoxyCodeLine{744         \textcolor{comment}{// gains compputation:}}
+\DoxyCodeLine{745         \mbox{\hyperlink{classcomplex}{complex< T >}} gain0 = glp[N-\/1];}
+\DoxyCodeLine{746         \mbox{\hyperlink{classcomplex}{complex< T >}} gain1 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ plp[N-\/1] / w );}
+\DoxyCodeLine{747         gains[N-\/1] = ( gain0 / gain1 / w ).m\_re;}
+\DoxyCodeLine{748 }
+\DoxyCodeLine{749         \textcolor{comment}{// zeros and poles transformation:}}
+\DoxyCodeLine{750         zlp[ N -\/ 1 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 );}
+\DoxyCodeLine{751         plp[ N -\/ 1 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + plp[ N -\/ 1 ] / w ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ plp[ N -\/ 1 ] / w ) * (-\/1);}
+\DoxyCodeLine{752 }
+\DoxyCodeLine{753         \textcolor{comment}{// digital highpass coefficients computation:}}
+\DoxyCodeLine{754 }
+\DoxyCodeLine{755         \textcolor{comment}{// numerator:}}
+\DoxyCodeLine{756         cfnum[3*(N-\/1)+0] = +1;}
+\DoxyCodeLine{757         cfnum[3*(N-\/1)+1] = -\/2;}
+\DoxyCodeLine{758         cfnum[3*(N-\/1)+2] = +1;}
+\DoxyCodeLine{759 }
+\DoxyCodeLine{760         \textcolor{comment}{// denominator:}}
+\DoxyCodeLine{761         cfden[3*(N-\/1)+0] = 1;}
+\DoxyCodeLine{762         cfden[3*(N-\/1)+1] = -\/plp[ N -\/ 1 ].m\_re;}
+\DoxyCodeLine{763         cfden[3*(N-\/1)+2] = 0;}
+\DoxyCodeLine{764     \}}
+\DoxyCodeLine{765 }
+\DoxyCodeLine{766     \textcolor{comment}{// setting filter output gain:}}
+\DoxyCodeLine{767     gains[N] = glp[N].\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{768 }
+\DoxyCodeLine{769     \textcolor{comment}{// memory free:}}
+\DoxyCodeLine{770     free( plp  );}
+\DoxyCodeLine{771     free( zlp  );}
+\DoxyCodeLine{772     free( glp  );}
+\DoxyCodeLine{773 }
+\DoxyCodeLine{774     \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ cfnum , cfden , gains , L , R , N \};}
+\DoxyCodeLine{775 \}}
+\DoxyCodeLine{776 }
+\DoxyCodeLine{777 \textcolor{comment}{// Butterworth or Chebyshev I digital bandpass coefficients computation:}}
+\DoxyCodeLine{778 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \mbox{\hyperlink{structiir__cf}{iir\_cf<T>}} \_\_butt\_cheb1\_digital\_bp\_\_( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fp , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} BandWidth , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} type = 0 , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_stop = 1 )}
+\DoxyCodeLine{779 \{}
+\DoxyCodeLine{780     \textcolor{comment}{// Fs           -\/ sampling frequency}}
+\DoxyCodeLine{781     \textcolor{comment}{// Fpass        -\/ passband frequency}}
+\DoxyCodeLine{782     \textcolor{comment}{// BandWidth    -\/ passband withd}}
+\DoxyCodeLine{783     \textcolor{comment}{// order        -\/ filter order}}
+\DoxyCodeLine{784     \textcolor{comment}{// coeffs\_num   -\/ quadratic sections numerator coefficients}}
+\DoxyCodeLine{785     \textcolor{comment}{// coeffs\_den   -\/ quadratic sections denominator coefficients}}
+\DoxyCodeLine{786     \textcolor{comment}{// gains        -\/ quadratic sections gains}}
+\DoxyCodeLine{787     \textcolor{comment}{// type         -\/ filter type ( 0 -\/ Butterworth , 1 -\/ Chebyshev )}}
+\DoxyCodeLine{788     \textcolor{comment}{// g\_stop       -\/ stopband attenuation in Db}}
+\DoxyCodeLine{789 }
+\DoxyCodeLine{790      order /= 2;}
+\DoxyCodeLine{791 }
+\DoxyCodeLine{792     \textcolor{comment}{// frequency deformation coefficient:}}
+\DoxyCodeLine{793     T w1 = tan( \mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * Fp / 2 / Fs ) , w2 = tan( \mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * ( Fp + BandWidth ) / 2 / Fs );}
+\DoxyCodeLine{794 }
+\DoxyCodeLine{795     \textcolor{comment}{// allocate zeros and poles arrays:}}
+\DoxyCodeLine{796 }
+\DoxyCodeLine{797     \textcolor{comment}{// lowpass analogue prototype poles, zeros and gains:}}
+\DoxyCodeLine{798     \mbox{\hyperlink{structiir__zp}{iir\_zp < T >}} zp = ( !type ) ? \_\_butt\_zeros\_poles\_plain\_\_< T >( order , g\_stop ) : \_\_cheb1\_zeros\_poles\_plain\_\_< T >( order , g\_stop );}
+\DoxyCodeLine{799     \mbox{\hyperlink{classcomplex}{complex< T >}} *plp = zp.plp;}
+\DoxyCodeLine{800     \mbox{\hyperlink{classcomplex}{complex< T >}} *glp = zp.glp;}
+\DoxyCodeLine{801     \mbox{\hyperlink{classcomplex}{complex< T >}} *zlp = zp.zlp;}
+\DoxyCodeLine{802     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L = zp.L , R = zp.R , N = L + R;}
+\DoxyCodeLine{803 }
+\DoxyCodeLine{804     \textcolor{keywordflow}{if}( plp == 0 || zlp == 0 || glp == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{805 }
+\DoxyCodeLine{806     \textcolor{comment}{// bandpass digital prototype poles, zeros and gains:}}
+\DoxyCodeLine{807     \mbox{\hyperlink{classcomplex}{complex< T >}} *pbp = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( 2*N , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{808     \mbox{\hyperlink{classcomplex}{complex< T >}} *zbp = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( 2*N , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{809     \mbox{\hyperlink{classcomplex}{complex< T >}} *gbp = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( 2*N , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{810 }
+\DoxyCodeLine{811     \textcolor{comment}{// coefficients matrix computation:}}
+\DoxyCodeLine{812     T *cfnum = ( T* )calloc( 3 * (2*L+R) , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{813     T *cfden = ( T* )calloc( 3 * (2*L+R) , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{814     T *gains = ( T* )calloc( (2*L+R + 1) , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{815 }
+\DoxyCodeLine{816     \textcolor{keywordflow}{if}( pbp   == 0 || zbp   == 0 || gbp   == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{817     \textcolor{keywordflow}{if}( cfnum == 0 || cfden == 0 || gains == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{818 }
+\DoxyCodeLine{819     \textcolor{comment}{// LP-\/BP BILLINEAR TRANSFORM:}}
+\DoxyCodeLine{820 }
+\DoxyCodeLine{821     \textcolor{comment}{// poles transformation:}}
+\DoxyCodeLine{822     T w0 = w1 * w2;}
+\DoxyCodeLine{823     T dW = w2 -\/ w1;}
+\DoxyCodeLine{824 }
+\DoxyCodeLine{825     \textcolor{comment}{// complex conjugate pairs:}}
+\DoxyCodeLine{826     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} j = 0;}
+\DoxyCodeLine{827     \textcolor{keywordflow}{for}( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0 ; i < L ; i++ , j+=2 )}
+\DoxyCodeLine{828     \{}
+\DoxyCodeLine{829         \textcolor{comment}{// poles transformation by means of square equation solve:}}
+\DoxyCodeLine{830         \mbox{\hyperlink{classcomplex}{complex< T >}} a( 1 / w0 , 0 );}
+\DoxyCodeLine{831         \mbox{\hyperlink{classcomplex}{complex< T >}} b( -\/plp[i].m\_re * dW / w0 , -\/plp[i].m\_im * dW / w0 );}
+\DoxyCodeLine{832         \mbox{\hyperlink{classcomplex}{complex< T >}} c( 1 , 0 );}
+\DoxyCodeLine{833         \mbox{\hyperlink{classcomplex}{complex< T >}} D = b * b -\/ a * c * 4;}
+\DoxyCodeLine{834         \mbox{\hyperlink{classcomplex}{complex< T >}} p1 = ( b*(-\/1) -\/ \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{835         \mbox{\hyperlink{classcomplex}{complex< T >}} p2 = ( b*(-\/1) + \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{836 }
+\DoxyCodeLine{837         \textcolor{comment}{// zeros and poles bilinear transform:}}
+\DoxyCodeLine{838         zbp[ j + 0 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( +1 , 0 );}
+\DoxyCodeLine{839         zbp[ j + 1 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 , 0 );}
+\DoxyCodeLine{840         pbp[ j + 0 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + p1 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ p1 );}
+\DoxyCodeLine{841         pbp[ j + 1 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + p2 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ p2 );}
+\DoxyCodeLine{842 }
+\DoxyCodeLine{843         \textcolor{comment}{// digital filter coefficients computation:}}
+\DoxyCodeLine{844 }
+\DoxyCodeLine{845         \textcolor{comment}{// numerator:}}
+\DoxyCodeLine{846         cfnum[ 3 * ( j + 0 ) + 0 ] = 1;}
+\DoxyCodeLine{847         cfnum[ 3 * ( j + 0 ) + 1 ] = 0;}
+\DoxyCodeLine{848         cfnum[ 3 * ( j + 0 ) + 2 ] = -\/1;}
+\DoxyCodeLine{849         cfnum[ 3 * ( j + 1 ) + 0 ] = 1;}
+\DoxyCodeLine{850         cfnum[ 3 * ( j + 1 ) + 1 ] = 0;}
+\DoxyCodeLine{851         cfnum[ 3 * ( j + 1 ) + 2 ] = -\/1;}
+\DoxyCodeLine{852 }
+\DoxyCodeLine{853         \textcolor{comment}{// denominator:}}
+\DoxyCodeLine{854         cfden[ 3 * ( j + 0 ) + 0 ] = 1;}
+\DoxyCodeLine{855         cfden[ 3 * ( j + 0 ) + 1 ] = -\/( pbp[j] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( pbp[j] ) ).m\_re;}
+\DoxyCodeLine{856         cfden[ 3 * ( j + 0 ) + 2 ] = +( pbp[j] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( pbp[j] ) ).m\_re;}
+\DoxyCodeLine{857         cfden[ 3 * ( j + 1 ) + 0 ] = 1;}
+\DoxyCodeLine{858         cfden[ 3 * ( j + 1 ) + 1 ] = -\/( pbp[j+1] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( pbp[j+1] ) ).m\_re;}
+\DoxyCodeLine{859         cfden[ 3 * ( j + 1 ) + 2 ] = +( pbp[j+1] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( pbp[j+1] ) ).m\_re;}
+\DoxyCodeLine{860 }
+\DoxyCodeLine{861         \textcolor{comment}{// complex conjugate quadratic sections gains computation:}}
+\DoxyCodeLine{862         \mbox{\hyperlink{classcomplex}{complex< T >}} gain0 = glp[i];}
+\DoxyCodeLine{863         \mbox{\hyperlink{classcomplex}{complex< T >}} gain1 = p1 * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( p1 );}
+\DoxyCodeLine{864         \mbox{\hyperlink{classcomplex}{complex< T >}} gain2 = p2 * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( p2 );}
+\DoxyCodeLine{865         \mbox{\hyperlink{classcomplex}{complex< T >}} gain3 = (\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ p1)*(\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}(p1));}
+\DoxyCodeLine{866         \mbox{\hyperlink{classcomplex}{complex< T >}} gain4 = (\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ p2)*(\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}(p2));}
+\DoxyCodeLine{867         \mbox{\hyperlink{classcomplex}{complex< T >}} gain5 = gain0 * gain1 * gain2 / gain3 / gain4 * dW * dW / w0 / w0;}
+\DoxyCodeLine{868         gain5 = \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( gain5 );}
+\DoxyCodeLine{869         gains[j+0] = gain5.\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{870         gains[j+1] = gain5.\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{871     \}}
+\DoxyCodeLine{872 }
+\DoxyCodeLine{873     \textcolor{comment}{// real odd pole:}}
+\DoxyCodeLine{874     \textcolor{keywordflow}{if}( R == 1 )}
+\DoxyCodeLine{875     \{}
+\DoxyCodeLine{876         \textcolor{comment}{// pole transformation by means of square equation solve:}}
+\DoxyCodeLine{877         \mbox{\hyperlink{classcomplex}{complex< T >}} a( 1 / w0 , 0 );}
+\DoxyCodeLine{878         \mbox{\hyperlink{classcomplex}{complex< T >}} b( -\/plp[ N -\/ 1 ].m\_re * dW / w0 , -\/plp[ N -\/ 1 ].m\_im * dW / w0 );}
+\DoxyCodeLine{879         \mbox{\hyperlink{classcomplex}{complex< T >}} c( 1 , 0 );}
+\DoxyCodeLine{880         \mbox{\hyperlink{classcomplex}{complex< T >}} D = b * b -\/ a * c * 4;}
+\DoxyCodeLine{881         \mbox{\hyperlink{classcomplex}{complex< T >}} p1 = ( b*(-\/1) -\/ \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{882         \mbox{\hyperlink{classcomplex}{complex< T >}} p2 = ( b*(-\/1) + \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{883 }
+\DoxyCodeLine{884         \textcolor{comment}{// zeros and poles bilinear transform:}}
+\DoxyCodeLine{885         zbp[ j + 0 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( +1 , 0 );}
+\DoxyCodeLine{886         zbp[ j + 1 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 , 0 );}
+\DoxyCodeLine{887         pbp[ j + 0 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + p1 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ p1 );}
+\DoxyCodeLine{888         pbp[ j + 1 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + p2 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ p2 );}
+\DoxyCodeLine{889 }
+\DoxyCodeLine{890         \textcolor{comment}{// digital filter coefficients computation:}}
+\DoxyCodeLine{891 }
+\DoxyCodeLine{892         \textcolor{comment}{// numerator:}}
+\DoxyCodeLine{893         cfnum[ 3 * ( j + 0 ) + 0 ] = 1;}
+\DoxyCodeLine{894         cfnum[ 3 * ( j + 0 ) + 1 ] = 0;}
+\DoxyCodeLine{895         cfnum[ 3 * ( j + 0 ) + 2 ] = -\/1;}
+\DoxyCodeLine{896 }
+\DoxyCodeLine{897         \textcolor{comment}{// denominator:}}
+\DoxyCodeLine{898         cfden[ 3 * ( j + 0 ) + 0 ] = 1;}
+\DoxyCodeLine{899         cfden[ 3 * ( j + 0 ) + 1 ] = -\/( pbp[j] + pbp[j+1] ).m\_re;}
+\DoxyCodeLine{900         cfden[ 3 * ( j + 0 ) + 2 ] = +( pbp[j] * pbp[j+1] ).m\_re;}
+\DoxyCodeLine{901 }
+\DoxyCodeLine{902         \textcolor{comment}{// complex conjugate quadratic sections gains computation:}}
+\DoxyCodeLine{903         \mbox{\hyperlink{classcomplex}{complex< T >}} gain0 = glp[N-\/1];}
+\DoxyCodeLine{904         \mbox{\hyperlink{classcomplex}{complex< T >}} gain1 = p1 * p2;}
+\DoxyCodeLine{905         \mbox{\hyperlink{classcomplex}{complex< T >}} gain2 = (\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ p1)*(\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ p2);}
+\DoxyCodeLine{906         \mbox{\hyperlink{classcomplex}{complex< T >}} gain3 = gain0 * gain1 / gain2 * dW / w0;}
+\DoxyCodeLine{907         gains[j+0] = gain3.\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{908     \}}
+\DoxyCodeLine{909 }
+\DoxyCodeLine{910     \textcolor{comment}{// setting filter output gain:}}
+\DoxyCodeLine{911     gains[ 2*L+R ] = glp[N].\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{912 }
+\DoxyCodeLine{913     \textcolor{comment}{// memory free:}}
+\DoxyCodeLine{914     free( plp );}
+\DoxyCodeLine{915     free( zlp );}
+\DoxyCodeLine{916     free( glp );}
+\DoxyCodeLine{917     free( pbp );}
+\DoxyCodeLine{918     free( zbp );}
+\DoxyCodeLine{919     free( gbp );}
+\DoxyCodeLine{920 }
+\DoxyCodeLine{921     \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf<  T  >}}\{ cfnum , cfden , gains , 2*L , R , 2*L+R  \};}
+\DoxyCodeLine{922 \}}
+\DoxyCodeLine{923 }
+\DoxyCodeLine{924 \textcolor{comment}{//  Butterworth or Chebyshev type I digital bandstop computation:}}
+\DoxyCodeLine{925 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \mbox{\hyperlink{structiir__cf}{iir\_cf<T>}} \_\_butt\_cheb1\_digital\_bs\_\_( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} BandWidth , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_gabc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}} type = 0 , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_stop = 1 )}
+\DoxyCodeLine{926 \{}
+\DoxyCodeLine{927     \textcolor{comment}{// Fs           -\/ sampling frequency}}
+\DoxyCodeLine{928     \textcolor{comment}{// Fstop        -\/ stopband frequency}}
+\DoxyCodeLine{929     \textcolor{comment}{// BandWidth    -\/ passband withd}}
+\DoxyCodeLine{930     \textcolor{comment}{// order        -\/ filter order}}
+\DoxyCodeLine{931     \textcolor{comment}{// coeffs\_num   -\/ quadratic sections numerator coefficients}}
+\DoxyCodeLine{932     \textcolor{comment}{// coeffs\_den   -\/ quadratic sections denominator coefficients}}
+\DoxyCodeLine{933     \textcolor{comment}{// gains        -\/ quadratic sections gains}}
+\DoxyCodeLine{934     \textcolor{comment}{// type         -\/ filter type ( 0 -\/ Butterworth , 1 -\/ Chebyshev )}}
+\DoxyCodeLine{935     \textcolor{comment}{// g\_stop       -\/ stopband attenuation in Db}}
+\DoxyCodeLine{936 }
+\DoxyCodeLine{937     \textcolor{comment}{// INITIALIZATION:}}
+\DoxyCodeLine{938 }
+\DoxyCodeLine{939     order /= 2;}
+\DoxyCodeLine{940 }
+\DoxyCodeLine{941    \textcolor{comment}{// frequency deformation coefficient:}}
+\DoxyCodeLine{942    T w1 = tan( \mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * Fc / 2 / Fs ) , w2 = tan( \mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * ( Fc + BandWidth ) / 2 / Fs );}
+\DoxyCodeLine{943 }
+\DoxyCodeLine{944    \textcolor{comment}{// allocate zeros and poles arrays:}}
+\DoxyCodeLine{945 }
+\DoxyCodeLine{946    \textcolor{comment}{// lowpass analogue prototype poles, zeros and gains:}}
+\DoxyCodeLine{947    \mbox{\hyperlink{structiir__zp}{iir\_zp < T >}} zp = ( !type ) ? \_\_butt\_zeros\_poles\_plain\_\_< T >( order , g\_stop ) : \_\_cheb1\_zeros\_poles\_plain\_\_< T >( order , g\_stop );}
+\DoxyCodeLine{948    \mbox{\hyperlink{classcomplex}{complex< T >}} *plp = zp.plp;}
+\DoxyCodeLine{949    \mbox{\hyperlink{classcomplex}{complex< T >}} *glp = zp.glp;}
+\DoxyCodeLine{950    \mbox{\hyperlink{classcomplex}{complex< T >}} *zlp = zp.zlp;}
+\DoxyCodeLine{951    \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L = zp.L , R = zp.R , N = L + R;}
+\DoxyCodeLine{952 }
+\DoxyCodeLine{953    \textcolor{keywordflow}{if}( plp == 0 || zlp == 0 || glp == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{954 }
+\DoxyCodeLine{955     \textcolor{comment}{// bandpass digital prototype poles, zeros and gains:}}
+\DoxyCodeLine{956     \mbox{\hyperlink{classcomplex}{complex< T >}} *pbs = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( 2*N , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{957     \mbox{\hyperlink{classcomplex}{complex< T >}} *zbs = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( 2*N , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{958     \mbox{\hyperlink{classcomplex}{complex< T >}} *gbs = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( 2*N , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{959 }
+\DoxyCodeLine{960     \textcolor{comment}{// coefficients matrix computation:}}
+\DoxyCodeLine{961     T *cfnum = (T* )calloc( 3 * (2*L+R) , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{962     T *cfden = (T* )calloc( 3 * (2*L+R) , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{963     T *gains = (T* )calloc( (2*L+R+1)   , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{964 }
+\DoxyCodeLine{965     \textcolor{keywordflow}{if}( pbs   == 0 || pbs   == 0 || pbs   == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{966     \textcolor{keywordflow}{if}( cfnum == 0 || cfden == 0 || gains == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{967 }
+\DoxyCodeLine{968     \textcolor{comment}{// LP-\/BS BILLINEAR TRANSFORM:}}
+\DoxyCodeLine{969 }
+\DoxyCodeLine{970     \textcolor{comment}{// poles transformation:}}
+\DoxyCodeLine{971     T w0 = w1 * w2;}
+\DoxyCodeLine{972     T dW = w2 -\/ w1;}
+\DoxyCodeLine{973 }
+\DoxyCodeLine{974     \textcolor{comment}{// complex conjugate pairs:}}
+\DoxyCodeLine{975     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} j = 0;}
+\DoxyCodeLine{976     \textcolor{keywordflow}{for}( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0 ; i < L ; i++ , j+=2 )}
+\DoxyCodeLine{977     \{}
+\DoxyCodeLine{978         \textcolor{comment}{// poles transformation by means of square equation solve:}}
+\DoxyCodeLine{979         \mbox{\hyperlink{classcomplex}{complex< T >}} a = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 / w0 , 0 );}
+\DoxyCodeLine{980         \mbox{\hyperlink{classcomplex}{complex< T >}} b = \mbox{\hyperlink{classcomplex}{complex< T >}}( dW , 0 ) / plp[i] / w0;}
+\DoxyCodeLine{981         \mbox{\hyperlink{classcomplex}{complex< T >}} c = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 , 0 );}
+\DoxyCodeLine{982         \mbox{\hyperlink{classcomplex}{complex< T >}} D = b * b -\/ a * c * 4;}
+\DoxyCodeLine{983         \mbox{\hyperlink{classcomplex}{complex< T >}} p1 = ( b*(-\/1) -\/ \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{984         \mbox{\hyperlink{classcomplex}{complex< T >}} p2 = ( b*(-\/1) + \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{985 }
+\DoxyCodeLine{986         \textcolor{comment}{// zeros and poles bilinear transform:}}
+\DoxyCodeLine{987         zbs[ j + 0 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( +1 , 0 );}
+\DoxyCodeLine{988         zbs[ j + 1 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 , 0 );}
+\DoxyCodeLine{989         pbs[ j + 0 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + p1 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ p1 );}
+\DoxyCodeLine{990         pbs[ j + 1 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + p2 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ p2 );}
+\DoxyCodeLine{991 }
+\DoxyCodeLine{992         \textcolor{comment}{// digital filter coefficients computation:}}
+\DoxyCodeLine{993 }
+\DoxyCodeLine{994         \textcolor{comment}{// numerator:}}
+\DoxyCodeLine{995         cfnum[ 3 * ( j + 0 ) + 0 ] = 1;}
+\DoxyCodeLine{996         cfnum[ 3 * ( j + 0 ) + 1 ] = 2 * ( w0 -\/ 1 ) / ( w0 + 1 );}
+\DoxyCodeLine{997         cfnum[ 3 * ( j + 0 ) + 2 ] = 1;}
+\DoxyCodeLine{998         cfnum[ 3 * ( j + 1 ) + 0 ] = 1;}
+\DoxyCodeLine{999         cfnum[ 3 * ( j + 1 ) + 1 ] = 2 * ( w0 -\/ 1 ) / ( w0 + 1 );}
+\DoxyCodeLine{1000         cfnum[ 3 * ( j + 1 ) + 2 ] = 1;}
+\DoxyCodeLine{1001 }
+\DoxyCodeLine{1002         \textcolor{comment}{// denominator:}}
+\DoxyCodeLine{1003         cfden[ 3 * ( j + 0 ) + 0 ] = 1;}
+\DoxyCodeLine{1004         cfden[ 3 * ( j + 0 ) + 1 ] = -\/( pbs[j] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( pbs[j] ) ).m\_re;}
+\DoxyCodeLine{1005         cfden[ 3 * ( j + 0 ) + 2 ] = +( pbs[j] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( pbs[j] ) ).m\_re;}
+\DoxyCodeLine{1006         cfden[ 3 * ( j + 1 ) + 0 ] = 1;}
+\DoxyCodeLine{1007         cfden[ 3 * ( j + 1 ) + 1 ] = -\/( pbs[j+1] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( pbs[j+1] ) ).m\_re;}
+\DoxyCodeLine{1008         cfden[ 3 * ( j + 1 ) + 2 ] = +( pbs[j+1] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( pbs[j+1] ) ).m\_re;}
+\DoxyCodeLine{1009 }
+\DoxyCodeLine{1010         \textcolor{comment}{// complex conjugate quadratic sections gains computation:}}
+\DoxyCodeLine{1011         \textcolor{comment}{//complex<\_\_fx64> gain0 = glp[i];}}
+\DoxyCodeLine{1012         \mbox{\hyperlink{classcomplex}{complex< T >}} gain0 = \mbox{\hyperlink{classcomplex}{complex< T >}}(1,0);}
+\DoxyCodeLine{1013         \mbox{\hyperlink{classcomplex}{complex< T >}} gain1 = p1 * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( p1 );}
+\DoxyCodeLine{1014         \mbox{\hyperlink{classcomplex}{complex< T >}} gain2 = p2 * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( p2 );}
+\DoxyCodeLine{1015         \mbox{\hyperlink{classcomplex}{complex< T >}} gain3 = (\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ p1)*(\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}(p1));}
+\DoxyCodeLine{1016         \mbox{\hyperlink{classcomplex}{complex< T >}} gain4 = (\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ p2)*(\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}(p2));}
+\DoxyCodeLine{1017         \mbox{\hyperlink{classcomplex}{complex< T >}} gain5 = gain0 * gain1 * gain2 / gain3 / gain4 / w0 / w0 * ( 1 + w0 ) * ( 1 + w0 );}
+\DoxyCodeLine{1018         gain5 = \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( gain5 );}
+\DoxyCodeLine{1019         gains[j+0] = gain5.\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{1020         gains[j+1] = gains[j+0];}
+\DoxyCodeLine{1021     \}}
+\DoxyCodeLine{1022 }
+\DoxyCodeLine{1023     \textcolor{comment}{// real odd pole:}}
+\DoxyCodeLine{1024     \textcolor{keywordflow}{if}( R == 1 )}
+\DoxyCodeLine{1025     \{}
+\DoxyCodeLine{1026         \textcolor{comment}{// poles transformation by means of square equation solve:}}
+\DoxyCodeLine{1027         \mbox{\hyperlink{classcomplex}{complex< T >}} a = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 / w0 , 0 );}
+\DoxyCodeLine{1028         \mbox{\hyperlink{classcomplex}{complex< T >}} b = \mbox{\hyperlink{classcomplex}{complex< T >}}( dW , 0 ) / plp[N-\/1] / w0;}
+\DoxyCodeLine{1029         \mbox{\hyperlink{classcomplex}{complex< T >}} c = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 , 0 );}
+\DoxyCodeLine{1030         \mbox{\hyperlink{classcomplex}{complex< T >}} D = b * b -\/ a * c * 4;}
+\DoxyCodeLine{1031         \mbox{\hyperlink{classcomplex}{complex< T >}} p1 = ( b*(-\/1) -\/ \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{1032         \mbox{\hyperlink{classcomplex}{complex< T >}} p2 = ( b*(-\/1) + \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{1033 }
+\DoxyCodeLine{1034         \textcolor{comment}{// zeros and poles bilinear transform:}}
+\DoxyCodeLine{1035         zbs[ j + 0 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( +1 , 0 );}
+\DoxyCodeLine{1036         zbs[ j + 1 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 , 0 );}
+\DoxyCodeLine{1037         pbs[ j + 0 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + p1 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ p1 );}
+\DoxyCodeLine{1038         pbs[ j + 1 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + p2 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ p2 );}
+\DoxyCodeLine{1039 }
+\DoxyCodeLine{1040         \textcolor{comment}{// digital filter coefficients computation:}}
+\DoxyCodeLine{1041 }
+\DoxyCodeLine{1042         \textcolor{comment}{// numerator:}}
+\DoxyCodeLine{1043         cfnum[ 3 * ( j + 0 ) + 0 ] = 1;}
+\DoxyCodeLine{1044         cfnum[ 3 * ( j + 0 ) + 1 ] = 2 * ( w0 -\/ 1 ) / ( w0 + 1 );}
+\DoxyCodeLine{1045         cfnum[ 3 * ( j + 0 ) + 2 ] = 1;}
+\DoxyCodeLine{1046 }
+\DoxyCodeLine{1047         \textcolor{comment}{// denominator:}}
+\DoxyCodeLine{1048         cfden[ 3 * ( j + 0 ) + 0 ] = 1;}
+\DoxyCodeLine{1049         cfden[ 3 * ( j + 0 ) + 1 ] = -\/( pbs[j]+pbs[j+1] ).m\_re;}
+\DoxyCodeLine{1050         cfden[ 3 * ( j + 0 ) + 2 ] = +( pbs[j]*pbs[j+1] ).m\_re;}
+\DoxyCodeLine{1051 }
+\DoxyCodeLine{1052         \textcolor{comment}{// complex conjugate quadratic sections gains computation:}}
+\DoxyCodeLine{1053         \mbox{\hyperlink{classcomplex}{complex< T >}} gain0 = glp[N-\/1];}
+\DoxyCodeLine{1054         \mbox{\hyperlink{classcomplex}{complex< T >}} gain1 = p1 * p2;}
+\DoxyCodeLine{1055         \mbox{\hyperlink{classcomplex}{complex< T >}} gain2 = \mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) / plp[N-\/1] / (-\/1);}
+\DoxyCodeLine{1056         \mbox{\hyperlink{classcomplex}{complex< T >}} gain3 = (\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ p1)*(\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ p2);}
+\DoxyCodeLine{1057         \mbox{\hyperlink{classcomplex}{complex< T >}} gain4 = gain0 * gain1 * gain2 / gain3 / w0 * ( 1 + w0 );}
+\DoxyCodeLine{1058         gains[j+0] = gain4.\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{1059     \}}
+\DoxyCodeLine{1060 }
+\DoxyCodeLine{1061     \textcolor{comment}{// setting filter output gain:}}
+\DoxyCodeLine{1062     gains[ 2 * L + R ] = glp[ N ].\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{1063 }
+\DoxyCodeLine{1064     \textcolor{comment}{// memory free:}}
+\DoxyCodeLine{1065     free( plp );}
+\DoxyCodeLine{1066     free( zlp );}
+\DoxyCodeLine{1067     free( glp );}
+\DoxyCodeLine{1068     free( pbs );}
+\DoxyCodeLine{1069     free( zbs );}
+\DoxyCodeLine{1070     free( gbs );}
+\DoxyCodeLine{1071 }
+\DoxyCodeLine{1072     \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ cfnum , cfden , gains , 2 * L , R , 2 * L + R \};}
+\DoxyCodeLine{1073 \}}
+\DoxyCodeLine{1074 }
+\DoxyCodeLine{1075 \textcolor{comment}{// NON-\/UNIT NUMERATOR IIR COEFFICIENTS COMPUTATION:}}
+\DoxyCodeLine{1076 }
+\DoxyCodeLine{1077 \textcolor{comment}{// Elliptic or Chebyshev type II digital lowpass computation function:}}
+\DoxyCodeLine{1078 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \mbox{\hyperlink{structiir__cf}{iir\_cf<T>}} \_\_cheb2\_ellip\_digital\_lp\_\_( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} type = 0 , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_pass = 1 , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_stop = 80 )}
+\DoxyCodeLine{1079 \{}
+\DoxyCodeLine{1080     \textcolor{comment}{// Fs           -\/ sampling frequency}}
+\DoxyCodeLine{1081     \textcolor{comment}{// Fstop        -\/ cutoff frequency}}
+\DoxyCodeLine{1082     \textcolor{comment}{// order        -\/ filter order}}
+\DoxyCodeLine{1083     \textcolor{comment}{// coeffs\_num   -\/ quadratic sections numerator coefficients}}
+\DoxyCodeLine{1084     \textcolor{comment}{// coeffs\_den   -\/ quadratic sections denominator coefficients}}
+\DoxyCodeLine{1085     \textcolor{comment}{// gains        -\/ quadratic sections gains}}
+\DoxyCodeLine{1086     \textcolor{comment}{// type         -\/ filter type ( 0 -\/ Chebyshev type II , 1 -\/ Elliptic )}}
+\DoxyCodeLine{1087     \textcolor{comment}{// g\_stop       -\/ stopband attenuation in Db}}
+\DoxyCodeLine{1088 }
+\DoxyCodeLine{1089     T w = tan( \mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * Fc / 2 / Fs );}
+\DoxyCodeLine{1090 }
+\DoxyCodeLine{1091     \textcolor{comment}{// digital lowpass coefficients computation:}}
+\DoxyCodeLine{1092     \mbox{\hyperlink{structiir__zp}{iir\_zp< T >}} zp = ( !type ) ? \_\_cheb2\_zeros\_poles\_plain\_\_< T >( order , g\_stop ) : \_\_ellip\_zeros\_poles\_plain\_\_< T >( order , g\_pass , g\_stop );}
+\DoxyCodeLine{1093 }
+\DoxyCodeLine{1094     \textcolor{comment}{// zeros/poles and coefficients number:}}
+\DoxyCodeLine{1095     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L = zp.L;}
+\DoxyCodeLine{1096     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} R = zp.R;}
+\DoxyCodeLine{1097     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} N = zp.N;}
+\DoxyCodeLine{1098 }
+\DoxyCodeLine{1099     \textcolor{comment}{// zeros / poles plain initialization:}}
+\DoxyCodeLine{1100     \mbox{\hyperlink{classcomplex}{complex< T >}} *plp = zp.plp;}
+\DoxyCodeLine{1101     \mbox{\hyperlink{classcomplex}{complex< T >}} *zlp = zp.zlp;}
+\DoxyCodeLine{1102     \mbox{\hyperlink{classcomplex}{complex< T >}} *glp = zp.glp;}
+\DoxyCodeLine{1103 }
+\DoxyCodeLine{1104     \textcolor{keywordflow}{if}( plp == 0 || zlp == 0 || glp == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{1105 }
+\DoxyCodeLine{1106     \textcolor{comment}{// coefficients matrix computation:}}
+\DoxyCodeLine{1107      T  *cfnum = ( T * )calloc( 3 * N , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{1108      T  *cfden = ( T * )calloc( 3 * N , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{1109      T  *gains = ( T * )calloc( N + 1 , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{1110 }
+\DoxyCodeLine{1111     \textcolor{keywordflow}{if}( cfnum == 0 || cfden == 0 || gains == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{1112 }
+\DoxyCodeLine{1113     \textcolor{comment}{// complex conjugate pairs:}}
+\DoxyCodeLine{1114     \textcolor{keywordflow}{for} ( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0 ; i < L ; i++)}
+\DoxyCodeLine{1115     \{}
+\DoxyCodeLine{1116         \textcolor{comment}{// quadratic sections gains computation:}}
+\DoxyCodeLine{1117         \mbox{\hyperlink{classcomplex}{complex< T >}} gain0 = glp[i];}
+\DoxyCodeLine{1118         \mbox{\hyperlink{classcomplex}{complex< T >}} gain1 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ zlp[i] * w ) * ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( zlp[i] ) * w );}
+\DoxyCodeLine{1119         \mbox{\hyperlink{classcomplex}{complex< T >}} gain2 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ plp[i] * w ) * ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( plp[i] ) * w );}
+\DoxyCodeLine{1120         gains[ i ] = ( gain0 * gain1 / gain2 ).m\_re;}
+\DoxyCodeLine{1121 }
+\DoxyCodeLine{1122         \textcolor{comment}{// zeros and poles transformation:}}
+\DoxyCodeLine{1123         zlp[i] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + zlp[i] * w ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ zlp[i] * w );}
+\DoxyCodeLine{1124         plp[i] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + plp[i] * w ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ plp[i] * w );}
+\DoxyCodeLine{1125 }
+\DoxyCodeLine{1126         \textcolor{comment}{// quadratic sections coefficients computation:}}
+\DoxyCodeLine{1127 }
+\DoxyCodeLine{1128         \textcolor{comment}{// numerator:}}
+\DoxyCodeLine{1129         cfnum[ 3 * i + 0 ] = 1;}
+\DoxyCodeLine{1130         cfnum[ 3 * i + 1 ] = -\/( zlp[i] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( zlp[i] ) ).m\_re;}
+\DoxyCodeLine{1131         cfnum[ 3 * i + 2 ] = +( zlp[i] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( zlp[i] ) ).m\_re;}
+\DoxyCodeLine{1132 }
+\DoxyCodeLine{1133         \textcolor{comment}{// denominator:}}
+\DoxyCodeLine{1134         cfden[ 3 * i + 0 ] = 1;}
+\DoxyCodeLine{1135         cfden[ 3 * i + 1 ] = -\/( plp[i] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( plp[i] ) ).m\_re;}
+\DoxyCodeLine{1136         cfden[ 3 * i + 2 ] = +( plp[i] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( plp[i] ) ).m\_re;}
+\DoxyCodeLine{1137     \}}
+\DoxyCodeLine{1138 }
+\DoxyCodeLine{1139     \textcolor{comment}{// real odd pole:}}
+\DoxyCodeLine{1140     \textcolor{keywordflow}{if}( R >= 1 )}
+\DoxyCodeLine{1141     \{}
+\DoxyCodeLine{1142         \textcolor{comment}{// quadratic sections gains computation:}}
+\DoxyCodeLine{1143         \mbox{\hyperlink{classcomplex}{complex< T >}} gain0 = glp[ N -\/ 1 ];}
+\DoxyCodeLine{1144         \mbox{\hyperlink{classcomplex}{complex< T >}} gain1 = \mbox{\hyperlink{classcomplex}{complex< T >}}( w , 0 );}
+\DoxyCodeLine{1145         \mbox{\hyperlink{classcomplex}{complex< T >}} gain2 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ plp[ N -\/ 1 ] * w );}
+\DoxyCodeLine{1146         gains[ N -\/ 1 ] = ( gain0 * gain1 / gain2 ).m\_re;}
+\DoxyCodeLine{1147 }
+\DoxyCodeLine{1148         \textcolor{comment}{// zeros and poles transformation:}}
+\DoxyCodeLine{1149         zlp[ N -\/ 1 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 , 0 );}
+\DoxyCodeLine{1150         plp[ N -\/ 1 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + plp[ N -\/ 1 ] * w ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ plp[ N -\/ 1 ] * w );}
+\DoxyCodeLine{1151 }
+\DoxyCodeLine{1152         \textcolor{comment}{// quadratic sections coefficients computation:}}
+\DoxyCodeLine{1153 }
+\DoxyCodeLine{1154         \textcolor{comment}{// numerator:}}
+\DoxyCodeLine{1155         cfnum[ 3 * (N -\/ 1) + 0 ] = 1;}
+\DoxyCodeLine{1156         cfnum[ 3 * (N -\/ 1) + 1 ] = -\/zlp[ N -\/ 1 ].m\_re;}
+\DoxyCodeLine{1157         cfnum[ 3 * (N -\/ 1) + 2 ] = 0;}
+\DoxyCodeLine{1158 }
+\DoxyCodeLine{1159         \textcolor{comment}{// denominator:}}
+\DoxyCodeLine{1160         cfden[ 3 * (N -\/ 1) + 0 ] = 1;}
+\DoxyCodeLine{1161         cfden[ 3 * (N -\/ 1) + 1 ] = -\/plp[ N -\/ 1 ].m\_re;}
+\DoxyCodeLine{1162         cfden[ 3 * (N -\/ 1) + 2 ] = 0;}
+\DoxyCodeLine{1163 }
+\DoxyCodeLine{1164     \}}
+\DoxyCodeLine{1165 }
+\DoxyCodeLine{1166     gains[N] = glp[N].\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{1167 }
+\DoxyCodeLine{1168     \textcolor{comment}{// memory deallocation:}}
+\DoxyCodeLine{1169     free( plp );}
+\DoxyCodeLine{1170     free( zlp );}
+\DoxyCodeLine{1171     free( glp );}
+\DoxyCodeLine{1172 }
+\DoxyCodeLine{1173     \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ cfnum , cfden , gains , L , R , N \};}
+\DoxyCodeLine{1174 \}}
+\DoxyCodeLine{1175 }
+\DoxyCodeLine{1176 \textcolor{comment}{// Elliptic or Chebyshev type II digital highpass computation function:}}
+\DoxyCodeLine{1177 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \mbox{\hyperlink{structiir__cf}{iir\_cf<T>}} \_\_cheb2\_ellip\_digital\_hp\_\_( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} type = 0 , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_pass = 1 , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_stop = 80 )}
+\DoxyCodeLine{1178 \{}
+\DoxyCodeLine{1179     \textcolor{comment}{// Fs           -\/ sampling frequency}}
+\DoxyCodeLine{1180     \textcolor{comment}{// Fstop        -\/ cutoff frequency}}
+\DoxyCodeLine{1181     \textcolor{comment}{// order        -\/ filter order}}
+\DoxyCodeLine{1182     \textcolor{comment}{// coeffs\_num   -\/ quadratic sections numerator coefficients}}
+\DoxyCodeLine{1183     \textcolor{comment}{// coeffs\_den   -\/ quadratic sections denominator coefficients}}
+\DoxyCodeLine{1184     \textcolor{comment}{// gains        -\/ quadratic sections gains}}
+\DoxyCodeLine{1185     \textcolor{comment}{// type         -\/ filter type ( 0 -\/ Chebyshev II , 1 -\/ Elliptic )}}
+\DoxyCodeLine{1186     \textcolor{comment}{// g\_stop       -\/ stopband attenuation in Db}}
+\DoxyCodeLine{1187 }
+\DoxyCodeLine{1188      T  w = tan( \mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * Fc / 2 / Fs );}
+\DoxyCodeLine{1189 }
+\DoxyCodeLine{1190     \textcolor{comment}{// digital lowpass coefficients computation:}}
+\DoxyCodeLine{1191     \mbox{\hyperlink{structiir__zp}{iir\_zp< T >}} zp = ( !type ) ? \_\_cheb2\_zeros\_poles\_plain\_\_< T >( order , g\_stop ) : \_\_ellip\_zeros\_poles\_plain\_\_< T >( order , g\_pass , g\_stop );}
+\DoxyCodeLine{1192 }
+\DoxyCodeLine{1193     \textcolor{comment}{// zeros/poles and coefficients number:}}
+\DoxyCodeLine{1194     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L = zp.L;}
+\DoxyCodeLine{1195     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} R = zp.R;}
+\DoxyCodeLine{1196     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} N = zp.N;}
+\DoxyCodeLine{1197 }
+\DoxyCodeLine{1198     \textcolor{comment}{// zeros / poles plain initialization:}}
+\DoxyCodeLine{1199     \mbox{\hyperlink{classcomplex}{complex< T >}} *plp = zp.plp;}
+\DoxyCodeLine{1200     \mbox{\hyperlink{classcomplex}{complex< T >}} *zlp = zp.zlp;}
+\DoxyCodeLine{1201     \mbox{\hyperlink{classcomplex}{complex< T >}} *glp = zp.glp;}
+\DoxyCodeLine{1202 }
+\DoxyCodeLine{1203     \textcolor{keywordflow}{if}( plp == 0 || zlp == 0 || glp == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{1204 }
+\DoxyCodeLine{1205     \textcolor{comment}{// coefficients matrix memory allocation:}}
+\DoxyCodeLine{1206      T *cfnum = (T* )calloc( 3 * N , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{1207      T *cfden = (T* )calloc( 3 * N , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{1208      T *gains = (T* )calloc( N + 1 , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{1209 }
+\DoxyCodeLine{1210     \textcolor{keywordflow}{if}( cfnum == 0 || cfden == 0 || gains == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{1211 }
+\DoxyCodeLine{1212     \textcolor{comment}{// coefficients matrix computation:}}
+\DoxyCodeLine{1213 }
+\DoxyCodeLine{1214     \textcolor{comment}{// complex conjugate pairs:}}
+\DoxyCodeLine{1215     \textcolor{keywordflow}{for} ( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0 ; i < L ; i++)}
+\DoxyCodeLine{1216     \{}
+\DoxyCodeLine{1217         \textcolor{comment}{// quadratic sections gains computation:}}
+\DoxyCodeLine{1218         \mbox{\hyperlink{classcomplex}{complex< T >}} gain0 = glp[i];}
+\DoxyCodeLine{1219         \mbox{\hyperlink{classcomplex}{complex< T >}} gain1 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ zlp[i] / w ) * ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( zlp[i] ) / w );}
+\DoxyCodeLine{1220         \mbox{\hyperlink{classcomplex}{complex< T >}} gain2 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ plp[i] / w ) * ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( plp[i] ) / w );}
+\DoxyCodeLine{1221         gains[ i ] = ( gain0 * gain1 / gain2 ).m\_re;}
+\DoxyCodeLine{1222 }
+\DoxyCodeLine{1223         \textcolor{comment}{// zeros and poles transformation:}}
+\DoxyCodeLine{1224         zlp[i] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + zlp[i] / w ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ zlp[i] / w );}
+\DoxyCodeLine{1225         plp[i] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + plp[i] / w ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ plp[i] / w );}
+\DoxyCodeLine{1226 }
+\DoxyCodeLine{1227         \textcolor{comment}{// quadratic sections coefficients computation:}}
+\DoxyCodeLine{1228 }
+\DoxyCodeLine{1229         \textcolor{comment}{// numerator:}}
+\DoxyCodeLine{1230         cfnum[ 3 * i + 0 ] = 1;}
+\DoxyCodeLine{1231         cfnum[ 3 * i + 1 ] = +( zlp[i] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( zlp[i] ) ).m\_re;}
+\DoxyCodeLine{1232         cfnum[ 3 * i + 2 ] = +( zlp[i] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( zlp[i] ) ).m\_re;}
+\DoxyCodeLine{1233 }
+\DoxyCodeLine{1234         \textcolor{comment}{// denominator:}}
+\DoxyCodeLine{1235         cfden[ 3 * i + 0 ] = 1;}
+\DoxyCodeLine{1236         cfden[ 3 * i + 1 ] = +( plp[i] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( plp[i] ) ).m\_re;}
+\DoxyCodeLine{1237         cfden[ 3 * i + 2 ] = +( plp[i] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( plp[i] ) ).m\_re;}
+\DoxyCodeLine{1238     \}}
+\DoxyCodeLine{1239 }
+\DoxyCodeLine{1240     \textcolor{comment}{// real odd pole:}}
+\DoxyCodeLine{1241     \textcolor{keywordflow}{if}( R >= 1 )}
+\DoxyCodeLine{1242     \{}
+\DoxyCodeLine{1243         \textcolor{comment}{// quadratic sections gains computation:}}
+\DoxyCodeLine{1244         \mbox{\hyperlink{classcomplex}{complex< T >}} gain0 = glp[ N -\/ 1 ];}
+\DoxyCodeLine{1245         \mbox{\hyperlink{classcomplex}{complex< T >}} gain1 = \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 / w , 0 );}
+\DoxyCodeLine{1246         \mbox{\hyperlink{classcomplex}{complex< T >}} gain2 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ plp[ N -\/ 1 ] / w );}
+\DoxyCodeLine{1247         gains[ N -\/ 1 ] = ( gain0 * gain1 / gain2 ).m\_re;}
+\DoxyCodeLine{1248 }
+\DoxyCodeLine{1249         \textcolor{comment}{// zeros and poles transformation:}}
+\DoxyCodeLine{1250         zlp[ N -\/ 1 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 , 0 );}
+\DoxyCodeLine{1251         plp[ N -\/ 1 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + plp[ N -\/ 1 ] / w ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ plp[ N -\/ 1 ] / w );}
+\DoxyCodeLine{1252 }
+\DoxyCodeLine{1253         \textcolor{comment}{// quadratic sections coefficients computation:}}
+\DoxyCodeLine{1254 }
+\DoxyCodeLine{1255         \textcolor{comment}{// numerator:}}
+\DoxyCodeLine{1256         cfnum[ 3 * (N -\/ 1) + 0 ] = 1;}
+\DoxyCodeLine{1257         cfnum[ 3 * (N -\/ 1) + 1 ] = zlp[ N -\/ 1 ].m\_re;}
+\DoxyCodeLine{1258         cfnum[ 3 * (N -\/ 1) + 2 ] = 0;}
+\DoxyCodeLine{1259 }
+\DoxyCodeLine{1260         \textcolor{comment}{// denominator:}}
+\DoxyCodeLine{1261         cfden[ 3 * (N -\/ 1) + 0 ] = 1;}
+\DoxyCodeLine{1262         cfden[ 3 * (N -\/ 1) + 1 ] = plp[ N -\/ 1 ].m\_re;}
+\DoxyCodeLine{1263         cfden[ 3 * (N -\/ 1) + 2 ] = 0;}
+\DoxyCodeLine{1264     \}}
+\DoxyCodeLine{1265 }
+\DoxyCodeLine{1266     \textcolor{comment}{// output gain setting:}}
+\DoxyCodeLine{1267     gains[N] = glp[N].\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{1268 }
+\DoxyCodeLine{1269     \textcolor{comment}{// memory deallocation:}}
+\DoxyCodeLine{1270     free( plp );}
+\DoxyCodeLine{1271     free( zlp );}
+\DoxyCodeLine{1272     free( glp );}
+\DoxyCodeLine{1273 }
+\DoxyCodeLine{1274     \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ cfnum , cfden , gains , L , R , N \};}
+\DoxyCodeLine{1275 \}}
+\DoxyCodeLine{1276 }
+\DoxyCodeLine{1277 \textcolor{comment}{// Elliptic or Chebyshev II digital bandpass computation function:}}
+\DoxyCodeLine{1278 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \mbox{\hyperlink{structiir__cf}{iir\_cf<T>}} \_\_cheb2\_ellip\_digital\_bp\_\_( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fp , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} BandWidth , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} type = 0 , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_pass = 1 , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_stop = 80 )}
+\DoxyCodeLine{1279 \{}
+\DoxyCodeLine{1280     \textcolor{comment}{// Fs           -\/ sampling frequency}}
+\DoxyCodeLine{1281     \textcolor{comment}{// Fpass        -\/ passband frequency}}
+\DoxyCodeLine{1282     \textcolor{comment}{// BandWidth    -\/ passband withd}}
+\DoxyCodeLine{1283     \textcolor{comment}{// order        -\/ filter order}}
+\DoxyCodeLine{1284     \textcolor{comment}{// coeffs\_num   -\/ quadratic sections numerator coefficients}}
+\DoxyCodeLine{1285     \textcolor{comment}{// coeffs\_den   -\/ quadratic sections denominator coefficients}}
+\DoxyCodeLine{1286     \textcolor{comment}{// gains        -\/ quadratic sections gains}}
+\DoxyCodeLine{1287     \textcolor{comment}{// type         -\/ filter type ( 0 -\/ Butterworth , 1 -\/ Chebyshev )}}
+\DoxyCodeLine{1288     \textcolor{comment}{// g\_stop       -\/ stopband attenuation in Db}}
+\DoxyCodeLine{1289 }
+\DoxyCodeLine{1290      order /= 2;}
+\DoxyCodeLine{1291 }
+\DoxyCodeLine{1292     \textcolor{comment}{// frequency deformation coefficient:}}
+\DoxyCodeLine{1293      T w1 = tan( \mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * Fp / 2 / Fs ) , w2 = tan( \mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * ( Fp + BandWidth ) / 2 / Fs );}
+\DoxyCodeLine{1294 }
+\DoxyCodeLine{1295     \textcolor{comment}{// allocate zeros and poles arrays:}}
+\DoxyCodeLine{1296 }
+\DoxyCodeLine{1297     \textcolor{comment}{// lowpass analogue prototype poles, zeros and gains:}}
+\DoxyCodeLine{1298     \mbox{\hyperlink{structiir__zp}{iir\_zp< T >}} zp = ( !type ) ? \_\_cheb2\_zeros\_poles\_plain\_\_< T >( order , g\_stop ) : \_\_ellip\_zeros\_poles\_plain\_\_< T >( order , g\_pass , g\_stop );}
+\DoxyCodeLine{1299     \mbox{\hyperlink{classcomplex}{complex< T >}} *plp = zp.plp;}
+\DoxyCodeLine{1300     \mbox{\hyperlink{classcomplex}{complex< T >}} *glp = zp.glp;}
+\DoxyCodeLine{1301     \mbox{\hyperlink{classcomplex}{complex< T >}} *zlp = zp.zlp;}
+\DoxyCodeLine{1302     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L = zp.L , R = zp.R , N = L + R;}
+\DoxyCodeLine{1303 }
+\DoxyCodeLine{1304     \textcolor{keywordflow}{if}( plp == 0 || zlp == 0 || glp == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{1305 }
+\DoxyCodeLine{1306     \textcolor{comment}{// bandpass digital prototype poles, zeros and gains:}}
+\DoxyCodeLine{1307     \mbox{\hyperlink{classcomplex}{complex< T >}} *pbp = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( 2*N , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{1308     \mbox{\hyperlink{classcomplex}{complex< T >}} *zbp = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( 2*N , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{1309     \mbox{\hyperlink{classcomplex}{complex< T >}} *gbp = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( 2*N , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{1310 }
+\DoxyCodeLine{1311     \textcolor{comment}{// coefficients matrix computation:}}
+\DoxyCodeLine{1312      T  *cfnum = ( T * )calloc( 3 * (2*L+R) , \textcolor{keyword}{sizeof} (  T  ) );}
+\DoxyCodeLine{1313      T  *cfden = ( T * )calloc( 3 * (2*L+R) , \textcolor{keyword}{sizeof} (  T  ) );}
+\DoxyCodeLine{1314      T  *gains = ( T * )calloc( (2*L+R + 1) , \textcolor{keyword}{sizeof} (  T  ) );}
+\DoxyCodeLine{1315 }
+\DoxyCodeLine{1316     \textcolor{keywordflow}{if}( pbp   == 0 || zbp   == 0 || gbp   == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{1317     \textcolor{keywordflow}{if}( cfnum == 0 || cfden == 0 || gains == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{1318 }
+\DoxyCodeLine{1319     \textcolor{comment}{// LP-\/BP BILLINEAR TRANSFORM:}}
+\DoxyCodeLine{1320 }
+\DoxyCodeLine{1321     \textcolor{comment}{// poles transformation:}}
+\DoxyCodeLine{1322      T w0 = w1 * w2;}
+\DoxyCodeLine{1323      T dW = w2 -\/ w1;}
+\DoxyCodeLine{1324 }
+\DoxyCodeLine{1325     \textcolor{comment}{// complex conjugate pairs:}}
+\DoxyCodeLine{1326     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} j = 0;}
+\DoxyCodeLine{1327 }
+\DoxyCodeLine{1328     \textcolor{comment}{// auxiliary variables:}}
+\DoxyCodeLine{1329     \mbox{\hyperlink{classcomplex}{complex< T >}} a , b , c , D , z1 , z2 , p1 , p2;}
+\DoxyCodeLine{1330 }
+\DoxyCodeLine{1331     \textcolor{keywordflow}{for}( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0 ; i < L ; i++ , j+=2 )}
+\DoxyCodeLine{1332     \{}
+\DoxyCodeLine{1333         \textcolor{comment}{// zeros frequency transformation by means of square equation solve:}}
+\DoxyCodeLine{1334         a = 1 / w0;}
+\DoxyCodeLine{1335         b = zlp[i] * dW / w0 * (-\/1);}
+\DoxyCodeLine{1336         c = 1;}
+\DoxyCodeLine{1337         D = b * b -\/ a * c * 4;}
+\DoxyCodeLine{1338         z1 = ( b*(-\/1) -\/ \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{1339         z2 = ( b*(-\/1) + \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{1340 }
+\DoxyCodeLine{1341         \textcolor{comment}{// poles frequency transformation by means of square equation solve:}}
+\DoxyCodeLine{1342         a = 1 / w0;}
+\DoxyCodeLine{1343         b = plp[i] * dW / w0 * (-\/1);}
+\DoxyCodeLine{1344         c = 1;}
+\DoxyCodeLine{1345         D = b * b -\/ a * c * 4;}
+\DoxyCodeLine{1346         p1 = ( b*(-\/1) -\/ \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{1347         p2 = ( b*(-\/1) + \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{1348 }
+\DoxyCodeLine{1349         \textcolor{comment}{// zeros and poles bilinear transform:}}
+\DoxyCodeLine{1350         zbp[ j + 0 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + z1 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ z1 );}
+\DoxyCodeLine{1351         zbp[ j + 1 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + z2 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ z2 );}
+\DoxyCodeLine{1352         pbp[ j + 0 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + p1 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ p1 );}
+\DoxyCodeLine{1353         pbp[ j + 1 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + p2 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ p2 );}
+\DoxyCodeLine{1354 }
+\DoxyCodeLine{1355         \textcolor{comment}{// filter coefficients computation:}}
+\DoxyCodeLine{1356 }
+\DoxyCodeLine{1357         \textcolor{comment}{// numerator:}}
+\DoxyCodeLine{1358         cfnum[ 3 * ( j + 0 ) + 0 ] = 1;}
+\DoxyCodeLine{1359         cfnum[ 3 * ( j + 0 ) + 1 ] = -\/( zbp[j] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( zbp[j] ) ).m\_re;}
+\DoxyCodeLine{1360         cfnum[ 3 * ( j + 0 ) + 2 ] = +( zbp[j] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( zbp[j] ) ).m\_re;}
+\DoxyCodeLine{1361         cfnum[ 3 * ( j + 1 ) + 0 ] = 1;}
+\DoxyCodeLine{1362         cfnum[ 3 * ( j + 1 ) + 1 ] = -\/( zbp[j+1] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( zbp[j+1] ) ).m\_re;}
+\DoxyCodeLine{1363         cfnum[ 3 * ( j + 1 ) + 2 ] = +( zbp[j+1] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( zbp[j+1] ) ).m\_re;}
+\DoxyCodeLine{1364 }
+\DoxyCodeLine{1365         \textcolor{comment}{// denominator:}}
+\DoxyCodeLine{1366         cfden[ 3 * ( j + 0 ) + 0 ] = 1;}
+\DoxyCodeLine{1367         cfden[ 3 * ( j + 0 ) + 1 ] = -\/( pbp[j] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( pbp[j] ) ).m\_re;}
+\DoxyCodeLine{1368         cfden[ 3 * ( j + 0 ) + 2 ] = +( pbp[j] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( pbp[j] ) ).m\_re;}
+\DoxyCodeLine{1369         cfden[ 3 * ( j + 1 ) + 0 ] = 1;}
+\DoxyCodeLine{1370         cfden[ 3 * ( j + 1 ) + 1 ] = -\/( pbp[j+1] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( pbp[j+1] ) ).m\_re;}
+\DoxyCodeLine{1371         cfden[ 3 * ( j + 1 ) + 2 ] = +( pbp[j+1] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( pbp[j+1] ) ).m\_re;}
+\DoxyCodeLine{1372 }
+\DoxyCodeLine{1373         \textcolor{comment}{// complex conjugate quadratic sections gains computation:}}
+\DoxyCodeLine{1374         \mbox{\hyperlink{classcomplex}{complex< T >}} gain0 = glp[i];}
+\DoxyCodeLine{1375         \mbox{\hyperlink{classcomplex}{complex< T >}} gain1 = p1 * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( p1 );}
+\DoxyCodeLine{1376         \mbox{\hyperlink{classcomplex}{complex< T >}} gain2 = p2 * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( p2 );}
+\DoxyCodeLine{1377         \mbox{\hyperlink{classcomplex}{complex< T >}} gain3 = z1 * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( z1 );}
+\DoxyCodeLine{1378         \mbox{\hyperlink{classcomplex}{complex< T >}} gain4 = z2 * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( z2 );}
+\DoxyCodeLine{1379         \mbox{\hyperlink{classcomplex}{complex< T >}} gain5 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ z1)*(\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}(z1) );}
+\DoxyCodeLine{1380         \mbox{\hyperlink{classcomplex}{complex< T >}} gain6 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ z2)*(\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}(z2) );}
+\DoxyCodeLine{1381         \mbox{\hyperlink{classcomplex}{complex< T >}} gain7 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ p1)*(\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}(p1) );}
+\DoxyCodeLine{1382         \mbox{\hyperlink{classcomplex}{complex< T >}} gain8 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ p2)*(\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}(p2) );}
+\DoxyCodeLine{1383 }
+\DoxyCodeLine{1384         \mbox{\hyperlink{classcomplex}{complex< T >}} gain9 = gain0 * gain1 * gain2 / ( gain3 * gain4 ) * ( gain5 * gain6 ) / ( gain7 * gain8 );}
+\DoxyCodeLine{1385         gain9 = \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( gain9 );}
+\DoxyCodeLine{1386         gains[j+0] = gain9.\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{1387         gains[j+1] = gains[j+0];}
+\DoxyCodeLine{1388     \}}
+\DoxyCodeLine{1389 }
+\DoxyCodeLine{1390     \textcolor{comment}{// real odd pole:}}
+\DoxyCodeLine{1391     \textcolor{keywordflow}{if}( R == 1 )}
+\DoxyCodeLine{1392     \{}
+\DoxyCodeLine{1393         \textcolor{comment}{// pole transformation by means of square equation solve:}}
+\DoxyCodeLine{1394         \mbox{\hyperlink{classcomplex}{complex< T >}} a( 1 / w0 , 0 );}
+\DoxyCodeLine{1395         \mbox{\hyperlink{classcomplex}{complex< T >}} b( -\/plp[ N -\/ 1 ].m\_re * dW / w0 , -\/plp[ N -\/ 1 ].m\_im * dW / w0 );}
+\DoxyCodeLine{1396         \mbox{\hyperlink{classcomplex}{complex< T >}} c( 1 , 0 );}
+\DoxyCodeLine{1397         \mbox{\hyperlink{classcomplex}{complex< T >}} D = b * b -\/ a * c * 4;}
+\DoxyCodeLine{1398         \mbox{\hyperlink{classcomplex}{complex< T >}} p1 = ( b*(-\/1) -\/ \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{1399         \mbox{\hyperlink{classcomplex}{complex< T >}} p2 = ( b*(-\/1) + \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{1400 }
+\DoxyCodeLine{1401         \textcolor{comment}{// zeros and poles bilinear transform:}}
+\DoxyCodeLine{1402         zbp[ j + 0 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( +1 , 0 );}
+\DoxyCodeLine{1403         zbp[ j + 1 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 , 0 );}
+\DoxyCodeLine{1404         pbp[ j + 0 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + p1 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ p1 );}
+\DoxyCodeLine{1405         pbp[ j + 1 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + p2 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ p2 );}
+\DoxyCodeLine{1406 }
+\DoxyCodeLine{1407         \textcolor{comment}{// digital filter coefficients computation:}}
+\DoxyCodeLine{1408 }
+\DoxyCodeLine{1409         \textcolor{comment}{// numerator:}}
+\DoxyCodeLine{1410         cfnum[ 3 * ( j + 0 ) + 0 ] = 1;}
+\DoxyCodeLine{1411         cfnum[ 3 * ( j + 0 ) + 1 ] = 0;}
+\DoxyCodeLine{1412         cfnum[ 3 * ( j + 0 ) + 2 ] = -\/1;}
+\DoxyCodeLine{1413 }
+\DoxyCodeLine{1414         \textcolor{comment}{// denominator:}}
+\DoxyCodeLine{1415         cfden[ 3 * ( j + 0 ) + 0 ] = 1;}
+\DoxyCodeLine{1416         cfden[ 3 * ( j + 0 ) + 1 ] = -\/( pbp[j] + pbp[j+1] ).m\_re;}
+\DoxyCodeLine{1417         cfden[ 3 * ( j + 0 ) + 2 ] = +( pbp[j] * pbp[j+1] ).m\_re;}
+\DoxyCodeLine{1418 }
+\DoxyCodeLine{1419         \textcolor{comment}{// complex conjugate quadratic sections gains computation:}}
+\DoxyCodeLine{1420         \mbox{\hyperlink{classcomplex}{complex< T >}} gain0 = glp[N-\/1];}
+\DoxyCodeLine{1421         \mbox{\hyperlink{classcomplex}{complex< T >}} gain1 = p1 * p2;}
+\DoxyCodeLine{1422         \mbox{\hyperlink{classcomplex}{complex< T >}} gain2 = (\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ p1)*(\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ p2);}
+\DoxyCodeLine{1423         \mbox{\hyperlink{classcomplex}{complex< T >}} gain3 = gain0 * gain1 / gain2 * dW / w0;}
+\DoxyCodeLine{1424         gains[j+0] = gain3.\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{1425     \}}
+\DoxyCodeLine{1426 }
+\DoxyCodeLine{1427     \textcolor{comment}{// setting filter output gain:}}
+\DoxyCodeLine{1428     gains[ 2*L+R ] = glp[N].\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{1429 }
+\DoxyCodeLine{1430     \textcolor{comment}{// memory free:}}
+\DoxyCodeLine{1431     free( plp );}
+\DoxyCodeLine{1432     free( zlp );}
+\DoxyCodeLine{1433     free( glp );}
+\DoxyCodeLine{1434     free( pbp );}
+\DoxyCodeLine{1435     free( zbp );}
+\DoxyCodeLine{1436     free( gbp );}
+\DoxyCodeLine{1437 }
+\DoxyCodeLine{1438     \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ cfnum , cfden , gains , 2*L , R , 2*L+R  \};}
+\DoxyCodeLine{1439 \}}
+\DoxyCodeLine{1440 }
+\DoxyCodeLine{1441 \textcolor{comment}{// Elliptic or Chebyshev II digital bandstop computation function:}}
+\DoxyCodeLine{1442 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \mbox{\hyperlink{structiir__cf}{iir\_cf<T>}} \_\_cheb2\_ellip\_digital\_bs\_\_( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fp , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} BandWidth , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} type = 0 , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_pass = 1 , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} g\_stop = 80 )}
+\DoxyCodeLine{1443 \{}
+\DoxyCodeLine{1444     \textcolor{comment}{// Fs           -\/ sampling frequency}}
+\DoxyCodeLine{1445     \textcolor{comment}{// Fpass        -\/ passband frequency}}
+\DoxyCodeLine{1446     \textcolor{comment}{// BandWidth    -\/ passband withd}}
+\DoxyCodeLine{1447     \textcolor{comment}{// order        -\/ filter order}}
+\DoxyCodeLine{1448     \textcolor{comment}{// coeffs\_num   -\/ quadratic sections numerator coefficients}}
+\DoxyCodeLine{1449     \textcolor{comment}{// coeffs\_den   -\/ quadratic sections denominator coefficients}}
+\DoxyCodeLine{1450     \textcolor{comment}{// gains        -\/ quadratic sections gains}}
+\DoxyCodeLine{1451     \textcolor{comment}{// type         -\/ filter type ( 0 -\/ Butterworth , 1 -\/ Chebyshev )}}
+\DoxyCodeLine{1452     \textcolor{comment}{// g\_stop       -\/ stopband attenuation in Db}}
+\DoxyCodeLine{1453 }
+\DoxyCodeLine{1454      order /= 2;}
+\DoxyCodeLine{1455 }
+\DoxyCodeLine{1456     \textcolor{comment}{// frequency deformation coefficient:}}
+\DoxyCodeLine{1457     T w1 = tan( \mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * Fp / 2 / Fs ) , w2 = tan( \mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * ( Fp + BandWidth ) / 2 / Fs );}
+\DoxyCodeLine{1458 }
+\DoxyCodeLine{1459     \textcolor{comment}{// allocate zeros and poles arrays:}}
+\DoxyCodeLine{1460 }
+\DoxyCodeLine{1461     \textcolor{comment}{// lowpass analogue prototype poles, zeros and gains:}}
+\DoxyCodeLine{1462     \mbox{\hyperlink{structiir__zp}{iir\_zp < T >}} zp = ( !type ) ? \_\_cheb2\_zeros\_poles\_plain\_\_< T >( order , g\_stop ) : \_\_ellip\_zeros\_poles\_plain\_\_< T >( order , g\_pass , g\_stop );}
+\DoxyCodeLine{1463     \mbox{\hyperlink{classcomplex}{complex< T >}} *plp = zp.plp;}
+\DoxyCodeLine{1464     \mbox{\hyperlink{classcomplex}{complex< T >}} *glp = zp.glp;}
+\DoxyCodeLine{1465     \mbox{\hyperlink{classcomplex}{complex< T >}} *zlp = zp.zlp;}
+\DoxyCodeLine{1466     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L = zp.L , R = zp.R , N = L + R;}
+\DoxyCodeLine{1467 }
+\DoxyCodeLine{1468     \textcolor{keywordflow}{if}( plp == 0 || zlp == 0 || glp == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{1469 }
+\DoxyCodeLine{1470     \textcolor{comment}{// bandpass digital prototype poles, zeros and gains:}}
+\DoxyCodeLine{1471     \mbox{\hyperlink{classcomplex}{complex< T >}} *pbs = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( 2*N , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{1472     \mbox{\hyperlink{classcomplex}{complex< T >}} *zbs = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( 2*N , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{1473     \mbox{\hyperlink{classcomplex}{complex< T >}} *gbs = ( \mbox{\hyperlink{classcomplex}{complex< T >}}* ) calloc( 2*N , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classcomplex}{complex< T >}} ) );}
+\DoxyCodeLine{1474 }
+\DoxyCodeLine{1475     \textcolor{comment}{// coefficients matrix computation:}}
+\DoxyCodeLine{1476      T  *cfnum = ( T * )calloc( 3 * (2*L+R) , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{1477      T  *cfden = ( T * )calloc( 3 * (2*L+R) , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{1478      T  *gains = ( T * )calloc( (2*L+R + 1) , \textcolor{keyword}{sizeof} ( T ) );}
+\DoxyCodeLine{1479 }
+\DoxyCodeLine{1480     \textcolor{keywordflow}{if}( pbs   == 0 || zbs   == 0 || gbs   == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{1481     \textcolor{keywordflow}{if}( cfnum == 0 || cfden == 0 || gains == 0 ) \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \}; \textcolor{comment}{// check if the memory is allocated...}}
+\DoxyCodeLine{1482 }
+\DoxyCodeLine{1483     \textcolor{comment}{// LP-\/BP BILLINEAR TRANSFORM:}}
+\DoxyCodeLine{1484 }
+\DoxyCodeLine{1485     \textcolor{comment}{// poles transformation:}}
+\DoxyCodeLine{1486      T  w0 = w1 * w2;}
+\DoxyCodeLine{1487      T  dW = w2 -\/ w1;}
+\DoxyCodeLine{1488 }
+\DoxyCodeLine{1489     \textcolor{comment}{// complex conjugate pairs:}}
+\DoxyCodeLine{1490     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} j = 0;}
+\DoxyCodeLine{1491 }
+\DoxyCodeLine{1492     \textcolor{comment}{// auxiliary variables:}}
+\DoxyCodeLine{1493     \mbox{\hyperlink{classcomplex}{complex< T >}} a , b , c , D , z1 , z2 , p1 , p2;}
+\DoxyCodeLine{1494 }
+\DoxyCodeLine{1495     \textcolor{keywordflow}{for}( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0 ; i < L ; i++ , j+=2 )}
+\DoxyCodeLine{1496     \{}
+\DoxyCodeLine{1497         \textcolor{comment}{// zeros frequency transformation by means of square equation solve:}}
+\DoxyCodeLine{1498         a = -\/1 / w0;}
+\DoxyCodeLine{1499         b = \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) / zlp[i] * dW / w0;}
+\DoxyCodeLine{1500         c = -\/1;}
+\DoxyCodeLine{1501         D = b * b -\/ a * c * 4;}
+\DoxyCodeLine{1502         z1 = ( b*(-\/1) -\/ \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{1503         z2 = ( b*(-\/1) + \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{1504 }
+\DoxyCodeLine{1505         \textcolor{comment}{// poles frequency transformation by means of square equation solve:}}
+\DoxyCodeLine{1506         a = -\/1 / w0;}
+\DoxyCodeLine{1507         b = \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) / plp[i] * dW / w0;}
+\DoxyCodeLine{1508         c = -\/1;}
+\DoxyCodeLine{1509         D = b * b -\/ a * c * 4;}
+\DoxyCodeLine{1510         p1 = ( b*(-\/1) -\/ \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{1511         p2 = ( b*(-\/1) + \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{1512 }
+\DoxyCodeLine{1513         \textcolor{comment}{// zeros and poles bilinear transform:}}
+\DoxyCodeLine{1514         zbs[ j + 0 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + z1 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ z1 );}
+\DoxyCodeLine{1515         zbs[ j + 1 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + z2 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ z2 );}
+\DoxyCodeLine{1516         pbs[ j + 0 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + p1 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ p1 );}
+\DoxyCodeLine{1517         pbs[ j + 1 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + p2 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ p2 );}
+\DoxyCodeLine{1518 }
+\DoxyCodeLine{1519         \textcolor{comment}{// filter coefficients computation:}}
+\DoxyCodeLine{1520 }
+\DoxyCodeLine{1521         \textcolor{comment}{// numerator:}}
+\DoxyCodeLine{1522         cfnum[ 3 * ( j + 0 ) + 0 ] = 1;}
+\DoxyCodeLine{1523         cfnum[ 3 * ( j + 0 ) + 1 ] = -\/( zbs[j] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( zbs[j] ) ).m\_re;}
+\DoxyCodeLine{1524         cfnum[ 3 * ( j + 0 ) + 2 ] = +( zbs[j] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( zbs[j] ) ).m\_re;}
+\DoxyCodeLine{1525         cfnum[ 3 * ( j + 1 ) + 0 ] = 1;}
+\DoxyCodeLine{1526         cfnum[ 3 * ( j + 1 ) + 1 ] = -\/( zbs[j+1] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( zbs[j+1] ) ).m\_re;}
+\DoxyCodeLine{1527         cfnum[ 3 * ( j + 1 ) + 2 ] = +( zbs[j+1] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( zbs[j+1] ) ).m\_re;}
+\DoxyCodeLine{1528 }
+\DoxyCodeLine{1529         \textcolor{comment}{// denominator:}}
+\DoxyCodeLine{1530         cfden[ 3 * ( j + 0 ) + 0 ] = 1;}
+\DoxyCodeLine{1531         cfden[ 3 * ( j + 0 ) + 1 ] = -\/( pbs[j] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( pbs[j] ) ).m\_re;}
+\DoxyCodeLine{1532         cfden[ 3 * ( j + 0 ) + 2 ] = +( pbs[j] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( pbs[j] ) ).m\_re;}
+\DoxyCodeLine{1533         cfden[ 3 * ( j + 1 ) + 0 ] = 1;}
+\DoxyCodeLine{1534         cfden[ 3 * ( j + 1 ) + 1 ] = -\/( pbs[j+1] + \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( pbs[j+1] ) ).m\_re;}
+\DoxyCodeLine{1535         cfden[ 3 * ( j + 1 ) + 2 ] = +( pbs[j+1] * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( pbs[j+1] ) ).m\_re;}
+\DoxyCodeLine{1536 }
+\DoxyCodeLine{1537         \textcolor{comment}{// complex conjugate quadratic sections gains computation:}}
+\DoxyCodeLine{1538         \mbox{\hyperlink{classcomplex}{complex< T >}} gain0 = p1 * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( p1 );}
+\DoxyCodeLine{1539         \mbox{\hyperlink{classcomplex}{complex< T >}} gain1 = p2 * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( p2 );}
+\DoxyCodeLine{1540         \mbox{\hyperlink{classcomplex}{complex< T >}} gain2 = z1 * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( z1 );}
+\DoxyCodeLine{1541         \mbox{\hyperlink{classcomplex}{complex< T >}} gain3 = z2 * \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}( z2 );}
+\DoxyCodeLine{1542         \mbox{\hyperlink{classcomplex}{complex< T >}} gain4 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ z1)*(\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}(z1) );}
+\DoxyCodeLine{1543         \mbox{\hyperlink{classcomplex}{complex< T >}} gain5 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ z2)*(\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}(z2) );}
+\DoxyCodeLine{1544         \mbox{\hyperlink{classcomplex}{complex< T >}} gain6 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ p1)*(\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}(p1) );}
+\DoxyCodeLine{1545         \mbox{\hyperlink{classcomplex}{complex< T >}} gain7 = ( \mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ p2)*(\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ \mbox{\hyperlink{group___complex__fcn_ga319cdc31249b735fc75ef40c9743e317}{\_\_conjf\_\_}}(p2) );}
+\DoxyCodeLine{1546         \mbox{\hyperlink{classcomplex}{complex< T >}} gain8 = ( gain0 * gain1 ) / ( gain2 * gain3 ) * ( gain4 * gain5 ) / ( gain6 * gain7 );}
+\DoxyCodeLine{1547         gain8 = \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( gain8 );}
+\DoxyCodeLine{1548         gains[j+0] = gain8.\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{1549         gains[j+1] = gains[j+0];}
+\DoxyCodeLine{1550     \}}
+\DoxyCodeLine{1551 }
+\DoxyCodeLine{1552     \textcolor{comment}{// real odd pole:}}
+\DoxyCodeLine{1553     \textcolor{keywordflow}{if}( R == 1 )}
+\DoxyCodeLine{1554     \{}
+\DoxyCodeLine{1555         \textcolor{comment}{// poles transformation by means of square equation solve:}}
+\DoxyCodeLine{1556         \mbox{\hyperlink{classcomplex}{complex< T >}} a = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 / w0 , 0 );}
+\DoxyCodeLine{1557         \mbox{\hyperlink{classcomplex}{complex< T >}} b = \mbox{\hyperlink{classcomplex}{complex< T >}}( dW , 0 ) / plp[N-\/1] / w0;}
+\DoxyCodeLine{1558         \mbox{\hyperlink{classcomplex}{complex< T >}} c = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 , 0 );}
+\DoxyCodeLine{1559         \mbox{\hyperlink{classcomplex}{complex< T >}} D = b * b -\/ a * c * 4;}
+\DoxyCodeLine{1560         \mbox{\hyperlink{classcomplex}{complex< T >}} p1 = ( b*(-\/1) -\/ \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{1561         \mbox{\hyperlink{classcomplex}{complex< T >}} p2 = ( b*(-\/1) + \mbox{\hyperlink{group___complex__fcn_ga01fec2085d62c37467538eeb9ae36e91}{\_\_sqrtf\_\_}}( D ) ) / 2 / a;}
+\DoxyCodeLine{1562 }
+\DoxyCodeLine{1563         \textcolor{comment}{// zeros and poles bilinear transform:}}
+\DoxyCodeLine{1564         zbs[ j + 0 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( +1 , 0 );}
+\DoxyCodeLine{1565         zbs[ j + 1 ] = \mbox{\hyperlink{classcomplex}{complex< T >}}( -\/1 , 0 );}
+\DoxyCodeLine{1566         pbs[ j + 0 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + p1 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ p1 );}
+\DoxyCodeLine{1567         pbs[ j + 1 ] = ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) + p2 ) / ( \mbox{\hyperlink{classcomplex}{complex< T >}}( 1 , 0 ) -\/ p2 );}
+\DoxyCodeLine{1568 }
+\DoxyCodeLine{1569         \textcolor{comment}{// digital filter coefficients computation:}}
+\DoxyCodeLine{1570 }
+\DoxyCodeLine{1571         \textcolor{comment}{// numerator:}}
+\DoxyCodeLine{1572         cfnum[ 3 * ( j + 0 ) + 0 ] = 1;}
+\DoxyCodeLine{1573         cfnum[ 3 * ( j + 0 ) + 1 ] = 2 * ( w0 -\/ 1 ) / ( w0 + 1 );}
+\DoxyCodeLine{1574         cfnum[ 3 * ( j + 0 ) + 2 ] = 1;}
+\DoxyCodeLine{1575 }
+\DoxyCodeLine{1576         \textcolor{comment}{// denominator:}}
+\DoxyCodeLine{1577         cfden[ 3 * ( j + 0 ) + 0 ] = 1;}
+\DoxyCodeLine{1578         cfden[ 3 * ( j + 0 ) + 1 ] = -\/( pbs[j]+pbs[j+1] ).m\_re;}
+\DoxyCodeLine{1579         cfden[ 3 * ( j + 0 ) + 2 ] = +( pbs[j]*pbs[j+1] ).m\_re;}
+\DoxyCodeLine{1580 }
+\DoxyCodeLine{1581         \textcolor{comment}{// complex conjugate quadratic sections gains computation:}}
+\DoxyCodeLine{1582         \mbox{\hyperlink{classcomplex}{complex< T >}} gain0 = glp[N-\/1];}
+\DoxyCodeLine{1583         \mbox{\hyperlink{classcomplex}{complex< T >}} gain1 = p1 * p2;}
+\DoxyCodeLine{1584         \mbox{\hyperlink{classcomplex}{complex< T >}} gain2 = \mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) / plp[N-\/1] / (-\/1);}
+\DoxyCodeLine{1585         \mbox{\hyperlink{classcomplex}{complex< T >}} gain3 = (\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ p1)*(\mbox{\hyperlink{classcomplex}{complex< T >}}(1,0) -\/ p2);}
+\DoxyCodeLine{1586         \mbox{\hyperlink{classcomplex}{complex< T >}} gain4 = gain0 * gain1 * gain2 / gain3 / w0 * ( 1 + w0 );}
+\DoxyCodeLine{1587         gains[j+0] = gain4.\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{1588     \}}
+\DoxyCodeLine{1589 }
+\DoxyCodeLine{1590     \textcolor{comment}{// setting filter output gain:}}
+\DoxyCodeLine{1591     gains[ 2*L+R ] = glp[N].\mbox{\hyperlink{classcomplex_a8c874db33ea2a9397f7febbcca0fb788}{m\_re}};}
+\DoxyCodeLine{1592 }
+\DoxyCodeLine{1593     \textcolor{comment}{// memory free:}}
+\DoxyCodeLine{1594     free( plp );}
+\DoxyCodeLine{1595     free( zlp );}
+\DoxyCodeLine{1596     free( glp );}
+\DoxyCodeLine{1597     free( pbs );}
+\DoxyCodeLine{1598     free( zbs );}
+\DoxyCodeLine{1599     free( gbs );}
+\DoxyCodeLine{1600 }
+\DoxyCodeLine{1601     \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}}\{ cfnum , cfden , gains , 2*L , R , 2*L+R  \};}
+\DoxyCodeLine{1602 \}}
+\DoxyCodeLine{1603 }
+\DoxyCodeLine{1604 \textcolor{comment}{// iir buffers memory allocation function:}}
+\DoxyCodeLine{1605 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \mbox{\hyperlink{structiir__bf}{iir\_bf<T>}} \_\_iir\_bf\_alloc\_\_( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} N )}
+\DoxyCodeLine{1606 \{}
+\DoxyCodeLine{1607     \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer<T>}} *bx = ( \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer<T>}}* ) calloc( N , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer<T>}} ) );}
+\DoxyCodeLine{1608     \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer<T>}} *by = ( \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer<T>}}* ) calloc( N , \textcolor{keyword}{sizeof} ( \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer<T>}} ) );}
+\DoxyCodeLine{1609     \textcolor{keywordflow}{for}( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0 ; i < N ; i++ )}
+\DoxyCodeLine{1610     \{}
+\DoxyCodeLine{1611         bx[i].allocate( 4 );}
+\DoxyCodeLine{1612         by[i].allocate( 3 );}
+\DoxyCodeLine{1613     \}}
+\DoxyCodeLine{1614 }
+\DoxyCodeLine{1615     \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__bf}{iir\_bf< T >}}\{ bx , by , N \};}
+\DoxyCodeLine{1616 \}}
+\DoxyCodeLine{1617 }
+\DoxyCodeLine{1618 \textcolor{comment}{// iir buffers memory deallocation function:}}
+\DoxyCodeLine{1619 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \textcolor{keywordtype}{void} \_\_iir\_bf\_free\_\_( \mbox{\hyperlink{structiir__bf}{iir\_bf<T>}} bf )}
+\DoxyCodeLine{1620 \{}
+\DoxyCodeLine{1621     \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer<T>}} *bx = bf.bx , *by = bf.by;}
+\DoxyCodeLine{1622     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} N = bf.N;}
+\DoxyCodeLine{1623 }
+\DoxyCodeLine{1624     \textcolor{keywordflow}{if}( bx != 0 )}
+\DoxyCodeLine{1625     \{}
+\DoxyCodeLine{1626         \textcolor{keywordflow}{for}( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0 ; i < N ; i++ ) bx[i].deallocate();}
+\DoxyCodeLine{1627         free( bx );}
+\DoxyCodeLine{1628         bf.bx = 0;}
+\DoxyCodeLine{1629     \}}
+\DoxyCodeLine{1630 }
+\DoxyCodeLine{1631     \textcolor{keywordflow}{if}( by != 0 )}
+\DoxyCodeLine{1632     \{}
+\DoxyCodeLine{1633         \textcolor{keywordflow}{for}( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0 ; i < N ; i++ ) by[i].deallocate();}
+\DoxyCodeLine{1634         free( by );}
+\DoxyCodeLine{1635         bf.by = 0;}
+\DoxyCodeLine{1636     \}}
+\DoxyCodeLine{1637     bf.N = -\/1;}
+\DoxyCodeLine{1638 \}}
+\DoxyCodeLine{1639 }
+\DoxyCodeLine{1640 \textcolor{comment}{// iir zeros / poles plain memory deallocation function:}}
+\DoxyCodeLine{1641 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \textcolor{keywordtype}{void} \_\_iir\_zp\_free\_\_( \mbox{\hyperlink{structiir__zp}{iir\_zp< T >}} zp )}
+\DoxyCodeLine{1642 \{}
+\DoxyCodeLine{1643     \textcolor{keywordflow}{if}( zp.glp != 0 ) \{ free( zp.glp ); zp.glp = 0; \}}
+\DoxyCodeLine{1644     \textcolor{keywordflow}{if}( zp.zlp != 0 ) \{ free( zp.zlp ); zp.zlp = 0; \}}
+\DoxyCodeLine{1645     \textcolor{keywordflow}{if}( zp.plp != 0 ) \{ free( zp.plp ); zp.plp = 0; \}}
+\DoxyCodeLine{1646     zp.N = zp.L = zp.R = -\/1;}
+\DoxyCodeLine{1647 \}}
+\DoxyCodeLine{1648 }
+\DoxyCodeLine{1649 \textcolor{comment}{// iir coefficients memory deallocation function:}}
+\DoxyCodeLine{1650 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \textcolor{keywordtype}{void} \_\_iir\_cf\_free\_\_( \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}} cf )}
+\DoxyCodeLine{1651 \{}
+\DoxyCodeLine{1652     \textcolor{keywordflow}{if}( cf.cfnum != 0 ) \{ free( cf.cfnum ); cf.cfnum = 0; \}}
+\DoxyCodeLine{1653     \textcolor{keywordflow}{if}( cf.cfden != 0 ) \{ free( cf.cfden ); cf.cfden = 0; \}}
+\DoxyCodeLine{1654     \textcolor{keywordflow}{if}( cf.gains != 0 ) \{ free( cf.gains ); cf.gains = 0; \}}
+\DoxyCodeLine{1655     cf.N = cf.L = cf.R = -\/1;}
+\DoxyCodeLine{1656 \}}
+\DoxyCodeLine{1657 }
+\DoxyCodeLine{1658 \textcolor{comment}{// filtering template function:}}
+\DoxyCodeLine{1659 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \textcolor{keyword}{extern} \textcolor{keyword}{inline} \_\_attribute\_\_( (always\_inline) ) T \_\_filt\_\_( T *input , T *cfnum , T *cfden , T *gains  , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} N ,  \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer< T >}} *buff\_sx , \mbox{\hyperlink{classmirror__ring__buffer}{mirror\_ring\_buffer< T >}} *buff\_sy )}
+\DoxyCodeLine{1660 \{}
+\DoxyCodeLine{1661     \textcolor{comment}{// initialization:}}
+\DoxyCodeLine{1662     T sum\_num = 0 , sum\_den = 0 , out = 0;}
+\DoxyCodeLine{1663 }
+\DoxyCodeLine{1664     \textcolor{comment}{// filtering:}}
+\DoxyCodeLine{1665     buff\_sx[0].fill\_buff( input );}
+\DoxyCodeLine{1666     \textcolor{keywordflow}{for} ( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0 ; i < N ; i++)}
+\DoxyCodeLine{1667     \{}
+\DoxyCodeLine{1668         sum\_num = gains[i]*( buff\_sx[ i ][ 0 ] * cfnum[ 3 * i + 0 ] + buff\_sx[ i ][ 1 ] * cfnum[ 3 * i + 1 ] + buff\_sx[ i ][ 2 ] * cfnum[ 3 * i + 2 ] );}
+\DoxyCodeLine{1669         sum\_den = ( buff\_sy[ i ][ 0 ] * cfden[ 3 * i + 1 ] + buff\_sy[ i ][ 1 ] * cfden[ 3 * i + 2 ] );}
+\DoxyCodeLine{1670         out = sum\_num -\/ sum\_den;}
+\DoxyCodeLine{1671         buff\_sy[ i ].fill\_buff( \&out );}
+\DoxyCodeLine{1672         \textcolor{keywordflow}{if}( i < N -\/ 1 ) buff\_sx[ i + 1 ].fill\_buff( \&out );}
+\DoxyCodeLine{1673     \}}
+\DoxyCodeLine{1674     \textcolor{keywordflow}{return} out;}
+\DoxyCodeLine{1675 \}}
+\DoxyCodeLine{1676 }
+\DoxyCodeLine{1677 \textcolor{comment}{// frequency response computation function:}}
+\DoxyCodeLine{1678 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \mbox{\hyperlink{structiir__fr}{iir\_fr< T >}} \_\_iir\_freq\_resp\_\_( T *cfnum , T *cfden , T *gains , \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} N , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} F )}
+\DoxyCodeLine{1679 \{}
+\DoxyCodeLine{1680     \textcolor{comment}{// sampling period:}}
+\DoxyCodeLine{1681     T Ts = 1 / Fs;}
+\DoxyCodeLine{1682 }
+\DoxyCodeLine{1683     \textcolor{comment}{// transfer function initialization:}}
+\DoxyCodeLine{1684     \mbox{\hyperlink{classcomplex}{complex< T >}} tsf = \mbox{\hyperlink{classcomplex}{complex< T >}}( 1, 0 );}
+\DoxyCodeLine{1685 }
+\DoxyCodeLine{1686     \textcolor{keywordflow}{for}( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0 ; i < N ; i++ )}
+\DoxyCodeLine{1687     \{}
+\DoxyCodeLine{1688         \textcolor{comment}{// complex exponents:}}
+\DoxyCodeLine{1689         \mbox{\hyperlink{classcomplex}{complex< T >}} z0 = \mbox{\hyperlink{classcomplex}{complex<\_\_fx64>}}( cos( -\/\mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * F * Ts * 0 ) , sin( -\/\mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * F * Ts * 0 ) );}
+\DoxyCodeLine{1690         \mbox{\hyperlink{classcomplex}{complex< T >}} z1 = \mbox{\hyperlink{classcomplex}{complex<\_\_fx64>}}( cos( -\/\mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * F * Ts * 1 ) , sin( -\/\mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * F * Ts * 1 ) );}
+\DoxyCodeLine{1691         \mbox{\hyperlink{classcomplex}{complex< T >}} z2 = \mbox{\hyperlink{classcomplex}{complex<\_\_fx64>}}( cos( -\/\mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * F * Ts * 2 ) , sin( -\/\mbox{\hyperlink{group___i_i_r__fcn_ga2750dfdda752269a036f487a4a34b849}{PI2}} * F * Ts * 2 ) );}
+\DoxyCodeLine{1692 }
+\DoxyCodeLine{1693         \textcolor{comment}{// transfer function:}}
+\DoxyCodeLine{1694         \mbox{\hyperlink{classcomplex}{complex< T >}} num =  z0 * cfnum[ 3 * i + 0 ] + z1 * cfnum[ 3 * i + 1 ] + z2 * cfnum[ 3 * i + 2 ];}
+\DoxyCodeLine{1695         \mbox{\hyperlink{classcomplex}{complex< T >}} den =  z0 * cfden[ 3 * i + 0 ] + z1 * cfden[ 3 * i + 1 ] + z2 * cfden[ 3 * i + 2 ];}
+\DoxyCodeLine{1696         tsf *= num / den * gains[i];}
+\DoxyCodeLine{1697     \}}
+\DoxyCodeLine{1698 }
+\DoxyCodeLine{1699     \textcolor{comment}{// multiply by an output gain:}}
+\DoxyCodeLine{1700     tsf *= gains[N];}
+\DoxyCodeLine{1701 }
+\DoxyCodeLine{1702     \textcolor{comment}{// output:}}
+\DoxyCodeLine{1703     \textcolor{keywordflow}{return} \mbox{\hyperlink{structiir__fr}{iir\_fr< T >}}\{ \mbox{\hyperlink{group___complex__fcn_ga0765799ca4abb9e483c3ef879af01fb6}{\_\_absf\_\_}}( tsf ) , \mbox{\hyperlink{group___complex__fcn_ga9d52070119bede5b645e38ff626ab49d}{\_\_argf\_\_}}( tsf ) \};}
+\DoxyCodeLine{1704 \}}
+\DoxyCodeLine{1705 }
+\DoxyCodeLine{1706 \textcolor{comment}{// DEBUGGING FUNCTIONS:}}
+\DoxyCodeLine{1707 }
+\DoxyCodeLine{1708 \textcolor{preprocessor}{\#ifndef \_\_ALG\_PLATFORM}}
+\DoxyCodeLine{1709 }
+\DoxyCodeLine{1710 \textcolor{comment}{// show coeffs:}}
+\DoxyCodeLine{1711 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \textcolor{keywordtype}{void} \_\_show\_coeffs\_\_( \mbox{\hyperlink{structiir__cf}{iir\_cf< T >}} coeffs )}
+\DoxyCodeLine{1712 \{}
+\DoxyCodeLine{1713     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} L = coeffs.L , R = coeffs.R , N = L + R;}
+\DoxyCodeLine{1714     \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *cfnum = coeffs.cfnum;}
+\DoxyCodeLine{1715     \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *cfden = coeffs.cfden;}
+\DoxyCodeLine{1716     \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *gains = coeffs.gains;}
+\DoxyCodeLine{1717     \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}}  fgain = 1;}
+\DoxyCodeLine{1718 }
+\DoxyCodeLine{1719     \textcolor{keywordflow}{for}( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0 ; i < N ; i++ )}
+\DoxyCodeLine{1720     \{}
+\DoxyCodeLine{1721         printf( \textcolor{stringliteral}{"{}section: \%d \(\backslash\)n "{}} , i + 1 );}
+\DoxyCodeLine{1722         printf( \textcolor{stringliteral}{"{}num: \%.12f \%.12f \%.12f \(\backslash\)n "{}} , cfnum[ 3 * i + 0 ] , cfnum[ 3 * i + 1 ] , cfnum[ 3 * i + 2 ] );}
+\DoxyCodeLine{1723         printf( \textcolor{stringliteral}{"{}den: \%.12f \%.12f \%.12f \(\backslash\)n "{}} , cfden[ 3 * i + 0 ] , cfden[ 3 * i + 1 ] , cfden[ 3 * i + 2 ] );}
+\DoxyCodeLine{1724         printf( \textcolor{stringliteral}{"{}gf0: \%.12f \(\backslash\)n\(\backslash\)n "{}} , gains[i] );}
+\DoxyCodeLine{1725         fgain *= gains[i];}
+\DoxyCodeLine{1726     \}}
+\DoxyCodeLine{1727     fgain *= gains[N];}
+\DoxyCodeLine{1728     printf( \textcolor{stringliteral}{"{}output gain = : \%.12f \(\backslash\)n "{}} , gains[N] );}
+\DoxyCodeLine{1729     printf( \textcolor{stringliteral}{"{}filter gain = : \%.12f \(\backslash\)n "{}} , fgain    );}
+\DoxyCodeLine{1730 \}}
+\DoxyCodeLine{1731 }
+\DoxyCodeLine{1732 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \textcolor{keywordtype}{void} \_\_show\_iir\_\_( \mbox{\hyperlink{structiir__sp}{iir\_sp}} sp , \mbox{\hyperlink{structiir__cf}{iir\_cf<T>}} cf , \textcolor{keyword}{const} \textcolor{keywordtype}{char} *name )}
+\DoxyCodeLine{1733 \{}
+\DoxyCodeLine{1734     printf( \textcolor{stringliteral}{"{}\%s "{}} , name );}
+\DoxyCodeLine{1735 }
+\DoxyCodeLine{1736     \textcolor{keywordflow}{switch} ( sp.type )}
+\DoxyCodeLine{1737     \{}
+\DoxyCodeLine{1738         \textcolor{keywordflow}{case} iir\_type::lowpass\_iir:}
+\DoxyCodeLine{1739         printf( \textcolor{stringliteral}{"{}lowpass specifications: \(\backslash\)n"{}} );}
+\DoxyCodeLine{1740         \textcolor{keywordflow}{break};}
+\DoxyCodeLine{1741 }
+\DoxyCodeLine{1742         \textcolor{keywordflow}{case} iir\_type::highpass\_iir:}
+\DoxyCodeLine{1743         printf( \textcolor{stringliteral}{"{}highpass specifications: \(\backslash\)n"{}} );}
+\DoxyCodeLine{1744         \textcolor{keywordflow}{break};}
+\DoxyCodeLine{1745 }
+\DoxyCodeLine{1746         \textcolor{keywordflow}{case} iir\_type::bandpass\_iir:}
+\DoxyCodeLine{1747         printf( \textcolor{stringliteral}{"{}bandpass specifications: \(\backslash\)n"{}} );}
+\DoxyCodeLine{1748         \textcolor{keywordflow}{break};}
+\DoxyCodeLine{1749 }
+\DoxyCodeLine{1750         \textcolor{keywordflow}{case} iir\_type::bandstop\_iir:}
+\DoxyCodeLine{1751         printf( \textcolor{stringliteral}{"{}bandstop specifications: \(\backslash\)n"{}} );}
+\DoxyCodeLine{1752         \textcolor{keywordflow}{break};}
+\DoxyCodeLine{1753     \}}
+\DoxyCodeLine{1754 }
+\DoxyCodeLine{1755     printf( \textcolor{stringliteral}{"{}\(\backslash\)n"{}} );}
+\DoxyCodeLine{1756     \textcolor{keywordflow}{if}( sp.Fs > 0    ) \{ printf( \textcolor{stringliteral}{"{}Fs    = \%.6f Hz \(\backslash\)n"{}}   , sp.Fs    ); \}}
+\DoxyCodeLine{1757     \textcolor{keywordflow}{if}( sp.Ts > 0    ) \{ printf( \textcolor{stringliteral}{"{}Ts    = \%.6f s  \(\backslash\)n"{}}   , sp.Ts    ); \}}
+\DoxyCodeLine{1758     \textcolor{keywordflow}{if}( sp.Fn > 0    ) \{ printf( \textcolor{stringliteral}{"{}Fn    = \%.6f Hz \(\backslash\)n"{}}   , sp.Fn    ); \}}
+\DoxyCodeLine{1759     \textcolor{keywordflow}{if}( sp.Fc > 0    ) \{ printf( \textcolor{stringliteral}{"{}Fc    = \%.6f Hz \(\backslash\)n"{}}   , sp.Fc    ); \}}
+\DoxyCodeLine{1760     \textcolor{keywordflow}{if}( sp.BW > 0    ) \{ printf( \textcolor{stringliteral}{"{}BW    = \%.6f Hz \(\backslash\)n"{}}   , sp.BW    ); \}}
+\DoxyCodeLine{1761     \textcolor{keywordflow}{if}( sp.Gs > 0    ) \{ printf( \textcolor{stringliteral}{"{}Gs    = \%.6f Db \(\backslash\)n"{}}   , sp.Gs    ); \}}
+\DoxyCodeLine{1762     \textcolor{keywordflow}{if}( sp.Gp > 0    ) \{ printf( \textcolor{stringliteral}{"{}Gp    = \%.6f Db \(\backslash\)n"{}}   , sp.Gp    ); \}}
+\DoxyCodeLine{1763     \textcolor{keywordflow}{if}( sp.order > 0 ) \{ printf( \textcolor{stringliteral}{"{}order = \%d      \(\backslash\)n"{}}   , sp.order ); \}}
+\DoxyCodeLine{1764     \textcolor{keywordflow}{if}( cf.N > 0     ) \{ printf( \textcolor{stringliteral}{"{}N     = \%d      \(\backslash\)n"{}}   , cf.N     ); \}}
+\DoxyCodeLine{1765     \textcolor{keywordflow}{if}( cf.L > 0     ) \{ printf( \textcolor{stringliteral}{"{}L     = \%d      \(\backslash\)n"{}}   , cf.L     ); \}}
+\DoxyCodeLine{1766     \textcolor{keywordflow}{if}( cf.R > 0     ) \{ printf( \textcolor{stringliteral}{"{}R     = \%d      \(\backslash\)n\(\backslash\)n"{}} , cf.R     ); \}}
+\DoxyCodeLine{1767 }
+\DoxyCodeLine{1768     \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} fgain = 1;}
+\DoxyCodeLine{1769     \textcolor{keywordflow}{if}( cf.cfden != 0 \&\& cf.cfnum != 0 \&\& cf.gains != 0 )}
+\DoxyCodeLine{1770     \{}
+\DoxyCodeLine{1771         printf( \textcolor{stringliteral}{"{}coefficients: \(\backslash\)n\(\backslash\)n"{}} );}
+\DoxyCodeLine{1772         \textcolor{keywordflow}{for}( \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} i = 0 ; i < cf.N ; i++ )}
+\DoxyCodeLine{1773         \{}
+\DoxyCodeLine{1774             printf( \textcolor{stringliteral}{"{} section \%d : \(\backslash\)n"{}} , i );}
+\DoxyCodeLine{1775             printf( \textcolor{stringliteral}{"{} numerator  : \%.12f \%.12f \%.12f \(\backslash\)n"{}} , cf.cfnum[ 3 * i + 0 ] , cf.cfnum[ 3 * i + 1 ]  , cf.cfnum[ 3 * i + 2 ] );}
+\DoxyCodeLine{1776             printf( \textcolor{stringliteral}{"{} denominator: \%.12f \%.12f \%.12f \(\backslash\)n"{}} , cf.cfden[ 3 * i + 0 ] , cf.cfden[ 3 * i + 1 ]  , cf.cfden[ 3 * i + 2 ] );}
+\DoxyCodeLine{1777             printf( \textcolor{stringliteral}{"{} gain       : \%.12f \(\backslash\)n\(\backslash\)n"{}} , cf.gains[i] );}
+\DoxyCodeLine{1778             fgain *= cf.gains[i];}
+\DoxyCodeLine{1779         \}}
+\DoxyCodeLine{1780         printf( \textcolor{stringliteral}{"{}output gain: \%.12f \(\backslash\)n"{}} , cf.gains[ cf.N ]         );}
+\DoxyCodeLine{1781         printf( \textcolor{stringliteral}{"{}filter gain: \%.12f \(\backslash\)n\(\backslash\)n"{}} , fgain * cf.gains[ cf.N ] );}
+\DoxyCodeLine{1782     \}}
+\DoxyCodeLine{1783     \textcolor{keywordflow}{else}}
+\DoxyCodeLine{1784     \{}
+\DoxyCodeLine{1785         printf( \textcolor{stringliteral}{"{}coefficients : coefficients have not been computed yet... \(\backslash\)n"{}} );}
+\DoxyCodeLine{1786     \}}
+\DoxyCodeLine{1787 \}}
+\DoxyCodeLine{1788 }
+\DoxyCodeLine{1789 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1790 }
+\DoxyCodeLine{1791 \textcolor{comment}{// template Butterworth filter:}}
+\DoxyCodeLine{1792 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \textcolor{keyword}{class }\mbox{\hyperlink{classbutterworth}{butterworth}}}
+\DoxyCodeLine{1793 \{}
+\DoxyCodeLine{1794     \textcolor{keyword}{typedef} T \_\_type ;}
+\DoxyCodeLine{1795 \textcolor{keyword}{public}:}
+\DoxyCodeLine{1796     \textcolor{comment}{// filter specification , coefficients and buffers:}}
+\DoxyCodeLine{1797     \mbox{\hyperlink{structiir__sp}{iir\_sp}}           m\_sp;}
+\DoxyCodeLine{1798     \mbox{\hyperlink{structiir__cf}{iir\_cf< \_\_type >}} m\_cf;}
+\DoxyCodeLine{1799     \mbox{\hyperlink{structiir__bf}{iir\_bf< \_\_type >}} m\_bf;}
+\DoxyCodeLine{1800 \textcolor{keyword}{public}:}
+\DoxyCodeLine{1801 }
+\DoxyCodeLine{1802     \textcolor{comment}{// filter output:}}
+\DoxyCodeLine{1803     \_\_type m\_out , m\_Km , m\_pH;}
+\DoxyCodeLine{1804 }
+\DoxyCodeLine{1805     \textcolor{comment}{// initializations:}}
+\DoxyCodeLine{1806     \textcolor{keywordtype}{void} lp\_init( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fn , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc ,  \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gs = 1 )             \{ m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}\{ Fs , 1 / Fs , Fn , Fc , -\/1 , Gs , -\/1 , order , iir\_type::lowpass\_iir  \}; \}}
+\DoxyCodeLine{1807     \textcolor{keywordtype}{void} hp\_init( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fn , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc ,  \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gs = 1 )             \{ m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}\{ Fs , 1 / Fs , Fn , Fc , -\/1 , Gs , -\/1 , order , iir\_type::highpass\_iir \}; \}}
+\DoxyCodeLine{1808     \textcolor{keywordtype}{void} bp\_init( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fn , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} BW ,  \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gs = 1 ) \{ m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}\{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -\/1 , order , iir\_type::bandpass\_iir \}; \}}
+\DoxyCodeLine{1809     \textcolor{keywordtype}{void} bs\_init( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fn , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} BW ,  \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gs = 1 ) \{ m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}\{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -\/1 , order , iir\_type::bandstop\_iir \}; \}}
+\DoxyCodeLine{1810 }
+\DoxyCodeLine{1811     \textcolor{comment}{// memory allocation function:}}
+\DoxyCodeLine{1812     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} allocate()}
+\DoxyCodeLine{1813     \{}
+\DoxyCodeLine{1814         \textcolor{keywordflow}{switch} ( m\_sp.type )}
+\DoxyCodeLine{1815         \{}
+\DoxyCodeLine{1816             \textcolor{keywordflow}{case} iir\_type::lowpass\_iir:}
+\DoxyCodeLine{1817             m\_cf = \_\_butt\_cheb1\_digital\_lp\_\_< \_\_type >( m\_sp.Fs , m\_sp.Fc , m\_sp.order , 0 , m\_sp.Gs );}
+\DoxyCodeLine{1818             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{1819 }
+\DoxyCodeLine{1820             \textcolor{keywordflow}{case} iir\_type::highpass\_iir:}
+\DoxyCodeLine{1821             m\_cf = \_\_butt\_cheb1\_digital\_hp\_\_< \_\_type >( m\_sp.Fs , m\_sp.Fc , m\_sp.order , 0 , m\_sp.Gs );}
+\DoxyCodeLine{1822             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{1823 }
+\DoxyCodeLine{1824             \textcolor{keywordflow}{case} iir\_type::bandpass\_iir:}
+\DoxyCodeLine{1825             m\_cf = \_\_butt\_cheb1\_digital\_bp\_\_< \_\_type >( m\_sp.Fs , m\_sp.Fc , m\_sp.BW , m\_sp.order , 0 , m\_sp.Gs );}
+\DoxyCodeLine{1826             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{1827 }
+\DoxyCodeLine{1828             \textcolor{keywordflow}{case} iir\_type::bandstop\_iir:}
+\DoxyCodeLine{1829             m\_cf = \_\_butt\_cheb1\_digital\_bs\_\_< \_\_type >( m\_sp.Fs , m\_sp.Fc , m\_sp.BW , m\_sp.order , 0 , m\_sp.Gs );}
+\DoxyCodeLine{1830             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{1831         \}}
+\DoxyCodeLine{1832 }
+\DoxyCodeLine{1833         m\_bf = ( ( m\_cf.cfnum != 0 ) \&\& ( m\_cf.cfden != 0 ) \&\& ( m\_cf.gains != 0 ) ) ? \_\_iir\_bf\_alloc\_\_< \_\_type >( m\_cf.N ) : \mbox{\hyperlink{structiir__bf}{iir\_bf< \_\_type >}}\{ 0 , 0 , -\/1 \} ;}
+\DoxyCodeLine{1834         \textcolor{keywordflow}{return} ( m\_bf.bx != 0 \&\& m\_bf.by != 0 );}
+\DoxyCodeLine{1835     \}}
+\DoxyCodeLine{1836 }
+\DoxyCodeLine{1837     \textcolor{comment}{// memory deallocation function:}}
+\DoxyCodeLine{1838     \textcolor{keywordtype}{void} deallocate()}
+\DoxyCodeLine{1839     \{}
+\DoxyCodeLine{1840         \_\_iir\_bf\_free\_\_< \_\_type >( m\_bf );}
+\DoxyCodeLine{1841         \_\_iir\_cf\_free\_\_< \_\_type >( m\_cf );}
+\DoxyCodeLine{1842     \}}
+\DoxyCodeLine{1843 }
+\DoxyCodeLine{1844     \textcolor{comment}{// default constructor:}}
+\DoxyCodeLine{1845     \mbox{\hyperlink{classbutterworth}{butterworth}}()}
+\DoxyCodeLine{1846     \{}
+\DoxyCodeLine{1847         m\_cf = \mbox{\hyperlink{structiir__cf}{iir\_cf<\_\_type>}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \};}
+\DoxyCodeLine{1848         m\_bf = \mbox{\hyperlink{structiir__bf}{iir\_bf<\_\_type>}}\{ 0 , 0 , -\/1 \};}
+\DoxyCodeLine{1849         m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}        \{ 4000 , 1 / 4000 , 50 , 100 , -\/1 , 1 , -\/1 , 4 , 0 \};}
+\DoxyCodeLine{1850     \}}
+\DoxyCodeLine{1851 }
+\DoxyCodeLine{1852     \textcolor{comment}{// default destructor:}}
+\DoxyCodeLine{1853     \mbox{\hyperlink{classbutterworth}{\string~butterworth}}()\{ deallocate(); \}}
+\DoxyCodeLine{1854 }
+\DoxyCodeLine{1855     \textcolor{comment}{// filtering function:}}
+\DoxyCodeLine{1856     \_\_type filt( \_\_type *input ) \{ \textcolor{keywordflow}{return} ( m\_out = \_\_filt\_\_< \_\_type >( input , m\_cf.cfnum , m\_cf.cfden , m\_cf.gains , m\_cf.N , m\_bf.bx , m\_bf.by ) ); \}}
+\DoxyCodeLine{1857 }
+\DoxyCodeLine{1858     \textcolor{comment}{// operators:}}
+\DoxyCodeLine{1859     \textcolor{keyword}{inline} \_\_type operator () (  \_\_type *input  ) \{ \textcolor{keywordflow}{return} filt( input ); \}}
+\DoxyCodeLine{1860 }
+\DoxyCodeLine{1861 \textcolor{preprocessor}{    \#ifndef \_\_ALG\_PLATFORM}}
+\DoxyCodeLine{1862     \textcolor{keywordtype}{void} show\_properties() \{ \_\_show\_iir\_\_< \_\_type >( m\_sp , m\_cf , \textcolor{stringliteral}{"{}Butterworth"{}} ); \}}
+\DoxyCodeLine{1863 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{1864 \};}
+\DoxyCodeLine{1865 }
+\DoxyCodeLine{1866 \textcolor{comment}{// template Chebyshev type I filter:}}
+\DoxyCodeLine{1867 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \textcolor{keyword}{class }\mbox{\hyperlink{classchebyshev__1}{chebyshev\_1}}}
+\DoxyCodeLine{1868 \{}
+\DoxyCodeLine{1869     \textcolor{keyword}{typedef} T \_\_type ;}
+\DoxyCodeLine{1870 \textcolor{keyword}{public}:}
+\DoxyCodeLine{1871     \textcolor{comment}{// filter specification , coefficients and buffers:}}
+\DoxyCodeLine{1872     \mbox{\hyperlink{structiir__sp}{iir\_sp}}           m\_sp;}
+\DoxyCodeLine{1873     \mbox{\hyperlink{structiir__cf}{iir\_cf< \_\_type >}} m\_cf;}
+\DoxyCodeLine{1874     \mbox{\hyperlink{structiir__bf}{iir\_bf< \_\_type >}} m\_bf;}
+\DoxyCodeLine{1875 \textcolor{keyword}{public}:}
+\DoxyCodeLine{1876 }
+\DoxyCodeLine{1877     \textcolor{comment}{// filter output:}}
+\DoxyCodeLine{1878     \_\_type m\_out;}
+\DoxyCodeLine{1879 }
+\DoxyCodeLine{1880     \textcolor{comment}{// initializations:}}
+\DoxyCodeLine{1881     \textcolor{keywordtype}{void} lp\_init( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fn , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc ,  \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gs = 1 )             \{ m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}\{ Fs , 1 / Fs , Fn , Fc , -\/1 , Gs , -\/1 , order , iir\_type::lowpass\_iir  \}; \}}
+\DoxyCodeLine{1882     \textcolor{keywordtype}{void} hp\_init( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fn , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc ,  \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gs = 1 )             \{ m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}\{ Fs , 1 / Fs , Fn , Fc , -\/1 , Gs , -\/1 , order , iir\_type::highpass\_iir \}; \}}
+\DoxyCodeLine{1883     \textcolor{keywordtype}{void} bp\_init( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fn , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} BW ,  \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gs = 1 ) \{ m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}\{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -\/1 , order , iir\_type::bandpass\_iir \}; \}}
+\DoxyCodeLine{1884     \textcolor{keywordtype}{void} bs\_init( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fn , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} BW ,  \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gs = 1 ) \{ m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}\{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -\/1 , order , iir\_type::bandstop\_iir \}; \}}
+\DoxyCodeLine{1885 }
+\DoxyCodeLine{1886     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} allocate()}
+\DoxyCodeLine{1887     \{}
+\DoxyCodeLine{1888         \textcolor{keywordflow}{switch} ( m\_sp.type )}
+\DoxyCodeLine{1889         \{}
+\DoxyCodeLine{1890             \textcolor{keywordflow}{case} iir\_type::lowpass\_iir:}
+\DoxyCodeLine{1891             m\_cf = \_\_butt\_cheb1\_digital\_lp\_\_< \_\_type >( m\_sp.Fs , m\_sp.Fc , m\_sp.order , 1 , m\_sp.Gs );}
+\DoxyCodeLine{1892             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{1893 }
+\DoxyCodeLine{1894             \textcolor{keywordflow}{case} iir\_type::highpass\_iir:}
+\DoxyCodeLine{1895             m\_cf = \_\_butt\_cheb1\_digital\_hp\_\_< \_\_type >( m\_sp.Fs , m\_sp.Fc , m\_sp.order , 1 , m\_sp.Gs );}
+\DoxyCodeLine{1896             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{1897 }
+\DoxyCodeLine{1898             \textcolor{keywordflow}{case} iir\_type::bandpass\_iir:}
+\DoxyCodeLine{1899             m\_cf = \_\_butt\_cheb1\_digital\_bp\_\_< \_\_type >( m\_sp.Fs , m\_sp.Fc , m\_sp.BW , m\_sp.order , 1 , m\_sp.Gs );}
+\DoxyCodeLine{1900             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{1901 }
+\DoxyCodeLine{1902             \textcolor{keywordflow}{case} iir\_type::bandstop\_iir:}
+\DoxyCodeLine{1903             m\_cf = \_\_butt\_cheb1\_digital\_bs\_\_< \_\_type >( m\_sp.Fs , m\_sp.Fc , m\_sp.BW , m\_sp.order , 1 , m\_sp.Gs );}
+\DoxyCodeLine{1904             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{1905         \}}
+\DoxyCodeLine{1906 }
+\DoxyCodeLine{1907         m\_bf = ( ( m\_cf.cfnum != 0 ) \&\& ( m\_cf.cfden != 0 ) \&\& ( m\_cf.gains != 0 ) ) ? \_\_iir\_bf\_alloc\_\_< \_\_type >( m\_cf.N ) : \mbox{\hyperlink{structiir__bf}{iir\_bf< \_\_type >}}\{ 0 , 0 , -\/1 \} ;}
+\DoxyCodeLine{1908         \textcolor{keywordflow}{return} ( m\_bf.bx != 0 \&\& m\_bf.by != 0 );}
+\DoxyCodeLine{1909     \}}
+\DoxyCodeLine{1910 }
+\DoxyCodeLine{1911     \textcolor{keywordtype}{void} deallocate()}
+\DoxyCodeLine{1912     \{}
+\DoxyCodeLine{1913         \_\_iir\_bf\_free\_\_< \_\_type >( m\_bf );}
+\DoxyCodeLine{1914         \_\_iir\_cf\_free\_\_< \_\_type >( m\_cf );}
+\DoxyCodeLine{1915     \}}
+\DoxyCodeLine{1916 }
+\DoxyCodeLine{1917     \textcolor{comment}{// default constructor:}}
+\DoxyCodeLine{1918     \mbox{\hyperlink{classchebyshev__1}{chebyshev\_1}}()}
+\DoxyCodeLine{1919     \{}
+\DoxyCodeLine{1920         m\_cf = \mbox{\hyperlink{structiir__cf}{iir\_cf< \_\_type >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \};}
+\DoxyCodeLine{1921         m\_bf = \mbox{\hyperlink{structiir__bf}{iir\_bf< \_\_type >}}\{ 0 , 0 , -\/1 \};}
+\DoxyCodeLine{1922         m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}          \{ 4000 , 1 / 4000 , 50 , 100 , -\/1 , 1 , -\/1 , 4 , 0 \};}
+\DoxyCodeLine{1923     \}}
+\DoxyCodeLine{1924 }
+\DoxyCodeLine{1925     \textcolor{comment}{// default destructor:}}
+\DoxyCodeLine{1926     \mbox{\hyperlink{classchebyshev__1}{\string~chebyshev\_1}}()\{ deallocate(); \}}
+\DoxyCodeLine{1927 }
+\DoxyCodeLine{1928     \textcolor{comment}{// filtering function:}}
+\DoxyCodeLine{1929     \_\_type filt( \_\_type *input ) \{ \textcolor{keywordflow}{return} ( m\_out = \_\_filt\_\_< \_\_type >( input , m\_cf.cfnum , m\_cf.cfden , m\_cf.gains , m\_cf.N , m\_bf.bx , m\_bf.by ) ); \}}
+\DoxyCodeLine{1930 }
+\DoxyCodeLine{1931     \textcolor{comment}{// operators:}}
+\DoxyCodeLine{1932     \textcolor{keyword}{inline} \_\_type operator () (  \_\_type *input  ) \{ \textcolor{keywordflow}{return} filt( input ); \}}
+\DoxyCodeLine{1933 }
+\DoxyCodeLine{1934 \textcolor{preprocessor}{    \#ifndef \_\_ALG\_PLATFORM}}
+\DoxyCodeLine{1935     \textcolor{keywordtype}{void} show\_properties() \{ \_\_show\_iir\_\_< T >( m\_sp , m\_cf , \textcolor{stringliteral}{"{}Chebyshev\_I"{}} ); \}}
+\DoxyCodeLine{1936 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{1937 \};}
+\DoxyCodeLine{1938 }
+\DoxyCodeLine{1939 \textcolor{comment}{// template Chebyshev type II filter:}}
+\DoxyCodeLine{1940 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \textcolor{keyword}{class }\mbox{\hyperlink{classchebyshev__2}{chebyshev\_2}}}
+\DoxyCodeLine{1941 \{}
+\DoxyCodeLine{1942     \textcolor{keyword}{typedef} T \_\_type ;}
+\DoxyCodeLine{1943 \textcolor{keyword}{public}:}
+\DoxyCodeLine{1944     \textcolor{comment}{// filter specification , coefficients and buffers:}}
+\DoxyCodeLine{1945     \mbox{\hyperlink{structiir__sp}{iir\_sp}}           m\_sp;}
+\DoxyCodeLine{1946     \mbox{\hyperlink{structiir__cf}{iir\_cf< \_\_type >}} m\_cf;}
+\DoxyCodeLine{1947     \mbox{\hyperlink{structiir__bf}{iir\_bf< \_\_type >}} m\_bf;}
+\DoxyCodeLine{1948 \textcolor{keyword}{public}:}
+\DoxyCodeLine{1949 }
+\DoxyCodeLine{1950     \textcolor{comment}{// filter output:}}
+\DoxyCodeLine{1951     \_\_type m\_out;}
+\DoxyCodeLine{1952 }
+\DoxyCodeLine{1953     \textcolor{comment}{// initializations:}}
+\DoxyCodeLine{1954     \textcolor{keywordtype}{void} lp\_init( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fn , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc ,  \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gs = 80 )             \{ m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}\{ Fs , 1 / Fs , Fn , Fc , -\/1 , Gs , 1 , order , iir\_type::lowpass\_iir  \}; \}}
+\DoxyCodeLine{1955     \textcolor{keywordtype}{void} hp\_init( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fn , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc ,  \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gs = 80 )             \{ m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}\{ Fs , 1 / Fs , Fn , Fc , -\/1 , Gs , 1 , order , iir\_type::highpass\_iir \}; \}}
+\DoxyCodeLine{1956     \textcolor{keywordtype}{void} bp\_init( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fn , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} BW ,  \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gs = 80 ) \{ m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}\{ Fs , 1 / Fs , Fn , Fc , BW , Gs , 1 , order , iir\_type::bandpass\_iir \}; \}}
+\DoxyCodeLine{1957     \textcolor{keywordtype}{void} bs\_init( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fn , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} BW ,  \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gs = 80 ) \{ m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}\{ Fs , 1 / Fs , Fn , Fc , BW , Gs , 1 , order , iir\_type::bandstop\_iir \}; \}}
+\DoxyCodeLine{1958 }
+\DoxyCodeLine{1959     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} allocate()}
+\DoxyCodeLine{1960     \{}
+\DoxyCodeLine{1961         \textcolor{keywordflow}{switch} ( m\_sp.type )}
+\DoxyCodeLine{1962         \{}
+\DoxyCodeLine{1963             \textcolor{keywordflow}{case} iir\_type::lowpass\_iir:}
+\DoxyCodeLine{1964             m\_cf = \_\_cheb2\_ellip\_digital\_lp\_\_< \_\_type >( m\_sp.Fs , m\_sp.Fc , m\_sp.order , 0 , m\_sp.Gp , m\_sp.Gs );}
+\DoxyCodeLine{1965             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{1966 }
+\DoxyCodeLine{1967             \textcolor{keywordflow}{case} iir\_type::highpass\_iir:}
+\DoxyCodeLine{1968             m\_cf = \_\_cheb2\_ellip\_digital\_hp\_\_< \_\_type >( m\_sp.Fs , m\_sp.Fc , m\_sp.order , 0 , m\_sp.Gp , m\_sp.Gs );}
+\DoxyCodeLine{1969             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{1970 }
+\DoxyCodeLine{1971             \textcolor{keywordflow}{case} iir\_type::bandpass\_iir:}
+\DoxyCodeLine{1972             m\_cf = \_\_cheb2\_ellip\_digital\_bp\_\_< \_\_type >( m\_sp.Fs , m\_sp.Fc , m\_sp.BW , m\_sp.order , 0 , m\_sp.Gp , m\_sp.Gs );}
+\DoxyCodeLine{1973             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{1974 }
+\DoxyCodeLine{1975             \textcolor{keywordflow}{case} iir\_type::bandstop\_iir:}
+\DoxyCodeLine{1976             m\_cf = \_\_cheb2\_ellip\_digital\_bs\_\_< \_\_type >( m\_sp.Fs , m\_sp.Fc , m\_sp.BW , m\_sp.order , 0 , m\_sp.Gp , m\_sp.Gs );}
+\DoxyCodeLine{1977             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{1978         \}}
+\DoxyCodeLine{1979 }
+\DoxyCodeLine{1980         m\_bf = ( ( m\_cf.cfnum != 0 ) \&\& ( m\_cf.cfden != 0 ) \&\& ( m\_cf.gains != 0 ) ) ? \_\_iir\_bf\_alloc\_\_< \_\_type >( m\_cf.N ) : \mbox{\hyperlink{structiir__bf}{iir\_bf< \_\_type >}}\{ 0 , 0 , -\/1 \} ;}
+\DoxyCodeLine{1981         \textcolor{keywordflow}{return} ( m\_bf.bx != 0 \&\& m\_bf.by != 0 );}
+\DoxyCodeLine{1982     \}}
+\DoxyCodeLine{1983 }
+\DoxyCodeLine{1984     \textcolor{keywordtype}{void} deallocate()}
+\DoxyCodeLine{1985     \{}
+\DoxyCodeLine{1986         \_\_iir\_bf\_free\_\_< \_\_type >( m\_bf );}
+\DoxyCodeLine{1987         \_\_iir\_cf\_free\_\_< \_\_type >( m\_cf );}
+\DoxyCodeLine{1988     \}}
+\DoxyCodeLine{1989 }
+\DoxyCodeLine{1990     \textcolor{comment}{// default constructor:}}
+\DoxyCodeLine{1991     \mbox{\hyperlink{classchebyshev__2}{chebyshev\_2}}()}
+\DoxyCodeLine{1992     \{}
+\DoxyCodeLine{1993         m\_cf = \mbox{\hyperlink{structiir__cf}{iir\_cf< \_\_type >}} \{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \};}
+\DoxyCodeLine{1994         m\_bf = \mbox{\hyperlink{structiir__bf}{iir\_bf< \_\_type >}} \{ 0 , 0 , -\/1 \};}
+\DoxyCodeLine{1995         m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}           \{ 4000 , 1 / 4000 , 50 , 100 , -\/1 , 1 , 80 , 4 , 0 \};}
+\DoxyCodeLine{1996     \}}
+\DoxyCodeLine{1997 }
+\DoxyCodeLine{1998     \textcolor{comment}{// default destructor:}}
+\DoxyCodeLine{1999     \mbox{\hyperlink{classchebyshev__2}{\string~chebyshev\_2}}()\{ deallocate(); \}}
+\DoxyCodeLine{2000 }
+\DoxyCodeLine{2001     \textcolor{comment}{// filtering function:}}
+\DoxyCodeLine{2002     \_\_type filt( \_\_type *input ) \{ \textcolor{keywordflow}{return} ( m\_out = \_\_filt\_\_< \_\_type >( input , m\_cf.cfnum , m\_cf.cfden , m\_cf.gains , m\_cf.N , m\_bf.bx , m\_bf.by ) ); \}}
+\DoxyCodeLine{2003 }
+\DoxyCodeLine{2004     \textcolor{comment}{// operators:}}
+\DoxyCodeLine{2005     \textcolor{keyword}{inline} \_\_type operator () (  \_\_type *input  ) \{ \textcolor{keywordflow}{return} filt( input ); \}}
+\DoxyCodeLine{2006 }
+\DoxyCodeLine{2007 \textcolor{preprocessor}{    \#ifndef \_\_ALG\_PLATFORM}}
+\DoxyCodeLine{2008     \textcolor{keywordtype}{void} show\_properties() \{ \_\_show\_iir\_\_< \_\_type >( m\_sp , m\_cf , \textcolor{stringliteral}{"{}Chebyshev\_II"{}} ); \}}
+\DoxyCodeLine{2009 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{2010 \};}
+\DoxyCodeLine{2011 }
+\DoxyCodeLine{2012 \textcolor{comment}{// template Chebyshev type II filter:}}
+\DoxyCodeLine{2013 \textcolor{keyword}{template} < \textcolor{keyword}{typename} T > \textcolor{keyword}{class }\mbox{\hyperlink{classelliptic}{elliptic}}}
+\DoxyCodeLine{2014 \{}
+\DoxyCodeLine{2015     \textcolor{keyword}{typedef} T \_\_type ;}
+\DoxyCodeLine{2016 \textcolor{keyword}{public}:}
+\DoxyCodeLine{2017     \textcolor{comment}{// filter specification , coefficients and buffers:}}
+\DoxyCodeLine{2018     \mbox{\hyperlink{structiir__sp}{iir\_sp}}           m\_sp;}
+\DoxyCodeLine{2019     \mbox{\hyperlink{structiir__cf}{iir\_cf< \_\_type >}} m\_cf;}
+\DoxyCodeLine{2020     \mbox{\hyperlink{structiir__bf}{iir\_bf< \_\_type >}} m\_bf;}
+\DoxyCodeLine{2021 \textcolor{keyword}{public}:}
+\DoxyCodeLine{2022 }
+\DoxyCodeLine{2023     \textcolor{comment}{// filter output:}}
+\DoxyCodeLine{2024     \_\_type m\_out;}
+\DoxyCodeLine{2025 }
+\DoxyCodeLine{2026     \textcolor{comment}{// initializations:}}
+\DoxyCodeLine{2027     \textcolor{keywordtype}{void} lp\_init( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fn , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc ,  \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gp = 1 , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gs = 80 )             \{ m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}\{ Fs , 1 / Fs , Fn , Fc , -\/1 , Gs , Gp , order , iir\_type::lowpass\_iir  \}; \}}
+\DoxyCodeLine{2028     \textcolor{keywordtype}{void} hp\_init( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fn , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc ,  \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gp = 1 , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gs = 80 )             \{ m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}\{ Fs , 1 / Fs , Fn , Fc , -\/1 , Gs , Gp , order , iir\_type::highpass\_iir \}; \}}
+\DoxyCodeLine{2029     \textcolor{keywordtype}{void} bp\_init( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fn , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} BW ,  \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gp = 1 , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gs = 80 ) \{ m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}\{ Fs , 1 / Fs , Fn , Fc , BW , Gs , Gp , order , iir\_type::bandpass\_iir \}; \}}
+\DoxyCodeLine{2030     \textcolor{keywordtype}{void} bs\_init( \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fs , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fn , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Fc , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} BW ,  \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} order , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gp = 1 , \mbox{\hyperlink{group___i_i_r__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} Gs = 80 ) \{ m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}\{ Fs , 1 / Fs , Fn , Fc , BW , Gs , Gp , order , iir\_type::bandstop\_iir \}; \}}
+\DoxyCodeLine{2031 }
+\DoxyCodeLine{2032     \textcolor{comment}{// memory allocation function:}}
+\DoxyCodeLine{2033     \mbox{\hyperlink{group___i_i_r__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} allocate()}
+\DoxyCodeLine{2034     \{}
+\DoxyCodeLine{2035         \textcolor{keywordflow}{switch} ( m\_sp.type )}
+\DoxyCodeLine{2036         \{}
+\DoxyCodeLine{2037             \textcolor{keywordflow}{case} iir\_type::lowpass\_iir:}
+\DoxyCodeLine{2038             m\_cf = \_\_cheb2\_ellip\_digital\_lp\_\_< \_\_type >( m\_sp.Fs , m\_sp.Fc , m\_sp.order , 1 , m\_sp.Gp , m\_sp.Gs );}
+\DoxyCodeLine{2039             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{2040 }
+\DoxyCodeLine{2041             \textcolor{keywordflow}{case} iir\_type::highpass\_iir:}
+\DoxyCodeLine{2042             m\_cf = \_\_cheb2\_ellip\_digital\_hp\_\_< \_\_type >( m\_sp.Fs , m\_sp.Fc , m\_sp.order , 1 , m\_sp.Gp , m\_sp.Gs );}
+\DoxyCodeLine{2043             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{2044 }
+\DoxyCodeLine{2045             \textcolor{keywordflow}{case} iir\_type::bandpass\_iir:}
+\DoxyCodeLine{2046             m\_cf = \_\_cheb2\_ellip\_digital\_bp\_\_< \_\_type >( m\_sp.Fs , m\_sp.Fc , m\_sp.BW , m\_sp.order , 1 , m\_sp.Gp , m\_sp.Gs );}
+\DoxyCodeLine{2047             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{2048 }
+\DoxyCodeLine{2049             \textcolor{keywordflow}{case} iir\_type::bandstop\_iir:}
+\DoxyCodeLine{2050             m\_cf = \_\_cheb2\_ellip\_digital\_bs\_\_< \_\_type >( m\_sp.Fs , m\_sp.Fc , m\_sp.BW , m\_sp.order , 1 , m\_sp.Gp , m\_sp.Gs );}
+\DoxyCodeLine{2051             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{2052         \}}
+\DoxyCodeLine{2053 }
+\DoxyCodeLine{2054         m\_bf = ( ( m\_cf.cfnum != 0 ) \&\& ( m\_cf.cfden != 0 ) \&\& ( m\_cf.gains != 0 ) ) ? \_\_iir\_bf\_alloc\_\_< \_\_type >( m\_cf.N ) : \mbox{\hyperlink{structiir__bf}{iir\_bf< \_\_type >}}\{ 0 , 0 , -\/1 \} ;}
+\DoxyCodeLine{2055         \textcolor{keywordflow}{return} ( m\_bf.bx != 0 \&\& m\_bf.by != 0 );}
+\DoxyCodeLine{2056     \}}
+\DoxyCodeLine{2057 }
+\DoxyCodeLine{2058     \textcolor{comment}{// memory deallocation function:}}
+\DoxyCodeLine{2059     \textcolor{keywordtype}{void} deallocate()}
+\DoxyCodeLine{2060     \{}
+\DoxyCodeLine{2061         \_\_iir\_bf\_free\_\_< \_\_type >( m\_bf );}
+\DoxyCodeLine{2062         \_\_iir\_cf\_free\_\_< \_\_type >( m\_cf );}
+\DoxyCodeLine{2063     \}}
+\DoxyCodeLine{2064 }
+\DoxyCodeLine{2065     \textcolor{comment}{// default constructor:}}
+\DoxyCodeLine{2066     \mbox{\hyperlink{classelliptic}{elliptic}}()}
+\DoxyCodeLine{2067     \{}
+\DoxyCodeLine{2068         m\_cf = \mbox{\hyperlink{structiir__cf}{iir\_cf< \_\_type >}}\{ 0 , 0 , 0 , -\/1 , -\/1 , -\/1 \};}
+\DoxyCodeLine{2069         m\_bf = \mbox{\hyperlink{structiir__bf}{iir\_bf< \_\_type >}}\{ 0 , 0 , -\/1 \};}
+\DoxyCodeLine{2070         m\_sp = \mbox{\hyperlink{structiir__sp}{iir\_sp}}          \{ 4000 , 1 / 4000 , 50 , 100 , -\/1 , 1 , 80 , 4 , 0 \};}
+\DoxyCodeLine{2071     \}}
+\DoxyCodeLine{2072 }
+\DoxyCodeLine{2073     \textcolor{comment}{// default destructor:}}
+\DoxyCodeLine{2074     \mbox{\hyperlink{classelliptic}{\string~elliptic}}()\{ deallocate(); \}}
+\DoxyCodeLine{2075 }
+\DoxyCodeLine{2076 }
+\DoxyCodeLine{2077     \textcolor{comment}{// filtering function:}}
+\DoxyCodeLine{2078     \_\_type filt( \_\_type *input ) \{ \textcolor{keywordflow}{return} ( m\_out = \_\_filt\_\_< \_\_type >( input , m\_cf.cfnum , m\_cf.cfden , m\_cf.gains , m\_cf.N , m\_bf.bx , m\_bf.by ) ); \}}
+\DoxyCodeLine{2079 }
+\DoxyCodeLine{2080     \textcolor{comment}{// operators:}}
+\DoxyCodeLine{2081     \textcolor{keyword}{inline} \_\_type operator () (  \_\_type *input  ) \{ \textcolor{keywordflow}{return} filt( input ); \}}
+\DoxyCodeLine{2082 }
+\DoxyCodeLine{2083     \textcolor{comment}{// debugging function:}}
+\DoxyCodeLine{2084 \textcolor{preprocessor}{    \#ifndef \_\_ALG\_PLATFORM}}
+\DoxyCodeLine{2085     \textcolor{keywordtype}{void} show\_properties() \{ \_\_show\_iir\_\_< T >( m\_sp , m\_cf , \textcolor{stringliteral}{"{}Chebyshev\_II"{}} ); \}}
+\DoxyCodeLine{2086 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{2087 \};}
+\DoxyCodeLine{2088 }
+\DoxyCodeLine{2091 \textcolor{comment}{// customized macros exclusion to avoid aliases during compilation:}}
+\DoxyCodeLine{2092 \textcolor{preprocessor}{\#undef \_\_fx32}}
+\DoxyCodeLine{2093 \textcolor{preprocessor}{\#undef \_\_fx64}}
+\DoxyCodeLine{2094 \textcolor{preprocessor}{\#undef \_\_ix32}}
+\DoxyCodeLine{2095 \textcolor{preprocessor}{\#undef PI0}}
+\DoxyCodeLine{2096 \textcolor{preprocessor}{\#undef PI2}}
+\DoxyCodeLine{2097 \textcolor{preprocessor}{\#undef DEBUG}}
+\DoxyCodeLine{2098 }
+\DoxyCodeLine{2099 \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

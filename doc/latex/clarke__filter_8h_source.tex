@@ -1,0 +1,118 @@
+\hypertarget{clarke__filter_8h_source}{}\doxysection{clarke\+\_\+filter.\+h}
+\label{clarke__filter_8h_source}\index{C:/Qt\_projects/DigitalFilters\_x32/include/clarke\_filter.h@{C:/Qt\_projects/DigitalFilters\_x32/include/clarke\_filter.h}}
+\mbox{\hyperlink{clarke__filter_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 }
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#ifndef СLARKE\_FILTER\_H}}
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#define СLARKE\_FILTER\_H}}
+\DoxyCodeLine{18 }
+\DoxyCodeLine{20 \textcolor{preprocessor}{\#ifndef \_\_ix16}}
+\DoxyCodeLine{21 \textcolor{preprocessor}{\#define \_\_ix16 short}}
+\DoxyCodeLine{22 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{25 \textcolor{preprocessor}{\#ifndef \_\_ix32}}
+\DoxyCodeLine{26 \textcolor{preprocessor}{\#define \_\_ix32 int}}
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{30 \textcolor{preprocessor}{\#ifndef \_\_ix64}}
+\DoxyCodeLine{31 \textcolor{preprocessor}{\#define \_\_ix64 long long}}
+\DoxyCodeLine{32 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{33 }
+\DoxyCodeLine{35 \textcolor{preprocessor}{\#ifndef \_\_fx32}}
+\DoxyCodeLine{36 \textcolor{preprocessor}{\#define \_\_fx32 float}}
+\DoxyCodeLine{37 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{38 }
+\DoxyCodeLine{40 \textcolor{preprocessor}{\#ifndef \_\_fx64}}
+\DoxyCodeLine{41 \textcolor{preprocessor}{\#define \_\_fx64 double}}
+\DoxyCodeLine{42 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{43 }
+\DoxyCodeLine{45 \textcolor{keyword}{template}< \textcolor{keyword}{typename} T > \textcolor{keyword}{class }\mbox{\hyperlink{class_clarke__filter}{Clarke\_filter}};}
+\DoxyCodeLine{46 }
+\DoxyCodeLine{48 \textcolor{keyword}{template}<> \textcolor{keyword}{class }\mbox{\hyperlink{class_clarke__filter}{Clarke\_filter}}< \mbox{\hyperlink{group___three__phase__transformation__fcn_gabc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}} >}
+\DoxyCodeLine{49 \{}
+\DoxyCodeLine{50     \textcolor{keyword}{typedef} \mbox{\hyperlink{group___three__phase__transformation__fcn_gabc3e3e3fbdd4de8d12c8a8e4057be945}{\_\_fx32}} \_\_type;}
+\DoxyCodeLine{51 \textcolor{keyword}{public}:}
+\DoxyCodeLine{58     \_\_type \mbox{\hyperlink{class_clarke__filter_3_01____fx32_01_4_aeea5577dbbe14b15d2ce17669f180a84}{m\_a}} , m\_b , m\_c;}
+\DoxyCodeLine{59 }
+\DoxyCodeLine{96     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} \mbox{\hyperlink{class_clarke__filter_3_01____fx32_01_4_aa8f45be9fc5b94ea480b077c6888a21a}{toward\_transformation}}( \_\_type *A , \_\_type *B , \_\_type *C )}
+\DoxyCodeLine{97     \{}
+\DoxyCodeLine{98         m\_a = (*A) * 0.6666666666666666666666666666667 -\/ (*B) * 0.3333333333333333333333333333333 -\/ (*C) * 0.3333333333333333333333333333333;}
+\DoxyCodeLine{99         m\_b = (*B) * 0.577350269189625764509148780502  -\/ (*C) * 0.577350269189625764509148780502;}
+\DoxyCodeLine{100         m\_c = (*A) * 0.3333333333333333333333333333333 + (*B) * 0.3333333333333333333333333333333 + (*C) * 0.3333333333333333333333333333333;}
+\DoxyCodeLine{101     \}}
+\DoxyCodeLine{102 }
+\DoxyCodeLine{139     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} \mbox{\hyperlink{class_clarke__filter_3_01____fx32_01_4_a8ecd1f4ce9d90f45db57c802c7e98291}{toward\_transformation}}( \mbox{\hyperlink{group___three__phase__transformation__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *A , \mbox{\hyperlink{group___three__phase__transformation__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *B , \mbox{\hyperlink{group___three__phase__transformation__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *C )}
+\DoxyCodeLine{140     \{}
+\DoxyCodeLine{141         m\_a = (*A) * 0.6666666666666666666666666666667 -\/ (*B) * 0.3333333333333333333333333333333 -\/ (*C) * 0.3333333333333333333333333333333;}
+\DoxyCodeLine{142         m\_b = (*B) * 0.577350269189625764509148780502  -\/ (*C) * 0.577350269189625764509148780502;}
+\DoxyCodeLine{143         m\_c = (*A) * 0.3333333333333333333333333333333 + (*B) * 0.3333333333333333333333333333333 + (*C) * 0.3333333333333333333333333333333;}
+\DoxyCodeLine{144     \}}
+\DoxyCodeLine{145 }
+\DoxyCodeLine{182     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} \mbox{\hyperlink{class_clarke__filter_3_01____fx32_01_4_a6fff93a84a4cf3283800aa0d3ebd85d7}{backward\_transformation}}( \_\_type *A , \_\_type *B , \_\_type *C )}
+\DoxyCodeLine{183     \{}
+\DoxyCodeLine{184         m\_a = (*A) + (*C);}
+\DoxyCodeLine{185         m\_b = -\/(*A) * 0.5 + (*B) * 0.866025403784439 + (*C);}
+\DoxyCodeLine{186         m\_c = -\/(*A) * 0.5 -\/ (*B) * 0.866025403784439 + (*C);}
+\DoxyCodeLine{187     \}}
+\DoxyCodeLine{188 }
+\DoxyCodeLine{225     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} \mbox{\hyperlink{class_clarke__filter_3_01____fx32_01_4_ab89d1acc2dd398e574df1b1e21304f4d}{backward\_transformation}}( \mbox{\hyperlink{group___three__phase__transformation__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *A , \mbox{\hyperlink{group___three__phase__transformation__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *B , \mbox{\hyperlink{group___three__phase__transformation__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *C )}
+\DoxyCodeLine{226     \{}
+\DoxyCodeLine{227         m\_a = (*A) + (*C);}
+\DoxyCodeLine{228         m\_b = -\/(*A) * 0.5 + (*B) * 0.866025403784439 + (*C);}
+\DoxyCodeLine{229         m\_c = -\/(*A) * 0.5 -\/ (*B) * 0.866025403784439 + (*C);}
+\DoxyCodeLine{230     \}}
+\DoxyCodeLine{231 }
+\DoxyCodeLine{232 }
+\DoxyCodeLine{240     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} operator () ( \_\_type *A , \_\_type *B , \_\_type *C , \mbox{\hyperlink{group___three__phase__transformation__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} type )}
+\DoxyCodeLine{241     \{}
+\DoxyCodeLine{242         \textcolor{keywordflow}{if}( !type ) toward\_transformation  ( A , B , C );}
+\DoxyCodeLine{243         \textcolor{keywordflow}{else}        backward\_transformation( A , B , C );}
+\DoxyCodeLine{244     \}}
+\DoxyCodeLine{245 }
+\DoxyCodeLine{253     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} operator () ( \mbox{\hyperlink{group___three__phase__transformation__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *A , \mbox{\hyperlink{group___three__phase__transformation__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *B , \mbox{\hyperlink{group___three__phase__transformation__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} *C  , \mbox{\hyperlink{group___three__phase__transformation__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} type )}
+\DoxyCodeLine{254     \{}
+\DoxyCodeLine{255         \textcolor{keywordflow}{if}( !type ) toward\_transformation  ( A , B , C );}
+\DoxyCodeLine{256         \textcolor{keywordflow}{else}        backward\_transformation( A , B , C );}
+\DoxyCodeLine{257     \}}
+\DoxyCodeLine{258 \};}
+\DoxyCodeLine{259 }
+\DoxyCodeLine{261 \textcolor{keyword}{template}<> \textcolor{keyword}{class }\mbox{\hyperlink{class_clarke__filter}{Clarke\_filter}}< \mbox{\hyperlink{group___three__phase__transformation__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} >}
+\DoxyCodeLine{262 \{}
+\DoxyCodeLine{263     \textcolor{keyword}{typedef} \mbox{\hyperlink{group___three__phase__transformation__fcn_ga55c00d61c4ad25c012a8fb3fa8a57cdb}{\_\_fx64}} \_\_type;}
+\DoxyCodeLine{264 \textcolor{keyword}{public}:}
+\DoxyCodeLine{271     \_\_type \mbox{\hyperlink{class_clarke__filter_3_01____fx64_01_4_a00282bb5f310012d10682255471e4243}{m\_a}} , m\_b , m\_c;}
+\DoxyCodeLine{272 }
+\DoxyCodeLine{309     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} \mbox{\hyperlink{class_clarke__filter_3_01____fx64_01_4_a3e9d8d76bb13f8332c1d54b77cac5d69}{toward\_transformation}}( \_\_type *A , \_\_type *B , \_\_type *C )}
+\DoxyCodeLine{310     \{}
+\DoxyCodeLine{311         m\_a = (*A) * 0.6666666666666666666666666666667 -\/ (*B) * 0.3333333333333333333333333333333 -\/ (*C) * 0.3333333333333333333333333333333;}
+\DoxyCodeLine{312         m\_b = (*B) * 0.577350269189625764509148780502  -\/ (*C) * 0.577350269189625764509148780502;}
+\DoxyCodeLine{313         m\_c = (*A) * 0.3333333333333333333333333333333 + (*B) * 0.3333333333333333333333333333333 + (*C) * 0.3333333333333333333333333333333;}
+\DoxyCodeLine{314     \}}
+\DoxyCodeLine{315 }
+\DoxyCodeLine{352     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} \mbox{\hyperlink{class_clarke__filter_3_01____fx64_01_4_a084fc0b149039dea15f9e225f1bc2ae0}{backward\_transformation}}( \_\_type *A , \_\_type *B , \_\_type *C )}
+\DoxyCodeLine{353     \{}
+\DoxyCodeLine{354         m\_a = (*A) + (*C);}
+\DoxyCodeLine{355         m\_b = -\/(*A) * 0.5 + (*B) * 0.866025403784439 + (*C);}
+\DoxyCodeLine{356         m\_c = -\/(*A) * 0.5 -\/ (*B) * 0.866025403784439 + (*C);}
+\DoxyCodeLine{357     \}}
+\DoxyCodeLine{358 }
+\DoxyCodeLine{366     \textcolor{keyword}{inline} \textcolor{keywordtype}{void} operator () ( \_\_type *A , \_\_type *B , \_\_type *C , \mbox{\hyperlink{group___three__phase__transformation__fcn_ga7d1671ef10aab0922515d7ed25120d0e}{\_\_ix32}} type )}
+\DoxyCodeLine{367     \{}
+\DoxyCodeLine{368         \textcolor{keywordflow}{if}( !type ) toward\_transformation  ( A , B , C );}
+\DoxyCodeLine{369         \textcolor{keywordflow}{else}        backward\_transformation( A , B , C );}
+\DoxyCodeLine{370     \}}
+\DoxyCodeLine{371 \};}
+\DoxyCodeLine{372 }
+\DoxyCodeLine{375 \textcolor{comment}{// customized types names exclusion to avoid aliases during compilation:}}
+\DoxyCodeLine{376 \textcolor{preprocessor}{\#undef \_\_ix16}}
+\DoxyCodeLine{377 \textcolor{preprocessor}{\#undef \_\_ix32}}
+\DoxyCodeLine{378 \textcolor{preprocessor}{\#undef \_\_ix64}}
+\DoxyCodeLine{379 \textcolor{preprocessor}{\#undef \_\_uix16}}
+\DoxyCodeLine{380 \textcolor{preprocessor}{\#undef \_\_uix32}}
+\DoxyCodeLine{381 \textcolor{preprocessor}{\#undef \_\_uix64}}
+\DoxyCodeLine{382 \textcolor{preprocessor}{\#undef \_\_fx32}}
+\DoxyCodeLine{383 \textcolor{preprocessor}{\#undef \_\_fx64}}
+\DoxyCodeLine{384 }
+\DoxyCodeLine{385 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// СLARKE\_FILTER\_H}}
+
+\end{DoxyCode}

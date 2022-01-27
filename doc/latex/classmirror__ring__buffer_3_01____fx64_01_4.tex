@@ -1,0 +1,126 @@
+\hypertarget{classmirror__ring__buffer_3_01____fx64_01_4}{}\doxysection{mirror\+\_\+ring\+\_\+buffer\texorpdfstring{$<$}{<} \+\_\+\+\_\+fx64 \texorpdfstring{$>$}{>} Class Reference}
+\label{classmirror__ring__buffer_3_01____fx64_01_4}\index{mirror\_ring\_buffer$<$ \_\_fx64 $>$@{mirror\_ring\_buffer$<$ \_\_fx64 $>$}}
+
+
+64-\/bit floating point mirror ring buffer  
+
+
+
+
+{\ttfamily \#include $<$buffer.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{classmirror__ring__buffer_3_01____fx64_01_4_a4ea65c825e94d61f6c6ce21ce2304cd1}{allocate}} (\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} nelem)
+\begin{DoxyCompactList}\small\item\em mirror ring buffer memory allocation function \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classmirror__ring__buffer_3_01____fx64_01_4_a861fa6d74b0801a6e2b6e4341186a662}\label{classmirror__ring__buffer_3_01____fx64_01_4_a861fa6d74b0801a6e2b6e4341186a662}} 
+void {\bfseries deallocate} ()
+\begin{DoxyCompactList}\small\item\em mirror ring buffer memory deallocation function \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classmirror__ring__buffer_3_01____fx64_01_4_a12692944e004ccd6f4ccc04d86c6e4fd}\label{classmirror__ring__buffer_3_01____fx64_01_4_a12692944e004ccd6f4ccc04d86c6e4fd}} 
+{\bfseries mirror\+\_\+ring\+\_\+buffer} ()
+\begin{DoxyCompactList}\small\item\em mirror ring buffer default constructor \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classmirror__ring__buffer_3_01____fx64_01_4_ab270c3b25184a464496197180144e414}\label{classmirror__ring__buffer_3_01____fx64_01_4_ab270c3b25184a464496197180144e414}} 
+{\bfseries $\sim$mirror\+\_\+ring\+\_\+buffer} ()
+\begin{DoxyCompactList}\small\item\em mirror ring buffer destructor \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmirror__ring__buffer_3_01____fx64_01_4_aaea04b30e2b4bba2ab7a4daa8edfe919}{fill\+\_\+buff}} (\+\_\+\+\_\+type $\ast$input)
+\begin{DoxyCompactList}\small\item\em mirror ring buffer filling function \end{DoxyCompactList}\item 
+\+\_\+\+\_\+type \mbox{\hyperlink{classmirror__ring__buffer_3_01____fx64_01_4_a9c07836b8a5685312bba8cc3922cfbf2}{operator\mbox{[}$\,$\mbox{]}}} (\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} n)
+\begin{DoxyCompactList}\small\item\em mirror ring buffer \mbox{[}\mbox{]} operator \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classmirror__ring__buffer_3_01____fx64_01_4_ae15487542951f108c084e8ae19735b12}{operator()}} (\+\_\+\+\_\+type $\ast$input)
+\begin{DoxyCompactList}\small\item\em mirror ring buffer () operator \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classmirror__ring__buffer_3_01____fx64_01_4_aa1204fe2f6755c47c864ead1e8e6d8fd}\label{classmirror__ring__buffer_3_01____fx64_01_4_aa1204fe2f6755c47c864ead1e8e6d8fd}} 
+\+\_\+\+\_\+type $\ast$ {\bfseries m\+\_\+upper}
+\begin{DoxyCompactList}\small\item\em mirror ring buffer upper half pointer \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classmirror__ring__buffer_3_01____fx64_01_4_a6c209b73337b5580c5a0282ff060be7b}\label{classmirror__ring__buffer_3_01____fx64_01_4_a6c209b73337b5580c5a0282ff060be7b}} 
+\+\_\+\+\_\+type $\ast$ {\bfseries m\+\_\+lower}
+\begin{DoxyCompactList}\small\item\em mirror ring buffer lower half pointer \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classmirror__ring__buffer_3_01____fx64_01_4_aba5160bdf7a3960eacc6b6b7ab0ae283}\label{classmirror__ring__buffer_3_01____fx64_01_4_aba5160bdf7a3960eacc6b6b7ab0ae283}} 
+\+\_\+\+\_\+type $\ast$ {\bfseries m\+\_\+data}
+\begin{DoxyCompactList}\small\item\em mirror ring buffer data pointer \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classmirror__ring__buffer_3_01____fx64_01_4_a83cf63efc858f402b5926ddadc2cfe33}\label{classmirror__ring__buffer_3_01____fx64_01_4_a83cf63efc858f402b5926ddadc2cfe33}} 
+\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} {\bfseries m\+\_\+nelem}
+\begin{DoxyCompactList}\small\item\em mirror ring buffer size \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classmirror__ring__buffer_3_01____fx64_01_4_a151f75a7e3ad9c1db0b45fa5800ab054}\label{classmirror__ring__buffer_3_01____fx64_01_4_a151f75a7e3ad9c1db0b45fa5800ab054}} 
+\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} {\bfseries m\+\_\+buffpos}
+\begin{DoxyCompactList}\small\item\em mirror ring buffer position \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+64-\/bit floating point mirror ring buffer 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classmirror__ring__buffer_3_01____fx64_01_4_a4ea65c825e94d61f6c6ce21ce2304cd1}\label{classmirror__ring__buffer_3_01____fx64_01_4_a4ea65c825e94d61f6c6ce21ce2304cd1}} 
+\index{mirror\_ring\_buffer$<$ \_\_fx64 $>$@{mirror\_ring\_buffer$<$ \_\_fx64 $>$}!allocate@{allocate}}
+\index{allocate@{allocate}!mirror\_ring\_buffer$<$ \_\_fx64 $>$@{mirror\_ring\_buffer$<$ \_\_fx64 $>$}}
+\doxysubsubsection{\texorpdfstring{allocate()}{allocate()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}} \mbox{\hyperlink{classmirror__ring__buffer}{mirror\+\_\+ring\+\_\+buffer}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$\+::allocate (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{nelem }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+mirror ring buffer memory allocation function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}nelem\mbox{]}} & the mirror ring buffer size \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classmirror__ring__buffer_3_01____fx64_01_4_aaea04b30e2b4bba2ab7a4daa8edfe919}\label{classmirror__ring__buffer_3_01____fx64_01_4_aaea04b30e2b4bba2ab7a4daa8edfe919}} 
+\index{mirror\_ring\_buffer$<$ \_\_fx64 $>$@{mirror\_ring\_buffer$<$ \_\_fx64 $>$}!fill\_buff@{fill\_buff}}
+\index{fill\_buff@{fill\_buff}!mirror\_ring\_buffer$<$ \_\_fx64 $>$@{mirror\_ring\_buffer$<$ \_\_fx64 $>$}}
+\doxysubsubsection{\texorpdfstring{fill\_buff()}{fill\_buff()}}
+{\footnotesize\ttfamily void \mbox{\hyperlink{classmirror__ring__buffer}{mirror\+\_\+ring\+\_\+buffer}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$\+::fill\+\_\+buff (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type $\ast$}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+mirror ring buffer filling function 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}input\mbox{]}} & pointer to the input data \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classmirror__ring__buffer_3_01____fx64_01_4_ae15487542951f108c084e8ae19735b12}\label{classmirror__ring__buffer_3_01____fx64_01_4_ae15487542951f108c084e8ae19735b12}} 
+\index{mirror\_ring\_buffer$<$ \_\_fx64 $>$@{mirror\_ring\_buffer$<$ \_\_fx64 $>$}!operator()@{operator()}}
+\index{operator()@{operator()}!mirror\_ring\_buffer$<$ \_\_fx64 $>$@{mirror\_ring\_buffer$<$ \_\_fx64 $>$}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}}
+{\footnotesize\ttfamily void \mbox{\hyperlink{classmirror__ring__buffer}{mirror\+\_\+ring\+\_\+buffer}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$\+::operator() (\begin{DoxyParamCaption}\item[{\+\_\+\+\_\+type $\ast$}]{input }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+mirror ring buffer () operator 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}input\mbox{]}} & pointer to the input data \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the operator call puts the data into the buffer by means of calling \mbox{\hyperlink{classmirror__ring__buffer_3_01____fx64_01_4_aaea04b30e2b4bba2ab7a4daa8edfe919}{fill\+\_\+buff( \+\_\+\+\_\+type $\ast$input )}} function 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classmirror__ring__buffer_3_01____fx64_01_4_a9c07836b8a5685312bba8cc3922cfbf2}\label{classmirror__ring__buffer_3_01____fx64_01_4_a9c07836b8a5685312bba8cc3922cfbf2}} 
+\index{mirror\_ring\_buffer$<$ \_\_fx64 $>$@{mirror\_ring\_buffer$<$ \_\_fx64 $>$}!operator\mbox{[}\mbox{]}@{operator[]}}
+\index{operator\mbox{[}\mbox{]}@{operator[]}!mirror\_ring\_buffer$<$ \_\_fx64 $>$@{mirror\_ring\_buffer$<$ \_\_fx64 $>$}}
+\doxysubsubsection{\texorpdfstring{operator[]()}{operator[]()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+type \mbox{\hyperlink{classmirror__ring__buffer}{mirror\+\_\+ring\+\_\+buffer}}$<$ \mbox{\hyperlink{special__functions_8h_a55c00d61c4ad25c012a8fb3fa8a57cdb}{\+\_\+\+\_\+fx64}} $>$\+::operator\mbox{[}$\,$\mbox{]} (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{special__functions_8h_a7d1671ef10aab0922515d7ed25120d0e}{\+\_\+\+\_\+ix32}}}]{n }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+mirror ring buffer \mbox{[}\mbox{]} operator 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \mbox{[}n\mbox{]}} & sample number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the operator call returns a sample that is on the left from the current mirror ring buffer position 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Qt\+\_\+projects/\+Digital\+Filters\+\_\+x32/include/\mbox{\hyperlink{buffer_8h}{buffer.\+h}}\end{DoxyCompactItemize}
