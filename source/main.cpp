@@ -175,7 +175,7 @@ int test2()
     return 0;
 }
 
-// fir lowpass test:
+// fir filters test:
 int test3()
 {
     typedef float __type ;
@@ -259,8 +259,8 @@ int test3()
     return 0;
 }
 
-// window function example:
-int test7()
+// iir filters test:
+int test4()
 {
     double Fs = 4000;
 
@@ -377,14 +377,11 @@ int test7()
 
 int main()
 {
-    std::cout << __DBL_MIN__ << "\n";
-
+    // test0(); // special functions check
     // test1(); // comlex arithmetic test
-    // test3(); // fir lowpass test
-    // test4(); // fir highpass test
-    // test5(); // fir bandpass test
-    // test6(); // fir bandstop test
-    // test7(); // iir filters test
+    // test2(); // buffer class example
+    // test3(); // fir filters test
+    // test4(); // iir filters test
 
     return 0;
 }
