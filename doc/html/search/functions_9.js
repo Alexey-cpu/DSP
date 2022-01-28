@@ -1,5 +1,0 @@
-var searchData=
-[
-  ['init_0',['init',['../classtimers.html#a078fa58db65fd0d71d1816dd49ba1c4e',1,'timers::init()'],['../classrecursive__fourier_3_01____fx32_01_4.html#a8f299f81df1ef8882a7b490f7004ffeb',1,'recursive_fourier&lt; __fx32 &gt;::init()'],['../classrecursive__fourier_3_01____fx64_01_4.html#a77a3fd2d7242b04a2225e8d53921cdba',1,'recursive_fourier&lt; __fx64 &gt;::init()'],['../classrecursive__mean_3_01____fx32_01_4.html#a45b1b038cbe2ec36abd8a40cb6e36596',1,'recursive_mean&lt; __fx32 &gt;::init()'],['../classrecursive__mean_3_01____fx64_01_4.html#ab8f85e1c47fe6f3111147cca3b6b6661',1,'recursive_mean&lt; __fx64 &gt;::init()'],['../classrecursive__rms_3_01____fx32_01_4.html#a93211a31ef85c5966051a566388fb6e4',1,'recursive_rms&lt; __fx32 &gt;::init()'],['../classrecursive__rms_3_01____fx64_01_4.html#a744709259b442ae5df2649582d578bc1',1,'recursive_rms&lt; __fx64 &gt;::init()'],['../classwind__fcn.html#a6deb4f700c93c94aff8e17194309cab7',1,'wind_fcn::init(__ix32 order)']]],
-  ['is_5fready_1',['is_ready',['../classwind__fcn.html#ad71b3a4bf91eae2db01d060b8b2ff0c2',1,'wind_fcn']]]
-];

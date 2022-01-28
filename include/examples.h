@@ -1,3 +1,13 @@
+/*!
+ * \file
+ * \brief   Examples
+ * \authors A.Tykvinskiy
+ * \date    28.01.2022
+ * \version 1.0
+ *
+ * The examples of DSP template ToolBox utilization
+*/
+
 #ifndef EXAMPLES_H
 #define EXAMPLES_H
 
@@ -15,9 +25,11 @@
 #include "include/iir.h"
 #include "include/recursive_fourier.h"
 
-// special functions utilization example and test:
+/*! \brief special functions utilization example and check */
 int example0()
 {
+    printf( " ...special functions utilization example and test... \n " );
+
     // timer:
     QElapsedTimer timer;
 
@@ -121,9 +133,11 @@ int example0()
     return 0;
 }
 
-// complex arithmetics utilization example and test:
+/*! \brief complex arithmetics utilization example and test */
 int example1()
 {
+    printf( " ...complex arithmetics utilization example and test... \n " );
+
     complex<double> z0( 1.0 , 2.0 ) , z1( 2.0 , 0.5 ) , z2( 3.5 , 4.5 );
     printf( "complex math functions check: \n" );
     printf( "z0 = %.4f \t %.4f \n" , z0.m_re , z0.m_im );
@@ -159,9 +173,11 @@ int example1()
     return 0;
 }
 
-// FIR filters utilization example and test:
-int examples2()
+/*! \brief FIR filters utilization example and test */
+int example2()
 {
+    printf( " ...FIR filters utilization example and test... \n " );
+
     // define filter and it's input signal data types:
     typedef float  __flt_type;
     typedef double __gen_type;
@@ -254,8 +270,8 @@ int examples2()
     return 0;
 }
 
-// comb FIR filter utilization example and test:
-int examples3()
+/*! \brief comb FIR filter utilization example and test */
+int example3()
 {
     printf( " ...comb FIR filter utilization example and test... \n " );
 
@@ -344,8 +360,8 @@ int examples3()
     return 0;
 }
 
-// equalized comb FIR filter utilization example and test:
-int examples4()
+/*! \brief equalized comb FIR filter utilization example and test */
+int example4()
 {
     printf( " ...equalized comb FIR filter utilization example and test... \n " );
 
