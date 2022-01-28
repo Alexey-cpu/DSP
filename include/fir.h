@@ -501,10 +501,16 @@ template< typename T > T* __fir_wind_digital_bs__( __fx64 Fs , __fx64 Fc , __fx6
     return cfbuff;
 }
 
-/*! \brief template FIR class */
+/*! \brief template FIR filter class */
 template< typename T > class fir;
 
-/*! \brief 32-bit floating point FIR */
+/*! \brief template comb FIR filter class */
+template< typename T > class fcomb;
+
+/*! \brief template equalized comb FIR filter class */
+template< typename T > class fcombeq;
+
+/*! \brief 32-bit floating point FIR filter */
 template<> class fir<__fx32>
 {
     typedef __fx32 __type ;
@@ -655,13 +661,41 @@ public:
     inline __type get_coeff( __ix32 n ) { return ( n <= m_sp.order ) ? m_cf[ n ] : 1e6; }
 
     /*!
-     *  \brief  FIR filtering function
+     *  \brief  32-bit FIR filter buffer filling function
+     *  \param[input] pointer to the input data array
+     *  \return the function returns FIR filtering result
+    */
+    inline void fill_fir_buff( __type *input ) { m_bx( input ); }
+
+    /*!
+     *  \brief  64-bit FIR filter buffer filling function
+     *  \param[input] pointer to the input data array
+     *  \return the function returns FIR filtering result
+    */
+    inline void fill_fir_buff( __fx64 *input ) { m_bx( input ); }
+
+    /*!
+     *  \brief  32-bit FIR filtering function
      *  \param[input] pointer to the input data array
      *  \return the function returns FIR filtering result
     */
     inline __type filt( __type *input )
     {
-        m_bx( input ); m_out = 0;
+        m_bx( input );
+        m_out = 0;
+        for ( __ix32 n = m_sp.order ; n >= 0; n--) m_out += m_bx[ n ] * m_cf[n];
+        return m_out;
+    }
+
+    /*!
+     *  \brief  64-bit FIR filtering function
+     *  \param[input] pointer to the input data array
+     *  \return the function returns FIR filtering result
+    */
+    inline __type filt( __fx64 *input )
+    {
+        m_bx( input );
+        m_out = 0;
         for ( __ix32 n = m_sp.order ; n >= 0; n--) m_out += m_bx[ n ] * m_cf[n];
         return m_out;
     }
@@ -678,14 +712,324 @@ public:
     }
 
     /*!
-     *  \brief  FIR filtering () operator
+     *  \brief 32-bit FIR filtering () operator
      *  \param[input] pointer to the input data
      *  \return the () operator calls filt( __type *input ) function that returns FIR filtering result
     */
     inline __type operator() ( __type *input ) { return filt( input ); }
+
+    /*!
+     *  \brief 64-bit FIR filtering () operator
+     *  \param[input] pointer to the input data
+     *  \return the () operator calls filt( __type *input ) function that returns FIR filtering result
+    */
+    inline __type operator() ( __fx64 *input ) { return filt( input ); }
 };
 
-/*! \brief 64-bit floating point FIR */
+/*! \brief 32-bit floating point comb FIR filter */
+template<> class fcomb<__fx32>
+{
+    typedef __fx32 __type ;
+private:
+
+    /*! \brief input signal nominal frequency  , Hz */
+    __fx64 m_Fn;
+    /*! \brief input signal sampling frequency , Hz */
+    __fx64 m_Fs;
+    /*! \brief input signal nominal period     , s */
+    __fx64 m_Ts;
+    /*! \brief comb filter order */
+    __ix32 m_order;
+
+    /*! \brief comb filter buffer */
+     mirror_ring_buffer< __type > m_bx;
+
+public:
+
+    /*! \brief filter output */
+    __fx64 m_out;
+    /*! \brief filter frequency phase response */
+    __fx64 m_pH;
+    /*! \brief filter frequency amplitude response */
+    __fx64 m_Km;
+
+    /*!
+     *  \brief comb filter initialization function
+     *  \param[Fs] - input signal sampling frequency
+     *  \param[Fn] - input signal nominal frequency
+    */
+    __ix32 init( __fx64 Fs , __fx64 Fn )
+    {
+        m_Fs      = Fs;
+        m_Fn      = Fn;
+        m_Ts      = 1 / m_Fs;
+        m_order   = m_Fs / m_Fn / 2;
+        m_out     = 0;
+        m_Km      = 0;
+        m_pH      = 0;
+        return 0;
+    }
+
+    /*! \brief memory allocation function */
+    __ix32 allocate()
+    {
+        return m_bx.allocate( m_order + 1 );
+    }
+
+    /*! \brief memory deallocation function */
+    void deallocate()
+    {
+        m_bx.deallocate();
+    }
+
+    /*! \brief default constructor */
+    fcomb()
+    {
+        m_Fs      = 4000;
+        m_Fn      = 50;
+        m_Ts      = 1 / m_Fs;
+        m_order   = m_Fs / m_Fn / 2;
+        m_out     = 0;
+        m_Km      = 0;
+        m_pH      = 0;
+    }
+
+    /*! \brief default destructor */
+    ~fcomb(){ deallocate(); };
+
+    /*! \brief frequency response computation function */
+    fir_fr< __fx64 > freq_resp( __fx64 F )
+    {
+        __fx64 Re = 1 - cos(-6.283185307179586476925286766559  * m_order * F * m_Ts);
+        __fx64 Im = 0 - sin(-6.283185307179586476925286766559  * m_order * F * m_Ts);
+        m_pH = atan2(Im, Re);
+        m_Km = sqrt(Re * Re + Im * Im) * 0.5;
+        return { m_Km , m_pH };
+    }
+
+    /*!
+     *  \brief 32-bit floating point filtering function
+     *  \param[input] - pointer to the input signal samples buffer
+     *  \return The function returns filtering result
+    */
+    inline __fx64 filt( __type *input)
+    {
+        m_bx( input );
+        m_out = (__fx64)*input - (__fx64)m_bx[ m_order ];
+        return m_out;
+    }
+
+    /*!
+     *  \brief 64-bit floating point filtering function
+     *  \param[input] - pointer to the input signal samples buffer
+     *  \return The function returns filtering result
+    */
+    inline __fx64 filt( __fx64 *input)
+    {
+        m_bx( input );
+        return ( m_out = *input - m_bx[ m_order ] );
+    }
+
+    /*!
+     *  \brief 32-bit floating point filtering operator
+     *  \param[input] - pointer to the input signal samples buffer
+     *  \return The operatoe calls the function that returns filtering result
+    */
+    inline __fx64 operator ()( __type *input ) { return filt(input); }
+
+    /*!
+     *  \brief 64-bit floating point filtering operator
+     *  \param[input] - pointer to the input signal samples buffer
+     *  \return The operatoe calls the function that returns filtering result
+    */
+    inline __fx64 operator ()( __fx64 *input ) { return filt(input); }
+};
+
+/*! \brief 32-bit floating point equalized comb FIR filter */
+template<> class fcombeq<__fx32>
+{
+    typedef __fx32 __type ;
+private:
+
+    /*! \brief input signal frequency deviation from nominal for which the amplitude frequency response slope compensation is implemented , Hz */
+    __fx64 m_dF;
+    /*! \brief residual amplitude frequency response slope for the input signal frequency deviation dF from nominal , p.u. */
+    __fx64 m_d_Amp;
+    /*! \brief input signal nominal frequency  , Hz */
+    __fx64 m_Fn;
+    /*! \brief input signal sampling frequency , Hz */
+    __fx64 m_Fs;
+    /*! \brief input signal sampling period , Hz */
+    __fx64 m_Ts;
+    /*! \brief auxiliary coefficient K1 */
+    __fx64 m_K1;
+    /*! \brief auxiliary coefficient K2 */
+    __fx64 m_K2;
+    /*! \brief filter order */
+    __ix32 m_order;
+    /*! \brief auxiliary coefficient ElemNum1 */
+    __ix32 m_ElemNum1;
+    /*! \brief auxiliary coefficient ElemNum2 */
+    __ix32 m_ElemNum2;
+
+    /*! \brief comb filter buffer */
+     mirror_ring_buffer< __type > m_bx;
+
+public:
+
+    /*! \brief filter output */
+    __fx64 m_out;
+    /*! \brief filter frequency phase response */
+    __fx64 m_pH;
+    /*! \brief filter frequency amplitude response */
+    __fx64 m_Km;
+
+    /*! \brief default constructor */
+    fcombeq()
+    {
+        m_Fs       = 4000;
+        m_Fn       = 50;
+        m_dF       = 5;
+        m_d_Amp    = 0;
+        m_order    = m_Fs / m_Fn / 2;
+        m_ElemNum1 = 1 * m_order;
+        m_ElemNum2 = 2 * m_order;
+        m_Ts       = 1 / m_Fs;
+        m_out      = 0;
+        m_Km       = 0;
+        m_pH       = 0;
+    }
+
+    /*! \brief default destructor */
+    ~fcombeq(){ deallocate(); }
+
+    /*!
+     *  \brief comb filter initialization function
+     *  \param[ Fs    ] - input signal sampling frequency
+     *  \param[ Fn    ] - input signal nominal frequency
+     *  \param[ dF    ] - input signal frequency deviation from nominal for which the amplitude frequency response slope compensation is implemented , Hz
+     *  \param[ d_Amp ] - residual amplitude frequency response slope for the input signal frequency deviation dF from nominal , p.u.
+    */
+    void init( __fx64 Fs, __fx64 Fn, __fx64 dF, __fx64 d_Amp )
+    {
+        m_Fs       = Fs;
+        m_Fn       = Fn;
+        m_dF       = dF;
+        m_d_Amp	   = d_Amp;
+        m_order    = m_Fs / m_Fn / 2;
+        m_ElemNum1 = 1 * m_order;
+        m_ElemNum2 = 2 * m_order;
+        m_Ts       = 1 / m_Fs;
+        m_K1       = ( 1 + 0.19/0.5 );
+        m_K2       =  0.19 / 0.5;
+        m_out      = 0;
+        m_Km       = 0;
+        m_pH       = 0;
+    }
+
+    /*! \brief memory allocation function */
+    __ix32 allocate()
+    {
+        // auxiliary coefficients:
+        __fx64 A =  0.5 - 0.5 * cos(-6.283185307179586476925286766559 * (m_Fn + m_dF) * (__fx64)m_order * m_Ts );
+        __fx64 B =  1.0 - cos(-6.283185307179586476925286766559 * (m_Fn + m_dF) * (__fx64)m_order * 2.0 * m_Ts);
+        __fx64 C = -0.5 * sin(-6.283185307179586476925286766559 * (m_Fn + m_dF) * (__fx64)m_order * m_Ts);
+        __fx64 D = -sin(-6.283185307179586476925286766559 * (m_Fn + m_dF) * (__fx64)m_order * 2.0 * m_Ts);
+
+        // square equation coefficients:
+        __fx64 a  = 1;
+        __fx64 b  = 2 * ( A * B + C * D ) / (B * B + D * D);
+        __fx64 c  = (A * A + C * C - (1 + m_d_Amp / 100) * (1 + m_d_Amp / 100) ) / (B * B + D * D);
+
+        // square equation solve:
+        __fx64 discr  = b * b - 4 * a * c;
+        __fx64 K1     = 0;
+        __fx64 K2     = 0;
+
+        if ( discr > 0 ) // discriminant check
+        {
+            // roots computation:
+            K1 = ( -b - sqrt( discr ) ) * 0.5;
+            K2 = ( -b + sqrt( discr ) ) * 0.5;
+
+            // take the greates of the roots ( although, it does not matter which root you take... ):
+            m_K1 = (1 + fmax(K1 , K2) / 0.5);
+            m_K2 = fmax(K1, K2) / 0.5;
+        }
+        else // if discriminant is negative, then the amplitude frequency slope is not compensated
+        {
+            m_K1 = 1;
+            m_K2 = 0;
+        }
+
+        return m_bx.allocate( m_ElemNum2 + 1 );;
+    }
+
+    /*! \brief memory deallocation function */
+    void deallocate()
+    {
+        m_bx.deallocate();
+    }
+
+    /*! \brief frequency response computation function */
+    fir_fr< __fx64 > freq_resp( __fx64 F , bool mode = 0 )
+    {
+        __fx64 Re  = 0 , Im  = 0;
+
+        if( !mode ) // even filter
+        {
+            Re = m_K1 - cos(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * cos(-PI2 * 2 * (__fx64)m_order * F * m_Ts);
+            Im = 0    - sin(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * sin(-PI2 * 2 * (__fx64)m_order * F * m_Ts);
+        }
+        else // odd filter
+        {
+            Re = m_K1 + cos(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * cos(-PI2 * 2 * (__fx64)m_order * F * m_Ts);
+            Im = 0    + sin(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * sin(-PI2 * 2 * (__fx64)m_order * F * m_Ts);
+        }
+
+        m_pH = atan2(Im, Re);
+        m_Km = sqrt(Re * Re + Im * Im);
+        return { m_Km , m_pH };
+    }
+
+    /*!
+     *  \brief 32-bit floating point filtering function
+     *  \param[input] - pointer to the input signal samples buffer
+     *  \return The function returns filtering result
+    */
+    inline __fx64 filt( __type *input , bool odd = true)
+    {
+        m_bx(input);
+        return ( m_out = ( odd ) ? ( (__fx64)*input * m_K1 - (__fx64)m_bx[m_ElemNum1] - (__fx64)m_bx[m_ElemNum2] * m_K2 ) : ( (__fx64)*input * m_K1 + (__fx64)m_bx[m_ElemNum1] - (__fx64)m_bx[m_ElemNum2] * m_K2 ) );
+    }
+
+    /*!
+     *  \brief 64-bit floating point filtering function
+     *  \param[input] - pointer to the input signal samples buffer
+     *  \return The function returns filtering result
+    */
+    inline __fx64 filt( __fx64 *input , bool odd = true)
+    {
+        m_bx(input);
+        return ( m_out = ( odd ) ? ( *input * m_K1 - m_bx[m_ElemNum1] - m_bx[m_ElemNum2] * m_K2 ) : ( *input * m_K1 + (__fx64)m_bx[m_ElemNum1] - m_bx[m_ElemNum2] * m_K2 ) );
+    }
+
+    /*!
+     *  \brief 32-bit floating point filtering operator
+     *  \param[input] - pointer to the input signal samples buffer
+     *  \return The operatoe calls the function that returns filtering result
+    */
+    inline __fx64 operator ()( __type *input , bool odd = true ) { return filt( input , odd ); }
+
+    /*!
+     *  \brief 64-bit floating point filtering operator
+     *  \param[input] - pointer to the input signal samples buffer
+     *  \return The operatoe calls the function that returns filtering result
+    */
+    inline __fx64 operator ()( __fx64 *input , bool odd = true ) { return filt( input , odd ); }
+};
+
+/*! \brief 64-bit floating point FIR filter */
 template<> class fir<__fx64>
 {
     typedef __fx64 __type ;
@@ -836,13 +1180,21 @@ public:
     inline __type get_coeff( __ix32 n ) { return ( n <= m_sp.order ) ? m_cf[ n ] : 1e6; }
 
     /*!
+     *  \brief  32-bit FIR filter buffer filling function
+     *  \param[input] pointer to the input data array
+     *  \return the function returns FIR filtering result
+    */
+    inline void fill_fir_buff( __type *input ) { m_bx( input ); }
+
+    /*!
      *  \brief  FIR filtering function
      *  \param[input] pointer to the input data array
      *  \return the function returns FIR filtering result
     */
     inline __type filt( __type *input )
     {
-        m_bx( input ); m_out = 0;
+        m_bx( input );
+        m_out = 0;
         for ( __ix32 n = m_sp.order ; n >= 0; n--) m_out += m_bx[ n ] * m_cf[n];
         return m_out;
     }
@@ -864,6 +1216,273 @@ public:
      *  \return the () operator calls filt( __type *input ) function that returns FIR filtering result
     */
     inline __type operator() ( __type *input ) { return filt( input ); }
+};
+
+/*! \brief 64-bit floating point comb FIR filter */
+template<> class fcomb<__fx64>
+{
+    typedef __fx64 __type ;
+private:
+
+    /*! \brief input signal nominal frequency  , Hz */
+    __fx64 m_Fn;
+    /*! \brief input signal sampling frequency , Hz */
+    __fx64 m_Fs;
+    /*! \brief input signal nominal period     , s */
+    __fx64 m_Ts;
+    /*! \brief comb filter order */
+    __ix32 m_order;
+
+    /*! \brief comb filter buffer */
+     mirror_ring_buffer< __type > m_bx;
+
+public:
+
+    /*! \brief filter output */
+    __fx64 m_out;
+    /*! \brief filter frequency phase response */
+    __fx64 m_pH;
+    /*! \brief filter frequency amplitude response */
+    __fx64 m_Km;
+
+    /*!
+     *  \brief comb filter initialization function
+     *  \param[Fs] - input signal sampling frequency
+     *  \param[Fn] - input signal nominal frequency
+    */
+    __ix32 init( __fx64 Fs , __fx64 Fn )
+    {
+        m_Fs      = Fs;
+        m_Fn      = Fn;
+        m_Ts      = 1 / m_Fs;
+        m_order   = m_Fs / m_Fn / 2;
+        m_out     = 0;
+        m_Km      = 0;
+        m_pH      = 0;
+        return 0;
+    }
+
+    /*! \brief memory allocation function */
+    __ix32 allocate()
+    {
+        return m_bx.allocate( m_order + 1 );
+    }
+
+    /*! \brief memory deallocation function */
+    void deallocate()
+    {
+        m_bx.deallocate();
+    }
+
+    /*! \brief default constructor */
+    fcomb()
+    {
+        m_Fs      = 4000;
+        m_Fn      = 50;
+        m_Ts      = 1 / m_Fs;
+        m_order   = m_Fs / m_Fn / 2;
+        m_out     = 0;
+        m_Km      = 0;
+        m_pH      = 0;
+    }
+
+    /*! \brief default destructor */
+    ~fcomb(){ deallocate(); };
+
+    /*! \brief frequency response computation function */
+    fir_fr< __fx64 > freq_resp( __fx64 F )
+    {
+        __fx64 Re = 1 - cos(-6.283185307179586476925286766559  * m_order * F * m_Ts);
+        __fx64 Im = 0 - sin(-6.283185307179586476925286766559  * m_order * F * m_Ts);
+        m_pH = atan2(Im, Re);
+        m_Km = sqrt(Re * Re + Im * Im) * 0.5;
+        return { m_Km , m_pH };
+    }
+
+    /*!
+     *  \brief 32-bit floating point filtering function
+     *  \param[input] - pointer to the input signal samples buffer
+     *  \return The function returns filtering result
+    */
+    inline __fx64 filt( __type *input)
+    {
+        m_bx( input );
+        m_out = (__fx64)*input - (__fx64)m_bx[ m_order ];
+        return m_out;
+    }
+
+    /*!
+     *  \brief 32-bit floating point filtering operator
+     *  \param[input] - pointer to the input signal samples buffer
+     *  \return The operatoe calls the function that returns filtering result
+    */
+    inline __fx64 operator ()( __type *input ) { return filt(input); }
+};
+
+/*! \brief 64-bit floating point equalized comb FIR filter */
+template<> class fcombeq<__fx64>
+{
+    typedef __fx64 __type ;
+private:
+
+    /*! \brief input signal frequency deviation from nominal for which the amplitude frequency response slope compensation is implemented , Hz */
+    __fx64 m_dF;
+    /*! \brief residual amplitude frequency response slope for the input signal frequency deviation dF from nominal , p.u. */
+    __fx64 m_d_Amp;
+    /*! \brief input signal nominal frequency  , Hz */
+    __fx64 m_Fn;
+    /*! \brief input signal sampling frequency , Hz */
+    __fx64 m_Fs;
+    /*! \brief input signal sampling period , Hz */
+    __fx64 m_Ts;
+    /*! \brief auxiliary coefficient K1 */
+    __fx64 m_K1;
+    /*! \brief auxiliary coefficient K2 */
+    __fx64 m_K2;
+    /*! \brief filter order */
+    __ix32 m_order;
+    /*! \brief auxiliary coefficient ElemNum1 */
+    __ix32 m_ElemNum1;
+    /*! \brief auxiliary coefficient ElemNum2 */
+    __ix32 m_ElemNum2;
+
+    /*! \brief comb filter buffer */
+     mirror_ring_buffer< __type > m_bx;
+
+public:
+
+    /*! \brief filter output */
+    __fx64 m_out;
+    /*! \brief filter frequency phase response */
+    __fx64 m_pH;
+    /*! \brief filter frequency amplitude response */
+    __fx64 m_Km;
+
+    /*! \brief default constructor */
+    fcombeq()
+    {
+        m_Fs       = 4000;
+        m_Fn       = 50;
+        m_dF       = 5;
+        m_d_Amp    = 0;
+        m_order    = m_Fs / m_Fn / 2;
+        m_ElemNum1 = 1 * m_order;
+        m_ElemNum2 = 2 * m_order;
+        m_Ts       = 1 / m_Fs;
+        m_out      = 0;
+        m_Km       = 0;
+        m_pH       = 0;
+    }
+
+    /*! \brief default destructor */
+    ~fcombeq(){ deallocate(); }
+
+    /*!
+     *  \brief comb filter initialization function
+     *  \param[ Fs    ] - input signal sampling frequency
+     *  \param[ Fn    ] - input signal nominal frequency
+     *  \param[ dF    ] - input signal frequency deviation from nominal for which the amplitude frequency response slope compensation is implemented , Hz
+     *  \param[ d_Amp ] - residual amplitude frequency response slope for the input signal frequency deviation dF from nominal , p.u.
+    */
+    void init( __fx64 Fs, __fx64 Fn, __fx64 dF, __fx64 d_Amp )
+    {
+        m_Fs       = Fs;
+        m_Fn       = Fn;
+        m_dF       = dF;
+        m_d_Amp	   = d_Amp;
+        m_order    = m_Fs / m_Fn / 2;
+        m_ElemNum1 = 1 * m_order;
+        m_ElemNum2 = 2 * m_order;
+        m_Ts       = 1 / m_Fs;
+        m_K1       = ( 1 + 0.19/0.5 );
+        m_K2       =  0.19 / 0.5;
+        m_out      = 0;
+        m_Km       = 0;
+        m_pH       = 0;
+    }
+
+    /*! \brief memory allocation function */
+    __ix32 allocate()
+    {
+        // auxiliary coefficients:
+        __fx64 A =  0.5 - 0.5 * cos(-6.283185307179586476925286766559 * (m_Fn + m_dF) * (__fx64)m_order * m_Ts );
+        __fx64 B =  1.0 - cos(-6.283185307179586476925286766559 * (m_Fn + m_dF) * (__fx64)m_order * 2.0 * m_Ts);
+        __fx64 C = -0.5 * sin(-6.283185307179586476925286766559 * (m_Fn + m_dF) * (__fx64)m_order * m_Ts);
+        __fx64 D = -sin(-6.283185307179586476925286766559 * (m_Fn + m_dF) * (__fx64)m_order * 2.0 * m_Ts);
+
+        // square equation coefficients:
+        __fx64 a  = 1;
+        __fx64 b  = 2 * ( A * B + C * D ) / (B * B + D * D);
+        __fx64 c  = (A * A + C * C - (1 + m_d_Amp / 100) * (1 + m_d_Amp / 100) ) / (B * B + D * D);
+
+        // square equation solve:
+        __fx64 discr  = b * b - 4 * a * c;
+        __fx64 K1     = 0;
+        __fx64 K2     = 0;
+
+        if ( discr > 0 ) // discriminant check
+        {
+            // roots computation:
+            K1 = ( -b - sqrt( discr ) ) * 0.5;
+            K2 = ( -b + sqrt( discr ) ) * 0.5;
+
+            // take the greates of the roots ( although, it does not matter which root you take... ):
+            m_K1 = (1 + fmax(K1 , K2) / 0.5);
+            m_K2 = fmax(K1, K2) / 0.5;
+        }
+        else // if discriminant is negative, then the amplitude frequency slope is not compensated
+        {
+            m_K1 = 1;
+            m_K2 = 0;
+        }
+
+        return m_bx.allocate( m_ElemNum2 + 1 );;
+    }
+
+    /*! \brief memory deallocation function */
+    void deallocate()
+    {
+        m_bx.deallocate();
+    }
+
+    /*! \brief frequency response computation function */
+    fir_fr< __fx64 > freq_resp( __fx64 F , bool mode = 0 )
+    {
+        __fx64 Re  = 0 , Im  = 0;
+
+        if( !mode ) // even filter
+        {
+            Re = m_K1 - cos(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * cos(-PI2 * 2 * (__fx64)m_order * F * m_Ts);
+            Im = 0    - sin(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * sin(-PI2 * 2 * (__fx64)m_order * F * m_Ts);
+        }
+        else // odd filter
+        {
+            Re = m_K1 + cos(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * cos(-PI2 * 2 * (__fx64)m_order * F * m_Ts);
+            Im = 0    + sin(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * sin(-PI2 * 2 * (__fx64)m_order * F * m_Ts);
+        }
+
+        m_pH = atan2(Im, Re);
+        m_Km = sqrt(Re * Re + Im * Im);
+        return { m_Km , m_pH };
+    }
+
+    /*!
+     *  \brief 32-bit floating point filtering function
+     *  \param[input] - pointer to the input signal samples buffer
+     *  \return The function returns filtering result
+    */
+    inline __fx64 filt( __type *input , bool odd = true)
+    {
+        m_bx(input);
+        return ( m_out = ( odd ) ? ( (__fx64)*input * m_K1 - (__fx64)m_bx[m_ElemNum1] - (__fx64)m_bx[m_ElemNum2] * m_K2 ) : ( (__fx64)*input * m_K1 + (__fx64)m_bx[m_ElemNum1] - (__fx64)m_bx[m_ElemNum2] * m_K2 ) );
+    }
+
+    /*!
+     *  \brief 32-bit floating point filtering operator
+     *  \param[input] - pointer to the input signal samples buffer
+     *  \return The operatoe calls the function that returns filtering result
+    */
+    inline __fx64 operator ()( __type *input , bool odd = true ) { return filt( input , odd ); }
 };
 
 /*! @} */

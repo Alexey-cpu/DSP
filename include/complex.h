@@ -11,7 +11,7 @@
 #ifndef COMPLEX_H
 #define COMPLEX_H
 
-/*! \defgroup <Complex_fcn> ( Complex numbers functions )
+/*! \defgroup <COMPLEX_ARITHMETICS> ( Complex numbers functions )
  *  \brief the module describes complex numbers functions
     @{
 */

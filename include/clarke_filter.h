@@ -8,7 +8,7 @@
  * The header declares ring buffer and mirror ring buffer template classes
 */
 
-/*! \defgroup <Three_phase_transformation_fcn> ( Three phase ortohonal transformations )
+/*! \defgroup <THREE_PHASE_TRANSFORMATIONS> ( Three phase ortohonal transformations )
  *  \brief the module describes complex numbers functions
     @{
 */

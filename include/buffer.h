@@ -17,7 +17,7 @@
 #include <iostream>
 #endif
 
-/*! \defgroup <BUFFER_fcn> ( Buffers )
+/*! \defgroup <BUFFERS> ( Buffers )
  *  \brief the module contains mirror ring buffer and classic ring buffer template classes
     @{
 */

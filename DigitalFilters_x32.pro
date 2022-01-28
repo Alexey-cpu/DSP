@@ -18,6 +18,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     include/buffer.h \
     include/complex.h \
+    include/examples.h \
     include/fir.h \
     include/iir.h \
     include/logical.h \
