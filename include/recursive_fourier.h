@@ -136,7 +136,7 @@ public:
      *  \param[hnum] - number of computed harmonic
      *  \return the function initializes recursive Fourier filter
    */
-    void init( __type Fn , __type Fs , __ix32 hnum )
+    void init( __type Fs , __type Fn , __ix32 hnum )
     {
         // system variables initialization:
         m_Fn      = Fn;
@@ -185,7 +185,7 @@ public:
      *  \param[hnum] - number of computed harmonic
      *  \return This constructor calls initialization function
     */
-    recursive_fourier( __type Fn , __type Fs , __ix32 hnum ) { init( Fn , Fs , hnum ); }
+    recursive_fourier( __type Fs , __type Fn , __ix32 hnum ) { init( Fs , Fn , hnum ); }
 
     /*! \brief  recursive Fourier filter default destructor */
     ~recursive_fourier(){ deallocate(); }
@@ -312,7 +312,7 @@ public:
      *  \param[hnum] - number of computed harmonic
      *  \return the function initializes recursive Fourier filter
    */
-    void init( __fx64 Fn , __fx64 Fs , __ix32 hnum )
+    void init( __fx64 Fs , __fx64 Fn , __ix32 hnum )
     {
         // system variables initialization:
         m_Fn      = Fn;
@@ -361,7 +361,7 @@ public:
      *  \param[hnum] - number of computed harmonic
      *  \return This constructor calls initialization function
     */
-    recursive_fourier( __fx64 Fn , __fx64 Fs , __ix32 hnum ) { init( Fn , Fs , hnum ); }
+    recursive_fourier( __fx64 Fs , __fx64 Fn , __ix32 hnum ) { init( Fs , Fn , hnum ); }
 
     /*! \brief  recursive Fourier filter default destructor */
     ~recursive_fourier(){ deallocate(); }

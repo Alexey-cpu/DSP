@@ -127,32 +127,10 @@ public:
     /*! \brief mirror ring buffer destructor */
     ~mirror_ring_buffer() { deallocate(); }
 
-    // biffer filling function:
-
-    /*! \brief mirror ring buffer filling function
+    /*! \brief mirror ring buffer template filling function
      * \param[input] pointer to the input data
     */
-    inline void fill_buff( __type *input )
-    {
-        *m_lower = *input;
-        *m_upper = *input;
-        if( ++m_buffpos >= m_nelem )
-        {
-            m_lower = &m_data[0];
-            m_upper = &m_data[m_nelem];
-            m_buffpos = 0;
-        }
-        else
-        {
-            m_lower++;
-            m_upper++;
-        }
-    }
-
-    /*! \brief mirror ring buffer filling function
-     * \param[input] pointer to the input data
-    */
-    inline void fill_buff( __fx64 *input )
+    template< typename T > inline void fill_buff( T *input )
     {
         *m_lower = *input;
         *m_upper = *input;
@@ -183,14 +161,14 @@ public:
      * \return the operator call puts the data into the buffer by
      *         means of calling fill_buff( __type *input ) function
     */
-    inline void operator () ( __type *input ){ fill_buff( input ); }
+    inline void operator () ( __type *input ){ fill_buff< __type >( input ); }
 
     /*! \brief mirror ring buffer () operator
      * \param[input] pointer to the input data
      * \return the operator call puts the data into the buffer by
      *         means of calling fill_buff( __type *input ) function
     */
-    inline void operator () ( __fx64 *input ){ fill_buff( input ); }
+    inline void operator () ( __fx64 *input ){ fill_buff< __fx64 >( input ); }
 };
 
 /*! \brief 64-bit floating point mirror ring buffer */
@@ -254,10 +232,10 @@ public:
 
     // biffer filling function:
 
-    /*! \brief mirror ring buffer filling function
+    /*! \brief mirror ring buffer template filling function
      * \param[input] pointer to the input data
     */
-    inline void fill_buff( __type *input )
+    template< typename T > inline void fill_buff( T *input )
     {
         *m_lower = *input;
         *m_upper = *input;
@@ -288,7 +266,7 @@ public:
      * \return the operator call puts the data into the buffer by
      *         means of calling fill_buff( __type *input ) function
     */
-    inline void operator () ( __type *input ){ fill_buff( input ); }
+    inline void operator () ( __type *input ){ fill_buff< __type >( input ); }
 };
 
 /*! \brief 32-bit integer mirror ring buffer */
@@ -352,30 +330,10 @@ public:
 
     // biffer filling function:
 
-    /*! \brief mirror ring buffer filling function
+    /*! \brief mirror ring buffer template filling function
      * \param[input] pointer to the input data
     */
-    inline void fill_buff( __type *input )
-    {
-        *m_lower = *input;
-        *m_upper = *input;
-        if( ++m_buffpos >= m_nelem )
-        {
-            m_lower = &m_data[0];
-            m_upper = &m_data[m_nelem];
-            m_buffpos = 0;
-        }
-        else
-        {
-            m_lower++;
-            m_upper++;
-        }
-    }
-
-    /*! \brief mirror ring buffer filling function
-     * \param[input] pointer to the input data
-    */
-    inline void fill_buff( __ix64 *input )
+    template< typename T > inline void fill_buff( T *input )
     {
         *m_lower = *input;
         *m_upper = *input;
@@ -406,14 +364,14 @@ public:
      * \return the operator call puts the data into the buffer by
      *         means of calling fill_buff( __type *input ) function
     */
-    inline void operator () ( __type *input ){ fill_buff( input ); }
+    inline void operator () ( __type *input ){ fill_buff< __type >( input ); }
 
     /*! \brief mirror ring buffer () operator
      * \param[input] pointer to the input data
      * \return the operator call puts the data into the buffer by
      *         means of calling fill_buff( __type *input ) function
     */
-    inline void operator () ( __ix64 *input ){ fill_buff( input ); }
+    inline void operator () ( __ix64 *input ){ fill_buff< __ix64 >( input ); }
 };
 
 /*! \brief 32-bit integer mirror ring buffer */
@@ -477,10 +435,10 @@ public:
 
     // biffer filling function:
 
-    /*! \brief mirror ring buffer filling function
+    /*! \brief mirror ring buffer template filling function
      * \param[input] pointer to the input data
     */
-    inline void fill_buff( __type *input )
+    template< typename T > inline void fill_buff( T *input )
     {
         *m_lower = *input;
         *m_upper = *input;
@@ -511,7 +469,369 @@ public:
      * \return the operator call puts the data into the buffer by
      *         means of calling fill_buff( __type *input ) function
     */
-    inline void operator () ( __type *input ){ fill_buff( input ); }
+    inline void operator () ( __type *input ){ fill_buff< __type >( input ); }
+};
+
+/*! \brief 32-bit floating point ring buffer */
+template<> class ring_buffer<__fx32>
+{
+    typedef __fx32 __type;
+public:
+    /*! \brief mirror ring buffer lower half pointer */
+    __type *m_lower;
+    /*! \brief mirror ring buffer data pointer */
+    __type *m_data;
+     /*! \brief mirror ring buffer size */
+    __ix32  m_nelem;
+     /*! \brief mirror ring buffer position */
+    __ix32  m_buffpos;
+
+    /*! \brief mirror ring buffer memory allocation function
+     *  \param[nelem] the mirror ring buffer size
+    */
+    __ix32 allocate( __ix32 nelem )
+    {
+        if( ( nelem > 0 ) && !m_data )
+        {
+            m_nelem = nelem;
+            m_data  = ( __type* ) calloc( ( m_nelem ) , sizeof ( __type ) );
+            m_lower = ( m_data ) ? &m_data[0] : 0;
+            return ( m_data != 0 );
+        }
+        else return 0;
+    }
+
+    /*! \brief mirror ring buffer memory deallocation function */
+    void deallocate()
+    {
+        if( m_data != 0 )
+        {
+            free( m_data );
+            m_data = 0;
+        }
+    }
+
+    /*! \brief mirror ring buffer default constructor */
+    ring_buffer()
+    {
+        m_lower   = 0;
+        m_data    = 0;
+        m_nelem   = 0;
+        m_buffpos = 0;
+    }
+
+    /*! \brief mirror ring buffer destructor */
+    ~ring_buffer() { deallocate(); }
+
+    // biffer filling function:
+
+    /*! \brief mirror ring buffer template filling function
+     * \param[input] pointer to the input data
+    */
+    template< typename T > inline void fill_buff( T *input )
+    {
+        *m_lower = *input;
+        if( ++m_buffpos >= m_nelem )
+        {
+            m_lower   = &m_data[0];
+            m_buffpos = 0;
+        }
+        else
+        {
+            m_lower++;
+        }
+    }
+
+    // operators:
+
+    /*! \brief mirror ring buffer [] operator
+     * \param[n] sample number
+     * \return the operator call returns a sample that is on the left from the current
+     *         mirror ring buffer position
+    */
+    inline __type operator [] ( __ix32 n ) { return m_data[n]; }
+
+    /*! \brief mirror ring buffer () operator
+     * \param[input] pointer to the input data
+     * \return the operator call puts the data into the buffer by
+     *         means of calling fill_buff( __type *input ) function
+    */
+    inline void operator () ( __type *input ){ fill_buff< __type >( input ); }
+
+    /*! \brief mirror ring buffer () operator
+     * \param[input] pointer to the input data
+     * \return the operator call puts the data into the buffer by
+     *         means of calling fill_buff( __type *input ) function
+    */
+    inline void operator () ( __fx64 *input ){ fill_buff< __fx64 >( input ); }
+};
+
+/*! \brief 64-bit floating point ring buffer */
+template<> class ring_buffer<__fx64>
+{
+    typedef __fx64 __type;
+public:
+    /*! \brief mirror ring buffer lower half pointer */
+    __type *m_lower;
+    /*! \brief mirror ring buffer data pointer */
+    __type *m_data;
+     /*! \brief mirror ring buffer size */
+    __ix32  m_nelem;
+     /*! \brief mirror ring buffer position */
+    __ix32  m_buffpos;
+
+    /*! \brief mirror ring buffer memory allocation function
+     *  \param[nelem] the mirror ring buffer size
+    */
+    __ix32 allocate( __ix32 nelem )
+    {
+        if( ( nelem > 0 ) && !m_data )
+        {
+            m_nelem = nelem;
+            m_data  = ( __type* ) calloc( ( m_nelem ) , sizeof ( __type ) );
+            m_lower = ( m_data ) ? &m_data[0] : 0;
+            return ( m_data != 0 );
+        }
+        else return 0;
+    }
+
+    /*! \brief mirror ring buffer memory deallocation function */
+    void deallocate()
+    {
+        if( m_data != 0 )
+        {
+            free( m_data );
+            m_data = 0;
+        }
+    }
+
+    /*! \brief mirror ring buffer default constructor */
+    ring_buffer()
+    {
+        m_lower   = 0;
+        m_data    = 0;
+        m_nelem   = 0;
+        m_buffpos = 0;
+    }
+
+    /*! \brief mirror ring buffer destructor */
+    ~ring_buffer() { deallocate(); }
+
+    // biffer filling function:
+
+    /*! \brief mirror ring buffer template filling function
+     * \param[input] pointer to the input data
+    */
+    template< typename T > inline void fill_buff( T *input )
+    {
+        *m_lower = *input;
+        if( ++m_buffpos >= m_nelem )
+        {
+            m_lower   = &m_data[0];
+            m_buffpos = 0;
+        }
+        else
+        {
+            m_lower++;
+        }
+    }
+
+    // operators:
+
+    /*! \brief mirror ring buffer [] operator
+     * \param[n] sample number
+     * \return the operator call returns a sample that is on the left from the current
+     *         mirror ring buffer position
+    */
+    inline __type operator [] ( __ix32 n ) { return m_data[n]; }
+
+    /*! \brief mirror ring buffer () operator
+     * \param[input] pointer to the input data
+     * \return the operator call puts the data into the buffer by
+     *         means of calling fill_buff( __type *input ) function
+    */
+    inline void operator () ( __type *input ){ fill_buff< __type >( input ); }
+};
+
+/*! \brief 32-bit integer ring buffer */
+template<> class ring_buffer<__ix32>
+{
+    typedef __ix32 __type;
+public:
+    /*! \brief mirror ring buffer lower half pointer */
+    __type *m_lower;
+    /*! \brief mirror ring buffer data pointer */
+    __type *m_data;
+     /*! \brief mirror ring buffer size */
+    __ix32  m_nelem;
+     /*! \brief mirror ring buffer position */
+    __ix32  m_buffpos;
+
+    /*! \brief mirror ring buffer memory allocation function
+     *  \param[nelem] the mirror ring buffer size
+    */
+    __ix32 allocate( __ix32 nelem )
+    {
+        if( ( nelem > 0 ) && !m_data )
+        {
+            m_nelem = nelem;
+            m_data  = ( __type* ) calloc( ( m_nelem ) , sizeof ( __type ) );
+            m_lower = ( m_data ) ? &m_data[0] : 0;
+            return ( m_data != 0 );
+        }
+        else return 0;
+    }
+
+    /*! \brief mirror ring buffer memory deallocation function */
+    void deallocate()
+    {
+        if( m_data != 0 )
+        {
+            free( m_data );
+            m_data = 0;
+        }
+    }
+
+    /*! \brief mirror ring buffer default constructor */
+    ring_buffer()
+    {
+        m_lower   = 0;
+        m_data    = 0;
+        m_nelem   = 0;
+        m_buffpos = 0;
+    }
+
+    /*! \brief mirror ring buffer destructor */
+    ~ring_buffer() { deallocate(); }
+
+    // biffer filling function:
+
+    /*! \brief mirror ring buffer template filling function
+     * \param[input] pointer to the input data
+    */
+    template< typename T > inline void fill_buff( T *input )
+    {
+        *m_lower = *input;
+        if( ++m_buffpos >= m_nelem )
+        {
+            m_lower   = &m_data[0];
+            m_buffpos = 0;
+        }
+        else
+        {
+            m_lower++;
+        }
+    }
+
+    // operators:
+
+    /*! \brief mirror ring buffer [] operator
+     * \param[n] sample number
+     * \return the operator call returns a sample that is on the left from the current
+     *         mirror ring buffer position
+    */
+    inline __type operator [] ( __ix32 n ) { return m_data[n]; }
+
+    /*! \brief mirror ring buffer () operator
+     * \param[input] pointer to the input data
+     * \return the operator call puts the data into the buffer by
+     *         means of calling fill_buff( __type *input ) function
+    */
+    inline void operator () ( __type *input ){ fill_buff< __type >( input ); }
+
+    /*! \brief mirror ring buffer () operator
+     * \param[input] pointer to the input data
+     * \return the operator call puts the data into the buffer by
+     *         means of calling fill_buff( __type *input ) function
+    */
+    inline void operator () ( __ix64 *input ){ fill_buff< __ix64 >( input ); }
+};
+
+/*! \brief 64-bit integer ring buffer */
+template<> class ring_buffer<__ix64>
+{
+    typedef __ix64 __type;
+public:
+    /*! \brief mirror ring buffer lower half pointer */
+    __type *m_lower;
+    /*! \brief mirror ring buffer data pointer */
+    __type *m_data;
+     /*! \brief mirror ring buffer size */
+    __ix32  m_nelem;
+     /*! \brief mirror ring buffer position */
+    __ix32  m_buffpos;
+
+    /*! \brief mirror ring buffer memory allocation function
+     *  \param[nelem] the mirror ring buffer size
+    */
+    __ix32 allocate( __ix32 nelem )
+    {
+        if( ( nelem > 0 ) && !m_data )
+        {
+            m_nelem = nelem;
+            m_data  = ( __type* ) calloc( ( m_nelem ) , sizeof ( __type ) );
+            m_lower = ( m_data ) ? &m_data[0] : 0;
+            return ( m_data != 0 );
+        }
+        else return 0;
+    }
+
+    /*! \brief mirror ring buffer memory deallocation function */
+    void deallocate()
+    {
+        if( m_data != 0 )
+        {
+            free( m_data );
+            m_data = 0;
+        }
+    }
+
+    /*! \brief mirror ring buffer default constructor */
+    ring_buffer()
+    {
+        m_lower   = 0;
+        m_data    = 0;
+        m_nelem   = 0;
+        m_buffpos = 0;
+    }
+
+    /*! \brief mirror ring buffer destructor */
+    ~ring_buffer() { deallocate(); }
+
+    // biffer filling function:
+
+    /*! \brief mirror ring buffer template filling function
+     * \param[input] pointer to the input data
+    */
+    template< typename T > inline void fill_buff( T *input )
+    {
+        *m_lower = *input;
+        if( ++m_buffpos >= m_nelem )
+        {
+            m_lower   = &m_data[0];
+            m_buffpos = 0;
+        }
+        else
+        {
+            m_lower++;
+        }
+    }
+
+    // operators:
+
+    /*! \brief mirror ring buffer [] operator
+     * \param[n] sample number
+     * \return the operator call returns a sample that is on the left from the current
+     *         mirror ring buffer position
+    */
+    inline __type operator [] ( __ix32 n ) { return m_data[n]; }
+
+    /*! \brief mirror ring buffer () operator
+     * \param[input] pointer to the input data
+     * \return the operator call puts the data into the buffer by
+     *         means of calling fill_buff( __type *input ) function
+    */
+    inline void operator () ( __type *input ){ fill_buff< __type >( input ); }
 };
 
 /*! @} */

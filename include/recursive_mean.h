@@ -84,6 +84,10 @@ template< typename T > class recursive_mean;
 template<> class recursive_mean<__fx32>
 {
     typedef __fx32 __type;
+
+    /*! \brief frequency response data structure */
+    struct fr { __fx64 Km , pH; };
+
 private:
     /*! \brief nominal input signal frequency , Hz */
     __fx64 m_Fn;
@@ -125,7 +129,7 @@ public:
      *  \param[order] - recursive mean filter order
      *  \return the function initializes recursive mean filter
    */
-    void init( __fx64 Fn , __fx64 Fs , __ix32 order )
+    void init( __fx64 Fs , __fx64 Fn , __ix32 order )
     {
         m_Fs      = Fs;
         m_Fn      = Fn;
@@ -152,7 +156,7 @@ public:
      *  \param[order] - recursive mean filter order
      *  \return This constructor calls initialization function
     */
-    recursive_mean( __fx64 Fn , __fx64 Fs , __ix32 order ) { init( Fn , Fs , order ); }
+    recursive_mean( __fx64 Fs , __fx64 Fn , __ix32 order ) { init( Fs , Fn , order ); }
 
     /*! \brief  recursive mean filter default destructor */
     ~recursive_mean(){ deallocate(); }
@@ -161,7 +165,7 @@ public:
      *  \param[F] - input signal frequency , Hz
      *  \return The function computes phase and amplitude frequency response for the signal having frequency F
     */
-    __ix32 FreqCharacteristics( __fx64 F )
+    fr freq_resp( __fx64 F )
     {
         __fx64 Re_nom = 0 , Im_nom = 0 , Re_den = 0 , Im_den = 0 , Re = 0 , Im = 0;
         Re_nom = 1 - cos(-PI2 * F * m_Ns * m_Ts);
@@ -172,7 +176,7 @@ public:
         Im   = (Re_den * Im_nom - Re_nom * Im_den) / (Re_den * Re_den + Im_den * Im_den);
         m_Km = m_Gain * sqrt(Re * Re + Im * Im);
         m_pH = atan2(Im , Re);
-        return 0;
+        return { m_Km , m_pH };
     }
 
     // filtering function:
@@ -214,6 +218,10 @@ public:
 template<> class recursive_mean<__fx64>
 {
     typedef __fx64 __type;
+
+    /*! \brief frequency response data structure */
+    struct fr { __fx64 Km , pH; };
+
 private:
     /*! \brief nominal input signal frequency , Hz */
     __fx64 m_Fn;
@@ -255,7 +263,7 @@ public:
      *  \param[order] - recursive mean filter order
      *  \return the function initializes recursive mean filter
    */
-    void init( __fx64 Fn , __fx64 Fs , __ix32 order )
+    void init( __fx64 Fs , __fx64 Fn , __ix32 order )
     {
         m_Fs      = Fs;
         m_Fn      = Fn;
@@ -282,7 +290,7 @@ public:
      *  \param[order] - recursive mean filter order
      *  \return This constructor calls initialization function
     */
-    recursive_mean( __fx64 Fn , __fx64 Fs , __ix32 order ) { init( Fn , Fs , order ); }
+    recursive_mean( __fx64 Fs , __fx64 Fn , __ix32 order ) { init( Fs , Fn , order ); }
 
     /*! \brief  recursive mean filter default destructor */
     ~recursive_mean(){ deallocate(); }
@@ -291,9 +299,9 @@ public:
      *  \param[F] - input signal frequency , Hz
      *  \return The function computes phase and amplitude frequency response for the signal having frequency F
     */
-    __ix32 FreqCharacteristics( __fx64 F )
+    fr freq_resp( __fx64 F )
     {
-        __type Re_nom = 0 , Im_nom = 0 , Re_den = 0 , Im_den = 0 , Re = 0 , Im = 0;
+        __fx64 Re_nom = 0 , Im_nom = 0 , Re_den = 0 , Im_den = 0 , Re = 0 , Im = 0;
         Re_nom = 1 - cos(-PI2 * F * m_Ns * m_Ts);
         Im_nom = 0 - sin(-PI2 * F * m_Ns * m_Ts);
         Re_den = 1 - cos(-PI2 * F * m_Ts);
@@ -302,7 +310,7 @@ public:
         Im   = (Re_den * Im_nom - Re_nom * Im_den) / (Re_den * Re_den + Im_den * Im_den);
         m_Km = m_Gain * sqrt(Re * Re + Im * Im);
         m_pH = atan2(Im , Re);
-        return 0;
+        return { m_Km , m_pH };
     }
 
     /*! \brief  32-bit recursive mean filter filtering function

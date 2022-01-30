@@ -20,10 +20,11 @@
 // DSP template library headers:
 #include "include/special_functions.h"
 #include "include/buffer.h"
-#include "include/FIR.h"
+#include "include/fir.h"
 #include "include/sgen.h"
 #include "include/iir.h"
 #include "include/recursive_fourier.h"
+#include "include/quad_mltpx.h"
 
 /*! \brief special functions utilization example and check */
 int example0()
@@ -450,5 +451,184 @@ int example4()
     return 0;
 }
 
+/*! \brief real-time quadrature demodulator utilization example and test  */
+int example5()
+{
+    printf( " ...real-time quadrature demodulator utilization example and test... \n " );
+
+    // define filter and it's input signal data types:
+    typedef float  __flt_type;
+    typedef float __gen_type;
+
+    // emulation parameters:
+    double Fs                = 4000;
+    double Fn                = 50;
+    double time              = 0;
+    double EmulationDuration = 0.08;
+    int    CycleWidth        = 5;
+    int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
+    int    frames_per_cycle  = CycleWidth * Fs / 1000;
+
+    // logs directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // files:
+    std::ofstream yt;
+    std::ofstream re;
+    std::ofstream im;
+    std::ofstream abs;
+    std::ofstream phs;
+    std::ofstream df;
+    std::ofstream ff;
+    std::ofstream tt;
+    yt .open( directory + "\\yt.txt"  );
+    re .open( directory + "\\re.txt"  );
+    im .open( directory + "\\im.txt"  );
+    abs.open( directory + "\\abs.txt" );
+    phs.open( directory + "\\phs.txt" );
+    df .open( directory + "\\df.txt"  );
+    ff .open( directory + "\\ff.txt"   );
+    tt .open( directory + "\\tt.txt"   );
+
+    // signal generator:
+    sgen< __gen_type > gen;
+    __gen_type *signal = ( __gen_type* )calloc( frames_per_cycle , sizeof ( __gen_type ) );
+
+    // filter initialization and memory allocation:
+    quad_mltpx_rt<__flt_type> mltpx;
+    mltpx.init( Fs , Fn , CycleWidth );
+    mltpx.allocate();
+
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        // generating signal buffer:
+        for( int j = 0 ; j < frames_per_cycle ; j++ ) signal[j] = gen( 1 , Fn , 30 , Fs );
+
+        // signal parameters computation:
+        mltpx( signal , 0 , 0 );
+
+        // generating outout:
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            yt  << signal[j]     << "\n";
+            re  << mltpx.m_Re[j] << "\n";
+            im  << mltpx.m_Im[j] << "\n";
+            abs << sqrt( mltpx.m_Re[j] * mltpx.m_Re[j] + mltpx.m_Im[j] *  mltpx.m_Im[j] ) << "\n";
+            phs << atan2( mltpx.m_Im[j] , mltpx.m_Re[j] ) * 180 / 3.14 << "\n";
+            df  << mltpx.m_dF << "\n";
+            ff  << mltpx.m_F  << "\n";
+            tt  << time  << "\n";
+            time += 1/ Fs;
+        }
+    }
+
+    // close files:
+    yt .close();
+    re .close();
+    im .close();
+    abs.close();
+    phs.close();
+    df .close();
+    ff .close();
+    tt .close();
+
+    // memory deallocation:
+    mltpx.deallocate();
+    free( signal );
+
+    return 0;
+}
+
+/*! \brief quadrature demodulator utilization example and test  */
+int example6()
+{
+    printf( " ... quadrature demodulator utilization example and test... \n " );
+
+    // define filter and it's input signal data types:
+    typedef float __flt_type;
+    typedef float __gen_type;
+
+    // emulation parameters:
+    double Fs                = 4000;
+    double Fn                = 50;
+    double time              = 0;
+    double EmulationDuration = 0.08;
+    int    CycleWidth        = 5;
+    int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
+    int    frames_per_cycle  = CycleWidth * Fs / 1000;
+
+    // logs directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // files:
+    std::ofstream yt;
+    std::ofstream re;
+    std::ofstream im;
+    std::ofstream abs;
+    std::ofstream phs;
+    std::ofstream df;
+    std::ofstream ff;
+    std::ofstream tt;
+    yt .open( directory + "\\yt.txt"  );
+    re .open( directory + "\\re.txt"  );
+    im .open( directory + "\\im.txt"  );
+    abs.open( directory + "\\abs.txt" );
+    phs.open( directory + "\\phs.txt" );
+    df .open( directory + "\\df.txt"  );
+    ff .open( directory + "\\ff.txt"   );
+    tt .open( directory + "\\tt.txt"   );
+
+    // signal generator:
+    sgen< __gen_type > gen;
+    __gen_type *signal = ( __gen_type* )calloc( frames_per_cycle , sizeof ( __gen_type ) );
+
+    // filter initialization and memory allocation:
+    quad_mltpx<__flt_type> mltpx;
+    mltpx.init( Fs , Fn , 60 , 95 , CycleWidth );
+    mltpx.allocate();
+
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        // generating signal buffer:
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            // generating output:
+            signal[j] = gen( 1 , Fn , 30 , Fs );
+        }
+
+        // signal parameters computation:
+        mltpx( signal , 0 );
+
+        // generating output:
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            yt  << signal[j] << "\n";
+            re  << mltpx.m_Re << "\n";
+            im  << mltpx.m_Im << "\n";
+            abs << sqrt( mltpx.m_Re * mltpx.m_Re + mltpx.m_Im *  mltpx.m_Im ) << "\n";
+            phs << atan2( mltpx.m_Im , mltpx.m_Re ) * 180 / 3.14 << "\n";
+            df  << mltpx.m_dF << "\n";
+            ff  << mltpx.m_F  << "\n";
+            tt  << time  << "\n";
+            time += 1/ Fs;
+        }
+    }
+
+    // close files:
+    yt .close();
+    re .close();
+    im .close();
+    abs.close();
+    phs.close();
+    df .close();
+    ff .close();
+    tt .close();
+
+    // memory deallocation:
+    mltpx.deallocate();
+    free( signal );
+
+    return 0;
+}
 
 #endif // EXAMPLES_H

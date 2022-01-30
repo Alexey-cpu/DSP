@@ -130,7 +130,7 @@ public:
      *  \param[order] - recursive mean filter order
      *  \return the function initializes recursive root mean square filter
    */
-    void init( __fx64 Fn , __fx64 Fs , __ix32 order )
+    void init( __fx64 Fs , __fx64 Fn , __ix32 order )
     {
         m_Fs      = Fs;
         m_Fn      = Fn;
@@ -161,7 +161,7 @@ public:
      *  \param[order] - recursive mean filter order
      *  \return This constructor calls initialization function
     */
-    recursive_rms( __fx64 Fn , __fx64 Fs , __ix32 order ) { init( Fn , Fs , order ); }
+    recursive_rms( __fx64 Fs , __fx64 Fn , __ix32 order ) { init( Fs , Fn , order ); }
 
     /*! \brief  recursive root mean square filter default destructor */
     ~recursive_rms(){ deallocate(); }
@@ -271,7 +271,7 @@ public:
      *  \param[order] - recursive mean filter order
      *  \return the function initializes recursive root mean square filter
    */
-    void init( __fx64 Fn , __fx64 Fs , __ix32 order )
+    void init( __fx64 Fs , __fx64 Fn , __ix32 order )
     {
         m_Fs      = Fs;
         m_Fn      = Fn;
@@ -302,7 +302,7 @@ public:
      *  \param[order] - recursive mean filter order
      *  \return This constructor calls initialization function
     */
-    recursive_rms( __fx64 Fn , __fx64 Fs , __ix32 order ) { init( Fn , Fs , order ); }
+    recursive_rms( __fx64 Fs , __fx64 Fn , __ix32 order ) { init( Fs , Fn , order ); }
 
     /*! \brief  recursive root mean square filter default destructor */
     ~recursive_rms(){ deallocate(); }

@@ -22,12 +22,13 @@ HEADERS += \
     include/fir.h \
     include/iir.h \
     include/logical.h \
+    include/quad_mltpx.h \
     include/recursive_fourier.h \
     include/recursive_mean.h \
     include/recursive_rms.h \
     include/sgen.h \
     include/special_functions.h \
-    include/clarke_filter.h \
+    include/transformations.h
 
 DISTFILES += \
     .gitignore

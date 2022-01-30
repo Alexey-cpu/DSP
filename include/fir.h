@@ -815,8 +815,7 @@ public:
     inline __fx64 filt( __type *input)
     {
         m_bx( input );
-        m_out = (__fx64)*input - (__fx64)m_bx[ m_order ];
-        return m_out;
+        return ( m_out = (__fx64)*input - (__fx64)m_bx[ m_order ] );
     }
 
     /*!
@@ -1490,6 +1489,7 @@ public:
 #undef __fx32
 #undef __fx64
 #undef __ix32
+#undef __fxx64
 
 // customized pi undef:
 #undef PI0

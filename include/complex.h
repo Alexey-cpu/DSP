@@ -406,6 +406,13 @@ public:
     {
         return ( this->m_re == _complex.m_re ) && ( this->m_im == _complex.m_im );
     }
+
+    // initializing operator:
+    inline void operator () ( __type re , __type im )
+    {
+        this->m_re = re;
+        this->m_im = im;
+    }
 };
 
 /*!

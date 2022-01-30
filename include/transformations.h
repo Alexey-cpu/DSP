@@ -16,6 +16,8 @@
 #ifndef СLARKE_FILTER_H
 #define СLARKE_FILTER_H
 
+#include "math.h"
+
 /*! \brief defines 16-bit integer type */
 #ifndef __ix16
 #define __ix16 short
@@ -41,8 +43,31 @@
 #define __fx64 double
 #endif
 
+/*! \brief defines pi */
+#ifndef PI0
+#define PI0 3.1415926535897932384626433832795
+#endif
+
+/*! \brief defines 2*pi */
+#ifndef PI2
+#define PI2 6.283185307179586476925286766559
+#endif
+
+/*! \brief defines pi / 2 */
+#ifndef PI_2
+#define PI_2 1.5707963267948966192313216916398
+#endif
+
+/*! \brief defines pi / 4 */
+#ifndef PI_4
+#define PI_4 0.78539816339744830961566084581988
+#endif
+
 /*! \brief Clarke's forward / backward transformation template class */
 template< typename T > class Clarke_filter;
+
+/*! \brief Parkes's forward / backward transformation template class */
+template< typename T > class Park_filter;
 
 /*! \brief Clarke's forward / backward 32-bit filter */
 template<> class Clarke_filter< __fx32 >
@@ -257,6 +282,92 @@ public:
     }
 };
 
+/*! \brief Parkes's forward / backward 32-bit filter */
+template<> class Park_filter< __fx32 >
+{
+    typedef __fx32 __type;
+private:
+    __type m_cnt , m_k1 , m_k2;
+public:
+    /*!
+     *  \brief Parkes's forward / backward 32-bit filter
+     *  \param[m_a] alpha component of Clarke's transformation
+     *  \param[m_b] betta component of Clarke's transformation
+     *  \param[m_c] zero component of Clarke's transformation
+    */
+    __type m_a , m_b , m_c;
+
+    /*! \brief default constructor */
+    Park_filter() { m_a = m_b = m_c = 0; m_cnt = 0; m_k1 = 2.0 / 3.0; m_k2 = 1.0 / 3.0; }
+
+    /*! \brief default destructor */
+    ~Park_filter(){}
+
+    /*!
+     *  \brief toward transformation
+    */
+    inline void toward_transformation( __type *A, __type *B, __type *C, __fx64 Fn , __fx64 Fs, bool a_axis_alignment = 1 )
+    {
+        // angles computation:
+        __type phi0 = PI2 * Fn * (__type)m_cnt / Fs;
+        __type phi1 = PI2 * Fn * (__type)m_cnt / Fs - 2 * PI0 / 3;
+        __type phi2 = PI2 * Fn * (__type)m_cnt / Fs + 2 * PI0 / 3;
+
+        // Parke's transformation components computation:
+        if ( a_axis_alignment )
+        {
+            m_a = m_k1 * ( (*A) * cos( phi0 ) + (*B) * cos( phi1 ) + (*C) * cos( phi2 ) );
+            m_b = m_k1 * (-(*A) * sin( phi0 ) - (*B) * sin( phi1 ) - (*C) * sin( phi2 ) );
+            m_c = m_k2 * ( (*A) + (*B) + (*C) );
+        }
+        else
+        {
+            m_a = m_k1 * ( (*A) * sin( phi0 ) + (*B) * sin( phi1 ) + (*C) * sin( phi2 ) );
+            m_b = m_k1 * (-(*A) * cos( phi0 ) - (*B) * cos( phi1 ) - (*C) * cos( phi2 ) );
+            m_c = m_k2 * ( (*A) + (*B) + (*C) );
+        }
+
+        // reference frame counter update:
+        if (m_cnt < ceil( Fs / Fn ) ) m_cnt++;
+        else m_cnt = 0;
+    }
+
+    /*!
+     *  \brief backward transformation
+    */
+    inline void backward_transformation( __type *D , __type *Q , __type *Z , __fx64 Fn , __fx64 Fs , bool a_axis_alignment = 1 )
+    {
+        // angles computation:
+        __type phi0 = PI2 * Fn * (__type)m_cnt / Fs;
+        __type phi1 = PI2 * Fn * (__type)m_cnt / Fs - 2 * PI0 / 3;
+        __type phi2 = PI2 * Fn * (__type)m_cnt / Fs + 2 * PI0 / 3;
+
+        if ( a_axis_alignment )
+        {
+            m_a = ( (*D) * cos( phi0 ) - (*Q) * sin( phi0 ) + (*Z) );
+            m_b = ( (*D) * cos( phi1 ) - (*Q) * sin( phi1 ) + (*Z) );
+            m_c = ( (*D) * cos( phi2 ) - (*Q) * sin( phi2 ) + (*Z) );
+        }
+        else
+        {
+            m_a = ( (*D) * sin( phi0 ) + (*Q) * cos( phi0 ) + (*Z) );
+            m_b = ( (*D) * sin( phi1 ) + (*Q) * cos( phi1 ) + (*Z) );
+            m_c = ( (*D) * sin( phi2 ) + (*Q) * cos( phi2 ) + (*Z) );
+        }
+
+        // reference frame counter update:
+        if (m_cnt < ceil( Fs / Fn ) ) m_cnt++;
+        else m_cnt = 0;
+    }
+
+    inline void operator () ( __type *A, __type *B, __type *C, __fx64 Fn , __fx64 Fs, bool a_axis_alignment , bool type = 0 )
+    {
+        if( !type ) toward_transformation  ( A , B ,  C,  Fn ,  Fs, a_axis_alignment );
+        else backward_transformation( A , B ,  C,  Fn ,  Fs, a_axis_alignment );
+    }
+
+};
+
 /*! \brief Clarke's forward / backward 64-bit filter */
 template<> class Clarke_filter< __fx64 >
 {
@@ -369,6 +480,9 @@ public:
         else        backward_transformation( A , B , C );
     }
 };
+
+/*! \brief Parkes's forward / backward 32-bit filter */
+template<> class Park_filter< __fx64 >{};
 
 /*! @} */
 
