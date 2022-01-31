@@ -28,6 +28,7 @@ HEADERS += \
     include/recursive_rms.h \
     include/sgen.h \
     include/special_functions.h \
+    include/transfer_functions.h \
     include/transformations.h
 
 DISTFILES += \

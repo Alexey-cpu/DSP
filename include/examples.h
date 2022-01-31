@@ -25,6 +25,7 @@
 #include "include/iir.h"
 #include "include/recursive_fourier.h"
 #include "include/quad_mltpx.h"
+#include "include/transfer_functions.h"
 
 /*! \brief special functions utilization example and check */
 int example0()
@@ -575,8 +576,8 @@ int example6()
     abs.open( directory + "\\abs.txt" );
     phs.open( directory + "\\phs.txt" );
     df .open( directory + "\\df.txt"  );
-    ff .open( directory + "\\ff.txt"   );
-    tt .open( directory + "\\tt.txt"   );
+    ff .open( directory + "\\ff.txt"  );
+    tt .open( directory + "\\tt.txt"  );
 
     // signal generator:
     sgen< __gen_type > gen;
@@ -627,6 +628,144 @@ int example6()
     // memory deallocation:
     mltpx.deallocate();
     free( signal );
+
+    return 0;
+}
+
+int example7()
+{
+    printf( " ... quadrature demodulator utilization example and test... \n " );
+
+    // define filter and it's input signal data types:
+    typedef float __flt_type;
+    typedef float __gen_type;
+
+    // emulation parameters:
+    double Fs                = 4000;
+    double Fn                = 50;
+    double time              = 0;
+    double EmulationDuration = 0.08;
+    int    CycleWidth        = 5;
+    int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
+    int    frames_per_cycle  = CycleWidth * Fs / 1000;
+
+    // logs directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // files:
+    std::ofstream yt;
+    std::ofstream dif_y;
+    std::ofstream app_y;
+    std::ofstream leg_y;
+    std::ofstream int_y;
+    std::ofstream lpf_y;
+    std::ofstream hpf_y;
+    std::ofstream bpf_y;
+    std::ofstream bsf1_y;
+    std::ofstream bsf2_y;
+    std::ofstream tt;
+    yt   .open( directory + "\\yt.txt"    );
+    dif_y.open( directory + "\\dif_y.txt" );
+    app_y.open( directory + "\\app_y.txt" );
+    leg_y.open( directory + "\\leg_y.txt" );
+    int_y.open( directory + "\\int_y.txt" );
+    lpf_y.open( directory + "\\lpf_y.txt" );
+    hpf_y.open( directory + "\\hpf_y.txt" );
+    bpf_y.open( directory + "\\bpf_y.txt" );
+    bsf1_y.open( directory + "\\bsf1_y.txt" );
+    bsf2_y.open( directory + "\\bsf2_y.txt" );
+    tt   .open( directory + "\\tt.txt"    );
+
+    // signal generator:
+    sgen< __gen_type > gen;
+
+    // transfer functions:
+    differentiator        < __flt_type > dif;
+    aperiodic             < __flt_type > app;
+    leadlag               < __flt_type > leg;
+    integrator            < __flt_type > itg;
+    lowpass2_filter       < __flt_type > lpf;
+    highpass2_filter      < __flt_type > hpf;
+    bandpass2_filter      < __flt_type > bpf;
+    bandstop2_filter_type1< __flt_type > bsf1;
+    bandstop2_filter_type2< __flt_type > bsf2;
+
+    dif .init( Fs , Fn , 0.01 );
+    app .init( Fs , Fn , 0.01 );
+    leg .init( Fs , Fn , 0.01 , 0.02 );
+    itg .init( Fs , Fn );
+    lpf .init( Fs , Fn , 0.707 , 120 );
+    hpf .init( Fs , Fn , 0.707 , 120 );
+    bpf .init( Fs , Fn , 0.707 , 120 );
+    bsf1.init( Fs , Fn , 0.707 , 120 );
+    bsf2.init( Fs , Fn , 120 , 110 );
+
+    dif .allocate();
+    app .allocate();
+    leg .allocate();
+    itg .allocate();
+    lpf .allocate();
+    hpf .allocate();
+    bpf .allocate();
+    bsf1.allocate();
+    bsf2.allocate();
+
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            gen( 1 , Fn , 0 , Fs );
+
+            // filtering:
+            dif ( &gen.m_out );
+            app ( &gen.m_out );
+            leg ( &gen.m_out );
+            itg ( &gen.m_out );
+            lpf ( &gen.m_out );
+            hpf ( &gen.m_out );
+            bpf ( &gen.m_out );
+            bsf1( &gen.m_out );
+            bsf2( &gen.m_out );
+
+            // generating output:
+            yt     << gen.m_out  << "\n";
+            dif_y  << dif.m_out  << "\n";
+            app_y  << app.m_out  << "\n";
+            leg_y  << leg.m_out  << "\n";
+            int_y  << itg.m_out  << "\n";
+            lpf_y  << lpf.m_out  << "\n";
+            hpf_y  << hpf.m_out  << "\n";
+            bpf_y  << bpf.m_out  << "\n";
+            bsf1_y << bsf1.m_out << "\n";
+            bsf2_y << bsf2.m_out << "\n";
+            tt    << time       << "\n";
+            time += 1 / Fs;
+        }
+    }
+
+    // close files:
+    yt    .close();
+    dif_y .close();
+    app_y .close();
+    leg_y .close();
+    int_y .close();
+    lpf_y .close();
+    hpf_y .close();
+    bpf_y .close();
+    bsf1_y.close();
+    bsf2_y.close();
+    tt    .close();
+
+    // memory deallocation:
+    dif .deallocate();
+    app .deallocate();
+    leg .deallocate();
+    itg .deallocate();
+    lpf .deallocate();
+    hpf .deallocate();
+    bpf .deallocate();
+    bsf1.deallocate();
+    bsf2.deallocate();
 
     return 0;
 }

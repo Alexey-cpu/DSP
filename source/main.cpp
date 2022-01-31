@@ -15,6 +15,7 @@ int main()
     // example4();
     // example5();
     // example6();
+     example7();
 
     return 0;
 }
