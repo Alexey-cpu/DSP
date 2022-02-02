@@ -365,8 +365,8 @@ public:
         // frequency computation:
         m_buff_re.fill_buff( &m_vector3.m_re  );
         m_buff_im.fill_buff( &m_vector3.m_im  );
-        m_vector1( +m_buff_re[1] , +m_buff_im[1] );
-        m_vector2( +m_buff_re[0] , -m_buff_im[0] );
+        m_vector1( +m_buff_re[1] , -m_buff_im[1] );
+        m_vector2( +m_buff_re[0] , +m_buff_im[0] );
         m_vector3 = m_vector1 * m_vector2;
         m_dF = atan2( m_vector3.m_im , m_vector3.m_re ) * m_K;
         m_dF =  m_fir_df( &m_dF );
@@ -737,8 +737,8 @@ public:
             // frequency computation:
             m_buff_re.fill_buff( &m_vector3.m_re  );
             m_buff_im.fill_buff( &m_vector3.m_im  );
-            m_vector1( +m_buff_re[1] , +m_buff_im[1] );
-            m_vector2( +m_buff_re[0] , -m_buff_im[0] );
+            m_vector1( +m_buff_re[1] , -m_buff_im[1] );
+            m_vector2( +m_buff_re[0] , +m_buff_im[0] );
             m_vector3 = m_vector1 * m_vector2;
             m_dF = atan2( m_vector3.m_im , m_vector3.m_re ) * m_K;
             m_dF =  m_fir_df( &m_dF );
@@ -1108,8 +1108,8 @@ public:
         // frequency computation:
         m_buff_re.fill_buff( &m_vector3.m_re  );
         m_buff_im.fill_buff( &m_vector3.m_im  );
-        m_vector1( +m_buff_re[1] , +m_buff_im[1] );
-        m_vector2( +m_buff_re[0] , -m_buff_im[0] );
+        m_vector1( +m_buff_re[1] , -m_buff_im[1] );
+        m_vector2( +m_buff_re[0] , +m_buff_im[0] );
         m_vector3 = m_vector1 * m_vector2;
         m_dF = atan2( m_vector3.m_im , m_vector3.m_re ) * m_K;
         m_dF =  m_fir_df( &m_dF );
@@ -1463,8 +1463,8 @@ public:
             // frequency computation:
             m_buff_re.fill_buff( &m_vector3.m_re  );
             m_buff_im.fill_buff( &m_vector3.m_im  );
-            m_vector1( +m_buff_re[1] , +m_buff_im[1] );
-            m_vector2( +m_buff_re[0] , -m_buff_im[0] );
+            m_vector1( +m_buff_re[1] , -m_buff_im[1] );
+            m_vector2( +m_buff_re[0] , +m_buff_im[0] );
             m_vector3 = m_vector1 * m_vector2;
             m_dF = atan2( m_vector3.m_im , m_vector3.m_re ) * m_K;
             m_dF =  m_fir_df( &m_dF );

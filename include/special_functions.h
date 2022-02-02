@@ -18,9 +18,6 @@
 #include "malloc.h"
 #endif
 
-// auxiliary header - files:
-#include "complex.h"
-
 /*! \brief converts radians to degrees */
 #ifndef __TO_DEGREES
 #define __TO_DEGREES(x) ( (x) * 57.295779513082320876798154814105)

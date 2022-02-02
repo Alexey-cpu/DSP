@@ -73,7 +73,7 @@ public:
     }
 
     /*! \brief default destructor */
-    ~timers();
+    ~timers(){};
 
     /*! \brief timers class initialization function
      *  \param[Fs            ] - sampling frequency , Hz
@@ -108,12 +108,16 @@ public:
                 if ( m_Time > dT ) break;
             }
         }
-        else
+
+        if( ( m_Time > dT ) && S )
         {
+            m_Q = 1;
+        }
+        else if( !S )
+        {
+            m_Q    = 0;
             m_Time = 0;
         }
-
-        m_Q = ( ( m_Time > dT ) && S ) ? 1 : 0;
 
         return m_Q;
     }
@@ -231,7 +235,7 @@ public:
     }
 
     /*! \brief default trigger destructor */
-    ~triggers();
+    ~triggers(){};
 
     /*! \brief rising edge detecting function
      *  \param[CLK] - controlled logical input
@@ -323,7 +327,7 @@ public:
     /*! \brief trigger state control function
      *  \return The function returns current trigger state
     */
-    __bool get_State() { return m_Q; }
+    __bool getState() { return m_Q; }
 };
 
 /*! @} */

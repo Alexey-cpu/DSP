@@ -47,6 +47,8 @@ template< typename T > class aperiodic;
 template< typename T > class leadlag;
 /*! \brief integrator transfer function */
 template< typename T > class integrator;
+/*! \brief discrete integrator transfer function */
+template< typename T > class discrete_integrator;
 
 /*! \brief second order lowpass filter transfer function */
 template< typename T > class lowpass2_filter;
@@ -58,6 +60,13 @@ template< typename T > class bandpass2_filter;
 template< typename T > class bandstop2_filter_type1;
 /*! \brief second order bandstop filter of type 2 transfer function */
 template< typename T > class bandstop2_filter_type2;
+
+/*!
+ *  \brief transfer function frequency response data structure
+ *  \param[Km] - amplitude frequency response, p.u.
+ *  \param[pH] - phase frequency response , radians
+*/
+struct tf_fr { __fx64 Km , pH; };
 
 /*!
  *  \brief transfer function filtering function
@@ -80,6 +89,34 @@ template< typename T > extern inline T __tf_filt__( T *input , T *cfnum , T *cfd
     }
     by( &( out = sum_num - sum_den ) );
     return out;
+}
+
+/*!
+ *  \brief transfer function frequency response computation function
+ *  \param[cfnum] - pointer to the transfer function numerator   coefficients
+ *  \param[cfden] - pointer to the transfer function denominator coefficients
+ *  \param[N    ] - transfer function order
+ *  \param[Fs   ] - sampling frequency     , Hz
+ *  \param[F    ] - input signal frequency , Hz
+*/
+template< typename T > tf_fr __tf_freq_resp__( T *cfnum , T *cfden , T gain , __ix32 N , __fx64 Fs , __fx64 F )
+{
+    // auxiliary variabes;
+    __fx64 Re_nom = 0 , Im_nom = 0 , Re_den = 0 , Im_den = 0 , Re = 0 , Im = 0 , Ts = 1 / Fs;
+
+    for ( __ix32 i = 0; i < N; i++)
+    {
+        Re_nom = Re_nom + cos(-PI2 * F * i * Ts) * cfnum[i];
+        Im_nom = Im_nom + sin(-PI2 * F * i * Ts) * cfnum[i];
+        Re_den = Re_den + cos(-PI2 * F * i * Ts) * cfden[i];
+        Im_den = Im_den + sin(-PI2 * F * i * Ts) * cfden[i];
+    }
+    // generating output:
+    Re   = (Re_nom * Re_den + Im_nom * Im_den) / (Re_den * Re_den + Im_den * Im_den);
+    Im   = (Re_den * Im_nom - Re_nom * Im_den) / (Re_den * Re_den + Im_den * Im_den);
+    __fx64 Km = gain * sqrt(Re * Re + Im * Im);
+    __fx64 pH = atan2(Im, Re);
+    return { Km , pH };
 }
 
 /*! \brief 32-bit realization of differentiator transfer function */
@@ -153,6 +190,12 @@ public:
 
     /*! \brief default destructor */
     ~differentiator(){ deallocate(); }
+
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 2 , m_Fs , F ); }
 
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn , __fx64 Td )
@@ -242,6 +285,12 @@ public:
     /*! \brief default destructor */
     ~differentiator(){ deallocate(); }
 
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 2 , m_Fs , F ); }
+
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn , __fx64 Td )
     {
@@ -330,6 +379,12 @@ public:
     /*! \brief default destructor */
     ~aperiodic(){ deallocate(); }
 
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 2 , m_Fs , F ); }
+
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn , __fx64 Td )
     {
@@ -417,6 +472,12 @@ public:
 
     /*! \brief default destructor */
     ~aperiodic(){ deallocate(); }
+
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 2 , m_Fs , F ); }
 
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn , __fx64 Td )
@@ -508,6 +569,12 @@ public:
 
     /*! \brief default destructor */
     ~leadlag(){ deallocate(); }
+
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 2 , m_Fs , F ); }
 
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn , __fx64 T1 , __fx64 T2 )
@@ -601,6 +668,12 @@ public:
     /*! \brief default destructor */
     ~leadlag(){ deallocate(); }
 
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 2 , m_Fs , F ); }
+
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn , __fx64 T1 , __fx64 T2 )
     {
@@ -687,6 +760,12 @@ public:
     /*! \brief default destructor */
     ~integrator(){ deallocate(); }
 
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 2 , m_Fs , F ); }
+
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn )
     {
@@ -771,6 +850,12 @@ public:
     /*! \brief default destructor */
     ~integrator(){ deallocate(); }
 
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 2 , m_Fs , F ); }
+
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn )
     {
@@ -784,6 +869,174 @@ public:
      *  \param[input] - pointer to the input samples
     */
     inline __type operator() ( __type *input ) { return ( m_out = __tf_filt__< __type >( input , m_cfnum , m_cfden , m_Gain , 2 , 1 , m_bx , m_by ) ); }
+};
+
+/*! \brief 32-bit realization of discrete integrator transfer function */
+template<> class discrete_integrator<__fx32>
+{
+    typedef __fx32 __type;
+private:
+    /*! \brief input signal sampling frequency , Hz */
+    __fx64 m_Fs;
+    /*! \brief input signal nominal frequency , Hz */
+    __fx64 m_Fn;
+    /*! \brief input signal sampling period , s */
+    __fx64 m_Ts;
+    /*! \brief previous input value */
+    __fx64 m_prev_input;
+    /*! \brief previous output value */
+    __fx64 m_prev_output;
+public:
+
+    /*! \brief output */
+    __fx64 m_out;
+
+    /*! \brief default constrictor */
+    discrete_integrator()
+    {
+        m_Fn          = 50;
+        m_Fs          = 4000;
+        m_Ts          = 1 / m_Fs;
+        m_out         = 0;
+        m_prev_input  = 0;
+        m_prev_output = 0;
+    }
+
+    /*! \brief default destructor */
+    ~discrete_integrator() {}
+
+    /*!
+     *  \brief Initialization function
+     *  \param[Fs] - input signal sampling frequency , Hz
+     *  \param[Fn] - input signal nominal frequency  , Hz
+    */
+    void init( __type Fs , __type Fn )
+    {
+        m_Fn          = Fn;
+        m_Fs          = Fs;
+        m_Ts          = 1 / m_Fs;
+        m_out         = 0;
+        m_prev_input  = 0;
+        m_prev_output = 0;
+    }
+
+    /*!
+     *  \brief Euler integration
+     *  \param[input] - pointer to the input
+    */
+    inline __type ForwardEuler( __type *input )
+    {
+        m_out  = m_out + m_prev_input * m_Ts;
+        m_prev_input = *input;
+        return m_out;
+    }
+
+    /*!
+     *  \brief Backward Euler integration
+     *  \param[input] - pointer to the input
+    */
+    inline __type BackwardEuler( __type *input )
+    {
+        m_prev_output = m_prev_output + m_prev_input * m_Ts;
+        m_prev_input  = *input;
+        m_out  = m_prev_output + (*input) * m_Ts;
+        return m_out;
+    }
+
+    /*!
+     *  \brief Trapezoidal integration
+     *  \param[input] - pointer to the input
+    */
+    inline __type Trapezoidal( __type *input )
+    {
+        m_out  = ( m_prev_input + *input ) * 0.5 * m_Ts + m_out;
+        m_prev_input = *input;
+        return m_out;
+    }
+};
+
+/*! \brief 32-bit realization of discrete integrator transfer function */
+template<> class discrete_integrator<__fx64>
+{
+    typedef __fx64 __type;
+private:
+    /*! \brief input signal sampling frequency , Hz */
+    __fx64 m_Fs;
+    /*! \brief input signal nominal frequency , Hz */
+    __fx64 m_Fn;
+    /*! \brief input signal sampling period , s */
+    __fx64 m_Ts;
+    /*! \brief previous input value */
+    __fx64 m_prev_input;
+    /*! \brief previous output value */
+    __fx64 m_prev_output;
+public:
+
+    /*! \brief output */
+    __fx64 m_out;
+
+    /*! \brief default constrictor */
+    discrete_integrator()
+    {
+        m_Fn          = 50;
+        m_Fs          = 4000;
+        m_Ts          = 1 / m_Fs;
+        m_out         = 0;
+        m_prev_input  = 0;
+        m_prev_output = 0;
+    }
+
+    /*! \brief default destructor */
+    ~discrete_integrator() {}
+
+    /*!
+     *  \brief Initialization function
+     *  \param[Fs] - input signal sampling frequency , Hz
+     *  \param[Fn] - input signal nominal frequency  , Hz
+    */
+    void init( __type Fs , __type Fn )
+    {
+        m_Fn          = Fn;
+        m_Fs          = Fs;
+        m_Ts          = 1 / m_Fs;
+        m_out         = 0;
+        m_prev_input  = 0;
+        m_prev_output = 0;
+    }
+
+    /*!
+     *  \brief Euler integration
+     *  \param[input] - pointer to the input
+    */
+    inline __type ForwardEuler( __type *input )
+    {
+        m_out  = m_out + m_prev_input * m_Ts;
+        m_prev_input = *input;
+        return m_out;
+    }
+
+    /*!
+     *  \brief Backward Euler integration
+     *  \param[input] - pointer to the input
+    */
+    inline __type BackwardEuler( __type *input )
+    {
+        m_prev_output = m_prev_output + m_prev_input * m_Ts;
+        m_prev_input  = *input;
+        m_out  = m_prev_output + (*input) * m_Ts;
+        return m_out;
+    }
+
+    /*!
+     *  \brief Trapezoidal integration
+     *  \param[input] - pointer to the input
+    */
+    inline __type Trapezoidal( __type *input )
+    {
+        m_out  = ( m_prev_input + *input ) * 0.5 * m_Ts + m_out;
+        m_prev_input = *input;
+        return m_out;
+    }
 };
 
 /*! \brief 32-bit realization of second order lowpass filter transfer function */
@@ -871,6 +1124,12 @@ public:
 
     /*! \brief default destructor */
     ~lowpass2_filter(){ deallocate(); }
+
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 3 , m_Fs , F ); }
 
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn , __fx64 Kd , __fx64 Fc )
@@ -975,6 +1234,12 @@ public:
     /*! \brief default destructor */
     ~lowpass2_filter(){ deallocate(); }
 
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 3 , m_Fs , F ); }
+
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn , __fx64 Kd , __fx64 Fc )
     {
@@ -1077,6 +1342,12 @@ public:
 
     /*! \brief default destructor */
     ~highpass2_filter(){ deallocate(); }
+
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 3 , m_Fs , F ); }
 
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn , __fx64 Kd , __fx64 Fc )
@@ -1181,6 +1452,12 @@ public:
     /*! \brief default destructor */
     ~highpass2_filter(){ deallocate(); }
 
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 3 , m_Fs , F ); }
+
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn , __fx64 Kd , __fx64 Fc )
     {
@@ -1283,6 +1560,12 @@ public:
 
     /*! \brief default destructor */
     ~bandpass2_filter(){ deallocate(); }
+
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 3 , m_Fs , F ); }
 
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn , __fx64 Kd , __fx64 Fc )
@@ -1387,6 +1670,12 @@ public:
     /*! \brief default destructor */
     ~bandpass2_filter(){ deallocate(); }
 
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 3 , m_Fs , F ); }
+
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn , __fx64 Kd , __fx64 Fc )
     {
@@ -1489,6 +1778,12 @@ public:
 
     /*! \brief default destructor */
     ~bandstop2_filter_type1(){ deallocate(); }
+
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 3 , m_Fs , F ); }
 
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn , __fx64 Kd , __fx64 Fc )
@@ -1593,6 +1888,12 @@ public:
     /*! \brief default destructor */
     ~bandstop2_filter_type1(){ deallocate(); }
 
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 3 , m_Fs , F ); }
+
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn , __fx64 Kd , __fx64 Fc )
     {
@@ -1690,6 +1991,12 @@ public:
 
     /*! \brief default destructor */
     ~bandstop2_filter_type2(){ deallocate(); }
+
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 3 , m_Fs , F ); }
 
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 Fb )
@@ -1789,6 +2096,12 @@ public:
     /*! \brief default destructor */
     ~bandstop2_filter_type2(){ deallocate(); }
 
+    /*!
+     *  \brief memory allocation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    tf_fr freq_resp( __fx64 F ) { return __tf_freq_resp__< __type >( m_cfnum , m_cfden , m_Gain , 3 , m_Fs , F ); }
+
     /*! \brief initialization function */
     void init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 Fb )
     {
@@ -1805,5 +2118,12 @@ public:
     */
     inline __type operator() ( __type *input ) { return ( m_out = __tf_filt__< __type >( input , m_cfnum , m_cfden , m_Gain , 3 , 2 , m_bx , m_by ) ); }
 };
+
+#undef __fx32
+#undef __fx64
+#undef __ix32
+#undef __fxx64
+#undef PI0
+#undef PI2
 
 #endif // TRANSFER_FUNCTIONS_H

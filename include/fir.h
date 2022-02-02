@@ -563,7 +563,7 @@ public:
     /*! \brief lowpass memory deallocation function */
     __void deallocate()
     {
-        if( m_cf != 0 ) free( m_cf );
+        if( m_cf != 0 ) { free( m_cf ); m_cf = nullptr; }
         m_bx.deallocate();
         m_wind.deallocate();
     }
@@ -726,6 +726,195 @@ public:
     inline __type operator() ( __fx64 *input ) { return filt( input ); }
 };
 
+/*! \brief 64-bit floating point FIR filter */
+template<> class fir<__fx64>
+{
+    typedef __fx64 __type ;
+    typedef bool   __bool ;
+    typedef void   __void ;
+
+    /*! \brief lowpass specification data structure */
+    fir_sp  m_sp;
+
+    /*! \brief lowpass coefficients buffer */
+    __type *m_cf;
+
+    /*! \brief lowpass input buffer */
+    mirror_ring_buffer< __type > m_bx;
+
+public:
+
+    /*! \brief lowpass output */
+    __type m_out;
+
+   /*! \brief lowpass window function object */
+    wind_fcn m_wind;
+
+    /*! \brief lowpass memory allocation function */
+    __ix32 allocate()
+    {
+        switch ( m_sp.type )
+        {
+            case fir_type::lowpass_fir:
+            m_cf = __fir_wind_digital_lp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , m_sp.scale , m_wind );
+            break;
+
+            case fir_type::highpass_fir:
+            m_cf = __fir_wind_digital_hp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , m_sp.scale , m_wind );
+            break;
+
+            case fir_type::bandpass_fir:
+            m_cf = __fir_wind_digital_bp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , m_sp.scale , m_wind );
+            break;
+
+            case fir_type::bandstop_fir:
+            m_cf = __fir_wind_digital_bs__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , m_sp.scale , m_wind );
+            break;
+        }
+
+        m_bx.allocate( m_sp.N + 1 );
+        return ( m_cf != 0 );
+    }
+
+    /*! \brief lowpass memory deallocation function */
+    __void deallocate()
+    {
+        if( m_cf != 0 ) { free( m_cf ); m_cf = nullptr; }
+        m_bx  .deallocate();
+        m_wind.deallocate();
+    }
+
+    /*! \brief Lowpass initialization function
+     *  \details the function initializes lowpass FIR filter
+     *  \param[Fs]      - sampling frequency , Hz
+     *  \param[Fn]      - nominal frequency  , Hz
+     *  \param[Fc]      - cut-off frequency  , Hz
+     *  \param[order]   - filter order
+     *  \param[scale]   - filter scaling flag ( 0 - not-scaled filter , 1 - scaled filter )
+    */
+    __void lp_init( __type Fs, __type Fn, __type Fc, __ix32 order , __bool scale )
+    {
+        m_sp  = fir_sp{ Fs , Fn , Fc , -1 , 1 / Fs , order , order + 1 , scale , fir_type::lowpass_fir };
+        m_cf  = 0;
+        m_out = 0;
+        m_wind.init( m_sp.N );
+    }
+
+    /*! \brief Highpass initialization function
+     *  \details the function initializes highpass FIR filter
+     *  \param[Fs]      - sampling frequency , Hz
+     *  \param[Fn]      - nominal frequency  , Hz
+     *  \param[Fp]      - pass frequency     , Hz
+     *  \param[order]   - filter order
+     *  \param[scale]   - filter scaling flag ( 0 - not-scaled filter , 1 - scaled filter )
+    */
+    __void hp_init( __type Fs, __type Fn, __type Fp , __ix32 order , __bool scale )
+    {
+        m_sp  = fir_sp{ Fs , Fn , Fp , -1 , 1 / Fs , order , order + 1 , scale , fir_type::highpass_fir };
+        m_cf  = 0;
+        m_out = 0;
+        m_wind.init( m_sp.N );
+    }
+
+    /*! \brief Bandpass initialization function
+     *  \details the function initializes bandpass FIR filter
+     *  \param[Fs]      - sampling frequency , Hz
+     *  \param[Fn]      - nominal frequency  , Hz
+     *  \param[Fp]      - cut-off frequency  , Hz
+     *  \param[BW]      - pass bandwidth     , Hz
+     *  \param[order]   - filter order
+     *  \param[scale]   - filter scaling flag ( 0 - not-scaled filter , 1 - scaled filter )
+    */
+    __void bp_init( __type Fs, __type Fn, __type Fp , __fx64 BW , __ix32 order , __bool scale )
+    {
+        m_sp  = fir_sp{ Fs , Fn , Fp , BW , 1 / Fs , order , order + 1 , scale , fir_type::bandpass_fir };
+        m_cf  = 0;
+        m_out = 0;
+        m_wind.init( m_sp.N );
+    }
+
+    /*! \brief Bandstop initialization function
+     *  \details The function initializes bandstop FIR filter
+     *  \param[Fs]      - sampling frequency , Hz
+     *  \param[Fn]      - nominal frequency  , Hz
+     *  \param[Fc]      - cut-off frequency  , Hz
+     *  \param[BW]      - stop bandwidth     , Hz
+     *  \param[order]   - filter order
+     *  \param[scale]   - filter scaling flag ( 0 - not-scaled filter , 1 - scaled filter )
+    */
+    __void bs_init( __type Fs, __type Fn, __type Fc , __fx64 BW , __ix32 order , __bool scale )
+    {
+        m_sp  = fir_sp{ Fs , Fn , Fc , BW , 1 / Fs , order , order + 1 , scale , fir_type::bandstop_fir };
+        m_cf  = 0;
+        m_out = 0;
+        m_wind.init( m_sp.N );
+    }
+
+    /*! \brief default constructor */
+    fir()
+    {
+        m_sp  = fir_sp{ 4000 , 50 , 100 , -1 , 1 / 4000 , 80 , 80 + 1 , 1 , fir_type::lowpass_fir };
+        m_cf  = 0;
+        m_out = 0;
+        m_wind.init( m_sp.N  );
+    }
+
+    /*! \brief  destructor */
+    ~fir() { deallocate(); }
+
+    /*!
+     *  \brief  frequency response computation function
+     *  \param[F] input frequency
+     *  \return the function returns fir_fr data structure
+    */
+    inline fir_fr< __fx64 > freq_resp( __type F ) { return __fir_freq_resp__< __fx64 , __type >( m_sp.Fs , F , m_sp.order , m_cf ); }
+
+    /*!
+     *  \brief  FIR pulse response getting function
+     *  \param[F] pulse response sample number
+     *  \return the function returns FIR impulse response sample
+    */
+    inline __type get_coeff( __ix32 n ) { return ( n <= m_sp.order ) ? m_cf[ n ] : 1e6; }
+
+    /*!
+     *  \brief  32-bit FIR filter buffer filling function
+     *  \param[input] pointer to the input data array
+     *  \return the function returns FIR filtering result
+    */
+    inline void fill_fir_buff( __type *input ) { m_bx( input ); }
+
+    /*!
+     *  \brief  FIR filtering function
+     *  \param[input] pointer to the input data array
+     *  \return the function returns FIR filtering result
+    */
+    inline __type filt( __type *input )
+    {
+        m_bx( input );
+        m_out = 0;
+        for ( __ix32 n = m_sp.order ; n >= 0; n--) m_out += m_bx[ n ] * m_cf[n];
+        return m_out;
+    }
+
+    /*!
+     *  \brief  FIR filtering function
+     *  \return the function returns FIR filtering result
+    */
+    inline __type filt()
+    {
+        m_out = 0;
+        for ( __ix32 n = m_sp.order ; n >= 0; n--) m_out += m_bx[ n ] * m_cf[n];
+        return m_out;
+    }
+
+    /*!
+     *  \brief  FIR filtering () operator
+     *  \param[input] pointer to the input data
+     *  \return the () operator calls filt( __type *input ) function that returns FIR filtering result
+    */
+    inline __type operator() ( __type *input ) { return filt( input ); }
+};
+
 /*! \brief 32-bit floating point comb FIR filter */
 template<> class fcomb<__fx32>
 {
@@ -842,6 +1031,107 @@ public:
      *  \return The operatoe calls the function that returns filtering result
     */
     inline __fx64 operator ()( __fx64 *input ) { return filt(input); }
+};
+
+/*! \brief 64-bit floating point comb FIR filter */
+template<> class fcomb<__fx64>
+{
+    typedef __fx64 __type ;
+private:
+
+    /*! \brief input signal nominal frequency  , Hz */
+    __fx64 m_Fn;
+    /*! \brief input signal sampling frequency , Hz */
+    __fx64 m_Fs;
+    /*! \brief input signal nominal period     , s */
+    __fx64 m_Ts;
+    /*! \brief comb filter order */
+    __ix32 m_order;
+
+    /*! \brief comb filter buffer */
+     mirror_ring_buffer< __type > m_bx;
+
+public:
+
+    /*! \brief filter output */
+    __fx64 m_out;
+    /*! \brief filter frequency phase response */
+    __fx64 m_pH;
+    /*! \brief filter frequency amplitude response */
+    __fx64 m_Km;
+
+    /*!
+     *  \brief comb filter initialization function
+     *  \param[Fs] - input signal sampling frequency
+     *  \param[Fn] - input signal nominal frequency
+    */
+    __ix32 init( __fx64 Fs , __fx64 Fn )
+    {
+        m_Fs      = Fs;
+        m_Fn      = Fn;
+        m_Ts      = 1 / m_Fs;
+        m_order   = m_Fs / m_Fn / 2;
+        m_out     = 0;
+        m_Km      = 0;
+        m_pH      = 0;
+        return 0;
+    }
+
+    /*! \brief memory allocation function */
+    __ix32 allocate()
+    {
+        return m_bx.allocate( m_order + 1 );
+    }
+
+    /*! \brief memory deallocation function */
+    void deallocate()
+    {
+        m_bx.deallocate();
+    }
+
+    /*! \brief default constructor */
+    fcomb()
+    {
+        m_Fs      = 4000;
+        m_Fn      = 50;
+        m_Ts      = 1 / m_Fs;
+        m_order   = m_Fs / m_Fn / 2;
+        m_out     = 0;
+        m_Km      = 0;
+        m_pH      = 0;
+    }
+
+    /*! \brief default destructor */
+    ~fcomb(){ deallocate(); };
+
+    /*! \brief frequency response computation function */
+    fir_fr< __fx64 > freq_resp( __fx64 F )
+    {
+        __fx64 Re = 1 - cos(-6.283185307179586476925286766559  * m_order * F * m_Ts);
+        __fx64 Im = 0 - sin(-6.283185307179586476925286766559  * m_order * F * m_Ts);
+        m_pH = atan2(Im, Re);
+        m_Km = sqrt(Re * Re + Im * Im) * 0.5;
+        return { m_Km , m_pH };
+    }
+
+    /*!
+     *  \brief 32-bit floating point filtering function
+     *  \param[input] - pointer to the input signal samples buffer
+     *  \return The function returns filtering result
+    */
+    inline __fx64 filt( __type *input)
+    {
+        m_bx( input );
+        m_out = (__fx64)*input - (__fx64)m_bx[ m_order ];
+        return m_out;
+    }
+
+    /*!
+     *  \brief 32-bit floating point filtering operator
+     *  \param[input] - pointer to the input signal samples buffer
+     *  \return The operatoe calls the function that returns filtering result
+    */
+    inline __fx64 operator ()( __type *input ) { return filt(input); }
 };
 
 /*! \brief 32-bit floating point equalized comb FIR filter */
@@ -1026,296 +1316,6 @@ public:
      *  \return The operatoe calls the function that returns filtering result
     */
     inline __fx64 operator ()( __fx64 *input , bool odd = true ) { return filt( input , odd ); }
-};
-
-/*! \brief 64-bit floating point FIR filter */
-template<> class fir<__fx64>
-{
-    typedef __fx64 __type ;
-    typedef bool   __bool ;
-    typedef void   __void ;
-
-    /*! \brief lowpass specification data structure */
-    fir_sp  m_sp;
-
-    /*! \brief lowpass coefficients buffer */
-    __type *m_cf;
-
-    /*! \brief lowpass input buffer */
-    mirror_ring_buffer< __type > m_bx;
-
-public:
-
-    /*! \brief lowpass output */
-    __type m_out;
-
-   /*! \brief lowpass window function object */
-    wind_fcn m_wind;
-
-    /*! \brief lowpass memory allocation function */
-    __ix32 allocate()
-    {
-        switch ( m_sp.type )
-        {
-            case fir_type::lowpass_fir:
-            m_cf = __fir_wind_digital_lp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , m_sp.scale , m_wind );
-            break;
-
-            case fir_type::highpass_fir:
-            m_cf = __fir_wind_digital_hp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , m_sp.scale , m_wind );
-            break;
-
-            case fir_type::bandpass_fir:
-            m_cf = __fir_wind_digital_bp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , m_sp.scale , m_wind );
-            break;
-
-            case fir_type::bandstop_fir:
-            m_cf = __fir_wind_digital_bs__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , m_sp.scale , m_wind );
-            break;
-        }
-
-        m_bx.allocate( m_sp.N + 1 );
-        return ( m_cf != 0 );
-    }
-
-    /*! \brief lowpass memory deallocation function */
-    __void deallocate()
-    {
-        if( m_cf != 0 ) free( m_cf );
-        m_bx.deallocate();
-        m_wind.deallocate();
-    }
-
-    /*! \brief Lowpass initialization function
-     *  \details the function initializes lowpass FIR filter
-     *  \param[Fs]      - sampling frequency , Hz
-     *  \param[Fn]      - nominal frequency  , Hz
-     *  \param[Fc]      - cut-off frequency  , Hz
-     *  \param[order]   - filter order
-     *  \param[scale]   - filter scaling flag ( 0 - not-scaled filter , 1 - scaled filter )
-    */
-    __void lp_init( __type Fs, __type Fn, __type Fc, __ix32 order , __bool scale )
-    {
-        m_sp  = fir_sp{ Fs , Fn , Fc , -1 , 1 / Fs , order , order + 1 , scale , fir_type::lowpass_fir };
-        m_cf  = 0;
-        m_out = 0;
-        m_wind.init( m_sp.N );
-    }
-
-    /*! \brief Highpass initialization function
-     *  \details the function initializes highpass FIR filter
-     *  \param[Fs]      - sampling frequency , Hz
-     *  \param[Fn]      - nominal frequency  , Hz
-     *  \param[Fp]      - pass frequency     , Hz
-     *  \param[order]   - filter order
-     *  \param[scale]   - filter scaling flag ( 0 - not-scaled filter , 1 - scaled filter )
-    */
-    __void hp_init( __type Fs, __type Fn, __type Fp , __ix32 order , __bool scale )
-    {
-        m_sp  = fir_sp{ Fs , Fn , Fp , -1 , 1 / Fs , order , order + 1 , scale , fir_type::highpass_fir };
-        m_cf  = 0;
-        m_out = 0;
-        m_wind.init( m_sp.N );
-    }
-
-    /*! \brief Bandpass initialization function
-     *  \details the function initializes bandpass FIR filter
-     *  \param[Fs]      - sampling frequency , Hz
-     *  \param[Fn]      - nominal frequency  , Hz
-     *  \param[Fp]      - cut-off frequency  , Hz
-     *  \param[BW]      - pass bandwidth     , Hz
-     *  \param[order]   - filter order
-     *  \param[scale]   - filter scaling flag ( 0 - not-scaled filter , 1 - scaled filter )
-    */
-    __void bp_init( __type Fs, __type Fn, __type Fp , __fx64 BW , __ix32 order , __bool scale )
-    {
-        m_sp  = fir_sp{ Fs , Fn , Fp , BW , 1 / Fs , order , order + 1 , scale , fir_type::bandpass_fir };
-        m_cf  = 0;
-        m_out = 0;
-        m_wind.init( m_sp.N );
-    }
-
-    /*! \brief Bandstop initialization function
-     *  \details The function initializes bandstop FIR filter
-     *  \param[Fs]      - sampling frequency , Hz
-     *  \param[Fn]      - nominal frequency  , Hz
-     *  \param[Fc]      - cut-off frequency  , Hz
-     *  \param[BW]      - stop bandwidth     , Hz
-     *  \param[order]   - filter order
-     *  \param[scale]   - filter scaling flag ( 0 - not-scaled filter , 1 - scaled filter )
-    */
-    __void bs_init( __type Fs, __type Fn, __type Fc , __fx64 BW , __ix32 order , __bool scale )
-    {
-        m_sp  = fir_sp{ Fs , Fn , Fc , BW , 1 / Fs , order , order + 1 , scale , fir_type::bandstop_fir };
-        m_cf  = 0;
-        m_out = 0;
-        m_wind.init( m_sp.N );
-    }
-
-    /*! \brief default constructor */
-    fir()
-    {
-        m_sp  = fir_sp{ 4000 , 50 , 100 , -1 , 1 / 4000 , 80 , 80 + 1 , 1 , fir_type::lowpass_fir };
-        m_cf  = 0;
-        m_out = 0;
-        m_wind.init( m_sp.N  );
-    }
-
-    /*! \brief  destructor */
-    ~fir() { deallocate(); }
-
-    /*!
-     *  \brief  frequency response computation function
-     *  \param[F] input frequency
-     *  \return the function returns fir_fr data structure
-    */
-    inline fir_fr< __fx64 > freq_resp( __type F ) { return __fir_freq_resp__< __fx64 , __type >( m_sp.Fs , F , m_sp.order , m_cf ); }
-
-    /*!
-     *  \brief  FIR pulse response getting function
-     *  \param[F] pulse response sample number
-     *  \return the function returns FIR impulse response sample
-    */
-    inline __type get_coeff( __ix32 n ) { return ( n <= m_sp.order ) ? m_cf[ n ] : 1e6; }
-
-    /*!
-     *  \brief  32-bit FIR filter buffer filling function
-     *  \param[input] pointer to the input data array
-     *  \return the function returns FIR filtering result
-    */
-    inline void fill_fir_buff( __type *input ) { m_bx( input ); }
-
-    /*!
-     *  \brief  FIR filtering function
-     *  \param[input] pointer to the input data array
-     *  \return the function returns FIR filtering result
-    */
-    inline __type filt( __type *input )
-    {
-        m_bx( input );
-        m_out = 0;
-        for ( __ix32 n = m_sp.order ; n >= 0; n--) m_out += m_bx[ n ] * m_cf[n];
-        return m_out;
-    }
-
-    /*!
-     *  \brief  FIR filtering function
-     *  \return the function returns FIR filtering result
-    */
-    inline __type filt()
-    {
-        m_out = 0;
-        for ( __ix32 n = m_sp.order ; n >= 0; n--) m_out += m_bx[ n ] * m_cf[n];
-        return m_out;
-    }
-
-    /*!
-     *  \brief  FIR filtering () operator
-     *  \param[input] pointer to the input data
-     *  \return the () operator calls filt( __type *input ) function that returns FIR filtering result
-    */
-    inline __type operator() ( __type *input ) { return filt( input ); }
-};
-
-/*! \brief 64-bit floating point comb FIR filter */
-template<> class fcomb<__fx64>
-{
-    typedef __fx64 __type ;
-private:
-
-    /*! \brief input signal nominal frequency  , Hz */
-    __fx64 m_Fn;
-    /*! \brief input signal sampling frequency , Hz */
-    __fx64 m_Fs;
-    /*! \brief input signal nominal period     , s */
-    __fx64 m_Ts;
-    /*! \brief comb filter order */
-    __ix32 m_order;
-
-    /*! \brief comb filter buffer */
-     mirror_ring_buffer< __type > m_bx;
-
-public:
-
-    /*! \brief filter output */
-    __fx64 m_out;
-    /*! \brief filter frequency phase response */
-    __fx64 m_pH;
-    /*! \brief filter frequency amplitude response */
-    __fx64 m_Km;
-
-    /*!
-     *  \brief comb filter initialization function
-     *  \param[Fs] - input signal sampling frequency
-     *  \param[Fn] - input signal nominal frequency
-    */
-    __ix32 init( __fx64 Fs , __fx64 Fn )
-    {
-        m_Fs      = Fs;
-        m_Fn      = Fn;
-        m_Ts      = 1 / m_Fs;
-        m_order   = m_Fs / m_Fn / 2;
-        m_out     = 0;
-        m_Km      = 0;
-        m_pH      = 0;
-        return 0;
-    }
-
-    /*! \brief memory allocation function */
-    __ix32 allocate()
-    {
-        return m_bx.allocate( m_order + 1 );
-    }
-
-    /*! \brief memory deallocation function */
-    void deallocate()
-    {
-        m_bx.deallocate();
-    }
-
-    /*! \brief default constructor */
-    fcomb()
-    {
-        m_Fs      = 4000;
-        m_Fn      = 50;
-        m_Ts      = 1 / m_Fs;
-        m_order   = m_Fs / m_Fn / 2;
-        m_out     = 0;
-        m_Km      = 0;
-        m_pH      = 0;
-    }
-
-    /*! \brief default destructor */
-    ~fcomb(){ deallocate(); };
-
-    /*! \brief frequency response computation function */
-    fir_fr< __fx64 > freq_resp( __fx64 F )
-    {
-        __fx64 Re = 1 - cos(-6.283185307179586476925286766559  * m_order * F * m_Ts);
-        __fx64 Im = 0 - sin(-6.283185307179586476925286766559  * m_order * F * m_Ts);
-        m_pH = atan2(Im, Re);
-        m_Km = sqrt(Re * Re + Im * Im) * 0.5;
-        return { m_Km , m_pH };
-    }
-
-    /*!
-     *  \brief 32-bit floating point filtering function
-     *  \param[input] - pointer to the input signal samples buffer
-     *  \return The function returns filtering result
-    */
-    inline __fx64 filt( __type *input)
-    {
-        m_bx( input );
-        m_out = (__fx64)*input - (__fx64)m_bx[ m_order ];
-        return m_out;
-    }
-
-    /*!
-     *  \brief 32-bit floating point filtering operator
-     *  \param[input] - pointer to the input signal samples buffer
-     *  \return The operatoe calls the function that returns filtering result
-    */
-    inline __fx64 operator ()( __type *input ) { return filt(input); }
 };
 
 /*! \brief 64-bit floating point equalized comb FIR filter */

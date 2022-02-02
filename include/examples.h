@@ -26,6 +26,7 @@
 #include "include/recursive_fourier.h"
 #include "include/quad_mltpx.h"
 #include "include/transfer_functions.h"
+#include "include/logical.h"
 
 /*! \brief special functions utilization example and check */
 int example0()
@@ -632,9 +633,10 @@ int example6()
     return 0;
 }
 
+/*! \brief simple filters utilization example and test  */
 int example7()
 {
-    printf( " ... quadrature demodulator utilization example and test... \n " );
+    printf( "...simple filters utilization example and test...\n" );
 
     // define filter and it's input signal data types:
     typedef float __flt_type;
@@ -766,6 +768,100 @@ int example7()
     bpf .deallocate();
     bsf1.deallocate();
     bsf2.deallocate();
+
+    return 0;
+}
+
+/*! \brief DSP logical components utilization examples and test  */
+int example8()
+{
+    printf( " ... DSP logical components utilization examples and test ... \n " );
+
+    // emulation parameters:
+    double Fs                = 4000;
+    double time              = 0;
+    double EmulationDuration = 1.0;
+    int    CycleWidth        = 5;
+    int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
+    int    frames_per_cycle  = CycleWidth * Fs / 1000;
+
+    // logs directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // files:
+    std::ofstream yt;
+    std::ofstream ton_y;
+    std::ofstream tof_y;
+    std::ofstream tp_y;
+    std::ofstream rs_y;
+    std::ofstream sr_y;
+    std::ofstream rr_y;
+    std::ofstream ff_y;
+    std::ofstream tt;
+    yt   .open( directory + "\\yt.txt");
+    ton_y.open( directory + "\\ton_y.txt");
+    tof_y.open( directory + "\\tof_y.txt");
+    tp_y .open( directory + "\\tp_y.txt" );
+    rs_y .open( directory + "\\rs_y.txt" );
+    sr_y .open( directory + "\\sr_y.txt" );
+    rr_y .open( directory + "\\rr_y.txt" );
+    ff_y .open( directory + "\\ff_y.txt" );
+    tt   .open( directory + "\\tt.txt"   );
+
+    // timers:
+    timers   ton; ton.init( Fs , 1 );
+    timers   tof; tof.init( Fs , 1 );
+    timers   tp ; tp .init( Fs , 1 );
+
+    // triggers:
+    triggers rs;
+    triggers sr;
+    triggers rr;
+    triggers ff;
+
+    // emulation:
+    int input = 0;
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            input = ( (time > 0.1) && (time <= 0.5) ) ? 1 : 0;
+
+            // timing:
+            ton.ton( input , 0.2 );
+            tof.tof( input , 0.2 );
+            tp .tp ( input , 0.2 );
+
+            // triggering:
+            rs.rs_trig( input , (time >= 0.5) );
+            sr.sr_trig( input , (time >= 0.5) );
+            rr.rr_trig( input );
+            ff.ff_trig( input );
+
+            // generating output:
+            yt    << input          << "\n";
+            ton_y << ton.getState() << "\n";
+            tof_y << tof.getState() << "\n";
+            tp_y  << tp .getState() << "\n";
+            rs_y  << rs .getState() << "\n";
+            sr_y  << sr .getState() << "\n";
+            rr_y  << rr .getState() << "\n";
+            ff_y  << ff .getState() << "\n";
+            tt    << time           << "\n";
+            time += 1 / Fs;
+        }
+    }
+
+    // close files:
+    yt   .close();
+    ton_y.close();
+    tof_y.close();
+    tp_y .close();
+    rs_y .close();
+    sr_y .close();
+    rr_y .close();
+    ff_y .close();
+    tt   .close();
 
     return 0;
 }
