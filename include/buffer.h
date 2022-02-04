@@ -147,7 +147,17 @@ public:
         }
     }
 
-    // operators:
+    /*!
+     *  \brief  mirror ring buffer position function
+     *  \return The function returns the buffer filling pointer position
+    */
+    inline __ix32 getBuffPos() { return m_buffpos; }
+
+    /*!
+     *  \brief  mirror ring buffer size function
+     *  \return The function returns the buffer size
+    */
+    inline __ix32 getBuffSize(){ return m_nelem;   }
 
     /*! \brief mirror ring buffer [] operator
      * \param[n] sample number
@@ -252,7 +262,17 @@ public:
         }
     }
 
-    // operators:
+    /*!
+     *  \brief  mirror ring buffer position function
+     *  \return The function returns the buffer filling pointer position
+    */
+    inline __ix32 getBuffPos() { return m_buffpos; }
+
+    /*!
+     *  \brief  mirror ring buffer size function
+     *  \return The function returns the buffer size
+    */
+    inline __ix32 getBuffSize(){ return m_nelem;   }
 
     /*! \brief mirror ring buffer [] operator
      * \param[n] sample number
@@ -350,7 +370,17 @@ public:
         }
     }
 
-    // operators:
+    /*!
+     *  \brief  mirror ring buffer position function
+     *  \return The function returns the buffer filling pointer position
+    */
+    inline __ix32 getBuffPos() { return m_buffpos; }
+
+    /*!
+     *  \brief  mirror ring buffer size function
+     *  \return The function returns the buffer size
+    */
+    inline __ix32 getBuffSize(){ return m_nelem;   }
 
     /*! \brief mirror ring buffer [] operator
      * \param[n] sample number
@@ -455,7 +485,17 @@ public:
         }
     }
 
-    // operators:
+    /*!
+     *  \brief  mirror ring buffer position function
+     *  \return The function returns the buffer filling pointer position
+    */
+    inline __ix32 getBuffPos() { return m_buffpos; }
+
+    /*!
+     *  \brief  mirror ring buffer size function
+     *  \return The function returns the buffer size
+    */
+    inline __ix32 getBuffSize(){ return m_nelem;   }
 
     /*! \brief mirror ring buffer [] operator
      * \param[n] sample number
@@ -542,7 +582,17 @@ public:
         }
     }
 
-    // operators:
+    /*!
+     *  \brief  mirror ring buffer position function
+     *  \return The function returns the buffer filling pointer position
+    */
+    inline __ix32 getBuffPos() { return m_buffpos; }
+
+    /*!
+     *  \brief  mirror ring buffer size function
+     *  \return The function returns the buffer size
+    */
+    inline __ix32 getBuffSize(){ return m_nelem;   }
 
     /*! \brief mirror ring buffer [] operator
      * \param[n] sample number
@@ -636,7 +686,17 @@ public:
         }
     }
 
-    // operators:
+    /*!
+     *  \brief  mirror ring buffer position function
+     *  \return The function returns the buffer filling pointer position
+    */
+    inline __ix32 getBuffPos() { return m_buffpos; }
+
+    /*!
+     *  \brief  mirror ring buffer size function
+     *  \return The function returns the buffer size
+    */
+    inline __ix32 getBuffSize(){ return m_nelem;   }
 
     /*! \brief mirror ring buffer [] operator
      * \param[n] sample number
@@ -723,7 +783,17 @@ public:
         }
     }
 
-    // operators:
+    /*!
+     *  \brief  mirror ring buffer position function
+     *  \return The function returns the buffer filling pointer position
+    */
+    inline __ix32 getBuffPos() { return m_buffpos; }
+
+    /*!
+     *  \brief  mirror ring buffer size function
+     *  \return The function returns the buffer size
+    */
+    inline __ix32 getBuffSize(){ return m_nelem;   }
 
     /*! \brief mirror ring buffer [] operator
      * \param[n] sample number
@@ -817,7 +887,17 @@ public:
         }
     }
 
-    // operators:
+    /*!
+     *  \brief  mirror ring buffer position function
+     *  \return The function returns the buffer filling pointer position
+    */
+    inline __ix32 getBuffPos() { return m_buffpos; }
+
+    /*!
+     *  \brief  mirror ring buffer size function
+     *  \return The function returns the buffer size
+    */
+    inline __ix32 getBuffSize(){ return m_nelem;   }
 
     /*! \brief mirror ring buffer [] operator
      * \param[n] sample number

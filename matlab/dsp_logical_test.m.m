@@ -10,10 +10,10 @@ ff_y  = TEXTFILE_TO_MATFILE( "ff_y.txt" , logs );
 tt    = TEXTFILE_TO_MATFILE( "tt.txt"   , logs );
 
 %plotting:
-plot( tt , yt , tt , ton_y  );
+%plot( tt , yt , tt , ton_y  );
 %plot( tt , yt , tt , tof_y );
 %plot( tt , yt , tt , tp_y  );
 %plot( tt , yt , tt , rs_y  );
 %plot( tt , yt , tt , sr_y  );
-%plot( tt , yt , tt , rr_y  );
-%plot( tt , yt , tt , ff_y  );
+%plot( tt , rr_y  );
+plot( tt , ff_y  );

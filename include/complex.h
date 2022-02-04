@@ -468,7 +468,7 @@ __fx64 __argf__( complex<__fx64> _complex ) { return atan2( _complex.m_im , _com
 * \param[ _complex ] input complex number
 * \return the function returns input 32-bit complex number square root:
 * \f[
-*       \sqrt{z} = \sqrt{ abs(z) } * cos( arg(z) ) + j*\sqrt{ abs(z) } * sin( arg(z) )
+*       \sqrt{z} = \sqrt{ abs(z) } * cos \left( \frac{ arg(z) }{ 2 } \right) + j*\sqrt{ abs(z) } * sin \left( \frac{ arg(z) }{ 2 } \right)
 * \f]
 */
 complex<__fx32> __sqrtf__( complex<__fx32> _complex )
@@ -483,7 +483,7 @@ complex<__fx32> __sqrtf__( complex<__fx32> _complex )
 * \param[ _complex ] input complex number
 * \return the function returns input 64-bit complex number square root:
 * \f[
-*       \sqrt{z} = \sqrt{ abs(z) } * cos( arg(z) ) + j*\sqrt{ abs(z) } * sin( arg(z) )
+*       \sqrt{z} = \sqrt{ abs(z) } * cos \left( \frac{ arg(z) }{ 2 } \right) + j*\sqrt{ abs(z) } * sin \left( \frac{ arg(z) }{ 2 } \right)
 * \f]
 */
 complex<__fx64> __sqrtf__( complex<__fx64> _complex )
