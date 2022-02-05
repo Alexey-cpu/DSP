@@ -866,4 +866,180 @@ int example8()
     return 0;
 }
 
+/*! \brief IIR filters utilization example and test  */
+int example9()
+{
+    printf( "...IIR filters utilization example and test ...\n" );
+
+    // define filter and it's input signal data types:
+    typedef float __flt_type;
+    typedef float __gen_type;
+
+    // emulation parameters:
+    double Fs                = 4000;
+    double Fn                = 50;
+    double time              = 0;
+    double EmulationDuration = 0.08;
+    int    CycleWidth        = 5;
+    int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
+    int    frames_per_cycle  = CycleWidth * Fs / 1000;
+    int    flt_type          = 3; // ( 0 - lowpass 1 , 1 - highpass 2 , 2 - bandpass , 3 - bandstop )
+
+    // logs directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // files:
+    std::ofstream yt;
+    std::ofstream cheb1_y;
+    std::ofstream cheb2_y;
+    std::ofstream buttf_y;
+    std::ofstream ellip_y;
+
+    std::ofstream cheb1_km;
+    std::ofstream cheb2_km;
+    std::ofstream buttf_km;
+    std::ofstream ellip_km;
+    std::ofstream cheb1_ph;
+    std::ofstream cheb2_ph;
+    std::ofstream buttf_ph;
+    std::ofstream ellip_ph;
+    std::ofstream ff;
+    std::ofstream tt;
+    yt      .open( directory + "\\yt.txt"      );
+    cheb1_y .open( directory + "\\cheb1_y.txt" );
+    cheb2_y .open( directory + "\\cheb2_y.txt" );
+    buttf_y .open( directory + "\\buttf_y.txt" );
+    ellip_y .open( directory + "\\ellip_y.txt" );
+    cheb1_km.open( directory + "\\cheb1_km.txt" );
+    cheb2_km.open( directory + "\\cheb2_km.txt" );
+    buttf_km.open( directory + "\\buttf_km.txt" );
+    ellip_km.open( directory + "\\ellip_km.txt" );
+    cheb1_ph.open( directory + "\\cheb1_ph.txt" );
+    cheb2_ph.open( directory + "\\cheb2_ph.txt" );
+    buttf_ph.open( directory + "\\buttf_ph.txt" );
+    ellip_ph.open( directory + "\\ellip_ph.txt" );
+    ff.open( directory + "\\ff.txt" );
+    tt     .open( directory + "\\tt.txt"      );
+
+    // signal generator:
+    sgen< __gen_type > gen;
+
+    // IIR filters:
+    chebyshev_1< __flt_type > cheb1;
+    chebyshev_2< __flt_type > cheb2;
+    butterworth< __flt_type > buttf;
+    elliptic   < __flt_type > ellip;
+
+    switch ( flt_type )
+    {
+        case 0: // lowpass
+            cheb1.lp_init( Fs , Fn , 100 , 8 , 1  );
+            cheb2.lp_init( Fs , Fn , 100 , 8 , 80 );
+            buttf.lp_init( Fs , Fn , 100 , 8 , 1  );
+            ellip.lp_init( Fs , Fn , 100 , 8 );
+        break;
+
+        case 1: // highpass
+            cheb1.hp_init( Fs , Fn , 100 , 8 , 1  );
+            cheb2.hp_init( Fs , Fn , 100 , 8 , 80 );
+            buttf.hp_init( Fs , Fn , 100 , 8 , 1  );
+            ellip.hp_init( Fs , Fn , 100 , 8 , 1 , 80  );
+        break;
+
+        case 2: // bandpass
+            cheb1.bp_init( Fs , Fn , 100 , 100 , 8 , 1  );
+            cheb2.bp_init( Fs , Fn , 100 , 100 , 8 , 80 );
+            buttf.bp_init( Fs , Fn , 100 , 100 , 8 , 1  );
+            ellip.bp_init( Fs , Fn , 100 , 100 , 8 , 1 , 80  );
+        break;
+
+        case 3: // bandstop
+            cheb1.bs_init( Fs , Fn , 100 , 100 , 8 , 1  );
+            cheb2.bs_init( Fs , Fn , 100 , 100 , 8 , 80 );
+            buttf.bs_init( Fs , Fn , 100 , 100 , 8 , 1  );
+            ellip.bs_init( Fs , Fn , 100 , 100 , 8 , 1 , 80  );
+        break;
+
+    }
+
+    // filters memory allocation:
+    cheb1 .allocate();
+    cheb2 .allocate();
+    buttf .allocate();
+    ellip .allocate();
+
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            gen( 1 , Fn , 0 , Fs );
+
+            // filtering:
+            double y1 = cheb1 ( &gen.m_out );
+            double y2 = cheb2 ( &gen.m_out );
+            double y3 = buttf ( &gen.m_out );
+            double y4 = ellip ( &gen.m_out );
+
+            // generating output:
+            yt      << gen.m_out  << "\n";
+            cheb1_y << y1 << "\n";
+            cheb2_y << y2 << "\n";
+            buttf_y << y3 << "\n";
+            ellip_y << y4 << "\n";
+            tt      << time       << "\n";
+            time += 1 / Fs;
+        }
+    }
+
+    // frequency response computation:
+    iir_fr< double > fr1;
+    iir_fr< double > fr2;
+    iir_fr< double > fr3;
+    iir_fr< double > fr4;
+
+    for( int i = 0 ; i < Fs / 2 ; i++ )
+    {
+        fr1 = cheb1.freq_resp( i );
+        fr2 = cheb2.freq_resp( i );
+        fr3 = buttf.freq_resp( i );
+        fr4 = ellip.freq_resp( i );
+        cheb1_km << fr1.Km << "\n";
+        cheb1_ph << fr1.pH << "\n";
+        cheb2_km << fr2.Km << "\n";
+        cheb2_ph << fr2.pH << "\n";
+        buttf_km << fr3.Km << "\n";
+        buttf_ph << fr3.pH << "\n";
+        ellip_km << fr4.Km << "\n";
+        ellip_ph << fr4.pH << "\n";
+        ff << (double)i << "\n";
+    }
+
+    // close files:
+    yt     .close();
+    cheb1_y.close();
+    cheb2_y.close();
+    buttf_y.close();
+    ellip_y.close();
+    cheb1_km.close();
+    cheb2_km.close();
+    buttf_km.close();
+    ellip_km.close();
+    cheb1_ph.close();
+    cheb2_ph.close();
+    buttf_ph.close();
+    ellip_ph.close();
+    ff.close();
+
+
+    tt     .close();
+
+    // memory deallocation:
+    cheb1 .deallocate();
+    cheb2 .deallocate();
+    buttf .deallocate();
+    ellip .deallocate();
+
+    return 0;
+}
+
 #endif // EXAMPLES_H
