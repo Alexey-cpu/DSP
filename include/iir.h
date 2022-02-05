@@ -1614,8 +1614,8 @@ template < typename T > iir_cf<T> __cheb2_ellip_digital_bs__( __fx64 Fs , __fx64
 
 template< typename T > iir_bf<T> __iir_bf_alloc__( __ix32 N )
 {
-    mirror_ring_buffer<T> *bx = ( mirror_ring_buffer<T>* ) calloc( N , sizeof ( mirror_ring_buffer<T> ) );
-    mirror_ring_buffer<T> *by = ( mirror_ring_buffer<T>* ) calloc( N , sizeof ( mirror_ring_buffer<T> ) );
+    mirror_ring_buffer<T> *bx = new mirror_ring_buffer<T> [ N ];
+    mirror_ring_buffer<T> *by = new mirror_ring_buffer<T> [ N ];
     for( __ix32 i = 0 ; i < N ; i++ )
     {
         bx[i].allocate( 4 );
@@ -1639,14 +1639,14 @@ template< typename T > void __iir_bf_free__( iir_bf<T> bf )
     if( bx != 0 )
     {
         for( __ix32 i = 0 ; i < N ; i++ ) bx[i].deallocate();
-        free( bx );
+        delete[] bx;
         bf.bx = 0;
     }
 
     if( by != 0 )
     {
         for( __ix32 i = 0 ; i < N ; i++ ) by[i].deallocate();
-        free( by );
+        delete[] by;
         bf.by = 0;
     }
     bf.N = -1;
