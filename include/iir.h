@@ -1776,9 +1776,21 @@ template < typename T > void __show_iir__( iir_sp sp , iir_cf<T> cf , const char
 #endif
 
 /*! \brief Template Butterworth IIR filter class */
-template < typename T > class butterworth
+template < typename T > class butterworth;
+
+/*! \brief Template Chebyshev I IIR filter class */
+template < typename T > class chebyshev_1;
+
+/*! \brief Template Chebyshev II IIR filter class */
+template < typename T > class chebyshev_2;
+
+/*! \brief Template Elliptic IIR filter class */
+template < typename T > class elliptic;
+
+/*! \brief Butterworth IIR filter 32-bit realization */
+template <> class butterworth< __fx32 >
 {
-    typedef T __type ;
+    typedef __fx32 __type ;
 public:
 
     /*! \brief Butterworth filter specification data structure */
@@ -1913,10 +1925,148 @@ public:
     #endif
 };
 
-/*! \brief Template Chebyshev type I IIR filter class */
-template < typename T > class chebyshev_1
+/*! \brief Butterworth IIR filter 32-bit realization */
+template <> class butterworth< __fx64 >
 {
-    typedef T __type ;
+    typedef __fx64 __type ;
+public:
+
+    /*! \brief Butterworth filter specification data structure */
+    iir_sp           m_sp;
+    /*! \brief Butterworth filter second order sections coefficients data structure */
+    iir_cf< __type > m_cf;
+    /*! \brief Butterworth filter second order sections input/output buffers data structure */
+    iir_bf< __type > m_bf;
+
+public:
+
+    /*! \brief Butterworth filter output */
+    __type m_out;
+
+    /*! \brief Butterworth lowpass filter initialization function
+     *  \param[Fs   ] - sampling frequency        , Hz
+     *  \param[Fn   ] - network nominal frequency , Hz
+     *  \param[Fc   ] - cut-off frequency         , Hz
+     *  \param[order] - filter order
+     *  \param[Gs   ] - stopband attenuation      , Db
+     *  \return       The function implements Butterworth lowpass filter initialization.
+    */
+    void lp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , -1 , order , iir_type::lowpass_iir  }; }
+
+    /*! \brief Butterworth highpass filter initialization function
+     *  \param[Fs   ] - sampling frequency        , Hz
+     *  \param[Fn   ] - network nominal frequency , Hz
+     *  \param[Fp   ] - filter pass frequency     , Hz
+     *  \param[order] - filter order
+     *  \param[Gs   ] - stopband attenuation      , Db
+     *  \return       The function implements Butterworth highpass filter initialization.
+    */
+
+    void hp_init( __fx64 Fs , __fx64 Fn , __fx64 Fp ,  __ix32 order , __fx64 Gs = 1 ){ m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fp , -1 , Gs , -1 , order , iir_type::highpass_iir }; }
+
+    /*! \brief Butterworth bandpass filter initialization function
+     *  \param[Fs   ] - sampling frequency        , Hz
+     *  \param[Fn   ] - network nominal frequency , Hz
+     *  \param[Fp   ] - filter pass frequency     , Hz
+     *  \param[BW   ] - filter passband width     , Hz
+     *  \param[order] - filter order
+     *  \param[Gs   ] - stopband attenuation      , Db
+     *  \return       The function implements Butterworth bandpass filter initialization.
+    */
+
+    void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fp , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fp , BW , Gs , -1 , order , iir_type::bandpass_iir }; }
+
+    /*! \brief Butterworth bandstop filter initialization function
+     *  \param[Fs   ] - sampling frequency        , Hz
+     *  \param[Fn   ] - network nominal frequency , Hz
+     *  \param[Fc   ] - filter cut-off frequency  , Hz
+     *  \param[BW   ] - filter passband width     , Hz
+     *  \param[order] - filter order
+     *  \param[Gs   ] - stopband attenuation      , Db
+     *  \return       The function implements Butterworth bandstop filter initialization.
+    */
+
+    void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , iir_type::bandstop_iir }; }
+
+    /*! \brief  Butterworth IIR memory allocation function
+     *  \return The function implements Butterworth type IIR filter memory allocation and coefficients computation.
+    */
+    __ix32 allocate()
+    {
+        switch ( m_sp.type )
+        {
+            case iir_type::lowpass_iir:
+            m_cf = __butt_cheb1_digital_lp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , 0 , m_sp.Gs );
+            break;
+
+            case iir_type::highpass_iir:
+            m_cf = __butt_cheb1_digital_hp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , 0 , m_sp.Gs );
+            break;
+
+            case iir_type::bandpass_iir:
+            m_cf = __butt_cheb1_digital_bp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 0 , m_sp.Gs );
+            break;
+
+            case iir_type::bandstop_iir:
+            m_cf = __butt_cheb1_digital_bs__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 0 , m_sp.Gs );
+            break;
+        }
+
+        m_bf = ( ( m_cf.cfnum != 0 ) && ( m_cf.cfden != 0 ) && ( m_cf.gains != 0 ) ) ? __iir_bf_alloc__< __type >( m_cf.N ) : iir_bf< __type >{ 0 , 0 , -1 } ;
+        return ( m_bf.bx != 0 && m_bf.by != 0 );
+    }
+
+    /*! \brief  Butterworth IIR memory deallocation function
+     *  \return The function implements Butterworth type IIR filter memory deallocation.
+    */
+    void deallocate()
+    {
+        m_bf = __iir_bf_free__< __type >( m_bf );
+        m_cf = __iir_cf_free__< __type >( m_cf );
+    }
+
+    /*! \brief  Butterworth IIR filter default constructor */
+    butterworth()
+    {
+        m_cf = iir_cf<__type>{ 0 , 0 , 0 , -1 , -1 , -1 };
+        m_bf = iir_bf<__type>{ 0 , 0 , -1 };
+        m_sp = iir_sp        { 4000 , 1 / 4000 , 50 , 100 , -1 , 1 , -1 , 4 , 0 };
+    }
+
+    /*! \brief  Butterworth IIR filter default destructor */
+    ~butterworth(){ deallocate(); }
+
+    /*! \brief  Butterworth IIR filter filtering function
+     *  \param[input] - input samples
+     *  \return The function implements input samples filtering using Butterworth IIR filter second order sections coefficients and gains.
+     *          The filtering result is returned.
+    */
+    __type filt( __type *input ) { return ( m_out = __filt__< __type >( input , m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_bf.bx , m_bf.by ) ); }
+
+    /*! \brief  Butterworth IIR filter filtering operator
+     *  \param[input] - input samples
+     *  \return The operator calls function that implements input samples filtering using Butterworth IIR filter second order sections coefficients and gains.
+     *          The filtering result is returned.
+    */
+    inline __type operator () (  __type *input  ) { return filt( input ); }
+
+    /*! \brief  IIR filter frequency response computation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    iir_fr< __fx64 > freq_resp( __fx64 F ) { return __iir_freq_resp__( m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_sp.Fs , F ); }
+
+    #ifndef __ALG_PLATFORM
+    /*! \brief  Butterworth IIR filter properties show function
+     *  \return The operator calls function outputs Butterworth IIR filter specification and coefficients on the console
+    */
+    void show_properties() { __show_iir__< __type >( m_sp , m_cf , "Butterworth" ); }
+    #endif
+};
+
+/*! \brief Chebyshev I IIR filter 32-bit realization */
+template <> class chebyshev_1< __fx32 >
+{
+    typedef __fx32 __type ;
 public:
     /*! \brief Chebyshev I filter specification data structure */
     iir_sp           m_sp;
@@ -2046,14 +2196,151 @@ public:
     /*! \brief  Chebyshev I IIR filter properties show function
      *  \return The operator calls function outputs Chebyshev I IIR filter specification and coefficients on the console
     */
-    void show_properties() { __show_iir__< T >( m_sp , m_cf , "Chebyshev_I" ); }
+    void show_properties() { __show_iir__< __type >( m_sp , m_cf , "Chebyshev_I" ); }
     #endif
 };
 
-/*! \brief Template Chebyshev type II IIR filter class */
-template < typename T > class chebyshev_2
+/*! \brief Chebyshev I IIR filter 32-bit realization */
+template <> class chebyshev_1< __fx64 >
 {
-    typedef T __type ;
+    typedef __fx64 __type ;
+public:
+    /*! \brief Chebyshev I filter specification data structure */
+    iir_sp           m_sp;
+    /*! \brief Chebyshev I filter second order sections coefficients data structure */
+    iir_cf< __type > m_cf;
+    /*! \brief Chebyshev I filter second order sections input/output buffers data structure */
+    iir_bf< __type > m_bf;
+public:
+
+    /*! \brief Chebyshev I filter output */
+    __type m_out;
+
+    /*! \brief Chebyshev I lowpass filter initialization function
+     *  \param[Fs   ] - sampling frequency        , Hz
+     *  \param[Fn   ] - network nominal frequency , Hz
+     *  \param[Fc   ] - cut-off frequency         , Hz
+     *  \param[order] - filter order
+     *  \param[Gs   ] - stopband attenuation      , Db
+     *  \return       The function implements Butterworth lowpass filter initialization.
+    */
+
+    void lp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 1 ){ m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , -1 , order , iir_type::lowpass_iir  }; }
+
+    /*! \brief Chebyshev I highpass filter initialization function
+     *  \param[Fs   ] - sampling frequency        , Hz
+     *  \param[Fn   ] - network nominal frequency , Hz
+     *  \param[Fp   ] - filter pass frequency     , Hz
+     *  \param[order] - filter order
+     *  \param[Gs   ] - stopband attenuation      , Db
+     *  \return       The function implements Butterworth highpass filter initialization.
+    */
+
+    void hp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 1 ){ m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , -1 , order , iir_type::highpass_iir }; }
+
+    /*! \brief Chebyshev I bandpass filter initialization function
+     *  \param[Fs   ] - sampling frequency        , Hz
+     *  \param[Fn   ] - network nominal frequency , Hz
+     *  \param[Fp   ] - filter pass frequency     , Hz
+     *  \param[BW   ] - filter passband width     , Hz
+     *  \param[order] - filter order
+     *  \param[Gs   ] - stopband attenuation      , Db
+     *  \return       The function implements Butterworth bandpass filter initialization.
+    */
+
+    void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , iir_type::bandpass_iir }; }
+
+    /*! \brief Chebyshev I bandstop filter initialization function
+     *  \param[Fs   ] - sampling frequency        , Hz
+     *  \param[Fn   ] - network nominal frequency , Hz
+     *  \param[Fc   ] - filter cut-off frequency  , Hz
+     *  \param[BW   ] - filter passband width     , Hz
+     *  \param[order] - filter order
+     *  \param[Gs   ] - stopband attenuation      , Db
+     *  \return       The function implements Butterworth bandstop filter initialization.
+    */
+
+    void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 1 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , -1 , order , iir_type::bandstop_iir }; }
+
+    /*! \brief  Chebyshev I IIR memory allocation function
+     *  \return The function implements Chebyshev I type IIR filter memory allocation and coefficients computation.
+    */
+    __ix32 allocate()
+    {
+        switch ( m_sp.type )
+        {
+            case iir_type::lowpass_iir:
+            m_cf = __butt_cheb1_digital_lp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , 1 , m_sp.Gs );
+            break;
+
+            case iir_type::highpass_iir:
+            m_cf = __butt_cheb1_digital_hp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , 1 , m_sp.Gs );
+            break;
+
+            case iir_type::bandpass_iir:
+            m_cf = __butt_cheb1_digital_bp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 1 , m_sp.Gs );
+            break;
+
+            case iir_type::bandstop_iir:
+            m_cf = __butt_cheb1_digital_bs__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 1 , m_sp.Gs );
+            break;
+        }
+
+        m_bf = ( ( m_cf.cfnum != 0 ) && ( m_cf.cfden != 0 ) && ( m_cf.gains != 0 ) ) ? __iir_bf_alloc__< __type >( m_cf.N ) : iir_bf< __type >{ 0 , 0 , -1 } ;
+        return ( m_bf.bx != 0 && m_bf.by != 0 );
+    }
+
+    /*! \brief  Chebyshev I IIR memory deallocation function
+     *  \return The function implements Butterworth type IIR filter memory deallocation.
+    */
+    void deallocate()
+    {
+        m_bf = __iir_bf_free__< __type >( m_bf );
+        m_cf = __iir_cf_free__< __type >( m_cf );
+    }
+
+    /*! \brief  Chebyshev I IIR filter default constructor */
+    chebyshev_1()
+    {
+        m_cf = iir_cf< __type >{ 0 , 0 , 0 , -1 , -1 , -1 };
+        m_bf = iir_bf< __type >{ 0 , 0 , -1 };
+        m_sp = iir_sp          { 4000 , 1 / 4000 , 50 , 100 , -1 , 1 , -1 , 4 , 0 };
+    }
+
+    /*! \brief  Chebyshev I IIR filter default destructor */
+    ~chebyshev_1(){ deallocate(); }
+
+    /*! \brief  Chebyshev I IIR filter filtering function
+     *  \param[input] - input samples
+     *  \return The function implements input samples filtering using Chebyshev I IIR filter second order sections coefficients and gains.
+     *          The filtering result is returned.
+    */
+    __type filt( __type *input ) { return ( m_out = __filt__< __type >( input , m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_bf.bx , m_bf.by ) ); }
+
+    /*! \brief  Chebyshev I IIR filter filtering operator
+     *  \param[input] - input samples
+     *  \return The operator calls function that implements input samples filtering using Chebyshev I filter second order sections coefficients and gains.
+     *          The filtering result is returned.
+    */
+    inline __type operator () (  __type *input  ) { return filt( input ); }
+
+    /*! \brief  IIR filter frequency response computation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    iir_fr< __fx64 > freq_resp( __fx64 F ) { return __iir_freq_resp__( m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_sp.Fs , F ); }
+
+    #ifndef __ALG_PLATFORM
+    /*! \brief  Chebyshev I IIR filter properties show function
+     *  \return The operator calls function outputs Chebyshev I IIR filter specification and coefficients on the console
+    */
+    void show_properties() { __show_iir__< __type >( m_sp , m_cf , "Chebyshev_I" ); }
+    #endif
+};
+
+/*! \brief Chebyshev II IIR filter 32-bit realization */
+template <> class chebyshev_2< __fx32 >
+{
+    typedef __fx32 __type ;
 public:
     /*! \brief Chebyshev II filter specification data structure */
     iir_sp           m_sp;
@@ -2183,10 +2470,143 @@ public:
     #endif
 };
 
-/*! \brief Template Elliptic IIR filter class */
-template < typename T > class elliptic
+/*! \brief Chebyshev II IIR filter 64-bit realization */
+template <> class chebyshev_2< __fx64 >
 {
-    typedef T __type ;
+    typedef __fx64 __type ;
+public:
+    /*! \brief Chebyshev II filter specification data structure */
+    iir_sp           m_sp;
+    /*! \brief Chebyshev II filter second order sections coefficients data structure */
+    iir_cf< __type > m_cf;
+    /*! \brief Chebyshev II filter second order sections input/output buffers data structure */
+    iir_bf< __type > m_bf;
+public:
+
+    /*! \brief Chebyshev II filter output */
+    __type m_out;
+
+    /*! \brief Chebyshev II lowpass filter initialization function
+     *  \param[Fs   ] - sampling frequency        , Hz
+     *  \param[Fn   ] - network nominal frequency , Hz
+     *  \param[Fc   ] - cut-off frequency         , Hz
+     *  \param[order] - filter order
+     *  \param[Gs   ] - stopband attenuation      , Db
+     *  \return         The function implements Butterworth lowpass filter initialization.
+    */
+    void lp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 80 ){ m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , 1 , order , iir_type::lowpass_iir  }; }
+
+    /*! \brief Chebyshev II highpass filter initialization function
+     *  \param[Fs   ] - sampling frequency        , Hz
+     *  \param[Fn   ] - network nominal frequency , Hz
+     *  \param[Fp   ] - filter pass frequency     , Hz
+     *  \param[order] - filter order
+     *  \param[Gs   ] - stopband attenuation      , Db
+     *  \return         The function implements Butterworth highpass filter initialization.
+    */
+    void hp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gs = 80 ){ m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , 1 , order , iir_type::highpass_iir }; }
+
+    /*! \brief Chebyshev II bandpass filter initialization function
+     *  \param[Fs   ] - sampling frequency        , Hz
+     *  \param[Fn   ] - network nominal frequency , Hz
+     *  \param[Fp   ] - filter pass frequency     , Hz
+     *  \param[BW   ] - filter passband width     , Hz
+     *  \param[order] - filter order
+     *  \param[Gs   ] - stopband attenuation      , Db
+     *  \return         The function implements Butterworth bandpass filter initialization.
+    */
+    void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , 1 , order , iir_type::bandpass_iir }; }
+
+    /*! \brief Chebyshev II bandstop filter initialization function
+     *  \param[Fs   ] - sampling frequency        , Hz
+     *  \param[Fn   ] - network nominal frequency , Hz
+     *  \param[Fc   ] - filter cut-off frequency  , Hz
+     *  \param[BW   ] - filter passband width     , Hz
+     *  \param[order] - filter order
+     *  \param[Gs   ] - stopband attenuation      , Db
+     *  \return         The function implements Butterworth bandstop filter initialization.
+    */
+    void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , 1 , order , iir_type::bandstop_iir }; }
+
+    /*! \brief  Chebyshev II IIR memory allocation function
+     *  \return The function implements Chebyshev II type IIR filter memory allocation and coefficients computation.
+    */
+    __ix32 allocate()
+    {
+        switch ( m_sp.type )
+        {
+            case iir_type::lowpass_iir:
+            m_cf = __cheb2_ellip_digital_lp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , 0 , m_sp.Gp , m_sp.Gs );
+            break;
+
+            case iir_type::highpass_iir:
+            m_cf = __cheb2_ellip_digital_hp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , 0 , m_sp.Gp , m_sp.Gs );
+            break;
+
+            case iir_type::bandpass_iir:
+            m_cf = __cheb2_ellip_digital_bp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 0 , m_sp.Gp , m_sp.Gs );
+            break;
+
+            case iir_type::bandstop_iir:
+            m_cf = __cheb2_ellip_digital_bs__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 0 , m_sp.Gp , m_sp.Gs );
+            break;
+        }
+
+        m_bf = ( ( m_cf.cfnum != 0 ) && ( m_cf.cfden != 0 ) && ( m_cf.gains != 0 ) ) ? __iir_bf_alloc__< __type >( m_cf.N ) : iir_bf< __type >{ 0 , 0 , -1 } ;
+        return ( m_bf.bx != 0 && m_bf.by != 0 );
+    }
+
+    /*! \brief  Chebyshev II IIR memory deallocation function
+     *  \return The function implements Chebyshev II type IIR filter memory deallocation.
+    */
+    void deallocate()
+    {
+        m_bf = __iir_bf_free__< __type >( m_bf );
+        m_cf = __iir_cf_free__< __type >( m_cf );
+    }
+
+     /*! \brief  Chebyshev II IIR filter default constructor */
+    chebyshev_2()
+    {
+        m_cf = iir_cf< __type > { 0 , 0 , 0 , -1 , -1 , -1 };
+        m_bf = iir_bf< __type > { 0 , 0 , -1 };
+        m_sp = iir_sp           { 4000 , 1 / 4000 , 50 , 100 , -1 , 1 , 80 , 4 , 0 };
+    }
+
+     /*! \brief  Chebyshev II IIR filter default destructor */
+    ~chebyshev_2(){ deallocate(); }
+
+    /*! \brief  Chebyshev II IIR filter filtering function
+     *  \param[input] - input samples
+     *  \return The function implements input samples filtering using Chebyshev II IIR filter second order sections coefficients and gains.
+     *          The filtering result is returned.
+    */
+    __type filt( __type *input ) { return ( m_out = __filt__< __type >( input , m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_bf.bx , m_bf.by ) ); }
+
+    /*! \brief  Chebyshev II IIR filter filtering operator
+     *  \param[input] - input samples
+     *  \return The operator calls function that implements input samples filtering using Butterworth IIR filter second order sections coefficients and gains.
+     *          The filtering result is returned.
+    */
+    inline __type operator () (  __type *input  ) { return filt( input ); }
+
+    /*! \brief  IIR filter frequency response computation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    iir_fr< __fx64 > freq_resp( __fx64 F ) { return __iir_freq_resp__( m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_sp.Fs , F ); }
+
+    #ifndef __ALG_PLATFORM
+    /*! \brief  Chebyshev II IIR filter properties show function
+     *  \return The operator calls function outputs Butterworth IIR filter specification and coefficients on the console
+    */
+    void show_properties() { __show_iir__< __type >( m_sp , m_cf , "Chebyshev_II" ); }
+    #endif
+};
+
+/*! \brief Elliptic IIR filter 32-bit realization */
+template <> class elliptic< __fx32 >
+{
+    typedef __fx32 __type ;
 public:
     /*! \brief Elliptic filter specification data structure */
     iir_sp           m_sp;
@@ -2317,7 +2737,145 @@ public:
     /*! \brief  Elliptic IIR filter properties show function
      *  \return The operator calls function outputs Elliptic IIR filter specification and coefficients on the console
     */
-    void show_properties() { __show_iir__< T >( m_sp , m_cf , "Elliptic" ); }
+    void show_properties() { __show_iir__< __type >( m_sp , m_cf , "Elliptic" ); }
+    #endif
+};
+
+/*! \brief Elliptic IIR filter 32-bit realization */
+template <> class elliptic< __fx64 >
+{
+    typedef __fx64 __type ;
+public:
+    /*! \brief Elliptic filter specification data structure */
+    iir_sp           m_sp;
+    /*! \brief Elliptic filter second order sections coefficients data structure */
+    iir_cf< __type > m_cf;
+    /*! \brief Elliptic filter second order sections input/output buffers data structure */
+    iir_bf< __type > m_bf;
+public:
+
+    /*! \brief Elliptic filter output */
+    __type m_out;
+
+    /*! \brief Elliptic lowpass filter initialization function
+     *  \param[Fs   ] - sampling frequency        , Hz
+     *  \param[Fn   ] - network nominal frequency , Hz
+     *  \param[Fc   ] - cut-off frequency         , Hz
+     *  \param[order] - filter order
+     *  \param[Gs   ] - stopband attenuation      , Db
+     *  \param[Gp   ] - passband attenuation      , Db
+     *  \return       The function implements Butterworth lowpass filter initialization.
+    */
+    void lp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , Gp , order , iir_type::lowpass_iir  }; }
+
+    /*! \brief Elliptic highpass filter initialization function
+     *  \param[Fs   ] - sampling frequency        , Hz
+     *  \param[Fn   ] - network nominal frequency , Hz
+     *  \param[Fp   ] - filter pass frequency     , Hz
+     *  \param[order] - filter order
+     *  \param[Gs   ] - stopband attenuation      , Db
+     *  \param[Gp   ] - passband attenuation      , Db
+     *  \return       The function implements Butterworth highpass filter initialization.
+    */
+    void hp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , -1 , Gs , Gp , order , iir_type::highpass_iir }; }
+
+    /*! \brief Elliptic bandpass filter initialization function
+     *  \param[Fs   ] - sampling frequency        , Hz
+     *  \param[Fn   ] - network nominal frequency , Hz
+     *  \param[Fp   ] - filter pass frequency     , Hz
+     *  \param[BW   ] - filter passband width     , Hz
+     *  \param[order] - filter order
+     *  \param[Gs   ] - stopband attenuation      , Db
+     *  \param[Gp   ] - passband attenuation      , Db
+     *  \return       The function implements Butterworth bandpass filter initialization.
+    */
+    void bp_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , Gp , order , iir_type::bandpass_iir }; }
+
+    /*! \brief Elliptic bandstop filter initialization function
+     *  \param[Fs   ] - sampling frequency        , Hz
+     *  \param[Fn   ] - network nominal frequency , Hz
+     *  \param[Fc   ] - filter cut-off frequency  , Hz
+     *  \param[BW   ] - filter passband width     , Hz
+     *  \param[order] - filter order
+     *  \param[Gs   ] - stopband attenuation      , Db
+     *  \param[Gp   ] - passband attenuation      , Db
+     *  \return       The function implements Butterworth bandstop filter initialization.
+    */
+    void bs_init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 BW ,  __ix32 order , __fx64 Gp = 1 , __fx64 Gs = 80 ) { m_sp = iir_sp{ Fs , 1 / Fs , Fn , Fc , BW , Gs , Gp , order , iir_type::bandstop_iir }; }
+
+    /*! \brief  Elliptic IIR memory allocation function
+     *  \return The function implements Butterworth type IIR filter memory allocation and coefficients computation.
+    */
+    __ix32 allocate()
+    {
+        switch ( m_sp.type )
+        {
+            case iir_type::lowpass_iir:
+            m_cf = __cheb2_ellip_digital_lp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , 1 , m_sp.Gp , m_sp.Gs );
+            break;
+
+            case iir_type::highpass_iir:
+            m_cf = __cheb2_ellip_digital_hp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.order , 1 , m_sp.Gp , m_sp.Gs );
+            break;
+
+            case iir_type::bandpass_iir:
+            m_cf = __cheb2_ellip_digital_bp__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 1 , m_sp.Gp , m_sp.Gs );
+            break;
+
+            case iir_type::bandstop_iir:
+            m_cf = __cheb2_ellip_digital_bs__< __type >( m_sp.Fs , m_sp.Fc , m_sp.BW , m_sp.order , 1 , m_sp.Gp , m_sp.Gs );
+            break;
+        }
+
+        m_bf = ( ( m_cf.cfnum != 0 ) && ( m_cf.cfden != 0 ) && ( m_cf.gains != 0 ) ) ? __iir_bf_alloc__< __type >( m_cf.N ) : iir_bf< __type >{ 0 , 0 , -1 } ;
+        return ( m_bf.bx != 0 && m_bf.by != 0 );
+    }
+
+    /*! \brief  Elliptic IIR memory deallocation function
+     *  \return The function implements Butterworth type IIR filter memory deallocation.
+    */
+    void deallocate()
+    {
+        m_bf = __iir_bf_free__< __type >( m_bf );
+        m_cf = __iir_cf_free__< __type >( m_cf );
+    }
+
+    /*! \brief  Elliptic IIR filter default constructor */
+    elliptic()
+    {
+        m_cf = iir_cf< __type >{ 0 , 0 , 0 , -1 , -1 , -1 };
+        m_bf = iir_bf< __type >{ 0 , 0 , -1 };
+        m_sp = iir_sp          { 4000 , 1 / 4000 , 50 , 100 , -1 , 1 , 80 , 4 , 0 };
+    }
+
+    /*! \brief  Elliptic IIR filter default destructor */
+    ~elliptic(){ deallocate(); }
+
+    /*! \brief  Elliptic IIR filter filtering function
+     *  \param[input] - input samples
+     *  \return The function implements input samples filtering using Elliptic IIR filter second order sections coefficients and gains.
+     *          The filtering result is returned.
+    */
+    __type filt( __type *input ) { return ( m_out = __filt__< __type >( input , m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_bf.bx , m_bf.by ) ); }
+
+    /*! \brief  Elliptic IIR filter filtering operator
+     *  \param[input] - input samples
+     *  \return The operator calls function that implements input samples filtering using Elliptic IIR filter second order sections coefficients and gains.
+     *          The filtering result is returned.
+    */
+    inline __type operator () (  __type *input  ) { return filt( input ); }
+
+    /*! \brief  IIR filter frequency response computation function
+     *  \param[F] - input signal frequency , Hz
+    */
+    iir_fr< __fx64 > freq_resp( __fx64 F ) { return __iir_freq_resp__( m_cf.cfnum , m_cf.cfden , m_cf.gains , m_cf.N , m_sp.Fs , F ); }
+
+    // debugging function:
+    #ifndef __ALG_PLATFORM
+    /*! \brief  Elliptic IIR filter properties show function
+     *  \return The operator calls function outputs Elliptic IIR filter specification and coefficients on the console
+    */
+    void show_properties() { __show_iir__< __type >( m_sp , m_cf , "Elliptic" ); }
     #endif
 };
 

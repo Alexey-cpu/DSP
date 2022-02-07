@@ -150,14 +150,13 @@ template< typename T>  fcomplex< T > __cdiv__( T re0 , T im0 , T re1 , T im1 , T
     return ( den == 0 ) ? fcomplex< T >{ max , max } : fcomplex< T >{ ( re0 * re1 + im0 * im1 ) / den , ( im0 * re1 - re0 * im1 ) / den } ;
 }
 
-/* template complex number class */
-
 /*! \brief complex number template class */
+template< typename T > class complex;
 
-// complex number type:
-template< typename T > class complex
+/*! \brief complex number 32-bit realization */
+template<> class complex< __fx32 >
 {
-    typedef T __type;
+    typedef __fx32 __type;
     /*! \brief maximum complex number real or imaginary component value */
     __type m_MAX = __max_fx32;
 public:
@@ -200,8 +199,6 @@ public:
         this->m_re = _complex.m_re;
         this->m_im = _complex.m_im;
     }
-
-    // operators:
 
     /*!
      *  \brief complex number + operator
@@ -320,8 +317,8 @@ public:
     /*!
      *  \brief complex number * operator
      *  \param[_complex] input template complex nuber object
-     *  \return the operator result is the multiplication of the current template complex number object and the input
-     *          real constant. The multiplication is implemented by calling \f[ cmul<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *  \return the operator result is the multiplication of the current template complex number object
+     *          by another complex number. The multiplication is implemented by calling \f[ cmul<T>( re_1 , im_1 , re_2 , im_2 ) \f]
      *          template function. The result is stored within the current complex number template object and returned as
      *          an output.
     */
@@ -331,6 +328,14 @@ public:
         return complex( c.re , c.im );
     }
 
+    /*!
+     *  \brief complex number *= operator
+     *  \param[_complex] input template complex nuber object
+     *  \return the operator result is the multiplication of the current template complex number object
+     *          by another complex number. The multiplication is implemented by calling \f[ cmul<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
     inline complex operator *= (complex _complex )
     {
         fcomplex< __type > c = __cmul__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im );
@@ -339,13 +344,28 @@ public:
         return *this;
     }
 
-    // multiply by a constant:
+    /*!
+     *  \brief complex number * operator
+     *  \param[number] input real constant
+     *  \return the operator result is the multiplication of the current template complex number object
+     *          by a real constant. The multiplication is implemented by calling \f[ cmul<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
     inline complex operator * ( __type number ) const
     {
         fcomplex< __type > c = __cmul__< __type >( this->m_re , this->m_im , number , 0.0 );
         return complex( c.re , c.im );
     }
 
+    /*!
+     *  \brief complex number *= operator
+     *  \param[number] input real constant
+     *  \return the operator result is the multiplication of the current template complex number object
+     *          by a real constant. The multiplication is implemented by calling \f[ cmul<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
     inline complex operator *= ( __type number )
     {
         fcomplex< __type > c = __cmul__< __type >( this->m_re , this->m_im , number , 0.0 );
@@ -354,13 +374,28 @@ public:
         return *this;
     }
 
-    // divide by another complex:
+    /*!
+     *  \brief complex number / operator
+     *  \param[_complex] input template complex nuber object
+     *  \return the operator result is the division of the current template complex number object
+     *          by another complex number. The multiplication is implemented by calling \f[ cdiv<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
     inline complex operator / ( complex _complex ) const
     {
         fcomplex< __type > c = __cdiv__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im , m_MAX );
         return complex( c.re , c.im );
     }
 
+    /*!
+     *  \brief complex number /= operator
+     *  \param[_complex] input template complex nuber object
+     *  \return the operator result is the division of the current template complex number object
+     *          by another complex number. The multiplication is implemented by calling \f[ cdiv<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
     inline complex operator /= ( complex _complex )
     {
 
@@ -370,13 +405,28 @@ public:
         return *this;
     }
 
-    // divide by a constant:
+    /*!
+     *  \brief complex number / operator
+     *  \param[number] input real constant
+     *  \return the operator result is the division of the current template complex number object
+     *          by a real constant. The multiplication is implemented by calling \f[ cdiv<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
     inline complex operator / ( __type number ) const
     {
         fcomplex< __type > c = __cdiv__< __type >( this->m_re , this->m_im , number , 0.0 , m_MAX );
         return complex( c.re , c.im );
     }
 
+    /*!
+     *  \brief complex number /= operator
+     *  \param[number] input real constant
+     *  \return the operator result is the division of the current template complex number object
+     *          by a real constant. The multiplication is implemented by calling \f[ cdiv<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
     inline complex operator /= ( __type number )
     {
         fcomplex< __type > c = __cdiv__< __type >( this->m_re , this->m_im , number , 0.0 , m_MAX );
@@ -385,7 +435,11 @@ public:
         return *this;
     }
 
-    // assign another complex:
+    /*!
+     *  \brief complex number /= operator
+     *  \param[_complex] input template complex nuber object
+     *  \return the operator assigns current complex number another complex number
+    */
     inline complex operator = ( const complex _complex )
     {
         this->m_re = _complex.m_re;
@@ -393,7 +447,11 @@ public:
         return *this;
     }
 
-    // assign a constant:
+    /*!
+     *  \brief complex number /= operator
+     *  \param[number] input real constant
+     *  \return the operator assigns current complex a real constant
+    */
     inline complex operator = ( const __type number )
     {
         this->m_re = number;
@@ -401,13 +459,399 @@ public:
         return *this;
     }
 
-    // comparison operator:
+    /*!
+     *  \brief equality operator
+     *  \param[_complex] input template complex nuber object
+     *  \return the operator checks if the two complex numbers are equal
+    */
     inline bool operator == ( const complex _complex )
     {
         return ( this->m_re == _complex.m_re ) && ( this->m_im == _complex.m_im );
     }
 
-    // initializing operator:
+    /*!
+     *  \brief operator >
+     *  \param[_complex] input template complex nuber object
+     *  \return the operator checks if the current complex number is greater than another
+    */
+    inline bool operator > (  const complex _complex  )
+    {
+        __type abs1 = sqrt( this->m_re * this->m_re + this->m_im * this->m_im );
+        __type abs2 = sqrt( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
+        return (abs1 > abs2);
+    }
+
+    /*!
+     *  \brief operator <
+     *  \param[_complex] input template complex nuber object
+     *  \return the operator checks if the current complex number is greater than another
+    */
+    inline bool operator < (  const complex _complex  )
+    {
+        __type abs1 = sqrt( this->m_re * this->m_re + this->m_im * this->m_im );
+        __type abs2 = sqrt( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
+        return (abs1 > abs2);
+    }
+
+    /*!
+     *  \brief equality operator
+     *  \param[re] input template complex nuber object
+     *  \param[im]
+     *  \return the operator checks if the two complex numbers are equal
+    */
+    inline void operator () ( __type re , __type im )
+    {
+        this->m_re = re;
+        this->m_im = im;
+    }
+};
+
+/*! \brief complex number 64-bit realization */
+template<> class complex< __fx64 >
+{
+    typedef __fx64 __type;
+    /*! \brief maximum complex number real or imaginary component value */
+    __type m_MAX = __max_fx64;
+public:
+
+    /*! \brief complex number real component */
+    __type m_re;
+
+    /*! \brief complex number imaginary component */
+    __type m_im;
+
+    /*! \brief complex number default constructor */
+    complex() { m_re  = m_im  = 0; }
+
+    /*!
+     *  \brief template complex number initialization constructor
+     *  \param[re] complex number real component
+     *  \param[im] imaginary number real component
+    */
+    complex( __type re , __type im )
+    {
+        m_re = re;
+        m_im = im;
+    }
+
+    /*!
+     *  \brief complex number initialization constructor
+     *  \param[ number ] - real constant that initializes complex number real component
+    */
+    complex( __type number )
+    {
+        m_re = number;
+        m_im = 0;
+    }
+
+    /*! \brief complex number copying constructor
+     *  \param[_complex] input template complex number
+    */
+    complex( const complex &_complex )
+    {
+        this->m_re = _complex.m_re;
+        this->m_im = _complex.m_im;
+    }
+
+    /*!
+     *  \brief complex number + operator
+     *  \param[_complex] input template complex number
+     *  \return the operator result is the summ of the current templatre complex number object and the input
+     *          complex number template object. The summation is implemented by calling
+     *          \f[ cadd<T>( re_1 , im_1 , re_2 , im_2 ) \f] template function
+    */
+    inline complex operator + ( complex _complex ) const
+    {
+        fcomplex< __type > c = __cadd__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im );
+        return complex( c.re , c.im ) ;
+    }
+
+    /*!
+     *  \brief complex number += operator
+     *  \param[_complex] input template complex number
+     *  \return the operator result is the summ of the current templatre complex number object and the input
+     *          complex number template object. The summation is implemented by calling
+     *          \f[ cadd<T>( re_1 , im_1 , re_2 , im_2 ) \f] template function. The result is stored within
+     *          current complex number template object and returned as an output
+    */
+    inline complex operator += ( complex _complex )
+    {
+        fcomplex< __type > c = __cadd__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im );
+        this->m_re = c.re;
+        this->m_im = c.im;
+        return *this;
+    }
+
+    /*!
+     *  \brief complex number + operator
+     *  \param[number] input real constant
+     *  \return the operator result is the summ of the current templatre complex number object and the input
+     *          real constant. The summation is implemented by calling \f[ cadd<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function.
+    */
+    inline complex operator + ( __type number ) const
+    {
+        fcomplex< __type > c = __cadd__< __type >( this->m_re , this->m_im , number , 0.0 );
+        return complex( c.re , c.im );
+    }
+
+    /*!
+     *  \brief complex number += operator
+     *  \param[number] input real constant
+     *  \return the operator result is the summ of the current templatre complex number object and the input
+     *          real constant. The summation is implemented by calling \f[ cadd<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within current complex number template object and
+     *          returned as an output
+    */
+    inline complex operator += ( __type number )
+    {
+        //this->m_re += number;
+        fcomplex< __type > c = __cadd__< __type >( this->m_re , this->m_im , number , 0.0 );
+        this->m_re = c.re; this->m_im = c.im;
+        return *this;
+    }
+
+    /*!
+     *  \brief complex number - operator
+     *  \param[_complex] input template complex number
+     *  \return the operator result is the sustraction of the current templatre complex number object and the input
+     *          template complex number. The substraction is implemented by calling \f[ csub<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function.
+    */
+    inline complex operator - ( complex _complex ) const
+    {
+        fcomplex< __type > c = __csub__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im );
+        return complex( c.re , c.im );
+    }
+
+    /*!
+     *  \brief complex number -= operator
+     *  \param[_complex] input template complex number
+     *  \return the operator result is the sustraction of the current templatre complex number object and the input
+     *          template complex number. The substraction is implemented by calling \f[ csub<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
+    inline complex operator -= ( complex _complex )
+    {
+
+        fcomplex< __type > c = __csub__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im );
+        this->m_re = c.re; this->m_im = c.im;
+        return *this;
+    }
+
+    /*!
+     *  \brief complex number - operator
+     *  \param[number] input real constant
+     *  \return the operator result is the sustraction of the current templatre complex number object and the input
+     *          real constant. The substraction is implemented by calling \f[ csub<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function.
+    */
+    inline complex operator - ( __type number ) const
+    {
+        fcomplex< __type > c = __csub__< __type >( this->m_re , this->m_im , number , 0.0 );
+        return complex( c.re , c.im );
+    }
+
+    /*!
+     *  \brief complex number - operator
+     *  \param[number] input real constant
+     *  \return the operator result is the sustraction of the current template complex number object and the input
+     *          real constant. The substraction is implemented by calling \f[ csub<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
+    inline complex operator -= ( __type number )
+    {
+        fcomplex< __type > c = __csub__< __type >( this->m_re , this->m_im , number , 0.0 );
+        return complex( c.re , c.im );
+    }
+
+    /*!
+     *  \brief complex number * operator
+     *  \param[_complex] input template complex nuber object
+     *  \return the operator result is the multiplication of the current template complex number object
+     *          by another complex number. The multiplication is implemented by calling \f[ cmul<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
+    inline complex operator * (complex _complex ) const
+    {
+        fcomplex< __type > c = __cmul__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im );
+        return complex( c.re , c.im );
+    }
+
+    /*!
+     *  \brief complex number *= operator
+     *  \param[_complex] input template complex nuber object
+     *  \return the operator result is the multiplication of the current template complex number object
+     *          by another complex number. The multiplication is implemented by calling \f[ cmul<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
+    inline complex operator *= (complex _complex )
+    {
+        fcomplex< __type > c = __cmul__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im );
+        this->m_re = c.re;
+        this->m_im = c.im;
+        return *this;
+    }
+
+    /*!
+     *  \brief complex number * operator
+     *  \param[number] input real constant
+     *  \return the operator result is the multiplication of the current template complex number object
+     *          by a real constant. The multiplication is implemented by calling \f[ cmul<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
+    inline complex operator * ( __type number ) const
+    {
+        fcomplex< __type > c = __cmul__< __type >( this->m_re , this->m_im , number , 0.0 );
+        return complex( c.re , c.im );
+    }
+
+    /*!
+     *  \brief complex number *= operator
+     *  \param[number] input real constant
+     *  \return the operator result is the multiplication of the current template complex number object
+     *          by a real constant. The multiplication is implemented by calling \f[ cmul<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
+    inline complex operator *= ( __type number )
+    {
+        fcomplex< __type > c = __cmul__< __type >( this->m_re , this->m_im , number , 0.0 );
+        this->m_re = c.re;
+        this->m_im = c.im;
+        return *this;
+    }
+
+    /*!
+     *  \brief complex number / operator
+     *  \param[_complex] input template complex nuber object
+     *  \return the operator result is the division of the current template complex number object
+     *          by another complex number. The multiplication is implemented by calling \f[ cdiv<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
+    inline complex operator / ( complex _complex ) const
+    {
+        fcomplex< __type > c = __cdiv__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im , m_MAX );
+        return complex( c.re , c.im );
+    }
+
+    /*!
+     *  \brief complex number /= operator
+     *  \param[_complex] input template complex nuber object
+     *  \return the operator result is the division of the current template complex number object
+     *          by another complex number. The multiplication is implemented by calling \f[ cdiv<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
+    inline complex operator /= ( complex _complex )
+    {
+
+        fcomplex< __type > c = __cdiv__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im , m_MAX );
+        this->m_re = c.re;
+        this->m_im = c.im;
+        return *this;
+    }
+
+    /*!
+     *  \brief complex number / operator
+     *  \param[number] input real constant
+     *  \return the operator result is the division of the current template complex number object
+     *          by a real constant. The multiplication is implemented by calling \f[ cdiv<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
+    inline complex operator / ( __type number ) const
+    {
+        fcomplex< __type > c = __cdiv__< __type >( this->m_re , this->m_im , number , 0.0 , m_MAX );
+        return complex( c.re , c.im );
+    }
+
+    /*!
+     *  \brief complex number /= operator
+     *  \param[number] input real constant
+     *  \return the operator result is the division of the current template complex number object
+     *          by a real constant. The multiplication is implemented by calling \f[ cdiv<T>( re_1 , im_1 , re_2 , im_2 ) \f]
+     *          template function. The result is stored within the current complex number template object and returned as
+     *          an output.
+    */
+    inline complex operator /= ( __type number )
+    {
+        fcomplex< __type > c = __cdiv__< __type >( this->m_re , this->m_im , number , 0.0 , m_MAX );
+        this->m_re = c.re;
+        this->m_im = c.im;
+        return *this;
+    }
+
+    /*!
+     *  \brief complex number /= operator
+     *  \param[_complex] input template complex nuber object
+     *  \return the operator assigns current complex number another complex number
+    */
+    inline complex operator = ( const complex _complex )
+    {
+        this->m_re = _complex.m_re;
+        this->m_im = _complex.m_im;
+        return *this;
+    }
+
+    /*!
+     *  \brief complex number /= operator
+     *  \param[number] input real constant
+     *  \return the operator assigns current complex a real constant
+    */
+    inline complex operator = ( const __type number )
+    {
+        this->m_re = number;
+        this->m_im = 0;
+        return *this;
+    }
+
+    /*!
+     *  \brief equality operator
+     *  \param[_complex] input template complex nuber object
+     *  \return the operator checks if the two complex numbers are equal
+    */
+    inline bool operator == ( const complex _complex )
+    {
+        return ( this->m_re == _complex.m_re ) && ( this->m_im == _complex.m_im );
+    }
+
+    /*!
+     *  \brief operator >
+     *  \param[_complex] input template complex nuber object
+     *  \return the operator checks if the current complex number is greater than another
+    */
+    inline bool operator > (  const complex _complex  )
+    {
+        __type abs1 = sqrt( this->m_re * this->m_re + this->m_im * this->m_im );
+        __type abs2 = sqrt( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
+        return (abs1 > abs2);
+    }
+
+    /*!
+     *  \brief operator <
+     *  \param[_complex] input template complex nuber object
+     *  \return the operator checks if the current complex number is greater than another
+    */
+    inline bool operator < (  const complex _complex  )
+    {
+        __type abs1 = sqrt( this->m_re * this->m_re + this->m_im * this->m_im );
+        __type abs2 = sqrt( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im );
+        return (abs1 > abs2);
+    }
+
+    /*!
+     *  \brief equality operator
+     *  \param[re] input template complex nuber object
+     *  \param[im]
+     *  \return the operator checks if the two complex numbers are equal
+    */
     inline void operator () ( __type re , __type im )
     {
         this->m_re = re;

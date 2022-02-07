@@ -234,7 +234,7 @@ int example2()
         for( int j = 0 ; j < frames_per_cycle ; j++ )
         {
             // signal generation and filtering:
-            gen( 1 , Fn , 0 , Fs );
+            gen.sine( 1 , Fn , 0 , Fs );
 
             // filtering:
             flt( &gen.m_out );
@@ -324,7 +324,7 @@ int example3()
         for( int j = 0 ; j < frames_per_cycle ; j++ )
         {
             // signal generation and filtering:
-            gen( 1 , Fn , 0 , Fs );
+            gen.sine( 1 , Fn , 0 , Fs );
 
             // filtering:
             flt( &gen.m_out );
@@ -414,7 +414,7 @@ int example4()
         for( int j = 0 ; j < frames_per_cycle ; j++ )
         {
             // signal generation and filtering:
-            gen( 1 , Fn , 0 , Fs );
+            gen.sine( 1 , Fn , 0 , Fs );
 
             // filtering:
             flt( &gen.m_out );
@@ -504,7 +504,7 @@ int example5()
     for( int i = 0 ; i < cycles_num ; i++ )
     {
         // generating signal buffer:
-        for( int j = 0 ; j < frames_per_cycle ; j++ ) signal[j] = gen( 1 , Fn , 30 , Fs );
+        for( int j = 0 ; j < frames_per_cycle ; j++ ) signal[j] = gen.pulse( 1 , Fn , 60 , Fs );
 
         // signal parameters computation:
         mltpx( signal , 0 , 0 );
@@ -595,7 +595,7 @@ int example6()
         for( int j = 0 ; j < frames_per_cycle ; j++ )
         {
             // generating output:
-            signal[j] = gen( 1 , Fn , 30 , Fs );
+            signal[j] = gen.sine( 1 , Fn , 30 , Fs );
         }
 
         // signal parameters computation:
@@ -716,7 +716,7 @@ int example7()
     {
         for( int j = 0 ; j < frames_per_cycle ; j++ )
         {
-            gen( 1 , Fn , 0 , Fs );
+            gen.sine( 1 , Fn , 0 , Fs );
 
             // filtering:
             dif ( &gen.m_out );
@@ -972,7 +972,7 @@ int example9()
     {
         for( int j = 0 ; j < frames_per_cycle ; j++ )
         {
-            gen( 1 , Fn , 0 , Fs );
+            gen.sine( 1 , Fn , 0 , Fs );
 
             // filtering:
             double y1 = cheb1 ( &gen.m_out );

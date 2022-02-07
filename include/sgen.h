@@ -79,7 +79,7 @@ public:
      *  \returns The function returns sine function output. Timer counter is dropped to a zero every hour
      *           to avoid overflow within the real time
     */
-    __type gen( __type amp , __type fn , __type phs , __type fs )
+    __type sine( __type amp , __type fn , __type phs , __type fs )
     {
         // signal generation:
         m_out = amp * sin( fn * PI2 * m_t + __TO_RADIANS( phs ) );
@@ -88,15 +88,25 @@ public:
         return m_out;
     }
 
-    /*! \brief test signal generator operator
-     *  \param[amp] - test signal amplitude
-     *  \param[fn ] - test signal frequency          , Hz
-     *  \param[phs] - test signal phase              , degrees
-     *  \param[fs ] - test signal sampling frequency , Hz
-     *  \returns Operator call the function that returns sine function output. Timer counter is dropped to a zero every hour
+    /*! \brief test pulse signal generator
+     *  \param[amp] - test pulse amplitude
+     *  \param[fn ] - test pulse frequency                        , Hz
+     *  \param[phs] - phase angle between two neighboirung pulses , degrees
+     *  \param[fs ] - test signal sampling frequency              , Hz
+     *  \returns The function returns sine function output. Timer counter is dropped to a zero every hour
      *           to avoid overflow within the real time
     */
-    inline __type operator() ( __type amp , __type fn , __type phs , __type fs ) { return gen( amp , fn , phs , fs ); }
+    __type pulse( __type amp , __type fn , __type phs , __type fs )
+    {
+        __type y1 = sin( fn * PI2 * m_t + __TO_RADIANS( 180 + phs ) );
+        __type y2 = sin( fn * PI2 * m_t );
+        m_out     = amp * ( ( y1 > 0 ) || ( y2 > 0 ) );
+        if( m_t >= 3600 ) m_t = 0; // reset every hour
+        else m_t += 1.0 / fs;
+        return m_out;
+
+        return 0;
+    }
 };
 
 // macro undefenition to avoid aliases during compilation
