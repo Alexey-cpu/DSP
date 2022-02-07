@@ -146,7 +146,7 @@ template< typename T>  fcomplex< T > __cmul__( T re0 , T im0 , T re1 , T im1 ) {
  */
 template< typename T>  fcomplex< T > __cdiv__( T re0 , T im0 , T re1 , T im1 , T max )
 {
-    __fx32 den = re1 * re1 + im1 * im1;
+    T den = re1 * re1 + im1 * im1;
     return ( den == 0 ) ? fcomplex< T >{ max , max } : fcomplex< T >{ ( re0 * re1 + im0 * im1 ) / den , ( im0 * re1 - re0 * im1 ) / den } ;
 }
 
