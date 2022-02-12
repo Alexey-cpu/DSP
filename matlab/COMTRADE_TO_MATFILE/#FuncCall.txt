@@ -1,0 +1,6 @@
+FineName  = 'NetSimExport'
+Directory = 'C:\Users\Пользователь\YandexDisk';
+
+COMTRADE_TO_MATFILE( FineName   , Directory );
+
+in_signal = [ ans( : , 1 ) , ans( : , 2 ) ];

@@ -2,12 +2,8 @@
 #include <fstream>
 #include <QElapsedTimer>
 
-#include "float.h"
-
 // examples:
 #include "include/examples.h"
-
-
 
 int main()
 {
@@ -22,6 +18,9 @@ int main()
     // example7();
     // example8();
     // example9();
+    // example10();
+    // example11();
+     example12();
 
     return 0;
 }

@@ -252,7 +252,6 @@ public:
     */
     inline complex operator += ( __type number )
     {
-        //this->m_re += number;
         fcomplex< __type > c = __cadd__< __type >( this->m_re , this->m_im , number , 0.0 );
         this->m_re = c.re; this->m_im = c.im;
         return *this;
@@ -281,7 +280,6 @@ public:
     */
     inline complex operator -= ( complex _complex )
     {
-
         fcomplex< __type > c = __csub__< __type >( this->m_re , this->m_im , _complex.m_re , _complex.m_im );
         this->m_re = c.re; this->m_im = c.im;
         return *this;

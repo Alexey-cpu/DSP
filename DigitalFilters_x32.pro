@@ -23,9 +23,6 @@ HEADERS += \
     include/iir.h \
     include/logical.h \
     include/quad_mltpx.h \
-    include/recursive_fourier.h \
-    include/recursive_mean.h \
-    include/recursive_rms.h \
     include/sgen.h \
     include/special_functions.h \
     include/transfer_functions.h \

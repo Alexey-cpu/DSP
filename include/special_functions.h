@@ -16,6 +16,7 @@
 #ifndef __ALG_PLATFORM
 #include "cmath"
 #include "malloc.h"
+#include "cstring"
 #endif
 
 /*! \brief converts radians to degrees */
@@ -923,6 +924,8 @@ protected:
     __fx64 *m_buff;
 public:
 
+    char m_name[256];
+
     // constructor and destructor:
     wind_fcn()
     {
@@ -994,6 +997,7 @@ public:
 
         // window is ready to use:
         m_wind_ready = 1;
+        strcpy( m_name , "Bartlett" );
         return m_wind_ready;
     }
 
@@ -1018,6 +1022,7 @@ public:
 
         // window is ready to use:
         m_wind_ready = 1;
+        strcpy( m_name , "BartlettHanning" );
         return m_wind_ready;
     }
 
@@ -1041,6 +1046,7 @@ public:
 
         // window is ready to use:
         m_wind_ready = 1;
+        strcpy( m_name , "Blackman" );
 
         return 0;
     }
@@ -1065,6 +1071,8 @@ public:
 
         // window is ready to use:
         m_wind_ready = 1;
+        strcpy( m_name , "BlackmanHarris" );
+
         return m_wind_ready;
     }
 
@@ -1097,6 +1105,8 @@ public:
 
         // window is ready to use:
         m_wind_ready = 1;
+        strcpy( m_name , "Bohman" );
+
         return m_wind_ready;
     }
 
@@ -1153,6 +1163,7 @@ public:
 
         // window is ready to use:
         m_wind_ready = true;
+        strcpy( m_name , "Chebyshev" );
         return m_wind_ready;
     }
 
@@ -1179,6 +1190,7 @@ public:
 
         // window is ready to use:
         m_wind_ready = true;
+        strcpy( m_name , "FlatTop" );
         return m_wind_ready;
     }
 
@@ -1219,6 +1231,7 @@ public:
 
         // wind is ready to use:
         m_wind_ready = true;
+        strcpy( m_name , "Gaussian" );
         return m_wind_ready;
     }
 
@@ -1242,6 +1255,7 @@ public:
 
         // window is ready to use:
         m_wind_ready = true;
+        strcpy( m_name , "Hamming" );
         return m_wind_ready;
     }
 
@@ -1265,6 +1279,7 @@ public:
 
         // window is ready to use:
         m_wind_ready = true;
+        strcpy( m_name , "Hann" );
         return m_wind_ready;
     }
 
@@ -1301,6 +1316,7 @@ public:
 
         // window is ready to use:
         m_wind_ready = true;
+        strcpy( m_name , "Kaiser" );
         return m_wind_ready;
     }
 
@@ -1330,6 +1346,7 @@ public:
 
         // window is ready to use:
         m_wind_ready = true;
+        strcpy( m_name , "Nutall" );
         return m_wind_ready;
     }
 
@@ -1376,6 +1393,7 @@ public:
 
         // window is ready:
         m_wind_ready = true;
+        strcpy( m_name , "Parzen" );
         return m_wind_ready;
     }
 
@@ -1398,6 +1416,7 @@ public:
 
         // window is ready to use:
         m_wind_ready = true;
+        strcpy( m_name , "Rectangular" );
         return m_wind_ready;
     }
 
@@ -1433,6 +1452,7 @@ public:
 
         // window is ready to use:
         m_wind_ready = true;
+        strcpy( m_name , "Triangular" );
         return m_wind_ready;
     }
 
@@ -1485,6 +1505,7 @@ public:
 
         // window is ready to use:
         m_wind_ready = true;
+        strcpy( m_name , "Tukey" );
         return m_wind_ready;
     }
 

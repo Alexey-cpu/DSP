@@ -23,10 +23,12 @@
 #include "include/fir.h"
 #include "include/sgen.h"
 #include "include/iir.h"
-#include "include/recursive_fourier.h"
 #include "include/quad_mltpx.h"
 #include "include/transfer_functions.h"
 #include "include/logical.h"
+
+using namespace IIR;
+using namespace FIR;
 
 /*! \brief special functions utilization example and check */
 int example0()
@@ -252,7 +254,7 @@ int example2()
     // filter frequency response computation:
     for( int i = 0 ; i < Fs / 2 ; i++ )
     {
-        fir_fr< double > fr = flt.freq_resp( i );
+        FIR::fr< double > fr = flt.freq_resp( i );
         Km << fr.Km << "\n";
         pH << fr.pH << "\n";
         FF << i     << "\n";
@@ -342,7 +344,7 @@ int example3()
     // filter frequency response computation:
     for( int i = 0 ; i < Fs / 2 ; i++ )
     {
-        fir_fr< double > fr = flt.freq_resp( i );
+        FIR::fr< double > fr = flt.freq_resp( i );
         Km << fr.Km << "\n";
         pH << fr.pH << "\n";
         FF << i     << "\n";
@@ -432,7 +434,7 @@ int example4()
     // filter frequency response computation:
     for( int i = 0 ; i < Fs / 2 ; i++ )
     {
-        fir_fr< double > fr = flt.freq_resp( i );
+        FIR::fr< double > fr = flt.freq_resp( i );
         Km << fr.Km << "\n";
         pH << fr.pH << "\n";
         FF << i     << "\n";
@@ -459,8 +461,8 @@ int example5()
     printf( " ...real-time quadrature demodulator utilization example and test... \n " );
 
     // define filter and it's input signal data types:
-    typedef float  __flt_type;
-    typedef float __gen_type;
+    typedef float __flt_type;
+    typedef double __gen_type;
 
     // emulation parameters:
     double Fs                = 4000;
@@ -504,7 +506,7 @@ int example5()
     for( int i = 0 ; i < cycles_num ; i++ )
     {
         // generating signal buffer:
-        for( int j = 0 ; j < frames_per_cycle ; j++ ) signal[j] = gen.pulse( 1 , Fn , 60 , Fs );
+        for( int j = 0 ; j < frames_per_cycle ; j++ ) signal[j] = gen.sine( 1 , Fn , 60 , Fs );
 
         // signal parameters computation:
         mltpx( signal , 0 , 0 );
@@ -936,28 +938,28 @@ int example9()
             cheb1.lp_init( Fs , Fn , 100 , 8 , 1  );
             cheb2.lp_init( Fs , Fn , 100 , 8 , 80 );
             buttf.lp_init( Fs , Fn , 100 , 8 , 1  );
-            ellip.lp_init( Fs , Fn , 100 , 8 );
+            ellip.lp_init( Fs , Fn , 100 , 8 , 80 , 1 );
         break;
 
         case 1: // highpass
             cheb1.hp_init( Fs , Fn , 100 , 8 , 1  );
             cheb2.hp_init( Fs , Fn , 100 , 8 , 80 );
             buttf.hp_init( Fs , Fn , 100 , 8 , 1  );
-            ellip.hp_init( Fs , Fn , 100 , 8 , 1 , 80  );
+            ellip.hp_init( Fs , Fn , 100 , 8 , 80 , 1  );
         break;
 
         case 2: // bandpass
             cheb1.bp_init( Fs , Fn , 100 , 100 , 8 , 1  );
             cheb2.bp_init( Fs , Fn , 100 , 100 , 8 , 80 );
             buttf.bp_init( Fs , Fn , 100 , 100 , 8 , 1  );
-            ellip.bp_init( Fs , Fn , 100 , 100 , 8 , 1 , 80  );
+            ellip.bp_init( Fs , Fn , 100 , 100 , 8 , 80 , 1  );
         break;
 
         case 3: // bandstop
             cheb1.bs_init( Fs , Fn , 100 , 100 , 8 , 1  );
             cheb2.bs_init( Fs , Fn , 100 , 100 , 8 , 80 );
             buttf.bs_init( Fs , Fn , 100 , 100 , 8 , 1  );
-            ellip.bs_init( Fs , Fn , 100 , 100 , 8 , 1 , 80  );
+            ellip.bs_init( Fs , Fn , 100 , 100 , 8 , 80 , 1  );
         break;
 
     }
@@ -992,10 +994,10 @@ int example9()
     }
 
     // frequency response computation:
-    iir_fr< double > fr1;
-    iir_fr< double > fr2;
-    iir_fr< double > fr3;
-    iir_fr< double > fr4;
+    IIR::fr< double > fr1;
+    IIR::fr< double > fr2;
+    IIR::fr< double > fr3;
+    IIR::fr< double > fr4;
 
     for( int i = 0 ; i < Fs / 2 ; i++ )
     {
@@ -1039,6 +1041,205 @@ int example9()
     buttf .deallocate();
     ellip .deallocate();
 
+    return 0;
+}
+
+/*! \brief recursive Fourier filter utilization example and test  */
+int example10()
+{
+    printf( " ...recursive Fourier filter utilization example and test... \n " );
+
+    // define filter and it's input signal data types:
+    typedef float __flt_type;
+    typedef float __gen_type;
+
+    // emulation parameters:
+    double Fs                = 4000;
+    double Fn                = 50;
+    double time              = 0;
+    double EmulationDuration = 0.08;
+    int    CycleWidth        = 5;
+    int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
+    int    frames_per_cycle  = CycleWidth * Fs / 1000;
+
+    // logs directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // files:
+    std::ofstream yt;
+    std::ofstream re;
+    std::ofstream im;
+    std::ofstream abs;
+    std::ofstream phs;
+    std::ofstream tt;
+    yt .open( directory + "\\yt.txt"  );
+    re .open( directory + "\\re.txt"  );
+    im .open( directory + "\\im.txt"  );
+    abs.open( directory + "\\abs.txt" );
+    phs.open( directory + "\\phs.txt" );
+    tt .open( directory + "\\tt.txt"  );
+
+    // signal generator:
+    sgen< __gen_type > gen;
+    __gen_type signal = 0;
+
+    // filter initialization and memory allocation:
+    recursive_fourier< __flt_type > rdft;
+    rdft.init( 4000 , 50 , 1 );
+    rdft.allocate();
+
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        // generating signal buffer:
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            signal = gen.sine( 1 , Fn , 60 , Fs );
+            recursive_fourier< __flt_type > :: result r = rdft( &signal );
+            yt  << signal        << "\n";
+            re  << r.re          << "\n";
+            im  << r.im          << "\n";
+            abs << sqrt( r.re * r.re + r.im *  r.im ) << "\n";
+            phs << atan2( r.im , r.re ) * 180 / 3.14  << "\n";
+            tt  << time  << "\n";
+            time += 1/ Fs;
+        }
+    }
+
+    // close files:
+    yt .close();
+    re .close();
+    im .close();
+    abs.close();
+    phs.close();
+    tt .close();
+
+    // memory deallocation:
+    rdft.deallocate();
+
+    return 0;
+}
+
+/*! \brief recursive mean filter utilization example and test  */
+int example11()
+{
+    printf( " ...recursive mean filter utilization example and test... \n " );
+
+    // define filter and it's input signal data types:
+    typedef float __flt_type;
+    typedef float __gen_type;
+
+    // emulation parameters:
+    double Fs                = 4000;
+    double Fn                = 50;
+    double time              = 0;
+    double EmulationDuration = 0.08;
+    int    CycleWidth        = 5;
+    int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
+    int    frames_per_cycle  = CycleWidth * Fs / 1000;
+
+    // logs directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // files:
+    std::ofstream yt;
+    std::ofstream rms;
+    std::ofstream tt;
+    yt  .open( directory + "\\yt.txt"  );
+    rms .open( directory + "\\rms.txt"  );
+    tt  .open( directory + "\\tt.txt"  );
+
+    // signal generator:
+    sgen< __gen_type > gen;
+    __gen_type signal = 0;
+
+    // filter initialization and memory allocation:
+    recursive_mean< __flt_type > rmean;
+    rmean.init( 4000 , 50 , 80 );
+    rmean.allocate();
+
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        // generating signal buffer:
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            signal = gen.sine( 1 , Fn , 0 , Fs );
+
+            yt  << signal           << "\n";
+            rms << rmean( &signal ) << "\n";
+            tt  << time             << "\n";
+            time += 1/ Fs;
+        }
+    }
+
+    // close files:
+    yt  .close();
+    rms .close();
+    tt  .close();
+
+    // memory deallocation:
+    rmean.deallocate();
+    return 0;
+}
+
+/*! \brief recursive rms filter utilization example and test  */
+int example12()
+{
+    printf( " ..recursive rms filter utilization example and test... \n " );
+
+    // define filter and it's input signal data types:
+    typedef float __flt_type;
+    typedef float __gen_type;
+
+    // emulation parameters:
+    double Fs                = 4000;
+    double Fn                = 50;
+    double time              = 0;
+    double EmulationDuration = 0.08;
+    int    CycleWidth        = 5;
+    int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
+    int    frames_per_cycle  = CycleWidth * Fs / 1000;
+
+    // logs directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // files:
+    std::ofstream yt;
+    std::ofstream rms;
+    std::ofstream tt;
+    yt  .open( directory + "\\yt.txt"  );
+    rms .open( directory + "\\rms.txt"  );
+    tt  .open( directory + "\\tt.txt"  );
+
+    // signal generator:
+    sgen< __gen_type > gen;
+    __gen_type signal = 0;
+
+    // filter initialization and memory allocation:
+    recursive_rms< __flt_type > rmean;
+    rmean.init( 4000 , 50 , 80 );
+    rmean.allocate();
+
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        // generating signal buffer:
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            signal = gen.sine( 1 , Fn , 0 , Fs );
+
+            yt  << signal           << "\n";
+            rms << rmean( &signal ) << "\n";
+            tt  << time             << "\n";
+            time += 1/ Fs;
+        }
+    }
+
+    // close files:
+    yt  .close();
+    rms .close();
+    tt  .close();
+
+    // memory deallocation:
+    rmean.deallocate();
     return 0;
 }
 

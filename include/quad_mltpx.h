@@ -11,7 +11,6 @@
 #include "fir.h"
 #include "complex.h"
 #include "buffer.h"
-#include "recursive_mean.h"
 
 #ifndef QUAD_MLTPX_H
 #define QUAD_MLTPX_H
@@ -60,6 +59,8 @@
 #ifndef PI_4
 #define PI_4 0.78539816339744830961566084581988
 #endif
+
+using namespace FIR;
 
 /*! \brief Quadrature demodulator template class for the cycling computations */
 template< typename T > class quad_mltpx;
