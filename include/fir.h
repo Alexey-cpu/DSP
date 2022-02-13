@@ -70,15 +70,6 @@
 
 namespace FIR
 {
-    /*!
-      \brief FIR filter types enumeration:
-      \param[ lowpass  ] lowpass  FIR
-      \param[ highpass ] highpass FIR
-      \param[ bandpass ] bandpass FIR
-      \param[ bandstop ] bandstop FIR
-    */
-    enum type { lowpass  , highpass , bandpass , bandstop };
-
     /*! \brief FIR filter frequency response template data structure */
     template< typename T > struct fr;
 
@@ -507,64 +498,24 @@ namespace FIR
         return cfbuff;
     }
 
-    #ifndef __ALG_PLATFORM
-
-    template< typename T > void __show_fir__( sp sp , T *cf , wind_fcn &wind )
-    {
-        printf( wind.m_name );
-        printf( " " );
-
-        switch ( sp.type )
-        {
-            case type::lowpass:
-            printf( "lowpass specifications: \n" );
-            break;
-
-            case type::highpass:
-            printf( "highpass specifications: \n" );
-            break;
-
-            case type::bandpass:
-            printf( "bandpass specifications: \n" );
-            break;
-
-            case type::bandstop:
-            printf( "bandstop specifications: \n" );
-            break;
-        }
-
-        printf( "\n" );
-        if( sp.Fs > 0    ) { printf( "Fs    = %.6f Hz \n"   , sp.Fs    ); }
-        if( sp.Ts > 0    ) { printf( "Ts    = %.6f s  \n"   , sp.Ts    ); }
-        if( sp.Fn > 0    ) { printf( "Fn    = %.6f Hz \n"   , sp.Fn    ); }
-        if( sp.Fc > 0    ) { printf( "Fc    = %.6f Hz \n"   , sp.Fc    ); }
-        if( sp.BW > 0    ) { printf( "BW    = %.6f Hz \n"   , sp.BW    ); }
-        if( sp.order > 0 ) { printf( "order = %d      \n"   , sp.order ); }
-
-        if( cf )
-        {
-            if( sp.scale ) printf( "scaled coefficients: \n\n" );
-            else printf( "not-scaled coefficients: \n\n" );
-            for( __ix32 i = 0 ; i < sp.order + 1 ; i++ ) printf( " coeff[ %d ] = %.12f \n" , i , cf[i] );
-        }
-        else
-        {
-            printf( "coefficients : coefficients have not been computed yet... \n" );
-        }
-
-
-    }
-
-    #endif
-
     /*! \brief template abstract FIR filter class */
     template < typename T > class fir_abstract
     {
-        typedef __fx32 __type ;
+        typedef T __type ;
         typedef bool   __bool ;
         typedef void   __void ;
 
     protected:
+
+        /*!
+          \brief FIR filter types enumeration:
+          \param[ lowpass  ] lowpass  FIR
+          \param[ highpass ] highpass FIR
+          \param[ bandpass ] bandpass FIR
+          \param[ bandstop ] bandstop FIR
+        */
+        enum type { lowpass  , highpass , bandpass , bandstop };
+
         /*! \brief lowpass specification data structure */
         sp  m_sp;
 
@@ -573,6 +524,36 @@ namespace FIR
 
         /*! \brief lowpass input buffer */
         mirror_ring_buffer< __type > m_bx;
+
+        /*!
+         *  \brief  64-bit FIR filtering function
+         *  \param[input] pointer to the input data array
+         *  \return the function returns FIR filtering result
+        */
+        template< typename F > inline  __type filt( F *input )
+        {
+            m_bx( input ); m_out = 0;
+            for ( __ix32 n = m_sp.order ; n >= 0; n--) m_out += m_bx[ n ] * m_cf[n];
+            return m_out;
+        }
+
+        /*!
+         *  \brief  FIR filtering function
+         *  \return the function returns FIR filtering result
+        */
+        inline __type filt()
+        {
+            m_out = 0;
+            for ( __ix32 n = m_sp.order ; n >= 0; n--) m_out += m_bx[ n ] * m_cf[n];
+            return m_out;
+        }
+
+        /*!
+         *  \brief  32-bit FIR filter buffer filling function
+         *  \param[input] pointer to the input data array
+         *  \return the function returns FIR filtering result
+        */
+        template< typename F > inline void fill_fir_buff( F *input ) { m_bx( input ); }
 
     public:
 
@@ -714,72 +695,57 @@ namespace FIR
         */
         inline __type get_coeff( __ix32 n ) { return ( n <= m_sp.order ) ? m_cf[ n ] : 1e6; }
 
-        /*!
-         *  \brief  32-bit FIR filter buffer filling function
-         *  \param[input] pointer to the input data array
-         *  \return the function returns FIR filtering result
-        */
-        inline void fill_fir_buff( __fx32 *input ) { m_bx( input ); }
-
-        /*!
-         *  \brief  32-bit FIR filter buffer filling function
-         *  \param[input] pointer to the input data array
-         *  \return the function returns FIR filtering result
-        */
-        inline void fill_fir_buff( __fx64 *input ) { m_bx( input ); }
-
-        /*!
-         *  \brief  32-bit FIR filtering function
-         *  \param[input] pointer to the input data array
-         *  \return the function returns FIR filtering result
-        */
-        inline __type filt( __fx32 *input )
-        {
-            m_bx( input );
-            m_out = 0;
-            for ( __ix32 n = m_sp.order ; n >= 0; n--) m_out += m_bx[ n ] * m_cf[n];
-            return m_out;
-        }
-
-        /*!
-         *  \brief  64-bit FIR filtering function
-         *  \param[input] pointer to the input data array
-         *  \return the function returns FIR filtering result
-        */
-        inline __type filt( __fx64 *input )
-        {
-            m_bx( input );
-            m_out = 0;
-            for ( __ix32 n = m_sp.order ; n >= 0; n--) m_out += m_bx[ n ] * m_cf[n];
-            return m_out;
-        }
-
-        /*!
-         *  \brief  FIR filtering function
-         *  \return the function returns FIR filtering result
-        */
-        inline __type filt()
-        {
-            m_out = 0;
-            for ( __ix32 n = m_sp.order ; n >= 0; n--) m_out += m_bx[ n ] * m_cf[n];
-            return m_out;
-        }
-
-        /*!
-         *  \brief 32-bit FIR filtering () operator
-         *  \param[input] pointer to the input data
-         *  \return the () operator calls filt( __type *input ) function that returns FIR filtering result
-        */
-        inline __type operator() ( __fx32 *input ) { return filt( input ); }
-
-        /*!
-         *  \brief 32-bit FIR filtering () operator
-         *  \param[input] pointer to the input data
-         *  \return the () operator calls filt( __type *input ) function that returns FIR filtering result
-        */
-        inline __type operator() ( __fx64 *input ) { return filt( input ); }
+        // virtual functions:
+        virtual inline void operator <<  ( __type *input ) = 0;
+        virtual inline __type operator() ( __type *input ) = 0;
+        virtual inline __type operator() () = 0;
 
         #ifndef __ALG_PLATFORM
+
+        template< typename F > void __show_fir__( sp sp , F *cf , wind_fcn &wind )
+        {
+            printf( wind.m_name );
+            printf( " " );
+
+            switch ( sp.type )
+            {
+                case type::lowpass:
+                printf( "lowpass specifications: \n" );
+                break;
+
+                case type::highpass:
+                printf( "highpass specifications: \n" );
+                break;
+
+                case type::bandpass:
+                printf( "bandpass specifications: \n" );
+                break;
+
+                case type::bandstop:
+                printf( "bandstop specifications: \n" );
+                break;
+            }
+
+            printf( "\n" );
+            if( sp.Fs > 0    ) { printf( "Fs    = %.6f Hz \n"   , sp.Fs    ); }
+            if( sp.Ts > 0    ) { printf( "Ts    = %.6f s  \n"   , sp.Ts    ); }
+            if( sp.Fn > 0    ) { printf( "Fn    = %.6f Hz \n"   , sp.Fn    ); }
+            if( sp.Fc > 0    ) { printf( "Fc    = %.6f Hz \n"   , sp.Fc    ); }
+            if( sp.BW > 0    ) { printf( "BW    = %.6f Hz \n"   , sp.BW    ); }
+            if( sp.order > 0 ) { printf( "order = %d      \n"   , sp.order ); }
+
+            if( cf )
+            {
+                if( sp.scale ) printf( "scaled coefficients: \n\n" );
+                else printf( "not-scaled coefficients: \n\n" );
+                for( __ix32 i = 0 ; i < sp.order + 1 ; i++ ) printf( " coeff[ %d ] = %.12f \n" , i , cf[i] );
+            }
+            else
+            {
+                printf( "coefficients : coefficients have not been computed yet... \n" );
+            }
+        }
+
         void show_properties() { __show_fir__< __type >( m_sp , m_cf , m_wind ); }
         #endif
     };
@@ -801,6 +767,13 @@ namespace FIR
 
         /*! \brief comb filter buffer */
          mirror_ring_buffer< __type > m_bx;
+
+         /*!
+          *  \brief 32-bit floating point filtering function
+          *  \param[input] - pointer to the input signal samples buffer
+          *  \return The function returns filtering result
+         */
+         template< typename F > inline __type filt( F *input) { m_bx( input ); return ( m_out = (__fx64)*input - (__fx64)m_bx[ m_order ] ); }
 
     public:
 
@@ -847,13 +820,7 @@ namespace FIR
         }
 
         /*! \brief default destructor */
-        virtual ~fcomb_abstract()
-        {
-            deallocate();
-            #ifdef DEBUGGING
-            printf( "fcomb_abstract destructor call \n" );
-            #endif
-        }
+        virtual ~fcomb_abstract() { deallocate(); }
 
         /*! \brief frequency response computation function */
         fr< __fx64 > freq_resp( __fx64 F )
@@ -866,47 +833,18 @@ namespace FIR
         }
 
         /*!
-         *  \brief 32-bit floating point filtering function
-         *  \param[input] - pointer to the input signal samples buffer
-         *  \return The function returns filtering result
-        */
-        inline __fx64 filt( __fx32 *input)
-        {
-            m_bx( input );
-            return ( m_out = (__fx64)*input - (__fx64)m_bx[ m_order ] );
-        }
-
-        /*!
-         *  \brief 64-bit floating point filtering function
-         *  \param[input] - pointer to the input signal samples buffer
-         *  \return The function returns filtering result
-        */
-        inline __fx64 filt( __fx64 *input)
-        {
-            m_bx( input );
-            return ( m_out = *input - m_bx[ m_order ] );
-        }
-
-        /*!
          *  \brief 32-bit floating point filtering operator
          *  \param[input] - pointer to the input signal samples buffer
          *  \return The operatoe calls the function that returns filtering result
         */
-        inline __fx64 operator ()( __fx32 *input ) { return filt(input); }
-
-        /*!
-         *  \brief 64-bit floating point filtering operator
-         *  \param[input] - pointer to the input signal samples buffer
-         *  \return The operatoe calls the function that returns filtering result
-        */
-        inline __fx64 operator ()( __fx64 *input ) { return filt(input); }
+        virtual inline __type operator ()( __type *input ) = 0;
     };
 
     /*! \brief template equalized comb filter abstract class ( base ) */
     template < typename T > class fcombeq_abstract
     {
         typedef T __type ;
-    private:
+    protected:
 
         /*! \brief input signal frequency deviation from nominal for which the amplitude frequency response slope compensation is implemented , Hz */
         __fx64 m_dF;
@@ -931,6 +869,17 @@ namespace FIR
 
         /*! \brief comb filter buffer */
          mirror_ring_buffer< __type > m_bx;
+
+         /*!
+          *  \brief 32-bit floating point filtering function
+          *  \param[input] - pointer to the input signal samples buffer
+          *  \return The function returns filtering result
+         */
+         template< typename F > inline __type filt( F *input , bool odd = true)
+         {
+             m_bx(input);
+             return ( m_out = ( odd ) ? ( (__fx64)*input * m_K1 - (__fx64)m_bx[m_ElemNum1] - (__fx64)m_bx[m_ElemNum2] * m_K2 ) : ( (__fx64)*input * m_K1 + (__fx64)m_bx[m_ElemNum1] - (__fx64)m_bx[m_ElemNum2] * m_K2 ) );
+         }
 
     public:
 
@@ -958,13 +907,7 @@ namespace FIR
         }
 
         /*! \brief default destructor */
-        virtual ~fcombeq_abstract()
-        {
-            deallocate();
-            #ifdef DEBUGGING
-            printf( "fcombeq_abstract destructor call \n" );
-            #endif
-        }
+        virtual ~fcombeq_abstract() { deallocate(); }
 
         /*!
          *  \brief comb filter initialization function
@@ -1053,47 +996,20 @@ namespace FIR
         }
 
         /*!
-         *  \brief 32-bit floating point filtering function
-         *  \param[input] - pointer to the input signal samples buffer
-         *  \return The function returns filtering result
-        */
-        inline __fx64 filt( __fx32 *input , bool odd = true)
-        {
-            m_bx(input);
-            return ( m_out = ( odd ) ? ( (__fx64)*input * m_K1 - (__fx64)m_bx[m_ElemNum1] - (__fx64)m_bx[m_ElemNum2] * m_K2 ) : ( (__fx64)*input * m_K1 + (__fx64)m_bx[m_ElemNum1] - (__fx64)m_bx[m_ElemNum2] * m_K2 ) );
-        }
-
-        /*!
-         *  \brief 64-bit floating point filtering function
-         *  \param[input] - pointer to the input signal samples buffer
-         *  \return The function returns filtering result
-        */
-        inline __fx64 filt( __fx64 *input , bool odd = true)
-        {
-            m_bx(input);
-            return ( m_out = ( odd ) ? ( *input * m_K1 - m_bx[m_ElemNum1] - m_bx[m_ElemNum2] * m_K2 ) : ( *input * m_K1 + (__fx64)m_bx[m_ElemNum1] - m_bx[m_ElemNum2] * m_K2 ) );
-        }
-
-        /*!
          *  \brief 32-bit floating point filtering operator
          *  \param[input] - pointer to the input signal samples buffer
          *  \return The operatoe calls the function that returns filtering result
         */
-        inline __fx64 operator ()( __fx32 *input , bool odd = true ) { return filt( input , odd ); }
-
-        /*!
-         *  \brief 64-bit floating point filtering operator
-         *  \param[input] - pointer to the input signal samples buffer
-         *  \return The operatoe calls the function that returns filtering result
-        */
-        inline __fx64 operator ()( __fx64 *input , bool odd = true ) { return filt( input , odd ); }
+        virtual inline __type operator ()( __type *input , bool odd = true ) = 0;
     };
 
     /*! \brief template recursive Fourier filter abstract class ( base ) */
     template < typename T > class recursive_fourier_abstract
     {
         typedef T __type;
-    private:
+        public: struct result { __fx64 re , im; };
+    protected:
+
         /*! \brief nominal input signal frequency , Hz */
         __fx64 m_Fn;
         /*! \brief input signal sampling frequency , Hz */
@@ -1116,9 +1032,22 @@ namespace FIR
         __ix32 m_order;
         /*! \brief recursive Fourier filter buffer */
         mirror_ring_buffer<__type> m_buffer_sx;
-    public:
 
-        struct result { __fx64 re , im; };
+        /*!
+         *  \brief  32-bit recursive Fourier filter filtering function
+         *  \param[input] - pointer to the nput signal frames
+         *  \return The function computes real and imaginary harmonic component
+        */
+        template< typename F > inline result filt ( F *input )
+        {
+            m_buffer_sx( input );
+            m_a0 = m_a + ( ( __fx64 )*input - ( __fx64 )m_buffer_sx[ m_order ] ) * m_Gain;
+            m_a  = m_a0 * m_Kc - m_b * m_Ks;
+            m_b  = m_a0 * m_Ks + m_b * m_Kc;
+            return { m_a , m_b };
+        }
+
+    public:
 
          /*! \brief harmonic real output component */
         __fx64 m_a;
@@ -1199,32 +1128,6 @@ namespace FIR
         /*! \brief  recursive Fourier filter default destructor */
         virtual ~recursive_fourier_abstract(){ deallocate(); }
 
-        /*! \brief  32-bit recursive Fourier filter filtering function
-         *  \param[input] - pointer to the nput signal frames
-         *  \return The function computes real and imaginary harmonic component
-        */
-        inline result filt ( __fx32 *input )
-        {
-            m_buffer_sx.fill_buff( input );
-            m_a0 = m_a + ( ( __fx64 )*input - ( __fx64 )m_buffer_sx[ m_order ] ) * m_Gain;
-            m_a  = m_a0 * m_Kc - m_b * m_Ks;
-            m_b  = m_a0 * m_Ks + m_b * m_Kc;
-            return { m_a , m_b };
-        }
-
-        /*! \brief  64-bit recursive Fourier filter filtering function
-         *  \param[input] - pointer to the nput signal frames
-         *  \return The function computes real and imaginary harmonic component
-        */
-        inline result filt ( __fx64 *input )
-        {
-            m_buffer_sx.fill_buff( input );
-            m_a0 = m_a + ( *input - m_buffer_sx[ m_order ] ) * m_Gain;
-            m_a  = m_a0 * m_Kc - m_b * m_Ks;
-            m_b  = m_a0 * m_Ks + m_b * m_Kc;
-            return { m_a , m_b };
-        }
-
         /*! \brief recursive Fourier filter frequency response computation function
          *  \param[F] - input signal frequency , Hz
          *  \return The function computes phase and amplitude frequency response for the signal having frequency F
@@ -1259,20 +1162,14 @@ namespace FIR
          *  \param[input] - pointer to the nput signal frames
          *  \return The operator calls the function that computes real and imaginary harmonic component
         */
-        inline result operator () ( __fx32 *input ){ return filt ( input ); }
-
-        /*! \brief  64-bit recursive Fourier filter filtering operator
-         *  \param[input] - pointer to the nput signal frames
-         *  \return The operator calls the function that computes real and imaginary harmonic component
-        */
-        inline result operator () ( __fx64 *input ){ return filt ( input ); }
+        virtual inline result operator () ( __type *input ) = 0;
     };
 
     /*! \brief template recursive mean filter abstract class ( base ) */
     template < typename T > class recursive_mean_abstract
     {
-        typedef __fx32 __type;
-    private:
+        typedef T __type;
+    protected:
         /*! \brief nominal input signal frequency , Hz */
         __fx64 m_Fn;
         /*! \brief input signal sampling frequency , Hz */
@@ -1287,6 +1184,13 @@ namespace FIR
         __ix32 m_order;
         /*! \brief recursive mean filter buffer */
         mirror_ring_buffer<__type> m_buffer_sx;
+
+        /*!
+         *  \brief  32-bit recursive mean filter filtering function
+         *  \param[input] - pointer to the nput signal frames
+         *  \return The function computes recursive mean fiter output
+        */
+        template< typename F > inline __type filt ( F *input ) { m_buffer_sx( input ); return (m_out = m_Gain * ( ( __fx64 )*input - ( __fx64 )m_buffer_sx[ m_order ] ) + m_out); }
 
     public:
         /*! \brief recursive mean filter output */
@@ -1362,44 +1266,19 @@ namespace FIR
             return { m_Km , m_pH };
         }
 
-        /*! \brief  32-bit recursive mean filter filtering function
-         *  \param[input] - pointer to the nput signal frames
-         *  \return The function computes recursive mean fiter output
-        */
-        inline __fx64 filt ( __fx32 *input )
-        {
-            m_buffer_sx.fill_buff( input );
-            return (m_out = m_Gain * ( ( __fx64 )*input - ( __fx64 )m_buffer_sx[ m_order ] ) + m_out);
-        }
-
-        /*! \brief  64-bit recursive mean filter filtering function
-         *  \param[input] - pointer to the nput signal frames
-         *  \return The function computes recursive mean fiter output
-        */
-        inline __fx64 filt ( __fx64 *input )
-        {
-            m_buffer_sx.fill_buff( input );
-            return (m_out = m_Gain * ( ( __fx64 )*input - ( __fx64 )m_buffer_sx[ m_order ] ) + m_out);
-        }
-
-        /*! \brief  32-bit recursive mean filter filtering operator
+        /*!
+         *  \brief  32-bit recursive mean filter filtering operator
          *  \param[input] - pointer to the nput signal frames
          *  \return The operator calls the function that computes real and imaginary harmonic component
         */
-        inline __fx64 operator () ( __fx32 *input ){ return filt ( input ); }
-
-        /*! \brief  64-bit recursive mean filter filtering operator
-         *  \param[input] - pointer to the nput signal frames
-         *  \return The operator calls the function that computes real and imaginary harmonic component
-        */
-        inline __fx64 operator () ( __fx64 *input ){ return filt ( input ); }
+        virtual inline __type operator () ( __type *input ) = 0;
     };
 
     /*! \brief template recursive rms filter abstract class ( base ) */
     template < typename T > class recursive_rms_abstract
     {
         typedef T __type;
-    private:
+    protected:
         /*! \brief nominal input signal frequency , Hz */
         __fx64 m_Fn;
         /*! \brief input signal sampling frequency , Hz */
@@ -1418,6 +1297,18 @@ namespace FIR
         __ix32 m_order;
         /*! \brief recursive root mean square filter buffer */
         mirror_ring_buffer<__type> m_buffer_sx;
+
+        /*! \brief  32-bit recursive root mean square filter filtering function
+         *  \param[input] - pointer to the nput signal frames
+         *  \return The function computes recursive mean fiter output
+        */
+        template< typename F > inline __type filt ( F *input )
+        {
+            m_auxv = (__fx64)( *input ) * (__fx64)( *input );
+            m_buffer_sx( &m_auxv );
+            m_y = m_Gain * ( m_auxv - (__fx64)m_buffer_sx[ m_order ] ) + m_y;
+            return ( m_out =  ( m_y <= 0 ) ? 0 : sqrtf( m_y ) );
+        }
 
     public:
         /*! \brief recursive root mean square filter output */
@@ -1497,42 +1388,11 @@ namespace FIR
             return { m_Km , m_pH };
         }
 
-
-        /*! \brief  32-bit recursive root mean square filter filtering function
-         *  \param[input] - pointer to the nput signal frames
-         *  \return The function computes recursive mean fiter output
-        */
-        inline __fx64 filt ( __fx32 *input )
-        {
-            m_auxv = (__fx64)( *input ) * (__fx64)( *input );
-            m_buffer_sx.fill_buff( &m_auxv );
-            m_y = m_Gain * ( m_auxv - (__fx64)m_buffer_sx[ m_order ] ) + m_y;
-            return ( m_out =  ( m_y <= 0 ) ? 0 : sqrtf( m_y ) );
-        }
-
-        /*! \brief  64-bit recursive root mean square filter filtering function
-         *  \param[input] - pointer to the nput signal frames
-         *  \return The function computes recursive mean fiter output
-        */
-        inline __fx64 filt ( __fx64 *input )
-        {
-            m_auxv = (__fx64)( *input ) * (__fx64)( *input );
-            m_buffer_sx.fill_buff( &m_auxv );
-            m_y = m_Gain * ( m_auxv - (__fx64)m_buffer_sx[ m_order ] ) + m_y;
-            return ( m_out =  ( m_y <= 0 ) ? 0 : sqrtf( m_y ) );
-        }
-
         /*! \brief  32-bit recursive root mean square filter filtering operator
          *  \param[input] - pointer to the nput signal frames
          *  \return The operator calls the function that computes recursive mean fiter output
         */
-        inline __fx32 operator () ( __fx32 *input ) { return filt ( input ); }
-
-        /*! \brief  64-bit recursive root mean square filter filtering operator
-         *  \param[input] - pointer to the nput signal frames
-         *  \return The operator calls the function that computes recursive mean fiter output
-        */
-        inline __fx64 operator () ( __fx64 *input ) { return filt ( input ); }
+        virtual inline __type operator () ( __type *input ) = 0;
     };
 
     /*! \brief template FIR filter class */
@@ -1554,141 +1414,162 @@ namespace FIR
     template < typename T > class recursive_rms;
 
     /*! \brief FIR filter class 32-bit realization */
-    template <> class fir < __fx32 > : public fir_abstract< __fx32 >
+    template <> class fir < __fx32 > final : public fir_abstract< __fx32 >
     {
         typedef __fx32 __type ;
     public:
          fir() : fir_abstract(){}
-        ~fir()
-         {
-            #ifdef DEBUGGING
-            printf( "fir child destructor call \n" );
-            #endif
-         }
+        ~fir() {}
+         inline __type operator()( __type  *input ) override { return filt< __type >( input ); }
+         inline __type operator()( __fx64  *input ){ return filt< __fx64  >( input ); }
+         inline __type operator()( __fxx64 *input ){ return filt< __fxx64 >( input ); }
+         inline __type operator()() override { return filt(); }
+         inline void operator << ( __type  *input ) override { fill_fir_buff< __type >( input ); }
+         inline void operator << ( __fx64  *input ) { fill_fir_buff< __fx64  >( input ); }
+         inline void operator << ( __fxx64 *input ) { fill_fir_buff< __fxx64 >( input ); }
     };
 
-    /*! \brief FIR filter class 32-bit realization */
-    template <> class fir < __fx64 > : public fir_abstract< __fx64 >
+    /*! \brief FIR filter class 64-bit realization */
+    template <> class fir < __fx64 > final : public fir_abstract< __fx64 >
     {
         typedef __fx64 __type ;
     public:
          fir() : fir_abstract(){}
-        ~fir()
-         {
-            #ifdef DEBUGGING
-            printf( "fir child destructor call \n" );
-            #endif
-         }
+        ~fir() {}
+         inline __type operator()( __type  *input ) override { return filt< __type >( input ); }
+         inline __type operator()( __fxx64 *input ){ return filt< __fxx64 >( input ); }
+         inline __type operator()() override { return filt(); }
+         inline void operator << ( __type  *input ) override { fill_fir_buff< __type >( input ); }
+         inline void operator << ( __fxx64 *input ) { fill_fir_buff< __fxx64 >( input ); }
+    };
+
+    /*! \brief FIR filter class extended 64-bit realization */
+    template <> class fir < __fxx64 > final : public fir_abstract< __fxx64 >
+    {
+        typedef __fxx64 __type ;
+    public:
+         fir() : fir_abstract(){}
+        ~fir() {}
+         inline __type operator()( __type  *input ) override { return filt< __type >( input ); }
+         inline __type operator()() override { return filt(); }
+         inline void operator << ( __type  *input ) override { fill_fir_buff< __type >( input ); }
     };
 
     /*! \brief comb FIR filter class 32-bit realization */
-    template <> class fcomb < __fx32 > : public fcomb_abstract< __fx32 >
+    template <> class fcomb < __fx32 > final : public fcomb_abstract< __fx32 >
     {
         typedef __fx32 __type ;
     public:
          fcomb() : fcomb_abstract(){}
-        ~fcomb()
-         {
-            #ifdef DEBUGGING
-            printf( "fcomb child destructor call \n" );
-            #endif
-         }
+        ~fcomb() {}
+         inline __type operator()( __type  *input ) override { return filt< __type >( input ) ; }
+         inline __type operator()( __fx64  *input ) { return filt< __fx64  >( input ) ; }
+         inline __type operator()( __fxx64 *input ) { return filt< __fxx64 >( input ) ; }
     };
 
     /*! \brief comb FIR filter class 32-bit realization */
-    template <> class fcomb < __fx64 > : public fcomb_abstract< __fx64 >
+    template <> class fcomb < __fx64 > final : public fcomb_abstract< __fx64 >
     {
         typedef __fx64 __type ;
     public:
          fcomb() : fcomb_abstract(){}
-        ~fcomb()
-         {
-            #ifdef DEBUGGING
-            printf( "fcomb child destructor call \n" );
-            #endif
-         }
+        ~fcomb() {}
+         inline __type operator()( __type  *input ) override { return filt< __type >( input ) ; }
+         inline __type operator()( __fxx64 *input ) { return filt< __fxx64 >( input ) ; }
     };
 
     /*! \brief equalized comb FIR filter class 32-bit realization */
-    template <> class fcombeq < __fx32 > : public fcombeq_abstract< __fx32 >
+    template <> class fcombeq < __fx32 > final : public fcombeq_abstract< __fx32 >
     {
         typedef __fx32 __type ;
     public:
          fcombeq() : fcombeq_abstract(){}
-        ~fcombeq()
-         {
-            #ifdef DEBUGGING
-            printf( "fcombeq child destructor call \n" );
-            #endif
-         }
+        ~fcombeq() {}
+         inline __type operator() ( __type  *input , bool odd = 1 ) override { return filt< __type >( input , odd ); }
+         inline __type operator() ( __fx64  *input , bool odd = 1 ){ return filt< __fx64  >( input , odd ); }
+         inline __type operator() ( __fxx64 *input , bool odd = 1 ){ return filt< __fxx64 >( input , odd ); }
     };
 
     /*! \brief equalized comb FIR filter class 32-bit realization */
-    template <> class fcombeq< __fx64 > : public fcombeq_abstract< __fx64 >
+    template <> class fcombeq< __fx64 > final : public fcombeq_abstract< __fx64 >
     {
         typedef __fx64 __type ;
     public:
          fcombeq() : fcombeq_abstract(){}
-        ~fcombeq()
-         {
-            #ifdef DEBUGGING
-            printf( "fcombeq child destructor call \n" );
-            #endif
-         }
+        ~fcombeq() {}
+         inline __type operator() ( __type  *input , bool odd = 1 ) override { return filt< __type >( input , odd ); }
+         inline __type operator() ( __fxx64 *input , bool odd = 1 ){ return filt< __fxx64 >( input , odd ); }
     };
 
     /*! \brief recursive Fourier class 32-bit realization */
-    template <> class recursive_fourier < __fx32 > : public recursive_fourier_abstract < __fx32 >
+    template <> class recursive_fourier < __fx32 > final : public recursive_fourier_abstract < __fx32 >
     {
         typedef __fx32 __type ;
     public:
          recursive_fourier() : recursive_fourier_abstract() {}
         ~recursive_fourier() {}
+         inline result operator() ( __type  *input ) override { return filt( input ); }
+         inline result operator() ( __fx64  *input ) { return filt( input ); }
+         inline result operator() ( __fxx64 *input ) { return filt( input ); }
+
     };
 
     /*! \brief recursive Fourier class 64-bit realization */
-    template <> class recursive_fourier < __fx64 > : public recursive_fourier_abstract < __fx64 >
+    template <> class recursive_fourier < __fx64 > final : public recursive_fourier_abstract < __fx64 >
     {
         typedef __fx64 __type ;
     public:
          recursive_fourier() : recursive_fourier_abstract() {}
         ~recursive_fourier() {}
+         inline result operator() ( __type  *input ) override { return filt( input ); }
+         inline result operator() ( __fxx64 *input ) { return filt( input ); }
     };
 
     /*! \brief recursive mean class 32-bit realization */
-    template <> class recursive_mean < __fx32 > : public recursive_mean_abstract < __fx32 >
+    template <> class recursive_mean < __fx32 > final : public recursive_mean_abstract < __fx32 >
     {
         typedef __fx32 __type ;
     public:
          recursive_mean() : recursive_mean_abstract() {}
         ~recursive_mean() {}
+         __type operator()( __type  *input ) override { return filt< __type >( input ); }
+         __type operator()( __fx64  *input ) { return filt< __fx64  >( input ); }
+         __type operator()( __fxx64 *input ) { return filt< __fxx64 >( input ); }
     };
 
     /*! \brief recursive mean class 64-bit realization */
-    template <> class recursive_mean < __fx64 > : public recursive_mean_abstract < __fx64 >
+    template <> class recursive_mean < __fx64 > final : public recursive_mean_abstract < __fx64 >
     {
         typedef __fx64 __type ;
     public:
          recursive_mean() : recursive_mean_abstract() {}
         ~recursive_mean() {}
+         __type operator()( __type  *input ) override { return filt< __type >( input ); }
+         __type operator()( __fxx64 *input ) { return filt< __fxx64 >( input ); }
     };
 
     /*! \brief recursive rms class 32-bit realization */
-    template <> class recursive_rms < __fx32 > : public recursive_rms_abstract < __fx32 >
+    template <> class recursive_rms < __fx32 > final : public recursive_rms_abstract < __fx32 >
     {
         typedef __fx32 __type ;
     public:
          recursive_rms() : recursive_rms_abstract() {}
         ~recursive_rms() {}
+         inline __type operator () ( __type  *input ) override { return filt < __type >( input ); }
+         inline __type operator () ( __fx64  *input ) { return filt < __fx64  >( input ); }
+         inline __type operator () ( __fxx64 *input ) { return filt < __fxx64 >( input ); }
+
     };
 
     /*! \brief recursive rms class 32-bit realization */
-    template <> class recursive_rms < __fx64 > : public recursive_rms_abstract < __fx64 >
+    template <> class recursive_rms < __fx64 > final : public recursive_rms_abstract < __fx64 >
     {
         typedef __fx64 __type ;
     public:
          recursive_rms() : recursive_rms_abstract() {}
         ~recursive_rms() {}
+         inline __type operator () ( __type  *input ) override { return filt < __type >( input ); }
+         inline __type operator () ( __fxx64 *input ) { return filt < __fxx64 >( input ); }
     };
 
 };

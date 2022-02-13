@@ -156,9 +156,10 @@ int example1()
     printf( "z0 - z1 - z2     = %.4f \t %.4f \n" , ( z0 - z1 - z2 ).m_re , ( z0 - z1 - z2 ).m_im );
     printf( "z0 * z1 / z2     = %.4f \t %.4f \n" , ( z0 * z1 / z2 ).m_re , ( z0 * z1 / z2 ).m_im );
     printf( "(z1-z2)/(z1+z2)  = %.4f \t %.4f \n" , ( ( z1 - z2 ) / ( z1 + z2 ) ).m_re , ( ( z1 - z2 ) / ( z1 + z2 ) ).m_im );
-    printf( "( z0 = z0 + z2 ) = %.4f \t %.4f \n" , ( z0 += z2 ).m_re , ( z0 += z2 ).m_im );
-    printf( "( z1 = z1 * z2 ) = %.4f \t %.4f \n" , ( z1 *= z2 ).m_re , ( z1 *= z2 ).m_im );
-    printf( "( z2 = z2 / z1 ) = %.4f \t %.4f \n" , ( z2 /= z1 ).m_re , ( z2 /= z1 ).m_im );
+
+    z0 += z2; printf( "( z0 = z0 + z2 ) = %.4f \t %.4f \n" , z0.m_re , z0.m_im );
+    z1 *= z2; printf( "( z1 = z1 * z2 ) = %.4f \t %.4f \n" , z1.m_re , z1.m_im );
+    z2 /= z1; printf( "( z2 = z2 / z1 ) = %.4f \t %.4f \n" , z2.m_re , z2.m_im );
     printf( "\n\n");
 
     printf( " complex functions : \n" );
@@ -168,12 +169,12 @@ int example1()
     printf( " ctnh( z0 )       = %.4f \t %.4f \n" , __ctnhf__(z0).m_re , __ctnhf__(z0).m_im );
     printf( " conj( z0 )       = %.4f \t %.4f \n" , __conjf__(z0).m_re , __conjf__(z0).m_im );
     printf( " norm( z0 )       = %.4f \t %.4f \n" , __normf__(z0).m_re , __normf__(z0).m_im );
-    printf( " z0*rot( 60 , 1 ) = %.4f \t %.4f \n" , ( z0 *=__rotf__( 60.0 , 1) ).m_re , ( z0 *=__rotf__( 60.0 , 1) ).m_im );
+    z0 *=__rotf__( 60.0 , 1); printf( " z0*rot( 60 , 1 ) = %.4f \t %.4f \n" , z0.m_re , z0.m_im );
     printf( "\n\n");
 
     printf( " scalar functions : \n" );
     printf( " abs( z0 )  = %.4f \n" , __absf__(z0) );
-    printf( " arg( z0 )  = %.4f \n" , __argf__(z0) * 180 / 3.14 );
+    printf( " arg( z0 )  = %.4f \n" , __argf__(z0) * 180 / 3.1415926535897932384626433832795);
 
     return 0;
 }
@@ -468,7 +469,7 @@ int example5()
     double Fs                = 4000;
     double Fn                = 50;
     double time              = 0;
-    double EmulationDuration = 0.08;
+    double EmulationDuration = 1.08;
     int    CycleWidth        = 5;
     int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
     int    frames_per_cycle  = CycleWidth * Fs / 1000;

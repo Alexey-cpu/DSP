@@ -73,6 +73,7 @@ template<> class quad_mltpx<__fx32>
 {
     typedef __fx32 __type ;
 private:
+
     /*! \brief input signal sampling frequency , Hz */
     __fx64 m_Fs;
      /*! \brief input signal sampling period   , s */
@@ -303,8 +304,8 @@ public:
             m_apfilt( &input[n] );
 
             // quadrature multiplication and FIR filters buffers filling:
-            m_fir_re.fill_fir_buff( &( m_a = m_ref_sin[m_cnt] * m_apfilt.m_out ) );
-            m_fir_im.fill_fir_buff( &( m_b = m_ref_cos[m_cnt] * m_apfilt.m_out ) );
+            m_fir_re << &( m_a = m_ref_sin[m_cnt] * m_apfilt.m_out );
+            m_fir_im << &( m_b = m_ref_cos[m_cnt] * m_apfilt.m_out );
 
             // reference frame counter update:
             if (m_cnt < m_ElemNum) m_cnt++;
@@ -312,8 +313,8 @@ public:
         }
 
         // filtering:
-        m_fir_re.filt();
-        m_fir_im.filt();
+        m_fir_re();
+        m_fir_im();
 
         // vector computation:
         m_vector1( m_fir_re.m_out , m_fir_im.m_out );
@@ -323,8 +324,8 @@ public:
         m_Im      = m_vector3.m_im;
 
         // frequency computation:
-        m_buff_re.fill_buff( &m_vector3.m_re  );
-        m_buff_im.fill_buff( &m_vector3.m_im  );
+        m_buff_re( &m_vector3.m_re  );
+        m_buff_im( &m_vector3.m_im  );
         m_vector1( +m_buff_re[1] , -m_buff_im[1] );
         m_vector2( +m_buff_re[0] , +m_buff_im[0] );
         m_vector3 = m_vector1 * m_vector2;
@@ -614,8 +615,8 @@ public:
             m_apfilt( &input[n] );
 
             // quadrature multiplication and FIR filters buffers filling:
-            m_fir_re.fill_fir_buff( &( m_a = m_ref_sin[m_cnt] * m_apfilt.m_out ) );
-            m_fir_im.fill_fir_buff( &( m_b = m_ref_cos[m_cnt] * m_apfilt.m_out ) );
+            m_fir_re << &( m_a = m_ref_sin[m_cnt] * m_apfilt.m_out );
+            m_fir_im << &( m_b = m_ref_cos[m_cnt] * m_apfilt.m_out );
 
             // reference frame counter update:
             if (m_cnt < m_ElemNum) m_cnt++;
@@ -623,8 +624,8 @@ public:
         }
 
         // filtering:
-        m_fir_re.filt();
-        m_fir_im.filt();
+        m_fir_re();
+        m_fir_im();
 
         // vector computation:
         m_vector1( m_fir_re.m_out , m_fir_im.m_out );
@@ -634,8 +635,8 @@ public:
         m_Im      = m_vector3.m_im;
 
         // frequency computation:
-        m_buff_re.fill_buff( &m_vector3.m_re  );
-        m_buff_im.fill_buff( &m_vector3.m_im  );
+        m_buff_re( &m_vector3.m_re  );
+        m_buff_im( &m_vector3.m_im  );
         m_vector1( +m_buff_re[1] , -m_buff_im[1] );
         m_vector2( +m_buff_re[0] , +m_buff_im[0] );
         m_vector3 = m_vector1 * m_vector2;
@@ -990,8 +991,8 @@ public:
             }
 
             // frequency computation:
-            m_buff_re.fill_buff( &m_vector3.m_re  );
-            m_buff_im.fill_buff( &m_vector3.m_im  );
+            m_buff_re( &m_vector3.m_re  );
+            m_buff_im( &m_vector3.m_im  );
             m_vector1( +m_buff_re[1] , -m_buff_im[1] );
             m_vector2( +m_buff_re[0] , +m_buff_im[0] );
             m_vector3 = m_vector1 * m_vector2;
@@ -1375,8 +1376,8 @@ public:
             }
 
             // frequency computation:
-            m_buff_re.fill_buff( &m_vector3.m_re  );
-            m_buff_im.fill_buff( &m_vector3.m_im  );
+            m_buff_re( &m_vector3.m_re  );
+            m_buff_im( &m_vector3.m_im  );
             m_vector1( +m_buff_re[1] , -m_buff_im[1] );
             m_vector2( +m_buff_re[0] , +m_buff_im[0] );
             m_vector3 = m_vector1 * m_vector2;

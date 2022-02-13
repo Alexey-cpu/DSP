@@ -12,7 +12,7 @@
 #define IIR_H
 
 #ifndef DEBUGGING
-#define DEBUGGING
+//#define DEBUGGING
 #endif
 
 /*! \brief defines if the compilation is implemented for Prosoft-Systems IDE */
@@ -193,15 +193,6 @@ template<> struct fr< __fxx64 > { __fxx64 Km , pH; };
  *  \param[type]    dilter type( 0 - lowpass , 1 - highpass , 2 - bandpass , 3 - bandstop )
 */
 struct sp { __fx64 Fs , Ts , Fn , Fc , BW , Gs , Gp; __ix32 order , type; };
-
-/*!
- *  \brief IIR types enumeration
- *  \param[lowpass ] lowpass  IIR
- *  \param[highpass] highpass IIR
- *  \param[bandpass] bandpass IIR
- *  \param[bandstop] bandstop IIR
-*/
-enum type { lowpass  , highpass , bandpass , bandstop };
 
 /*!
  * \brief Butterworth lowpass analogue prototype zeros/poles plain computation function
@@ -1641,14 +1632,13 @@ template< typename T > extern inline __attribute__( (always_inline) ) T __filt__
     T sum_num = 0 , sum_den = 0 , out = 0;
 
     // filtering:
-    buff_sx[0].fill_buff( input );
+    buff_sx[0]( input );
     for ( __ix32 i = 0 ; i < N ; i++)
     {
         sum_num = gains[i]*( buff_sx[ i ][ 0 ] * cfnum[ 3 * i + 0 ] + buff_sx[ i ][ 1 ] * cfnum[ 3 * i + 1 ] + buff_sx[ i ][ 2 ] * cfnum[ 3 * i + 2 ] );
         sum_den = ( buff_sy[ i ][ 0 ] * cfden[ 3 * i + 1 ] + buff_sy[ i ][ 1 ] * cfden[ 3 * i + 2 ] );
-        out = sum_num - sum_den;
-        buff_sy[ i ].fill_buff( &out );
-        if( i < N - 1 ) buff_sx[ i + 1 ].fill_buff( &out );
+        buff_sy[ i ]( &( out = sum_num - sum_den ) );
+        if( i < N - 1 ) buff_sx[ i + 1 ]( &out );
     }
     return out;
 }
@@ -1724,70 +1714,6 @@ template < typename T > void __show_coeffs__( cf< T > coeffs )
     printf( "filter gain = : %.12f \n " , fgain    );
 }
 
-/*!
- * \brief         IIR filter specification and coefficients show function
- * \param[sp   ] - IIR specification data structure
- * \param[sp   ] - IIR coefficients data structure
- * \param[name ] - IIR name
- * \return           The function outputs IIR filter specification and coefficients on the console
-*/
-template < typename T > void __show_iir__( sp sp , cf<T> cf , const char *name )
-{
-    printf( "%s " , name );
-
-    switch ( sp.type )
-    {
-        case type::lowpass:
-        printf( "lowpass specifications: \n" );
-        break;
-
-        case type::highpass:
-        printf( "highpass specifications: \n" );
-        break;
-
-        case type::bandpass:
-        printf( "bandpass specifications: \n" );
-        break;
-
-        case type::bandstop:
-        printf( "bandstop specifications: \n" );
-        break;
-    }
-
-    printf( "\n" );
-    if( sp.Fs > 0    ) { printf( "Fs    = %.6f Hz \n"   , sp.Fs    ); }
-    if( sp.Ts > 0    ) { printf( "Ts    = %.6f s  \n"   , sp.Ts    ); }
-    if( sp.Fn > 0    ) { printf( "Fn    = %.6f Hz \n"   , sp.Fn    ); }
-    if( sp.Fc > 0    ) { printf( "Fc    = %.6f Hz \n"   , sp.Fc    ); }
-    if( sp.BW > 0    ) { printf( "BW    = %.6f Hz \n"   , sp.BW    ); }
-    if( sp.Gs > 0    ) { printf( "Gs    = %.6f Db \n"   , sp.Gs    ); }
-    if( sp.Gp > 0    ) { printf( "Gp    = %.6f Db \n"   , sp.Gp    ); }
-    if( sp.order > 0 ) { printf( "order = %d      \n"   , sp.order ); }
-    if( cf.N > 0     ) { printf( "N     = %d      \n"   , cf.N     ); }
-    if( cf.L > 0     ) { printf( "L     = %d      \n"   , cf.L     ); }
-    if( cf.R > 0     ) { printf( "R     = %d      \n\n" , cf.R     ); }
-
-    __fx64 fgain = 1;
-    if( cf.cfden != 0 && cf.cfnum != 0 && cf.gains != 0 )
-    {
-        printf( "coefficients: \n\n" );
-        for( __ix32 i = 0 ; i < cf.N ; i++ )
-        {
-            printf( " section %d : \n" , i );
-            printf( " numerator  : %.12f %.12f %.12f \n" , cf.cfnum[ 3 * i + 0 ] , cf.cfnum[ 3 * i + 1 ]  , cf.cfnum[ 3 * i + 2 ] );
-            printf( " denominator: %.12f %.12f %.12f \n" , cf.cfden[ 3 * i + 0 ] , cf.cfden[ 3 * i + 1 ]  , cf.cfden[ 3 * i + 2 ] );
-            printf( " gain       : %.12f \n\n" , cf.gains[i] );
-            fgain *= cf.gains[i];
-        }
-        printf( "output gain: %.12f \n" , cf.gains[ cf.N ]         );
-        printf( "filter gain: %.12f \n\n" , fgain * cf.gains[ cf.N ] );
-    }
-    else
-    {
-        printf( "coefficients : coefficients have not been computed yet... \n" );
-    }
-}
-
 #endif
 
 /*! \brief IIR filter abstract class */
@@ -1795,6 +1721,16 @@ template< typename T >  class iir_abstract
 {
     typedef T __type ;
 protected:
+
+    /*!
+     *  \brief IIR types enumeration
+     *  \param[lowpass ] lowpass  IIR
+     *  \param[highpass] highpass IIR
+     *  \param[bandpass] bandpass IIR
+     *  \param[bandstop] bandstop IIR
+    */
+    enum type { lowpass  , highpass , bandpass , bandstop };
+
     /*! \brief IIR filter coefficients */
     cf< __type > m_cf;
     /*! \brief IIR filter I/O buffers data structure */
@@ -1936,6 +1872,71 @@ public:
     }
 
     #ifndef __ALG_PLATFORM
+
+    /*!
+     * \brief         IIR filter specification and coefficients show function
+     * \param[sp   ] - IIR specification data structure
+     * \param[sp   ] - IIR coefficients data structure
+     * \param[name ] - IIR name
+     * \return           The function outputs IIR filter specification and coefficients on the console
+    */
+    template < typename F > void __show_iir__( sp sp , cf < F > cf , const char *name )
+    {
+        printf( "%s " , name );
+
+        switch ( sp.type )
+        {
+            case type::lowpass:
+            printf( "lowpass specifications: \n" );
+            break;
+
+            case type::highpass:
+            printf( "highpass specifications: \n" );
+            break;
+
+            case type::bandpass:
+            printf( "bandpass specifications: \n" );
+            break;
+
+            case type::bandstop:
+            printf( "bandstop specifications: \n" );
+            break;
+        }
+
+        printf( "\n" );
+        if( sp.Fs > 0    ) { printf( "Fs    = %.6f Hz \n"   , sp.Fs    ); }
+        if( sp.Ts > 0    ) { printf( "Ts    = %.6f s  \n"   , sp.Ts    ); }
+        if( sp.Fn > 0    ) { printf( "Fn    = %.6f Hz \n"   , sp.Fn    ); }
+        if( sp.Fc > 0    ) { printf( "Fc    = %.6f Hz \n"   , sp.Fc    ); }
+        if( sp.BW > 0    ) { printf( "BW    = %.6f Hz \n"   , sp.BW    ); }
+        if( sp.Gs > 0    ) { printf( "Gs    = %.6f Db \n"   , sp.Gs    ); }
+        if( sp.Gp > 0    ) { printf( "Gp    = %.6f Db \n"   , sp.Gp    ); }
+        if( sp.order > 0 ) { printf( "order = %d      \n"   , sp.order ); }
+        if( cf.N > 0     ) { printf( "N     = %d      \n"   , cf.N     ); }
+        if( cf.L > 0     ) { printf( "L     = %d      \n"   , cf.L     ); }
+        if( cf.R > 0     ) { printf( "R     = %d      \n\n" , cf.R     ); }
+
+        __fx64 fgain = 1;
+        if( cf.cfden != 0 && cf.cfnum != 0 && cf.gains != 0 )
+        {
+            printf( "coefficients: \n\n" );
+            for( __ix32 i = 0 ; i < cf.N ; i++ )
+            {
+                printf( " section %d : \n" , i );
+                printf( " numerator  : %.12f %.12f %.12f \n" , cf.cfnum[ 3 * i + 0 ] , cf.cfnum[ 3 * i + 1 ]  , cf.cfnum[ 3 * i + 2 ] );
+                printf( " denominator: %.12f %.12f %.12f \n" , cf.cfden[ 3 * i + 0 ] , cf.cfden[ 3 * i + 1 ]  , cf.cfden[ 3 * i + 2 ] );
+                printf( " gain       : %.12f \n\n" , cf.gains[i] );
+                fgain *= cf.gains[i];
+            }
+            printf( "output gain: %.12f \n" , cf.gains[ cf.N ]         );
+            printf( "filter gain: %.12f \n\n" , fgain * cf.gains[ cf.N ] );
+        }
+        else
+        {
+            printf( "coefficients : coefficients have not been computed yet... \n" );
+        }
+    }
+
     /*! \brief debugging function */
     void show_properties() { __show_iir__< __type >( m_sp , m_cf , m_name ); }
     #endif
@@ -1951,7 +1952,7 @@ template< typename T > class chebyshev_2;
 template< typename T > class elliptic;
 
 /*! \brief Child Butterworth IIR filter 32-bit realization */
-template<> class butterworth < __fx32 > : public iir_abstract< __fx32 >
+template<> class butterworth < __fx32 > final : public iir_abstract< __fx32 >
 {
     typedef __fx32 __type ;
 private:
@@ -1979,7 +1980,7 @@ public:
 };
 
 /*! \brief Child Butterworth IIR filter 64-bit realization */
-template<> class butterworth < __fx64 > : public iir_abstract< __fx64 >
+template<> class butterworth < __fx64 > final : public iir_abstract< __fx64 >
 {
     typedef __fx64 __type ;
 private:
@@ -2000,7 +2001,7 @@ public:
 };
 
 /*! \brief Child Chebyshev type I IIR filter 32-bit realization */
-template<> class chebyshev_1 < __fx32 > : public iir_abstract< __fx32 >
+template<> class chebyshev_1 < __fx32 > final : public iir_abstract< __fx32 >
 {
     typedef __fx32 __type ;
 private:
@@ -2021,7 +2022,7 @@ public:
 };
 
 /*! \brief Child Chebyshev type I IIR filter 64-bit realization */
-template<> class chebyshev_1 < __fx64 > : public iir_abstract< __fx64 >
+template<> class chebyshev_1 < __fx64 > final : public iir_abstract< __fx64 >
 {
     typedef __fx64 __type ;
 private:
@@ -2042,7 +2043,7 @@ public:
 };
 
 /*! \brief Child Chebyshev type II IIR filter 32-bit realization */
-template<> class chebyshev_2 < __fx32 > : public iir_abstract< __fx32 >
+template<> class chebyshev_2 < __fx32 > final : public iir_abstract< __fx32 >
 {
     typedef __fx32 __type ;
 private:
@@ -2063,7 +2064,7 @@ public:
 };
 
 /*! \brief Child Chebyshev type I IIR filter 64-bit realization */
-template<> class chebyshev_2 < __fx64 > : public iir_abstract< __fx64 >
+template<> class chebyshev_2 < __fx64 > final : public iir_abstract< __fx64 >
 {
     typedef __fx64 __type ;
 private:
@@ -2084,7 +2085,7 @@ public:
 };
 
 /*! \brief Child Elliptic IIR filter 32-bit realization */
-template<> class elliptic < __fx32 > : public iir_abstract< __fx32 >
+template<> class elliptic < __fx32 > final : public iir_abstract< __fx32 >
 {
     typedef __fx32 __type ;
 private:
@@ -2105,7 +2106,7 @@ public:
 };
 
 /*! \brief Child Elliptic IIR filter 64-bit realization */
-template<> class elliptic < __fx64 > : public iir_abstract< __fx64 >
+template<> class elliptic < __fx64 > final : public iir_abstract< __fx64 >
 {
     typedef __fx64 __type ;
 private:

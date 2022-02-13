@@ -1,0 +1,20 @@
+  ****** Beginning of mfile2sci() session ******
+  File to convert: C:/Qt_projects/DigitalFilters_x32/matlab/TEXTFILE_TO_MATFILE/TEXTFILE_TO_MATFILE.m
+  Result file path: C:/QT_PRO~1/DIGITA~1/scilab/TEXTFI~1/
+  Recursive mode: OFF
+  Only double values used in M-file: NO
+  Verbose mode: 3
+  Generate formatted code: NO
+  M-file reading...
+  M-file reading: Done
+  Syntax modification...
+  Syntax modification: Done
+  Macro to tree conversion...
+  Conversion of M-tree...
+  !! L.5: Matlab function strcat not yet converted, original calling sequence used.
+  L.5: (Warning name conflict: function name changed from strcat to %strcat).
+  L.7: No simple equivalent, so mtlb_fread() is called.
+  Conversion of M-tree: Done
+  Macro to tree conversion: Done
+  Translation may be wrong (see the //!! comments).
+  ****** End of mfile2sci() session ******

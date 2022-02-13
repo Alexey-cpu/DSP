@@ -19,7 +19,7 @@ tt      = TEXTFILE_TO_MATFILE( "tt.txt"  , logs );
 %trial = sqrt( cheb1_y .* cheb1_y + cheb2_y .* cheb2_y );
 
 %plotting:
-plot( ff , cheb1_km , ff , cheb2_km , ff , buttf_km , ff , ellip_km );
-%plot( tt , cheb1_y , tt , cheb2_y , tt , buttf_y , tt , ellip_y );
+%plot( ff , cheb1_km , ff , cheb2_km , ff , buttf_km , ff , ellip_km );
+plot( tt , cheb1_y , tt , cheb2_y , tt , buttf_y , tt , ellip_y );
 %plot( tt , re_corr , tt , im_corr );
 %plot( tt , re_corr );
