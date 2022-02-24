@@ -1,6 +1,6 @@
 QT -= gui
 
-CONFIG += c++11 console -O2
+CONFIG += c++11 console
 CONFIG -= app_bundle
 
 # You can make your code fail to compile if it uses deprecated APIs.
@@ -17,15 +17,14 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     include/buffer.h \
-    include/complex.h \
     include/examples.h \
+    include/fcomplex.h \
     include/fir.h \
     include/iir.h \
     include/logical.h \
     include/quad_mltpx.h \
     include/sgen.h \
     include/special_functions.h \
-    include/transfer_functions.h \
     include/transformations.h
 
 DISTFILES += \

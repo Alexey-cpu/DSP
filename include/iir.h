@@ -29,7 +29,7 @@
 */
 
 #include "buffer.h"
-#include "complex.h"
+#include "fcomplex.h"
 #include "special_functions.h"
 
 /*! \brief defines 32-bit floating point type */
@@ -1860,16 +1860,7 @@ public:
     inline __type operator () (  __type *input  ) { return filt( input ); }
 
     /*! \brief virtual destructor */
-    virtual ~iir_abstract()
-    {
-        deallocate();
-
-        #ifdef DEBUGGING
-        printf( "parent destructor \n " );
-        if( !m_bf.bx && !m_bf.by ) printf( "buffers are cleared \n " );
-        if( !m_cf.cfnum && !m_cf.cfden && !m_cf.gains ) printf( "coefficient matrix is cleared \n " );
-        #endif
-    }
+    virtual ~iir_abstract() { deallocate(); }
 
     #ifndef __ALG_PLATFORM
 
@@ -1942,6 +1933,89 @@ public:
     #endif
 };
 
+/*! \brief transfer function abstract class */
+template< typename T = __fx32 > class transfer_function_abstract
+{
+    typedef T __type;
+protected:
+    __fx64 m_Fs;
+    __fx64 m_Fn;
+    __fx64 m_Ts;
+    __fx64 m_T1;
+    __fx64 m_T2;
+    __fx64 m_Kd;
+    __fx64 m_Fc;
+    __fx64 m_Gain;
+
+    mirror_ring_buffer< __type > m_bx;
+    mirror_ring_buffer< __type > m_by;
+    __type *m_cfnum;
+    __type *m_cfden;
+
+    inline __type __tf_filt__( __type *input , __type *cfnum , __type *cfden , __type gain , __ix32 Nx , __ix32 Ny , mirror_ring_buffer<__type> &bx , mirror_ring_buffer<__type> &by )
+    {
+        __type sum_num = 0 , sum_den = 0 , out = 0;
+        bx( input );
+        for ( __ix32 m = 0 ; m < Nx ; m++)
+        {
+            sum_num += gain * bx[m] * cfnum[m];
+            if ( m < Ny ) sum_den += by[m] * cfden[m + 1];
+        }
+        by( &( out = sum_num - sum_den ) );
+        return out;
+    }
+
+public:
+
+    /*!
+     *  \brief IIR types enumeration
+     *  \param[lowpass ] lowpass  IIR
+     *  \param[highpass] highpass IIR
+     *  \param[bandpass] bandpass IIR
+     *  \param[bandstop] bandstop IIR
+    */
+    enum type { lowpass  , highpass , bandpass , bandstop1 , bandstop2 };
+
+    __type m_out;
+
+    virtual __ix32 allocate() = 0;
+    virtual __type operator() ( __type *input ) = 0;
+
+    void deallocate()
+    {
+        m_bx.deallocate();
+        m_by.deallocate();
+        if( m_cfnum != 0 ) { free( m_cfnum ); m_cfnum = 0; }
+        if( m_cfden != 0 ) { free( m_cfden ); m_cfden = 0; }
+    }
+
+    transfer_function_abstract()
+    {
+        m_Fs    = 4000;
+        m_Fn    = 50;
+        m_Ts    = 1 / m_Fs;
+        m_T1    = 0.01;
+        m_T2    = 0.02;
+        m_Kd    = 0.707;
+        m_Fc    = 120;
+        m_Gain  = 1;
+        m_cfden = 0;
+        m_cfnum = 0;
+        m_out   = 0;
+    };
+    virtual ~transfer_function_abstract(){ deallocate(); };
+};
+
+/*! \brief Child differentiator template class */
+template< typename T > class differentiator;
+/*! \brief Child aperiodic ( delay ) template class */
+template< typename T > class aperiodic;
+/*! \brief Child integrator template class */
+template< typename T > class integrator;
+/*! \brief Child leadlag template class */
+template< typename T > class leadlag;
+/*! \brief Child second order filter template class */
+template< typename T > class second_order_filter;
 /*! \brief Child Butterworth IIR filter template class */
 template< typename T > class butterworth;
 /*! \brief Child Chebyshev type I IIR filter template class */
@@ -1950,6 +2024,544 @@ template< typename T > class chebyshev_1;
 template< typename T > class chebyshev_2;
 /*! \brief Child Elliptic IIR filter template class */
 template< typename T > class elliptic;
+
+/*! \brief Child differentiator 32-bit realization */
+template<> class differentiator< __fx32 > final : public transfer_function_abstract< __fx32 >
+{
+    typedef __fx32 __type;
+public:
+
+     // initialization:
+     void init( __fx64 Fs , __fx64 Fn , __fx64 Td )
+     {
+         m_Fs = Fs;
+         m_Ts = 1 / Fs;
+         m_Fn = Fn;
+         m_T1 = Td;
+     }
+
+     // memory allocation:
+     __ix32 allocate() override
+     {
+         // transfer function input/output and coefficicents buffers memory allocation:
+         m_cfnum = ( __type* )calloc( 2 , sizeof ( __type ) );
+         m_cfden = ( __type* )calloc( 2 , sizeof ( __type ) );
+         m_bx.allocate(3);
+         m_by.allocate(3);
+
+         // coefficients and gain computation:
+         m_Gain     = 2 / ( m_Ts * ( 1 + 2 * m_T1 / m_Ts ) );
+         m_cfnum[0] = +1;
+         m_cfnum[1] = -1;
+         m_cfden[0] = +1;
+         m_cfden[1] = (1 - 2 * m_T1 / m_Ts) / (1 + 2 * m_T1 / m_Ts);
+         return 0;
+     }
+
+     // constructors and destructor:
+     differentiator() : transfer_function_abstract(){}
+     differentiator( __fx64 Fs , __fx64 Fn , __fx64 Td ){ init( Fs , Fn , Td ); allocate(); };
+     ~differentiator(){};
+
+     // filtering operator:
+     inline __type operator()( __type *input ) override { return ( m_out = __tf_filt__( input , m_cfnum , m_cfden , m_Gain , 2 , 1 , m_bx , m_by ) ); }
+};
+
+/*! \brief Child differentiator 64-bit realization */
+template<> class differentiator< __fx64 > final : public transfer_function_abstract< __fx64 >
+{
+    typedef __fx64 __type;
+public:
+
+     // initialization:
+     void init( __fx64 Fs , __fx64 Fn , __fx64 Td )
+     {
+         m_Fs = Fs;
+         m_Ts = 1 / Fs;
+         m_Fn = Fn;
+         m_T1 = Td;
+     }
+
+     // memory allocation:
+     __ix32 allocate() override
+     {
+         // transfer function input/output and coefficicents buffers memory allocation:
+         m_cfnum = ( __type* )calloc( 2 , sizeof ( __type ) );
+         m_cfden = ( __type* )calloc( 2 , sizeof ( __type ) );
+         m_bx.allocate(3);
+         m_by.allocate(3);
+
+         // coefficients and gain computation:
+         m_Gain     = 2 / ( m_Ts * ( 1 + 2 * m_T1 / m_Ts ) );
+         m_cfnum[0] = +1;
+         m_cfnum[1] = -1;
+         m_cfden[0] = +1;
+         m_cfden[1] = (1 - 2 * m_T1 / m_Ts) / (1 + 2 * m_T1 / m_Ts);
+         return 0;
+     }
+
+     // constructors and destructor:
+     differentiator() : transfer_function_abstract(){}
+     differentiator( __fx64 Fs , __fx64 Fn , __fx64 Td ){ init( Fs , Fn , Td ); allocate(); };
+     ~differentiator(){};
+
+     // filtering operator:
+     inline __type operator()( __type *input ) override { return ( m_out = __tf_filt__( input , m_cfnum , m_cfden , m_Gain , 2 , 1 , m_bx , m_by ) ); }
+};
+
+/*! \brief Child aperiodic ( delay ) 32-bit realization */
+template<> class aperiodic< __fx32 > final : public transfer_function_abstract< __fx32 >
+{
+    typedef __fx32 __type;
+public:
+
+    // initialization function:
+    void init( __fx64 Fs , __fx64 Fn , __fx64 Ta )
+    {
+        m_Fs = Fs;
+        m_Ts = 1 / Fs;
+        m_Fn = Fn;
+        m_T1 = Ta;
+    }
+
+    // memory allocation function:
+    __ix32 allocate() override
+    {
+        // transfer function input/output and coefficicents buffers memory allocation:
+        m_cfnum = ( __type* )calloc( 2 , sizeof ( __type ) );
+        m_cfden = ( __type* )calloc( 2 , sizeof ( __type ) );
+        m_bx.allocate(3);
+        m_by.allocate(3);
+
+        // transfer function coefficients:
+        m_Gain     = 1 / (1 + 2 * m_T1 / m_Ts);
+        m_cfnum[0] = 1;
+        m_cfnum[1] = 1;
+        m_cfden[0] = 1;
+        m_cfden[1] = (1 - 2 * m_T1 / m_Ts) / (1 + 2 * m_T1 / m_Ts);
+        return 0;
+    }
+
+    // constructors and destructors:
+    aperiodic() : transfer_function_abstract(){}
+    aperiodic(__fx64 Fs , __fx64 Fn , __fx64 Ta ){ init( Fs , Fn , Ta ); }
+    ~aperiodic(){};
+
+    // filtering operator:
+    inline __type operator() ( __type *input ) override { return ( m_out = __tf_filt__( input , m_cfnum , m_cfden , m_Gain , 2 , 1 , m_bx , m_by ) ); }
+};
+
+/*! \brief Child aperiodic ( delay ) 32-bit realization */
+template<> class aperiodic< __fx64 > final : public transfer_function_abstract< __fx64 >
+{
+    typedef __fx64 __type;
+public:
+
+    // initialization function:
+    void init( __fx64 Fs , __fx64 Fn , __fx64 Ta )
+    {
+        m_Fs = Fs;
+        m_Ts = 1 / Fs;
+        m_Fn = Fn;
+        m_T1 = Ta;
+    }
+
+    // memory allocation function:
+    __ix32 allocate() override
+    {
+        // transfer function input/output and coefficicents buffers memory allocation:
+        m_cfnum = ( __type* )calloc( 2 , sizeof ( __type ) );
+        m_cfden = ( __type* )calloc( 2 , sizeof ( __type ) );
+        m_bx.allocate(3);
+        m_by.allocate(3);
+
+        // transfer function coefficients:
+        m_Gain     = 1 / (1 + 2 * m_T1 / m_Ts);
+        m_cfnum[0] = 1;
+        m_cfnum[1] = 1;
+        m_cfden[0] = 1;
+        m_cfden[1] = (1 - 2 * m_T1 / m_Ts) / (1 + 2 * m_T1 / m_Ts);
+        return 0;
+    }
+
+    // constructors and destructors:
+    aperiodic() : transfer_function_abstract(){}
+    aperiodic(__fx64 Fs , __fx64 Fn , __fx64 Ta ){ init( Fs , Fn , Ta ); allocate(); }
+    ~aperiodic(){};
+
+    // filtering operator:
+    inline __type operator() ( __type *input ) override { return ( m_out = __tf_filt__( input , m_cfnum , m_cfden , m_Gain , 2 , 1 , m_bx , m_by ) ); }
+};
+
+/*! \brief Child integrator 32-bit realization */
+template<> class integrator< __fx32 > final : public transfer_function_abstract< __fx32 >
+{
+    typedef __fx32 __type;
+public:
+
+    // initialization function:
+    void init( __fx64 Fs , __fx64 Fn )
+    {
+        m_Fs = Fs;
+        m_Ts = 1 / Fs;
+        m_Fn = Fn;
+    }
+
+    // memory allocation function:
+    __ix32 allocate() override
+    {
+        // transfer function input/output and coefficicents buffers memory allocation:
+        m_cfnum = ( __type* )calloc( 2 , sizeof ( __type ) );
+        m_cfden = ( __type* )calloc( 2 , sizeof ( __type ) );
+        m_bx.allocate(3);
+        m_by.allocate(3);
+
+        // transfer function coefficients:
+        m_Gain = 0.5 * m_Ts;
+        m_cfnum[0] = +1;
+        m_cfnum[1] = +1;
+        m_cfden[0] = +1;
+        m_cfden[1] = -1;
+        return 0;
+    }
+
+    // constructors and destructor:
+    integrator() : transfer_function_abstract(){}
+    integrator( __fx64 Fs , __fx64 Fn ){ init( Fs , Fn ); allocate(); }
+    ~integrator(){};
+
+    // filtering operator:
+    inline __type operator()( __type *input ) override { return ( m_out = __tf_filt__( input , m_cfnum , m_cfden , m_Gain , 2 , 1 , m_bx , m_by ) ); }
+};
+
+/*! \brief Child integrator 64-bit realization */
+template<> class integrator< __fx64 > final : public transfer_function_abstract< __fx64 >
+{
+    typedef __fx64 __type;
+public:
+
+    // initialization function:
+    void init( __fx64 Fs , __fx64 Fn )
+    {
+        m_Fs = Fs;
+        m_Ts = 1 / Fs;
+        m_Fn = Fn;
+    }
+
+    // memory allocation function:
+    __ix32 allocate() override
+    {
+        // transfer function input/output and coefficicents buffers memory allocation:
+        m_cfnum = ( __type* )calloc( 2 , sizeof ( __type ) );
+        m_cfden = ( __type* )calloc( 2 , sizeof ( __type ) );
+        m_bx.allocate(3);
+        m_by.allocate(3);
+
+        // transfer function coefficients:
+        m_Gain = 0.5 * m_Ts;
+        m_cfnum[0] = +1;
+        m_cfnum[1] = +1;
+        m_cfden[0] = +1;
+        m_cfden[1] = -1;
+        return 0;
+    }
+
+    // constructors and destructor:
+    integrator() : transfer_function_abstract(){}
+    integrator( __fx64 Fs , __fx64 Fn ){ init( Fs , Fn ); allocate(); }
+    ~integrator(){};
+
+    // filtering operator:
+    inline __type operator()( __type *input ) override { return ( m_out = __tf_filt__( input , m_cfnum , m_cfden , m_Gain , 2 , 1 , m_bx , m_by ) ); }
+};
+
+/*! \brief Child leadlag 32-bit realization */
+template<> class leadlag< __fx32 > final : public transfer_function_abstract< __fx32 >
+{
+    typedef __fx32 __type;
+public:
+
+    // initialization function:
+    void init( __fx64 Fs , __fx64 Fn , __fx64 T1 , __fx64 T2 )
+    {
+        m_Fs = Fs;
+        m_Ts = 1 / Fs;
+        m_Fn = Fn;
+        m_T1 = T1;
+        m_T2 = T2;
+    }
+
+    // memory allocation function:
+    __ix32 allocate() override
+    {
+        // transfer function input/output and coefficicents buffers memory allocation:
+        m_cfnum = ( __type* )calloc( 2 , sizeof ( __type ) );
+        m_cfden = ( __type* )calloc( 2 , sizeof ( __type ) );
+        m_bx.allocate(3);
+        m_by.allocate(3);
+
+        // transfer function coefficients:
+        m_Gain     = (1 + 2 * m_T1 / m_Ts) / (1 + 2 * m_T2 / m_Ts);
+        m_cfnum[0] = 1;
+        m_cfnum[1] = (1 - 2 * m_T1 / m_Ts) / (1 + 2 * m_T1 / m_Ts);;
+        m_cfden[0] = 1;
+        m_cfden[1] = (1 - 2 * m_T2 / m_Ts) / (1 + 2 * m_T2 / m_Ts);
+        return 0;
+    }
+
+    // constructors and destructor:
+    leadlag() : transfer_function_abstract(){}
+    leadlag( __fx64 Fs , __fx64 Fn , __fx64 T1 , __fx64 T2 ){ init( Fs , Fn , T1 , T2 ); }
+    ~leadlag(){};
+
+    // filtering operator:
+    inline __type operator()( __type *input ) override { return ( m_out = __tf_filt__( input , m_cfnum , m_cfden , m_Gain , 2 , 1 , m_bx , m_by ) ); }
+};
+
+/*! \brief Child leadlag 64-bit realization */
+template<> class leadlag< __fx64 > final : public transfer_function_abstract< __fx64 >
+{
+    typedef __fx64 __type;
+public:
+
+    // initialization function:
+    void init( __fx64 Fs , __fx64 Fn , __fx64 T1 , __fx64 T2 )
+    {
+        m_Fs = Fs;
+        m_Ts = 1 / Fs;
+        m_Fn = Fn;
+        m_T1 = T1;
+        m_T2 = T2;
+    }
+
+    // memory allocation function:
+    __ix32 allocate() override
+    {
+        // transfer function input/output and coefficicents buffers memory allocation:
+        m_cfnum = ( __type* )calloc( 2 , sizeof ( __type ) );
+        m_cfden = ( __type* )calloc( 2 , sizeof ( __type ) );
+        m_bx.allocate(3);
+        m_by.allocate(3);
+
+        // transfer function coefficients:
+        m_Gain     = (1 + 2 * m_T1 / m_Ts) / (1 + 2 * m_T2 / m_Ts);
+        m_cfnum[0] = 1;
+        m_cfnum[1] = (1 - 2 * m_T1 / m_Ts) / (1 + 2 * m_T1 / m_Ts);;
+        m_cfden[0] = 1;
+        m_cfden[1] = (1 - 2 * m_T2 / m_Ts) / (1 + 2 * m_T2 / m_Ts);
+        return 0;
+    }
+
+    // constructors and destructor:
+    leadlag() : transfer_function_abstract(){}
+    leadlag( __fx64 Fs , __fx64 Fn , __fx64 T1 , __fx64 T2 ){ init( Fs , Fn , T1 , T2 ); }
+    ~leadlag(){};
+
+    // filtering operator:
+    inline __type operator()( __type *input ) override { return ( m_out = __tf_filt__( input , m_cfnum , m_cfden , m_Gain , 2 , 1 , m_bx , m_by ) ); }
+};
+
+/*! \brief Child second order filter 32-bit realization */
+template<> class second_order_filter< __fx32 > final : public transfer_function_abstract< __fx32 >
+{
+    typedef __fx32 __type;
+    __ix32 m_type;
+public:
+
+    __ix32 allocate() override
+    {
+        // transfer function input/output and coefficicents buffers memory allocation:
+        m_cfnum = ( __type* )calloc( 3 , sizeof ( __type ) );
+        m_cfden = ( __type* )calloc( 3 , sizeof ( __type ) );
+        m_bx.allocate(4);
+        m_by.allocate(4);
+
+        // auxiliary variables:
+        __fx64 omega = tan( ( PI2 * m_Fc ) * m_Ts / 2);
+        __fx64 a     = 1;
+        __fx64 b     = omega / m_Kd;
+        __fx64 c     = omega * omega;
+        __fx64 k1    = a + b + c;
+        __fx64 k2    = 2 * c - 2 * a;
+        __fx64 k3    = a - b + c;
+
+        switch ( m_type )
+        {
+            case type::lowpass:
+                m_Gain     = omega * omega / k1;
+                m_cfnum[0] = 1;
+                m_cfnum[1] = 2;
+                m_cfnum[2] = 1;
+                m_cfden[0] = 1;
+                m_cfden[1] = k2 / k1;
+                m_cfden[2] = k3 / k1;
+            break;
+
+            case type::highpass:
+                m_Gain     = 1 / k1;
+                m_cfnum[0] = +1;
+                m_cfnum[1] = -2;
+                m_cfnum[2] = +1;
+                m_cfden[0] = +1;
+                m_cfden[1] = k2 / k1;
+                m_cfden[2] = k3 / k1;
+            break;
+
+            case type::bandpass:
+                m_Gain     = omega / m_Kd / k1;;
+                m_cfnum[0] = +1;
+                m_cfnum[1] = -0;
+                m_cfnum[2] = -1;
+                m_cfden[0] = +1;
+                m_cfden[1] = k2 / k1;
+                m_cfden[2] = k3 / k1;
+            break;
+
+            case type::bandstop1:
+                m_Gain     = 1 / k1;
+                m_cfnum[0] = 1 + omega * omega;
+                m_cfnum[1] = 2 * omega*omega - 2;
+                m_cfnum[2] = 1 + omega * omega;
+                m_cfden[0] = 1;
+                m_cfden[1] = k2 / k1;
+                m_cfden[2] = k3 / k1;
+            break;
+
+            case type::bandstop2:
+            k1 = -cos(2 * PI0 * m_Fc * m_Ts);
+            k2 = (1 - tan(PI0 * m_Kd * m_Ts)) / (1 + tan(PI0 * m_Kd * m_Ts));
+            m_Gain     = 0.5 * (1 + k2);
+            m_cfnum[0] = 1;
+            m_cfnum[1] = 2 * k1;
+            m_cfnum[2] = 1;
+            m_cfden[0] = 1;
+            m_cfden[1] = k1 * (1 + k2);
+            m_cfden[2] = k2;
+            break;
+        }
+        return 0;
+    }
+
+    void init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 Kd , type tp )
+    {
+        m_Fs = Fs;
+        m_Ts = 1 / Fs;
+        m_Fn = Fn;
+        m_Kd = Kd;
+        m_Fc = Fc;
+        m_type = tp;
+    }
+
+    // constructors and destructor:
+    second_order_filter() : transfer_function_abstract(){ m_type = type :: lowpass; }
+    second_order_filter( __fx64 Fs , __fx64 Fn , __fx64 Kd , __fx64 Fc , type tp ){ init( Fs , Fn , Kd , Fc , tp ); }
+    ~second_order_filter(){};
+
+    // filtering operator:
+    inline __type operator () ( __type *input ) override { return ( m_out = __tf_filt__( input , m_cfnum , m_cfden , m_Gain , 3 , 2 , m_bx , m_by ) ); }
+};
+
+/*! \brief Child second order filter 32-bit realization */
+template<> class second_order_filter< __fx64 > final : public transfer_function_abstract< __fx64 >
+{
+    typedef __fx64 __type;
+    __ix32 m_type;
+public:
+
+    __ix32 allocate() override
+    {
+        // transfer function input/output and coefficicents buffers memory allocation:
+        m_cfnum = ( __type* )calloc( 3 , sizeof ( __type ) );
+        m_cfden = ( __type* )calloc( 3 , sizeof ( __type ) );
+        m_bx.allocate(4);
+        m_by.allocate(4);
+
+        // auxiliary variables:
+        __fx64 omega = tan( ( PI2 * m_Fc ) * m_Ts / 2);
+        __fx64 a     = 1;
+        __fx64 b     = omega / m_Kd;
+        __fx64 c     = omega * omega;
+        __fx64 k1    = a + b + c;
+        __fx64 k2    = 2 * c - 2 * a;
+        __fx64 k3    = a - b + c;
+
+        switch ( m_type )
+        {
+            case type::lowpass:
+                m_Gain     = omega * omega / k1;
+                m_cfnum[0] = 1;
+                m_cfnum[1] = 2;
+                m_cfnum[2] = 1;
+                m_cfden[0] = 1;
+                m_cfden[1] = k2 / k1;
+                m_cfden[2] = k3 / k1;
+            break;
+
+            case type::highpass:
+                m_Gain     = 1 / k1;
+                m_cfnum[0] = +1;
+                m_cfnum[1] = -2;
+                m_cfnum[2] = +1;
+                m_cfden[0] = +1;
+                m_cfden[1] = k2 / k1;
+                m_cfden[2] = k3 / k1;
+            break;
+
+            case type::bandpass:
+                m_Gain     = omega / m_Kd / k1;;
+                m_cfnum[0] = +1;
+                m_cfnum[1] = -0;
+                m_cfnum[2] = -1;
+                m_cfden[0] = +1;
+                m_cfden[1] = k2 / k1;
+                m_cfden[2] = k3 / k1;
+            break;
+
+            case type::bandstop1:
+                m_Gain     = 1 / k1;
+                m_cfnum[0] = 1 + omega * omega;
+                m_cfnum[1] = 2 * omega*omega - 2;
+                m_cfnum[2] = 1 + omega * omega;
+                m_cfden[0] = 1;
+                m_cfden[1] = k2 / k1;
+                m_cfden[2] = k3 / k1;
+            break;
+
+            case type::bandstop2:
+                k1 = -cos(2 * PI0 * m_Fc * m_Ts);
+                k2 = (1 - tan(PI0 * m_Kd * m_Ts)) / (1 + tan(PI0 * m_Kd * m_Ts));
+                m_Gain = 0.5 * (1 + k2);
+                m_cfnum[0] = 1;
+                m_cfnum[1] = 2 * k1;
+                m_cfnum[2] = 1;
+                m_cfden[0] = 1;
+                m_cfden[1] = k1 * (1 + k2);
+                m_cfden[2] = k2;
+            break;
+
+        }
+
+        return 0;
+    }
+
+    void init( __fx64 Fs , __fx64 Fn , __fx64 Fc , __fx64 Kd , type tp )
+    {
+        m_Fs   = Fs;
+        m_Ts   = 1 / Fs;
+        m_Fn   = Fn;
+        m_Kd   = Kd;
+        m_Fc   = Fc;
+        m_type = tp;
+    }
+
+    // constructors and destructor:
+    second_order_filter() : transfer_function_abstract(){ m_type = type :: lowpass; }
+    second_order_filter( __fx64 Fs , __fx64 Fn , __fx64 Kd , __fx64 Fc , type tp ){ init( Fs , Fn , Kd , Fc , tp ); }
+    ~second_order_filter(){};
+
+    // filtering operator:
+    inline __type operator () ( __type *input ) override { return ( m_out = __tf_filt__( input , m_cfnum , m_cfden , m_Gain , 3 , 2 , m_bx , m_by ) ); }
+};
 
 /*! \brief Child Butterworth IIR filter 32-bit realization */
 template<> class butterworth < __fx32 > final : public iir_abstract< __fx32 >
@@ -1967,16 +2579,8 @@ public:
 
     // default constructor and destructor:
       butterworth() : iir_abstract() { strcpy( m_name , "Butterworth" ); }
-
       // default destructor:
-     ~butterworth()
-      {
-            #ifdef DEBUGGING
-            printf( "child destructor \n " );
-            if( !m_bf.bx && !m_bf.by ) printf( "buffers are cleared \n " );
-            if( !m_cf.cfnum && !m_cf.cfden && !m_cf.gains ) printf( "coefficient matrix is cleared \n " );
-            #endif
-      };
+     ~butterworth(){};
 };
 
 /*! \brief Child Butterworth IIR filter 64-bit realization */
@@ -1995,7 +2599,6 @@ public:
 
     // default constructor and destructor:
     butterworth() : iir_abstract() { strcpy( m_name , "Butterworth" ); }
-
     // default destructor:
     ~butterworth(){};
 };

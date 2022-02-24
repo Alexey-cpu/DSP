@@ -24,7 +24,6 @@
 #include "include/sgen.h"
 #include "include/iir.h"
 #include "include/quad_mltpx.h"
-#include "include/transfer_functions.h"
 #include "include/logical.h"
 
 using namespace IIR;
@@ -685,25 +684,25 @@ int example7()
     sgen< __gen_type > gen;
 
     // transfer functions:
-    differentiator        < __flt_type > dif;
-    aperiodic             < __flt_type > app;
-    leadlag               < __flt_type > leg;
-    integrator            < __flt_type > itg;
-    lowpass2_filter       < __flt_type > lpf;
-    highpass2_filter      < __flt_type > hpf;
-    bandpass2_filter      < __flt_type > bpf;
-    bandstop2_filter_type1< __flt_type > bsf1;
-    bandstop2_filter_type2< __flt_type > bsf2;
+    differentiator      < __flt_type > dif;
+    aperiodic           < __flt_type > app;
+    leadlag             < __flt_type > leg;
+    integrator          < __flt_type > itg;
+    second_order_filter < __flt_type > lpf;
+    second_order_filter < __flt_type > hpf;
+    second_order_filter < __flt_type > bpf;
+    second_order_filter < __flt_type > bsf1;
+    second_order_filter < __flt_type > bsf2;
 
     dif .init( Fs , Fn , 0.01 );
     app .init( Fs , Fn , 0.01 );
     leg .init( Fs , Fn , 0.01 , 0.02 );
     itg .init( Fs , Fn );
-    lpf .init( Fs , Fn , 0.707 , 120 );
-    hpf .init( Fs , Fn , 0.707 , 120 );
-    bpf .init( Fs , Fn , 0.707 , 120 );
-    bsf1.init( Fs , Fn , 0.707 , 120 );
-    bsf2.init( Fs , Fn , 120 , 110 );
+    lpf .init( Fs , Fn , 120 , 0.707 , transfer_function_abstract<>::type::lowpass   );
+    hpf .init( Fs , Fn , 120 , 0.707 , transfer_function_abstract<>::type::highpass  );
+    bpf .init( Fs , Fn , 120 , 0.707 , transfer_function_abstract<>::type::bandpass  );
+    bsf1.init( Fs , Fn , 120 , 0.707 , transfer_function_abstract<>::type::bandstop1 );
+    bsf2.init( Fs , Fn , 120 , 60   , transfer_function_abstract<>::type::bandstop2 );
 
     dif .allocate();
     app .allocate();

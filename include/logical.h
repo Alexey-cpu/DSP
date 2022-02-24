@@ -312,17 +312,7 @@ public:
      *  \return If falling == false: the function returns true if the input signal increases the offset.
      *          If falling == true : the function returns true if the input signal becomes bellow the offset.
     */
-    template< typename T > __bool hit_crossing( T input , T offset , __bool falling )
-    {
-        if (falling == false)
-        {
-            return rr_trig( ( input > offset ) );
-        }
-        else
-        {
-            return ff_trig( ( input > offset ) );
-        }
-    }
+    template< typename T > __bool hit_crossing( T input , T offset , __bool falling ) { return ( !falling ) ? rr_trig( ( input > offset ) ) : ff_trig( ( input > offset ) ); }
 
     /*! \brief trigger state control function
      *  \return The function returns current trigger state

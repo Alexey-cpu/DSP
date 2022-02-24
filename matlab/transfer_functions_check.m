@@ -12,13 +12,14 @@ bsf2_y = TEXTFILE_TO_MATFILE( "bsf2_y.txt" , logs );
 tt     = TEXTFILE_TO_MATFILE( "tt.txt"    , logs );
 
 %plotting:
-%plot(  tt , lpf_y );
-%plot( tt , simout( 1 : length(dif_y) ) , tt , dif_y );
-%plot( tt , simout( 1 : length(app_y) ) , tt , app_y );
-%plot( tt , simout( 1 : length(leg_y) ) , tt , leg_y );
-%plot( tt , simout( 1 : length(int_y) ) , tt , int_y );
-%plot( tt , simout( 1 : length(lpf_y) ) , tt , lpf_y );
-%plot( tt , simout( 1 : length(hpf_y) ) , tt , hpf_y );
-%plot( tt , simout( 1 : length(bpf_y) ) , tt , bpf_y );
-%plot( tt , simout( 1 : length(bsf1_y) ) , tt , bsf1_y );
-plot( tt , simout( 1 : length(bsf2_y) ) , tt , bsf2_y );
+%plot( tt , bsf1_y )
+%plot( tt , hpf_y );
+%plot( tt , simout1( 1 : length(dif_y) ) , tt , dif_y );
+%plot( tt , simout2( 1 : length(app_y) ) , tt , app_y );
+%plot( tt , simout3( 1 : length(leg_y) ) , tt , leg_y );
+%plot( tt , simout4( 1 : length(int_y) ) , tt , int_y );
+%plot( tt , simout5( 1 : length(lpf_y) ) , tt , lpf_y );
+%plot( tt , simout6( 1 : length(hpf_y) ) , tt , hpf_y );
+%plot( tt , simout7( 1 : length(bpf_y) ) , tt , bpf_y );
+%plot( tt , simout8( 1 : length(bsf1_y) ) , tt , bsf1_y );
+plot( tt , simout8( 1 : length(bsf2_y) ) , tt , bsf2_y );

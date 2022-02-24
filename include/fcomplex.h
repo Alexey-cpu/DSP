@@ -8,8 +8,8 @@
  * The header declares template complex number class and functions
 */
 
-#ifndef COMPLEX_H
-#define COMPLEX_H
+#ifndef FCOMPLEX_H
+#define FCOMPLEX_H
 
 /*! \defgroup <COMPLEX_ARITHMETICS> ( Complex numbers functions )
  *  \brief the module describes complex numbers functions
@@ -86,29 +86,29 @@
 // __cadd__:
 #ifndef __CADD__
 #define __CADD__                                                                                                                        \
-    inline complex operator + ( complex _complex ) const { return complex( _complex.m_re + this->m_re , _complex.m_im + this->m_im ); } \
-    inline complex operator + ( __type   number  ) const { return complex( this->m_re + number , this->m_im ); }                        \
-    inline complex operator += ( complex _complex ) { this->m_re += _complex.m_re; this->m_im += _complex.m_im; return *this; }         \
-    inline complex operator += ( __type number ) { this->m_re += number; return *this; }                                                \
+    inline __attribute__( (always_inline) ) complex operator + ( complex _complex ) const { return complex( _complex.m_re + this->m_re , _complex.m_im + this->m_im ); } \
+    inline __attribute__( (always_inline) ) complex operator + ( __type   number  ) const { return complex( this->m_re + number , this->m_im ); }                        \
+    inline __attribute__( (always_inline) ) complex operator += ( complex _complex ) { this->m_re += _complex.m_re; this->m_im += _complex.m_im; return *this; }         \
+    inline __attribute__( (always_inline) ) complex operator += ( __type number ) { this->m_re += number; return *this; }                                                \
 
 #endif
 
 // __csub__:
 #ifndef __CSUB__
 #define __CSUB__                                                                                                                    \
-inline complex operator - ( complex _complex ) const { return complex( this->m_re - _complex.m_re , this->m_im - _complex.m_im ); } \
-inline complex operator - ( __type number ) const { return complex( this->m_re - number , this->m_im ); }                           \
-inline complex operator -= ( complex _complex ) { this->m_re -= _complex.m_re; this->m_im -= _complex.m_im; return *this; }         \
-inline complex operator -= ( __type number ) { this->m_re -= number; return *this; }                                                \
+inline __attribute__( (always_inline) ) complex operator - ( complex _complex ) const { return complex( this->m_re - _complex.m_re , this->m_im - _complex.m_im ); } \
+inline __attribute__( (always_inline) ) complex operator - ( __type number ) const { return complex( this->m_re - number , this->m_im ); }                           \
+inline __attribute__( (always_inline) ) complex operator -= ( complex _complex ) { this->m_re -= _complex.m_re; this->m_im -= _complex.m_im; return *this; }         \
+inline __attribute__( (always_inline) ) complex operator -= ( __type number ) { this->m_re -= number; return *this; }                                                \
 
 #endif
 
 // __cmul__:
 #ifndef __CMUL__
 #define __CMUL__                                                                                                                                                                             \
-inline complex operator * (complex _complex ) const { return complex( this->m_re * _complex.m_re - this->m_im * _complex.m_im , this->m_im * _complex.m_re + this->m_re * _complex.m_im ); } \
-inline complex operator * ( __type number ) const { return complex( this->m_re * number , this->m_im * number ); }                                                                           \
-inline complex operator *= (complex _complex )                                                                                                                                               \
+inline __attribute__( (always_inline) ) complex operator * (complex _complex ) const { return complex( this->m_re * _complex.m_re - this->m_im * _complex.m_im , this->m_im * _complex.m_re + this->m_re * _complex.m_im ); } \
+inline __attribute__( (always_inline) ) complex operator * ( __type number ) const { return complex( this->m_re * number , this->m_im * number ); }                                                                           \
+inline __attribute__( (always_inline) ) complex operator *= (complex _complex )                                                                                                                                               \
 {                                                                                                                                                                                            \
     __type re0 = this->m_re; __type im0 = this->m_im;                                                                                                                                        \
     this->m_re = re0 * _complex.m_re - im0 * _complex.m_im;                                                                                                                                  \
@@ -116,21 +116,21 @@ inline complex operator *= (complex _complex )                                  
     return *this;                                                                                                                                                                            \
 }                                                                                                                                                                                            \
                                                                                                                                                                                              \
-inline complex operator *= ( __type number ) { this->m_re *= number; this->m_im *= number; return *this; }                                                                                   \
+inline __attribute__( (always_inline) ) complex operator *= ( __type number ) { this->m_re *= number; this->m_im *= number; return *this; }                                                                                   \
 
 #endif
 
 // __cdiv__:
 #ifndef __CDIV__
 #define __CDIV__                                                                                                                                                                                        \
-inline complex operator / ( complex _complex ) const                                                                                                                                                    \
+inline __attribute__( (always_inline) ) complex operator / ( complex _complex ) const                                                                                                                                                    \
 {                                                                                                                                                                                                       \
     __type den = _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im;                                                                                                                         \
     return ( den == 0 ) ? complex( m_MAX , m_MAX ) : complex( ( this->m_re * _complex.m_re + this->m_im * _complex.m_im ) / den , ( this->m_im * _complex.m_re - this->m_re * _complex.m_im ) / den );  \
 }                                                                                                                                                                                                       \
                                                                                                                                                                                                         \
-inline complex operator / ( __type number ) const { return ( fabs( number ) == 0 ) ? complex( m_MAX , m_MAX )  : complex( this->m_re / number , this->m_im / number ); }                                \
-inline complex operator /= ( complex _complex )                                                                                                                                                         \
+inline __attribute__( (always_inline) ) complex operator / ( __type number ) const { return ( fabs( number ) == 0 ) ? complex( m_MAX , m_MAX )  : complex( this->m_re / number , this->m_im / number ); }                                \
+inline __attribute__( (always_inline) ) complex operator /= ( complex _complex )                                                                                                                                                         \
 {                                                                                                                                                                                                       \
     __type re0 = this->m_re; __type im0 = this->m_im;                                                                                                                                                   \
     __type den = _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im; \
@@ -139,7 +139,7 @@ inline complex operator /= ( complex _complex )                                 
     return *this;                                                                                                                                                                                       \
 }                                                                                                                                                                                                       \
                                                                                                                                                                                                         \
-inline complex operator /= ( __type number )                                                                                                                                                            \
+inline __attribute__( (always_inline) ) complex operator /= ( __type number )                                                                                                                                                            \
 {                                                                                                                                                                                                       \
     if( abs( number ) > 0 ) { this->m_re /= number; this->m_im /= number; }                                                                                                                             \
     else { this->m_re = m_MAX; this->m_im = m_MAX; }                                                                                                                                                    \
@@ -151,29 +151,28 @@ inline complex operator /= ( __type number )                                    
 // __cmove__:
 #ifndef __CMOV__
 #define __CMOV__                                                                                                               \
-inline complex operator = ( const complex _complex ) { this->m_re = _complex.m_re; this->m_im = _complex.m_im; return *this; }  \
-inline complex operator = ( const __type number ) { this->m_re = number; this->m_im = 0; return *this; }                        \
+inline __attribute__( (always_inline) ) complex operator = ( const complex _complex ) { this->m_re = _complex.m_re; this->m_im = _complex.m_im; return *this; }  \
+inline __attribute__( (always_inline) ) complex operator = ( const __type number ) { this->m_re = number; this->m_im = 0; return *this; }                        \
 
 #endif
 
 // __ccmp__:
 #ifndef __CCMP__
 #define __CCMP__                                                                                                                                                                                              \
-inline bool operator == ( const complex _complex ) { return ( this->m_re == _complex.m_re ) && ( this->m_im == _complex.m_im ); }                                                                             \
-inline bool operator > (  const complex _complex  ) { return ( ( sqrt( this->m_re * this->m_re + this->m_im * this->m_im ) ) > ( sqrt( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im ) ) ); } \
-inline bool operator < (  const complex _complex  ) { return ( ( sqrt( this->m_re * this->m_re + this->m_im * this->m_im ) ) < ( sqrt( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im ) ) ); } \
+inline __attribute__( (always_inline) ) bool operator == ( const complex _complex ) { return ( this->m_re == _complex.m_re ) && ( this->m_im == _complex.m_im ); }                                                                             \
+inline __attribute__( (always_inline) ) bool operator > (  const complex _complex  ) { return ( ( sqrt( this->m_re * this->m_re + this->m_im * this->m_im ) ) > ( sqrt( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im ) ) ); } \
+inline __attribute__( (always_inline) ) bool operator < (  const complex _complex  ) { return ( ( sqrt( this->m_re * this->m_re + this->m_im * this->m_im ) ) < ( sqrt( _complex.m_re * _complex.m_re + _complex.m_im * _complex.m_im ) ) ); } \
 
 #endif
 
 #ifndef __CINI__
-#define __CINI__ inline void operator () ( __type re , __type im ) { this->m_re = re; this->m_im = im; } \
+#define __CINI__ inline __attribute__( (always_inline) ) void operator () ( __type re , __type im ) { this->m_re = re; this->m_im = im; } \
 
 #endif
 
-/*! \brief complex number template class */
+
 template< typename T > class complex;
 
-/*! \brief complex number 32-bit realization */
 template<> class complex < __fx32 >
 {
     typedef __fx32 __type;
@@ -202,7 +201,6 @@ public:
     __CINI__
 };
 
-/*! \brief complex number 64-bit realization */
 template<> class complex < __fx64 >
 {
     typedef __fx64 __type;
@@ -232,7 +230,6 @@ public:
     inline operator complex< __fx32  >() { return complex< __fx32  >( this->m_re , this->m_im ); }
 };
 
-/*! \brief complex number extended 64-bit realization */
 template<> class complex < __fxx64 >
 {
     typedef __fxx64 __type;
@@ -690,4 +687,4 @@ complex<__fxx64> __ctnhf__( complex<__fxx64> _complex ) { return __coshf__(_comp
 #undef __min_uix64
 
 
-#endif // COMPLEX_H
+#endif // FCOMPLEX_H

@@ -22,7 +22,7 @@
     @{
 */
 
-#include "complex.h"
+#include "fcomplex.h"
 
 /*! \brief defines 16-bit integer type */
 #ifndef __ix16
@@ -312,7 +312,7 @@ public:
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
-#ifdef COMPLEX_H
+#ifdef FCOMPLEX_H
 /*! \brief mirror ring buffer class complex floating point 32-bit realization */
 template<> class mirror_ring_buffer< complex< __fx32 > > : public mirror_ring_buffer_abstract< complex< __fx32 > >
 {
@@ -402,7 +402,7 @@ public:
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
-#ifdef COMPLEX_H
+#ifdef FCOMPLEX_H
 
 /*! \brief ring buffer class complex floating point 32-bit realization */
 template<> class ring_buffer< complex< __fx32 > > : public ring_buffer_abstract< complex< __fx32 > >

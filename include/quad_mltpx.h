@@ -9,7 +9,7 @@
 */
 
 #include "fir.h"
-#include "complex.h"
+#include "fcomplex.h"
 #include "buffer.h"
 
 #ifndef QUAD_MLTPX_H

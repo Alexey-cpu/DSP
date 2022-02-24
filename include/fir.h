@@ -673,13 +673,7 @@ namespace FIR
         }
 
         /*! \brief  virtual destructor */
-        virtual ~fir_abstract()
-        {
-            deallocate();
-            #ifdef DEBUGGING
-            printf( "fir_abstract destructor call \n" );
-            #endif
-        }
+        virtual ~fir_abstract() { deallocate();}
 
         /*!
          *  \brief  frequency response computation function
@@ -808,16 +802,14 @@ namespace FIR
         void deallocate() { m_bx.deallocate(); }
 
         /*! \brief default constructor */
-        fcomb_abstract()
-        {
-            m_Fs      = 4000;
-            m_Fn      = 50;
-            m_Ts      = 1 / m_Fs;
-            m_order   = m_Fs / m_Fn / 2;
-            m_out     = 0;
-            m_Km      = 0;
-            m_pH      = 0;
-        }
+        fcomb_abstract() { init( 4000 , 50 ); }
+
+        /*!
+         *  \brief initializinf constructor
+         *  \param[Fs] - input signal sampling frequency
+         *  \param[Fn] - input signal nominal frequency
+        */
+        fcomb_abstract( __fx64 Fs , __fx64 Fn ){ init( Fs , Fn ); allocate(); }
 
         /*! \brief default destructor */
         virtual ~fcomb_abstract() { deallocate(); }
@@ -890,25 +882,6 @@ namespace FIR
         /*! \brief filter frequency amplitude response */
         __fx64 m_Km;
 
-        /*! \brief default constructor */
-        fcombeq_abstract()
-        {
-            m_Fs       = 4000;
-            m_Fn       = 50;
-            m_dF       = 5;
-            m_d_Amp    = 0;
-            m_order    = m_Fs / m_Fn / 2;
-            m_ElemNum1 = 1 * m_order;
-            m_ElemNum2 = 2 * m_order;
-            m_Ts       = 1 / m_Fs;
-            m_out      = 0;
-            m_Km       = 0;
-            m_pH       = 0;
-        }
-
-        /*! \brief default destructor */
-        virtual ~fcombeq_abstract() { deallocate(); }
-
         /*!
          *  \brief comb filter initialization function
          *  \param[ Fs    ] - input signal sampling frequency
@@ -932,6 +905,21 @@ namespace FIR
             m_Km       = 0;
             m_pH       = 0;
         }
+
+        /*! \brief default constructor */
+        fcombeq_abstract() { init( 4000 , 50 , 5 , 0.05 ); }
+
+        /*!
+         *  \brief comb filter initialization function
+         *  \param[ Fs    ] - input signal sampling frequency
+         *  \param[ Fn    ] - input signal nominal frequency
+         *  \param[ dF    ] - input signal frequency deviation from nominal for which the amplitude frequency response slope compensation is implemented , Hz
+         *  \param[ d_Amp ] - residual amplitude frequency response slope for the input signal frequency deviation dF from nominal , p.u.
+        */
+        fcombeq_abstract( __fx64 Fs, __fx64 Fn, __fx64 dF, __fx64 d_Amp ){ init( Fs , Fn , dF , d_Amp ); allocate(); }
+
+        /*! \brief default destructor */
+        virtual ~fcombeq_abstract() { deallocate(); }
 
         /*! \brief memory allocation function */
         __ix32 allocate()
@@ -1074,7 +1062,7 @@ namespace FIR
          *  \param[hnum] - number of computed harmonic
          *  \return the function initializes recursive Fourier filter
        */
-        void init( __type Fs , __type Fn , __ix32 hnum )
+        void init( __fx64 Fs , __fx64 Fn , __ix32 hnum )
         {
             // system variables initialization:
             m_Fn      = Fn;
@@ -1096,26 +1084,7 @@ namespace FIR
         }
 
         /*! \brief  recursive Fourier filter default constructor */
-        recursive_fourier_abstract()
-        {
-            // system variables initialization:
-            m_Fn       = 50;
-            m_Fs       = 4000;
-            m_Ts       = 1 / m_Fs;
-            m_Ns       = ceil(m_Fs / m_Fn);
-            m_order    = m_Ns;
-            m_Gain     = 2.0 / m_Ns / sqrt(2);
-            m_hnum     = 1;
-            m_Ks      = sin( PI2 * (__fx64)m_hnum / m_Ns );
-            m_Kc      = cos( PI2 * (__fx64)m_hnum / m_Ns );
-
-            // filter output initialization:
-            m_a0 = 0;
-            m_a  = 0;
-            m_b  = 0;
-            m_Km = 0;
-            m_pH = 0;
-        };
+        recursive_fourier_abstract() { init( 4000 , 50 , 1 ); };
 
         /*! \brief  recursive Fourier filter initializing constructor
          *  \param[Fn  ] - input signal nominal frequency  , Hz
@@ -1123,7 +1092,7 @@ namespace FIR
          *  \param[hnum] - number of computed harmonic
          *  \return This constructor calls initialization function
         */
-        recursive_fourier_abstract( __type Fs , __type Fn , __ix32 hnum ) { init( Fs , Fn , hnum ); }
+        recursive_fourier_abstract( __fx64 Fs , __fx64 Fn , __ix32 hnum ) { init( Fs , Fn , hnum ); allocate(); }
 
         /*! \brief  recursive Fourier filter default destructor */
         virtual ~recursive_fourier_abstract(){ deallocate(); }
@@ -1227,15 +1196,7 @@ namespace FIR
         }
 
         /*! \brief  recursive mean filter default constructor */
-        recursive_mean_abstract()
-        {
-            m_Fs      = 4000;
-            m_Fn      = 50;
-            m_order   = m_Fs / m_Fn;
-            m_Ns      = m_order;
-            m_Ts      = 1 / m_Fs;
-            m_Gain    = 1 / m_Ns;
-        };
+        recursive_mean_abstract() { init( 4000 , 50 , 80 ); };
 
         /*! \brief  recursive Fourier filter initializing constructor
          *  \param[Fn  ]  - input signal nominal frequency  , Hz
@@ -1243,7 +1204,7 @@ namespace FIR
          *  \param[order] - recursive mean filter order
          *  \return This constructor calls initialization function
         */
-        recursive_mean_abstract( __fx64 Fs , __fx64 Fn , __ix32 order ) { init( Fs , Fn , order ); }
+        recursive_mean_abstract( __fx64 Fs , __fx64 Fn , __ix32 order ) { init( Fs , Fn , order ); allocate(); }
 
         /*! \brief  recursive mean filter default destructor */
         virtual ~recursive_mean_abstract(){ deallocate(); }
@@ -1347,17 +1308,7 @@ namespace FIR
         }
 
         /*! \brief  recursive root mean square filter default constructor */
-        recursive_rms_abstract()
-        {
-            m_Fs      = 4000;
-            m_Fn      = 50;
-            m_order   = m_Fs / m_Fn;
-            m_Ns      = m_order;
-            m_Ts      = 1 / m_Fs;
-            m_Gain    = 1 / m_Ns;
-            m_y		  = 0;
-            m_out     = 0;
-        };
+        recursive_rms_abstract() { init( 4000 , 50 , 80 ); };
 
         /*! \brief  recursive root mean square filter initializing constructor
          *  \param[Fn  ]  - input signal nominal frequency  , Hz
@@ -1365,7 +1316,7 @@ namespace FIR
          *  \param[order] - recursive mean filter order
          *  \return This constructor calls initialization function
         */
-        recursive_rms_abstract( __fx64 Fs , __fx64 Fn , __ix32 order ) { init( Fs , Fn , order ); }
+        recursive_rms_abstract( __fx64 Fs , __fx64 Fn , __ix32 order ) { init( Fs , Fn , order ); allocate(); }
 
         /*! \brief  recursive root mean square filter default destructor */
         virtual ~recursive_rms_abstract(){ deallocate(); }
@@ -1461,6 +1412,7 @@ namespace FIR
         typedef __fx32 __type ;
     public:
          fcomb() : fcomb_abstract(){}
+         fcomb( __fx64 Fs , __fx64 Fn ) : fcomb_abstract( Fs , Fn ){}
         ~fcomb() {}
          inline __type operator()( __type  *input ) override { return filt< __type >( input ) ; }
          inline __type operator()( __fx64  *input ) { return filt< __fx64  >( input ) ; }
@@ -1472,7 +1424,8 @@ namespace FIR
     {
         typedef __fx64 __type ;
     public:
-         fcomb() : fcomb_abstract(){}
+        fcomb() : fcomb_abstract(){}
+        fcomb( __fx64 Fs , __fx64 Fn ) : fcomb_abstract( Fs , Fn ){}
         ~fcomb() {}
          inline __type operator()( __type  *input ) override { return filt< __type >( input ) ; }
          inline __type operator()( __fxx64 *input ) { return filt< __fxx64 >( input ) ; }
@@ -1484,6 +1437,7 @@ namespace FIR
         typedef __fx32 __type ;
     public:
          fcombeq() : fcombeq_abstract(){}
+         fcombeq( __fx64 Fs, __fx64 Fn, __fx64 dF, __fx64 d_Amp ) : fcombeq_abstract( Fs, Fn, dF, d_Amp ){}
         ~fcombeq() {}
          inline __type operator() ( __type  *input , bool odd = 1 ) override { return filt< __type >( input , odd ); }
          inline __type operator() ( __fx64  *input , bool odd = 1 ){ return filt< __fx64  >( input , odd ); }
@@ -1495,7 +1449,8 @@ namespace FIR
     {
         typedef __fx64 __type ;
     public:
-         fcombeq() : fcombeq_abstract(){}
+        fcombeq() : fcombeq_abstract(){}
+        fcombeq( __fx64 Fs, __fx64 Fn, __fx64 dF, __fx64 d_Amp ) : fcombeq_abstract( Fs, Fn, dF, d_Amp ){}
         ~fcombeq() {}
          inline __type operator() ( __type  *input , bool odd = 1 ) override { return filt< __type >( input , odd ); }
          inline __type operator() ( __fxx64 *input , bool odd = 1 ){ return filt< __fxx64 >( input , odd ); }
@@ -1507,6 +1462,7 @@ namespace FIR
         typedef __fx32 __type ;
     public:
          recursive_fourier() : recursive_fourier_abstract() {}
+         recursive_fourier( __fx64 Fs , __fx64 Fn , __ix32 hnum ) : recursive_fourier_abstract( Fs , Fn , hnum ){}
         ~recursive_fourier() {}
          inline result operator() ( __type  *input ) override { return filt( input ); }
          inline result operator() ( __fx64  *input ) { return filt( input ); }
@@ -1519,7 +1475,8 @@ namespace FIR
     {
         typedef __fx64 __type ;
     public:
-         recursive_fourier() : recursive_fourier_abstract() {}
+        recursive_fourier() : recursive_fourier_abstract() {}
+        recursive_fourier( __fx64 Fs , __fx64 Fn , __ix32 hnum ) : recursive_fourier_abstract( Fs , Fn , hnum ){}
         ~recursive_fourier() {}
          inline result operator() ( __type  *input ) override { return filt( input ); }
          inline result operator() ( __fxx64 *input ) { return filt( input ); }
@@ -1531,6 +1488,7 @@ namespace FIR
         typedef __fx32 __type ;
     public:
          recursive_mean() : recursive_mean_abstract() {}
+         recursive_mean( __fx64 Fs , __fx64 Fn , __ix32 order ) : recursive_mean_abstract( Fs , Fn , order ){}
         ~recursive_mean() {}
          __type operator()( __type  *input ) override { return filt< __type >( input ); }
          __type operator()( __fx64  *input ) { return filt< __fx64  >( input ); }
@@ -1542,7 +1500,8 @@ namespace FIR
     {
         typedef __fx64 __type ;
     public:
-         recursive_mean() : recursive_mean_abstract() {}
+        recursive_mean() : recursive_mean_abstract() {}
+        recursive_mean( __fx64 Fs , __fx64 Fn , __ix32 order ) : recursive_mean_abstract( Fs , Fn , order ){}
         ~recursive_mean() {}
          __type operator()( __type  *input ) override { return filt< __type >( input ); }
          __type operator()( __fxx64 *input ) { return filt< __fxx64 >( input ); }
@@ -1554,6 +1513,7 @@ namespace FIR
         typedef __fx32 __type ;
     public:
          recursive_rms() : recursive_rms_abstract() {}
+         recursive_rms( __fx64 Fs , __fx64 Fn , __ix32 order ) : recursive_rms_abstract( Fs , Fn , order ){};
         ~recursive_rms() {}
          inline __type operator () ( __type  *input ) override { return filt < __type >( input ); }
          inline __type operator () ( __fx64  *input ) { return filt < __fx64  >( input ); }
@@ -1566,7 +1526,8 @@ namespace FIR
     {
         typedef __fx64 __type ;
     public:
-         recursive_rms() : recursive_rms_abstract() {}
+        recursive_rms() : recursive_rms_abstract() {}
+        recursive_rms( __fx64 Fs , __fx64 Fn , __ix32 order ) : recursive_rms_abstract( Fs , Fn , order ){};
         ~recursive_rms() {}
          inline __type operator () ( __type  *input ) override { return filt < __type >( input ); }
          inline __type operator () ( __fxx64 *input ) { return filt < __fxx64 >( input ); }
