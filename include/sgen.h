@@ -14,7 +14,8 @@
 // standart headers
 #ifndef __ALG_PLATFORM // identify if the compilation is for ProsoftSystems IDE
 #include "cmath"
-#include "malloc.h"
+#include <stdlib.h>
+//#include "malloc.h"
 #endif
 
 /*! \brief defines 32-bit integer type */

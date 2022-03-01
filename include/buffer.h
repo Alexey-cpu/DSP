@@ -13,7 +13,8 @@
 
 // identify if the compilation is for ProsoftSystems IDE
 #ifndef __ALG_PLATFORM
-#include "malloc.h"
+#include <stdlib.h>
+//#include "malloc.h"
 #include <iostream>
 #endif
 

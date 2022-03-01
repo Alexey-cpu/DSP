@@ -15,7 +15,8 @@
 // standart headers
 #ifndef __ALG_PLATFORM
 #include "cmath"
-#include "malloc.h"
+#include <stdlib.h>
+//#include "malloc.h"
 #include "cstring"
 #endif
 

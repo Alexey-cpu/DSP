@@ -215,7 +215,11 @@ template< typename T > zp< T > __butt_zeros_poles_plain__ ( __ix32 order , __fx6
     complex<T> *zlp = ( complex<T>* ) calloc( N+0 , sizeof ( complex<T> ) );
     complex<T> *glp = ( complex<T>* ) calloc( N+1 , sizeof ( complex<T> ) );
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return zp<T>{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( plp == 0 || zlp == 0 || glp == 0 )
+    {
+        free( plp ); free( zlp ); free( glp );
+        return zp<T>{ 0 , 0 , 0 , -1 , -1 , -1 };
+    }
 
     // complex-conjugate pairs:
     T alpha = 0 , betta = 1 / sqrt( pow( epsilon_stop , 1 / order ) );
@@ -261,7 +265,11 @@ template< typename T > zp< T > __cheb1_zeros_poles_plain__( __ix32 order , __fx6
     complex< T >  *zlp = ( complex<T>* ) calloc( N   , sizeof ( complex< T > ) );
     complex< T >  *glp = ( complex<T>* ) calloc( N+1 , sizeof ( complex< T > ) );
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return zp< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( plp == 0 || zlp == 0 || glp == 0 )
+    {
+        free( plp ); free( zlp ); free( glp );
+        return zp< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+    }
 
     // complex conjugate pairs:
     T alpha = 0 , betta = asinh( 1 / epsilon_stop ) / order;
@@ -307,7 +315,11 @@ template< typename T > zp< T > __cheb2_zeros_poles_plain__( __ix32 order , __fx6
     complex< T > *zlp = ( complex< T >* ) calloc( N   , sizeof ( complex< T > ) );
     complex< T > *glp = ( complex< T >* ) calloc( N+1 , sizeof ( complex< T > ) );
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return zp< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( plp == 0 || zlp == 0 || glp == 0 )
+    {
+        free( plp ); free( zlp ); free( glp );
+        return zp< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+    }
 
     // ZEROS AND POLES COMPUTATION:
 
@@ -371,7 +383,11 @@ template< typename T > zp< T > __ellip_zeros_poles_plain__( __ix32 order ,  __fx
     complex< T > *zlp = ( complex< T >* ) calloc( N   , sizeof ( complex< T > ) );
     complex< T > *glp = ( complex< T >* ) calloc( N+1 , sizeof ( complex< T > ) );
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return zp< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( plp == 0 || zlp == 0 || glp == 0 )
+    {
+        free( plp ); free( zlp ); free( glp );
+        return zp< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+    }
 
     // TRANSIENT SUPPRESSION FACTORS COMPUTATION:
 
@@ -521,8 +537,6 @@ template < typename T > cf< T > __butt_cheb1_digital_lp__( __fx64 Fs , __fx64 Fc
     complex< __fx64 > *glp = zp.glp;
     __ix32 L = zp.L , R = zp.R , N = L + R;
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
-
     // frequency deformation coefficient:
     __fx64 K = tan( PI2 * Fc / 2 / Fs );
 
@@ -531,7 +545,12 @@ template < typename T > cf< T > __butt_cheb1_digital_lp__( __fx64 Fs , __fx64 Fc
     T *cfden = ( T* )calloc( 3 * N , sizeof ( T ) );
     T *gains = ( T* )calloc( N + 1 , sizeof ( T ) );
 
-    if( cfnum == 0 || cfden == 0 || gains == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( cfnum == 0 || cfden == 0 || gains == 0 || plp == 0 || zlp == 0 || glp == 0 )
+    {
+        free( cfnum ); free( cfden ); free( gains );
+        free( plp )  ; free( zlp )  ; free( glp );
+        return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+    }
 
     // BILLINEAR LP-LP TRANSFORM:
 
@@ -588,7 +607,6 @@ template < typename T > cf< T > __butt_cheb1_digital_lp__( __fx64 Fs , __fx64 Fc
     // setting filter output gain:
     gains[N] = glp[N].m_re;
 
-
     // memory free:
     free( plp  );
     free( zlp  );
@@ -618,8 +636,6 @@ template < typename T > cf< T > __butt_cheb1_digital_hp__( __fx64 Fs , __fx64 Fp
     complex< __fx64 > *glp = zp.glp;
     __ix32 L = zp.L , R = zp.R , N = L + R;
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
-
     // frequency deformation coefficient:
     T w = tan( PI2 * Fp / 2 / Fs );
 
@@ -628,7 +644,12 @@ template < typename T > cf< T > __butt_cheb1_digital_hp__( __fx64 Fs , __fx64 Fp
     T *cfden = ( T* )calloc( 3 * N , sizeof ( T ) );
     T *gains = ( T* )calloc( N + 1 , sizeof ( T ) );
 
-    if( cfnum == 0 || cfden == 0 || gains == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( cfnum == 0 || cfden == 0 || gains == 0 || plp == 0 || zlp == 0 || glp == 0 )
+    {
+        free( cfnum ); free( cfden ); free( gains );
+        free( plp )  ; free( zlp )  ; free( glp );
+        return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+    }
 
     // BILLINEAR LP-HP TRANSFORM:
 
@@ -722,8 +743,6 @@ template < typename T > cf<T> __butt_cheb1_digital_bp__( __fx64 Fs , __fx64 Fp ,
     complex< __fx64 > *zlp = zp.zlp;
     __ix32 L = zp.L , R = zp.R , N = L + R;
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
-
     // bandpass digital prototype poles, zeros and gains:
     complex< __fx64 > *pbp = ( complex< __fx64 >* ) calloc( 2*N , sizeof ( complex< __fx64 > ) );
     complex< __fx64 > *zbp = ( complex< __fx64 >* ) calloc( 2*N , sizeof ( complex< __fx64 > ) );
@@ -734,8 +753,15 @@ template < typename T > cf<T> __butt_cheb1_digital_bp__( __fx64 Fs , __fx64 Fp ,
     T *cfden = ( T* )calloc( 3 * (2*L+R) , sizeof ( T ) );
     T *gains = ( T* )calloc( (2*L+R + 1) , sizeof ( T ) );
 
-    if( pbp   == 0 || zbp   == 0 || gbp   == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
-    if( cfnum == 0 || cfden == 0 || gains == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( cfnum == 0 || cfden == 0 || gains == 0 ||
+        plp == 0 || zlp == 0 || glp == 0 ||
+        pbp == 0 || zbp == 0 || gbp == 0)
+    {
+        free( cfnum ); free( cfden ); free( gains );
+        free( plp )  ; free( zlp )  ; free( glp );
+        free( pbp )  ; free( zbp )  ; free( gbp );
+        return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+    }
 
     // LP-BP BILLINEAR TRANSFORM:
 
@@ -873,8 +899,6 @@ template < typename T > cf<T> __butt_cheb1_digital_bs__( __fx64 Fs , __fx64 Fc ,
    complex< __fx64 > *zlp = zp.zlp;
    __ix32 L = zp.L , R = zp.R , N = L + R;
 
-   if( plp == 0 || zlp == 0 || glp == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
-
     // bandpass digital prototype poles, zeros and gains:
     complex< __fx64 > *pbs = ( complex< __fx64 >* ) calloc( 2*N , sizeof ( complex< __fx64 > ) );
     complex< __fx64 > *zbs = ( complex< __fx64 >* ) calloc( 2*N , sizeof ( complex< __fx64 > ) );
@@ -885,8 +909,15 @@ template < typename T > cf<T> __butt_cheb1_digital_bs__( __fx64 Fs , __fx64 Fc ,
     T *cfden = (T* )calloc( 3 * (2*L+R) , sizeof ( T ) );
     T *gains = (T* )calloc( (2*L+R+1)   , sizeof ( T ) );
 
-    if( pbs   == 0 || pbs   == 0 || pbs   == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
-    if( cfnum == 0 || cfden == 0 || gains == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( cfnum == 0 || cfden == 0 || gains == 0 ||
+        plp == 0 || zlp == 0 || glp == 0 ||
+        pbs == 0 || zbs == 0 || gbs == 0)
+    {
+        free( cfnum ); free( cfden ); free( gains );
+        free( plp )  ; free( zlp )  ; free( glp );
+        free( pbs )  ; free( zbs )  ; free( gbs );
+        return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+    }
 
     // LP-BS BILLINEAR TRANSFORM:
 
@@ -1025,14 +1056,18 @@ template < typename T > cf<T> __cheb2_ellip_digital_lp__( __fx64 Fs , __fx64 Fc 
     complex< __fx64 > *zlp = zp.zlp;
     complex< __fx64 > *glp = zp.glp;
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
-
     // coefficients matrix computation:
      T  *cfnum = ( T * )calloc( 3 * N , sizeof ( T ) );
      T  *cfden = ( T * )calloc( 3 * N , sizeof ( T ) );
      T  *gains = ( T * )calloc( N + 1 , sizeof ( T ) );
 
-    if( cfnum == 0 || cfden == 0 || gains == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( cfnum == 0 || cfden == 0 || gains == 0 ||
+        plp == 0 || zlp == 0 || glp == 0 )
+    {
+        free( cfnum ); free( cfden ); free( gains );
+        free( plp )  ; free( zlp )  ; free( glp );
+        return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+    }
 
     // complex conjugate pairs:
     for ( __ix32 i = 0 ; i < L ; i++)
@@ -1127,14 +1162,18 @@ template < typename T > cf<T> __cheb2_ellip_digital_hp__( __fx64 Fs , __fx64 Fc 
     complex< __fx64 > *zlp = zp.zlp;
     complex< __fx64 > *glp = zp.glp;
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
-
     // coefficients matrix memory allocation:
      T *cfnum = (T* )calloc( 3 * N , sizeof ( T ) );
      T *cfden = (T* )calloc( 3 * N , sizeof ( T ) );
      T *gains = (T* )calloc( N + 1 , sizeof ( T ) );
 
-    if( cfnum == 0 || cfden == 0 || gains == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+     if( cfnum == 0 || cfden == 0 || gains == 0 ||
+         plp == 0 || zlp == 0 || glp == 0 )
+     {
+         free( cfnum ); free( cfden ); free( gains );
+         free( plp )  ; free( zlp )  ; free( glp );
+         return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+     }
 
     // coefficients matrix computation:
 
@@ -1231,8 +1270,6 @@ template < typename T > cf<T> __cheb2_ellip_digital_bp__( __fx64 Fs , __fx64 Fp 
     complex< __fx64 > *zlp = zp.zlp;
     __ix32 L = zp.L , R = zp.R , N = L + R;
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
-
     // bandpass digital prototype poles, zeros and gains:
     complex< __fx64 > *pbp = ( complex< __fx64 >* ) calloc( 2*N , sizeof ( complex< __fx64 > ) );
     complex< __fx64 > *zbp = ( complex< __fx64 >* ) calloc( 2*N , sizeof ( complex< __fx64 > ) );
@@ -1243,8 +1280,15 @@ template < typename T > cf<T> __cheb2_ellip_digital_bp__( __fx64 Fs , __fx64 Fp 
      T  *cfden = ( T * )calloc( 3 * (2*L+R) , sizeof (  T  ) );
      T  *gains = ( T * )calloc( (2*L+R + 1) , sizeof (  T  ) );
 
-    if( pbp   == 0 || zbp   == 0 || gbp   == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
-    if( cfnum == 0 || cfden == 0 || gains == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+    if( cfnum == 0 || cfden == 0 || gains == 0 ||
+        plp == 0 || zlp == 0 || glp == 0 ||
+        pbp == 0 || zbp == 0 || gbp == 0)
+    {
+        free( cfnum ); free( cfden ); free( gains );
+        free( plp )  ; free( zlp )  ; free( glp );
+        free( pbp )  ; free( zbp )  ; free( gbp );
+        return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+    }
 
     // LP-BP BILLINEAR TRANSFORM:
 
@@ -1398,8 +1442,6 @@ template < typename T > cf<T> __cheb2_ellip_digital_bs__( __fx64 Fs , __fx64 Fc 
     complex< __fx64 > *zlp = zp.zlp;
     __ix32 L = zp.L , R = zp.R , N = L + R;
 
-    if( plp == 0 || zlp == 0 || glp == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
-
     // bandpass digital prototype poles, zeros and gains:
     complex< __fx64 > *pbs = ( complex< __fx64 >* ) calloc( 2*N , sizeof ( complex< __fx64 > ) );
     complex< __fx64 > *zbs = ( complex< __fx64 >* ) calloc( 2*N , sizeof ( complex< __fx64 > ) );
@@ -1410,8 +1452,15 @@ template < typename T > cf<T> __cheb2_ellip_digital_bs__( __fx64 Fs , __fx64 Fc 
      T  *cfden = ( T * )calloc( 3 * (2*L+R) , sizeof ( T ) );
      T  *gains = ( T * )calloc( (2*L+R + 1) , sizeof ( T ) );
 
-    if( pbs   == 0 || zbs   == 0 || gbs   == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
-    if( cfnum == 0 || cfden == 0 || gains == 0 ) return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 }; // check if the memory is allocated...
+     if( cfnum == 0 || cfden == 0 || gains == 0 ||
+         plp == 0 || zlp == 0 || glp == 0 ||
+         pbs == 0 || zbs == 0 || gbs == 0)
+     {
+         free( cfnum ); free( cfden ); free( gains );
+         free( plp )  ; free( zlp )  ; free( glp );
+         free( pbs )  ; free( zbs )  ; free( gbs );
+         return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+     }
 
     // LP-BP BILLINEAR TRANSFORM:
 

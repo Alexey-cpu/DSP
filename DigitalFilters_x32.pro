@@ -19,6 +19,7 @@ HEADERS += \
     include/buffer.h \
     include/examples.h \
     include/fcomplex.h \
+    include/filters_factory.h \
     include/fir.h \
     include/iir.h \
     include/logical.h \
