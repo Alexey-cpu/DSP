@@ -1865,6 +1865,7 @@ namespace DSP
         virtual cf< T > compute_bandpass() = 0;
         virtual cf< T > compute_bandstop() = 0;
 
+    public:
         // filtering operator:
         virtual inline T operator()( T *input ) = 0;
 
@@ -2061,8 +2062,9 @@ namespace DSP
             typedef __fx32 __type;
         public:
         // constructors:
-        butterworth< __type >() : classic_iir_abstract< __type >(){}
-        butterworth< __type >( __fx64 Fs , __ix32 order , filter_type type = filter_type::lowpass , bandwidth BW = { 100 , 400 } , attenuation AT = { 1 , 80 } ) : classic_iir_abstract< __type >( Fs , order , type , BW , AT ) {}
+         butterworth< __type >() : classic_iir_abstract< __type >(){}
+         butterworth< __type >( __fx64 Fs , __ix32 order , filter_type type = filter_type::lowpass , bandwidth BW = { 100 , 400 } , attenuation AT = { 1 , 80 } ) : classic_iir_abstract< __type >( Fs , order , type , BW , AT ) {}
+        ~butterworth< __type >(){};
 
         // base class virtual functions overriding:
         cf< __type > compute_lowpass () override { return __butt_cheb1_digital_lp__< __type >( m_Fs , m_BW.Fc , m_order , 0 , m_AT.G1 ); }
@@ -2080,8 +2082,9 @@ namespace DSP
             typedef __fx64 __type;
         public:
         // constructors:
-        butterworth< __type >() : classic_iir_abstract< __type >(){}
-        butterworth< __type >( __fx64 Fs , __ix32 order , filter_type type = filter_type::lowpass , bandwidth BW = { 100 , 400 } , attenuation AT = { 1 , 80 } ) : classic_iir_abstract< __type >( Fs , order , type , BW , AT ) {}
+         butterworth< __type >() : classic_iir_abstract< __type >(){}
+         butterworth< __type >( __fx64 Fs , __ix32 order , filter_type type = filter_type::lowpass , bandwidth BW = { 100 , 400 } , attenuation AT = { 1 , 80 } ) : classic_iir_abstract< __type >( Fs , order , type , BW , AT ) {}
+        ~butterworth< __type >(){};
 
         // base class virtual functions overriding:
         cf< __type > compute_lowpass () override { return __butt_cheb1_digital_lp__< __type >( m_Fs , m_BW.Fc , m_order , 0 , m_AT.G1 ); }
@@ -2099,8 +2102,9 @@ namespace DSP
             typedef __fx32 __type;
         public:
         // constructors:
-        chebyshev_1< __type >() : classic_iir_abstract< __type >(){}
-        chebyshev_1< __type >( __fx64 Fs , __ix32 order , filter_type type = filter_type::lowpass , bandwidth BW = { 100 , 400 } , attenuation AT = { 1 , 80 } ) : classic_iir_abstract< __type >( Fs , order , type , BW , AT ) {}
+         chebyshev_1< __type >() : classic_iir_abstract< __type >(){}
+         chebyshev_1< __type >( __fx64 Fs , __ix32 order , filter_type type = filter_type::lowpass , bandwidth BW = { 100 , 400 } , attenuation AT = { 1 , 80 } ) : classic_iir_abstract< __type >( Fs , order , type , BW , AT ) {}
+        ~chebyshev_1< __type >(){};
 
         // base class virtual functions overriding:
         cf< __type > compute_lowpass () override { return __butt_cheb1_digital_lp__< __type >( m_Fs , m_BW.Fc , m_order , 1 , m_AT.G1 ); }
@@ -2118,8 +2122,9 @@ namespace DSP
             typedef __fx64 __type;
         public:
         // constructors:
-        chebyshev_1< __type >() : classic_iir_abstract< __type >(){}
-        chebyshev_1< __type >( __fx64 Fs , __ix32 order , filter_type type = filter_type::lowpass , bandwidth BW = { 100 , 400 } , attenuation AT = { 1 , 80 } ) : classic_iir_abstract< __type >( Fs , order , type , BW , AT ) {}
+         chebyshev_1< __type >() : classic_iir_abstract< __type >(){}
+         chebyshev_1< __type >( __fx64 Fs , __ix32 order , filter_type type = filter_type::lowpass , bandwidth BW = { 100 , 400 } , attenuation AT = { 1 , 80 } ) : classic_iir_abstract< __type >( Fs , order , type , BW , AT ) {}
+        ~chebyshev_1< __type >(){};
 
         // base class virtual functions overriding:
         cf< __type > compute_lowpass () override { return __butt_cheb1_digital_lp__< __type >( m_Fs , m_BW.Fc , m_order , 1 , m_AT.G1 ); }
@@ -2137,14 +2142,15 @@ namespace DSP
             typedef __fx32 __type;
         public:
         // constructors:
-        chebyshev_2< __type >() : classic_iir_abstract< __type >(){}
-        chebyshev_2< __type >( __fx64 Fs , __ix32 order , filter_type type = filter_type::lowpass , bandwidth BW = { 100 , 400 } , attenuation AT = { 1 , 80 } ) : classic_iir_abstract< __type >( Fs , order , type , BW , AT ) {}
+         chebyshev_2< __type >() : classic_iir_abstract< __type >(){}
+         chebyshev_2< __type >( __fx64 Fs , __ix32 order , filter_type type = filter_type::lowpass , bandwidth BW = { 100 , 400 } , attenuation AT = { 1 , 80 } ) : classic_iir_abstract< __type >( Fs , order , type , BW , AT ) {}
+        ~chebyshev_2< __type >(){};
 
         // base class virtual functions overriding:
-        cf< __type > compute_lowpass () override { return __cheb2_ellip_digital_lp__< __type >( m_Fs , m_BW.Fc , m_order , 0 , m_AT.G1 , m_AT.G2 ); }
-        cf< __type > compute_highpass() override { return __cheb2_ellip_digital_hp__< __type >( m_Fs , m_BW.Fc , m_order , 0 , m_AT.G1 , m_AT.G2 ); }
-        cf< __type > compute_bandpass() override { return __cheb2_ellip_digital_bp__< __type >( m_Fs , m_BW.Fc , m_BW.BW , m_order , 0 , m_AT.G1 , m_AT.G2 ); }
-        cf< __type > compute_bandstop() override { return __cheb2_ellip_digital_bs__< __type >( m_Fs , m_BW.Fc , m_BW.BW , m_order , 0 , m_AT.G1 , m_AT.G2 ); }
+        cf< __type > compute_lowpass () override { return __cheb2_ellip_digital_lp__< __type >( m_Fs , m_BW.Fc , m_order , 0 , m_AT.G2 , m_AT.G1 ); }
+        cf< __type > compute_highpass() override { return __cheb2_ellip_digital_hp__< __type >( m_Fs , m_BW.Fc , m_order , 0 , m_AT.G2 , m_AT.G1 ); }
+        cf< __type > compute_bandpass() override { return __cheb2_ellip_digital_bp__< __type >( m_Fs , m_BW.Fc , m_BW.BW , m_order , 0 , m_AT.G2 , m_AT.G1 ); }
+        cf< __type > compute_bandstop() override { return __cheb2_ellip_digital_bs__< __type >( m_Fs , m_BW.Fc , m_BW.BW , m_order , 0 , m_AT.G2 , m_AT.G1 ); }
 
         // filtering operator override:
         inline __type operator()( __type *input ) override { return __filt__< __type >( input , m_cfmatrix.cfnum , m_cfmatrix.cfden , m_cfmatrix.gains  , m_cfmatrix.N ,  m_buff_sx , m_buff_sy ); }
@@ -2156,14 +2162,15 @@ namespace DSP
             typedef __fx64 __type;
         public:
         // constructors:
-        chebyshev_2< __type >() : classic_iir_abstract< __type >(){}
-        chebyshev_2< __type >( __fx64 Fs , __ix32 order , filter_type type = filter_type::lowpass , bandwidth BW = { 100 , 400 } , attenuation AT = { 1 , 80 } ) : classic_iir_abstract< __type >( Fs , order , type , BW , AT ) {}
+         chebyshev_2< __type >() : classic_iir_abstract< __type >(){}
+         chebyshev_2< __type >( __fx64 Fs , __ix32 order , filter_type type = filter_type::lowpass , bandwidth BW = { 100 , 400 } , attenuation AT = { 1 , 80 } ) : classic_iir_abstract< __type >( Fs , order , type , BW , AT ) {}
+        ~chebyshev_2< __type >(){};
 
         // base class virtual functions overriding:
-        cf< __type > compute_lowpass () override { return __cheb2_ellip_digital_lp__< __type >( m_Fs , m_BW.Fc , m_order , 0 , m_AT.G1 , m_AT.G2 ); }
-        cf< __type > compute_highpass() override { return __cheb2_ellip_digital_hp__< __type >( m_Fs , m_BW.Fc , m_order , 0 , m_AT.G1 , m_AT.G2 ); }
-        cf< __type > compute_bandpass() override { return __cheb2_ellip_digital_bp__< __type >( m_Fs , m_BW.Fc , m_BW.BW , m_order , 0 , m_AT.G1 , m_AT.G2 ); }
-        cf< __type > compute_bandstop() override { return __cheb2_ellip_digital_bs__< __type >( m_Fs , m_BW.Fc , m_BW.BW , m_order , 0 , m_AT.G1 , m_AT.G2 ); }
+        cf< __type > compute_lowpass () override { return __cheb2_ellip_digital_lp__< __type >( m_Fs , m_BW.Fc , m_order , 0 , m_AT.G2 , m_AT.G1 ); }
+        cf< __type > compute_highpass() override { return __cheb2_ellip_digital_hp__< __type >( m_Fs , m_BW.Fc , m_order , 0 , m_AT.G2 , m_AT.G1 ); }
+        cf< __type > compute_bandpass() override { return __cheb2_ellip_digital_bp__< __type >( m_Fs , m_BW.Fc , m_BW.BW , m_order , 0 , m_AT.G2 , m_AT.G1 ); }
+        cf< __type > compute_bandstop() override { return __cheb2_ellip_digital_bs__< __type >( m_Fs , m_BW.Fc , m_BW.BW , m_order , 0 , m_AT.G2 , m_AT.G1 ); }
 
         // filtering operator override:
         inline __type operator()( __type *input ) override { return __filt__< __type >( input , m_cfmatrix.cfnum , m_cfmatrix.cfden , m_cfmatrix.gains  , m_cfmatrix.N ,  m_buff_sx , m_buff_sy ); }
@@ -2175,14 +2182,15 @@ namespace DSP
             typedef __fx32 __type;
         public:
         // constructors:
-        elliptic< __type >() : classic_iir_abstract< __type >(){}
-        elliptic< __type >( __fx64 Fs , __ix32 order , filter_type type = filter_type::lowpass , bandwidth BW = { 100 , 400 } , attenuation AT = { 1 , 80 } ) : classic_iir_abstract< __type >( Fs , order , type , BW , AT ) {}
+         elliptic< __type >() : classic_iir_abstract< __type >(){}
+         elliptic< __type >( __fx64 Fs , __ix32 order , filter_type type = filter_type::lowpass , bandwidth BW = { 100 , 400 } , attenuation AT = { 1 , 80 } ) : classic_iir_abstract< __type >( Fs , order , type , BW , AT ) {}
+        ~elliptic< __type >(){};
 
         // base class virtual functions overriding:
-        cf< __type > compute_lowpass () override { return __cheb2_ellip_digital_lp__< __type >( m_Fs , m_BW.Fc , m_order , 1 , m_AT.G1 , m_AT.G2 ); }
-        cf< __type > compute_highpass() override { return __cheb2_ellip_digital_hp__< __type >( m_Fs , m_BW.Fc , m_order , 1 , m_AT.G1 , m_AT.G2 ); }
-        cf< __type > compute_bandpass() override { return __cheb2_ellip_digital_bp__< __type >( m_Fs , m_BW.Fc , m_BW.BW , m_order , 1 , m_AT.G1 , m_AT.G2 ); }
-        cf< __type > compute_bandstop() override { return __cheb2_ellip_digital_bs__< __type >( m_Fs , m_BW.Fc , m_BW.BW , m_order , 1 , m_AT.G1 , m_AT.G2 ); }
+        cf< __type > compute_lowpass () override { return __cheb2_ellip_digital_lp__< __type >( m_Fs , m_BW.Fc , m_order , 1 , m_AT.G2 , m_AT.G1 ); }
+        cf< __type > compute_highpass() override { return __cheb2_ellip_digital_hp__< __type >( m_Fs , m_BW.Fc , m_order , 1 , m_AT.G2 , m_AT.G1 ); }
+        cf< __type > compute_bandpass() override { return __cheb2_ellip_digital_bp__< __type >( m_Fs , m_BW.Fc , m_BW.BW , m_order , 1 , m_AT.G2 , m_AT.G1 ); }
+        cf< __type > compute_bandstop() override { return __cheb2_ellip_digital_bs__< __type >( m_Fs , m_BW.Fc , m_BW.BW , m_order , 1 , m_AT.G2 , m_AT.G1 ); }
 
         // filtering operator override:
         inline __type operator()( __type *input ) override { return __filt__< __type >( input , m_cfmatrix.cfnum , m_cfmatrix.cfden , m_cfmatrix.gains  , m_cfmatrix.N ,  m_buff_sx , m_buff_sy ); }
@@ -2194,14 +2202,15 @@ namespace DSP
             typedef __fx64 __type;
         public:
         // constructors:
-        elliptic< __type >() : classic_iir_abstract< __type >(){}
-        elliptic< __type >( __fx64 Fs , __ix32 order , filter_type type = filter_type::lowpass , bandwidth BW = { 100 , 400 } , attenuation AT = { 1 , 80 } ) : classic_iir_abstract< __type >( Fs , order , type , BW , AT ) {}
+         elliptic< __type >() : classic_iir_abstract< __type >(){}
+         elliptic< __type >( __fx64 Fs , __ix32 order , filter_type type = filter_type::lowpass , bandwidth BW = { 100 , 400 } , attenuation AT = { 1 , 80 } ) : classic_iir_abstract< __type >( Fs , order , type , BW , AT ) {}
+        ~elliptic< __type >(){};
 
         // base class virtual functions overriding:
-        cf< __type > compute_lowpass () override { return __cheb2_ellip_digital_lp__< __type >( m_Fs , m_BW.Fc , m_order , 1 , m_AT.G1 , m_AT.G2 ); }
-        cf< __type > compute_highpass() override { return __cheb2_ellip_digital_hp__< __type >( m_Fs , m_BW.Fc , m_order , 1 , m_AT.G1 , m_AT.G2 ); }
-        cf< __type > compute_bandpass() override { return __cheb2_ellip_digital_bp__< __type >( m_Fs , m_BW.Fc , m_BW.BW , m_order , 1 , m_AT.G1 , m_AT.G2 ); }
-        cf< __type > compute_bandstop() override { return __cheb2_ellip_digital_bs__< __type >( m_Fs , m_BW.Fc , m_BW.BW , m_order , 1 , m_AT.G1 , m_AT.G2 ); }
+        cf< __type > compute_lowpass () override { return __cheb2_ellip_digital_lp__< __type >( m_Fs , m_BW.Fc , m_order , 1 , m_AT.G2 , m_AT.G1 ); }
+        cf< __type > compute_highpass() override { return __cheb2_ellip_digital_hp__< __type >( m_Fs , m_BW.Fc , m_order , 1 , m_AT.G2 , m_AT.G1 ); }
+        cf< __type > compute_bandpass() override { return __cheb2_ellip_digital_bp__< __type >( m_Fs , m_BW.Fc , m_BW.BW , m_order , 1 , m_AT.G2 , m_AT.G1 ); }
+        cf< __type > compute_bandstop() override { return __cheb2_ellip_digital_bs__< __type >( m_Fs , m_BW.Fc , m_BW.BW , m_order , 1 , m_AT.G2 , m_AT.G1 ); }
 
         // filtering operator override:
         inline __type operator()( __type *input ) override { return __filt__< __type >( input , m_cfmatrix.cfnum , m_cfmatrix.cfden , m_cfmatrix.gains  , m_cfmatrix.N ,  m_buff_sx , m_buff_sy ); }

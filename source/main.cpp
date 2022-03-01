@@ -7,11 +7,11 @@
 
 template< typename T > void conv( T *a , T *b , T *c , int Na , int Nb , int Nc )
 {
-    if( ( Nc >= Na + Nb ) && ( a && b && c ) )
+    if( ( Nc >= Na + Nb - 1 ) && ( a && b && c ) )
     {
         for( int i = 0 ; i < ( Na + Nb ) ; i++ )
         {
-            for( int j = ( i - Na < 0 ) ? 0 : i-Na , k = ( i < Na ) ? i : Na-1 ; ( j < Nb ) && ( k >= 0 ) ; j++ , k-- )
+            for( int j = ( i - Na < 0 ) ? 0 : i-Na+1 , k = ( i < Na ) ? i : Na-1 ; ( j < Nb ) && ( k >= 0 ) ; j++ , k-- )
             {
                 c[i] += a[k] * b[j];
             }
@@ -21,13 +21,13 @@ template< typename T > void conv( T *a , T *b , T *c , int Na , int Nb , int Nc 
 
 int main()
 {
+    /*
     int a[] = { 1 , 2 , 3 , 4 };
     int b[] = { 5 , 6 , 7 };
-    int c[7]{};
-
-    conv( a , b, c , 4 , 3 , 7 );
-
-    for( int i = 0 ; i < 7 ; i++ ) std::cout << c[i] << "\n";
+    int c[6]{};
+    conv( b , a, c , 3 , 4 , 7 );
+    for( int i = 0 ; i < 6 ; i++ ) std::cout << c[i] << "\n";
+    */
 
     // run examples code:
     // example0();
@@ -43,6 +43,7 @@ int main()
     // example10();
     // example11();
     // example12();
+     example13();
 
     /*
     int bsize = 10;
