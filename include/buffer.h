@@ -71,7 +71,7 @@
 #endif
 
 /*! \brief mirror ring buffer template abstract class */
-template< typename T > class mirror_ring_buffer_abstract
+template< typename T > class delay_abstract
 {
     typedef T __type;
 protected:
@@ -140,7 +140,7 @@ public:
     }
 
     /*! \brief default constructor */
-    mirror_ring_buffer_abstract()
+    delay_abstract()
     {
         m_upper   = 0;
         m_lower   = 0;
@@ -150,7 +150,7 @@ public:
     }
 
     /*! \brief virtual destructor */
-    virtual ~mirror_ring_buffer_abstract(){ deallocate(); }
+    virtual ~delay_abstract(){ deallocate(); }
 
     /*!
      *  \brief  mirror ring buffer position function
@@ -275,98 +275,98 @@ public:
 };
 
 /*! \brief mirror ring buffer template class */
-template< typename T > class mirror_ring_buffer;
+template< typename T > class delay;
 
 /*! \brief classic ring buffer template class */
 template< typename T > class ring_buffer;
 
 /*! \brief mirror ring buffer class floating point 32-bit realization */
-template<> class mirror_ring_buffer< __fx32 > : public mirror_ring_buffer_abstract< __fx32 >
+template<> class delay< __fx32 > : public delay_abstract< __fx32 >
 {
     typedef __fx32 __type;
 public:
-      mirror_ring_buffer() : mirror_ring_buffer_abstract(){}
-     ~mirror_ring_buffer(){};
+      delay() : delay_abstract(){}
+     ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( __fx64  *input ) { fill_buff< __fx64 >( input ); }
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
 /*! \brief mirror ring buffer class floating point 64-bit realization */
-template<> class mirror_ring_buffer< __fx64 > : public mirror_ring_buffer_abstract< __fx64 >
+template<> class delay< __fx64 > : public delay_abstract< __fx64 >
 {
     typedef __fx64 __type;
 public:
-     mirror_ring_buffer() : mirror_ring_buffer_abstract(){}
-    ~mirror_ring_buffer(){};
+     delay() : delay_abstract(){}
+    ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
 /*! \brief mirror ring buffer class floating point extended 64-bit realization */
-template<> class mirror_ring_buffer< __fxx64 > : public mirror_ring_buffer_abstract< __fxx64 >
+template<> class delay< __fxx64 > : public delay_abstract< __fxx64 >
 {
     typedef __fxx64 __type;
 public:
-     mirror_ring_buffer() : mirror_ring_buffer_abstract(){}
-    ~mirror_ring_buffer(){};
+     delay() : delay_abstract(){}
+    ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
 #ifdef FCOMPLEX_H
 /*! \brief mirror ring buffer class complex floating point 32-bit realization */
-template<> class mirror_ring_buffer< complex< __fx32 > > : public mirror_ring_buffer_abstract< complex< __fx32 > >
+template<> class delay< complex< __fx32 > > : public delay_abstract< complex< __fx32 > >
 {
     typedef complex< __fx32 > __type;
 public:
-      mirror_ring_buffer() : mirror_ring_buffer_abstract(){}
-     ~mirror_ring_buffer(){};
+      delay() : delay_abstract(){}
+     ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( complex< __fx64  > *input ) { fill_buff< complex< __fx64  > >( input ); }
      inline void operator () ( complex< __fxx64 > *input ) { fill_buff< complex< __fxx64  > >( input ); }
 };
 
 /*! \brief mirror ring buffer class complex floating point 64-bit realization */
-template<> class mirror_ring_buffer< complex< __fx64 > > : public mirror_ring_buffer_abstract< complex< __fx64 > >
+template<> class delay< complex< __fx64 > > : public delay_abstract< complex< __fx64 > >
 {
     typedef complex< __fx64 > __type;
 public:
-      mirror_ring_buffer() : mirror_ring_buffer_abstract(){}
-     ~mirror_ring_buffer(){};
+      delay() : delay_abstract(){}
+     ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( complex< __fxx64 > *input ) { fill_buff< complex< __fxx64  > >( input ); }
 };
 
 /*! \brief mirror ring buffer class complex floating point extended 64-bit realization */
-template<> class mirror_ring_buffer< complex< __fxx64 > > : public mirror_ring_buffer_abstract< complex< __fxx64 > >
+template<> class delay< complex< __fxx64 > > : public delay_abstract< complex< __fxx64 > >
 {
     typedef complex< __fxx64 > __type;
 public:
-      mirror_ring_buffer() : mirror_ring_buffer_abstract(){}
-     ~mirror_ring_buffer(){};
+      delay() : delay_abstract(){}
+     ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
 #endif
 
 /*! \brief mirror ring buffer class integer 32-bit realization */
-template<> class mirror_ring_buffer< __ix32 > : public mirror_ring_buffer_abstract< __ix32 >
+template<> class delay< __ix32 > : public delay_abstract< __ix32 >
 {
     typedef __ix32 __type;
 public:
-      mirror_ring_buffer() : mirror_ring_buffer_abstract(){}
-     ~mirror_ring_buffer(){};
+      delay() : delay_abstract(){}
+     ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( __ix64  *input ) { fill_buff< __ix64 >( input ); }
 };
 
 /*! \brief mirror ring buffer class integer 64-bit realization */
-template<> class mirror_ring_buffer< __ix64 > : public mirror_ring_buffer_abstract< __ix64 >
+template<> class delay< __ix64 > : public delay_abstract< __ix64 >
 {
     typedef __ix64 __type;
 public:
-      mirror_ring_buffer() : mirror_ring_buffer_abstract(){}
-     ~mirror_ring_buffer(){};
+      delay() : delay_abstract(){}
+     ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 

@@ -22,6 +22,17 @@ template< typename T > void conv( T *a , T *b , T *c , int Na , int Nb , int Nc 
 int main()
 {
     /*
+    wind_fcn m_wind;
+    m_wind.init(10);
+    m_wind.Chebyshev(60);
+    for( int i = 0 ; i < m_wind.m_order ; i++ ) std::cout << m_wind[i] << "\n";
+    */
+
+    //DSP::cf<double> cff = DSP::__fir_wind_digital_lp__<double>( 4000 , 100 , 10 , 0 , m_wind );
+    //free(cff.cfnum);
+    //m_wind.deallocate();
+
+    /*
     int a[] = { 1 , 2 , 3 , 4 };
     int b[] = { 5 , 6 , 7 };
     int c[6]{};
@@ -43,7 +54,9 @@ int main()
     // example10();
     // example11();
     // example12();
-     example13();
+    // example13();
+
+    example14();
 
     /*
     int bsize = 10;

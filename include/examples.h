@@ -1422,4 +1422,162 @@ int example13()
     return 0;
 }
 
+/*! \brief FIR filters utilization example and test */
+int example14()
+{
+    printf( " ...FIR filters utilization example and test... \n " );
+
+    // define filter and it's input signal data types:
+    typedef float  __flt_type;
+    typedef double __gen_type;
+
+    // emulation parameters:
+    double Fs                = 4000;
+    double Fn                = 50;
+    double time              = 0;
+    double EmulationDuration = 1;
+    int    CycleWidth        = 5;
+    int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
+    int    frames_per_cycle  = CycleWidth * Fs / 1000;
+
+    // logs directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // files:
+    std::ofstream lp_yt;
+    std::ofstream hp_yt;
+    std::ofstream bp_yt;
+    std::ofstream bs_yt;
+    std::ofstream yt;
+    std::ofstream lp_km;
+    std::ofstream lp_ph;
+    std::ofstream hp_km;
+    std::ofstream hp_ph;
+    std::ofstream bp_km;
+    std::ofstream bp_ph;
+    std::ofstream bs_km;
+    std::ofstream bs_ph;
+    std::ofstream ff;
+    std::ofstream tt;
+
+    // opening files:
+    yt   .open( directory + "\\yt.txt"    );
+    lp_yt.open( directory + "\\lp_yt.txt" );
+    hp_yt.open( directory + "\\hp_yt.txt" );
+    bp_yt.open( directory + "\\bp_yt.txt" );
+    bs_yt.open( directory + "\\bs_yt.txt" );
+    yt   .open( directory + "\\yt.txt"    );
+    lp_km.open( directory + "\\lp_km.txt" );
+    lp_ph.open( directory + "\\lp_ph.txt" );
+    hp_km.open( directory + "\\hp_km.txt" );
+    hp_ph.open( directory + "\\hp_ph.txt" );
+    bp_km.open( directory + "\\bp_km.txt" );
+    bp_ph.open( directory + "\\bp_ph.txt" );
+    bs_km.open( directory + "\\bs_km.txt" );
+    bs_ph.open( directory + "\\bs_ph.txt" );
+    tt   .open( directory + "\\tt.txt"    );
+    tt   .open( directory + "\\ff.txt"    );
+
+    // signal generator:
+    sgen< __gen_type > gen;
+
+    // filter configuration:
+    DSP::fir< __flt_type > lp_flt;
+    DSP::fir< __flt_type > hp_flt;
+    DSP::fir< __flt_type > bp_flt;
+    DSP::fir< __flt_type > bs_flt;
+    lp_flt.init(Fs , 80 , DSP::filter_type::lowpass  , { 100 , -1  } , true );
+    hp_flt.init(Fs , 80 , DSP::filter_type::highpass , { 100 , -1  } , true );
+    bp_flt.init(Fs , 80 , DSP::filter_type::bandpass , { 100 , 500 } , true );
+    bs_flt.init(Fs , 80 , DSP::filter_type::bandstop , { 100 , 500 } , true );
+
+    // filters window construction:
+    lp_flt.m_wind.Chebyshev(60);
+    hp_flt.m_wind.Chebyshev(60);
+    bp_flt.m_wind.Chebyshev(60);
+    bs_flt.m_wind.Chebyshev(60);
+
+    // filters memory allocation:
+    lp_flt.allocate();
+    hp_flt.allocate();
+    bp_flt.allocate();
+    bs_flt.allocate();
+
+    //lp_flt.show_coeffs();
+
+    // emulation:
+
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            // signal generation and filtering:
+            gen.sine( 1 , Fn , 0 , Fs );
+
+            // filtering:
+            double yt1 = lp_flt( &gen.m_out );
+            double yt2 = hp_flt( &gen.m_out );
+            double yt3 = bp_flt( &gen.m_out );
+            double yt4 = bs_flt( &gen.m_out );
+
+            // store signal and filter output:
+            lp_yt << yt1       << "\n";
+            hp_yt << yt2       << "\n";
+            bp_yt << yt3       << "\n";
+            bs_yt << yt4       << "\n";
+            yt    << gen.m_out << "\n";
+            tt    << time      << "\n";
+
+            // time increment:
+            time += 1 / Fs;
+        }
+    }
+
+    // filter frequency response computation:
+    for( int i = 0 ; i < Fs / 2 ; i++ )
+    {
+        // frequency response computation:
+        DSP::fr fr1 = lp_flt.frequency_response(i);
+        DSP::fr fr2 = hp_flt.frequency_response(i);
+        DSP::fr fr3 = bp_flt.frequency_response(i);
+        DSP::fr fr4 = bs_flt.frequency_response(i);
+
+        // frequency response recording:
+        lp_km << fr1.Km << "\n";
+        lp_ph << fr1.pH << "\n";
+        hp_km << fr2.Km << "\n";
+        hp_ph << fr2.pH << "\n";
+        bp_km << fr3.Km << "\n";
+        bp_ph << fr3.pH << "\n";
+        bs_km << fr4.Km << "\n";
+        bs_ph << fr4.pH << "\n";
+    }
+
+    // close files:
+    yt   .close();
+    lp_yt.close();
+    hp_yt.close();
+    bp_yt.close();
+    bs_yt.close();
+    yt   .close();
+    lp_km.close();
+    lp_ph.close();
+    hp_km.close();
+    hp_ph.close();
+    bp_km.close();
+    bp_ph.close();
+    bs_km.close();
+    bs_ph.close();
+    tt   .close();
+    tt   .close();
+
+    // memory deallocation:
+    lp_flt.deallocate();
+    hp_flt.deallocate();
+    bp_flt.deallocate();
+    bs_flt.deallocate();
+
+    return 0;
+}
+
 #endif // EXAMPLES_H

@@ -119,9 +119,9 @@ private:
     __type *m_ref_sin;
 
     /*! \brief input signal real component buffer */
-    mirror_ring_buffer<__type> m_buff_re;
+    delay<__type> m_buff_re;
     /*! \brief input signal imaginary component buffer */
-    mirror_ring_buffer<__type> m_buff_im;
+    delay<__type> m_buff_im;
 
     /*! \brief comb filter */
     fcomb<__type> m_apfilt;
@@ -430,9 +430,9 @@ private:
     __type *m_ref_sin;
 
     /*! \brief input signal real component buffer */
-    mirror_ring_buffer<__type> m_buff_re;
+    delay<__type> m_buff_re;
     /*! \brief input signal imaginary component buffer */
-    mirror_ring_buffer<__type> m_buff_im;
+    delay<__type> m_buff_im;
 
     /*! \brief comb filter */
     fcomb<__type> m_apfilt;
@@ -725,9 +725,9 @@ private:
     __type *m_ref_sin;
 
     /*! \brief input signal real component buffer */
-    mirror_ring_buffer<__type> m_buff_re;
+    delay<__type> m_buff_re;
     /*! \brief input signal imaginary component buffer */
-    mirror_ring_buffer<__type> m_buff_im;
+    delay<__type> m_buff_im;
 
     /*! \brief recursuve mean filter to extract input signal real component */
     recursive_mean<__type> m_rmean_re1;
@@ -1111,9 +1111,9 @@ private:
     __type *m_ref_sin;
 
     /*! \brief input signal real component buffer */
-    mirror_ring_buffer<__type> m_buff_re;
+    delay<__type> m_buff_re;
     /*! \brief input signal imaginary component buffer */
-    mirror_ring_buffer<__type> m_buff_im;
+    delay<__type> m_buff_im;
 
     /*! \brief recursuve mean filter to extract input signal real component */
     recursive_mean<__type> m_rmean_re1;

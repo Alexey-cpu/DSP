@@ -145,21 +145,21 @@ template<> struct cf< __fxx64 > { __fxx64 *cfnum , *cfden , *gains; __ix32 L , R
  *  \param[by] pointer to the IIR filter second order sections output buffers
  *  \param[N]  number of the IIR filter coefficients
 */
-template<> struct bf< __fx32  >{ mirror_ring_buffer< __fx32  > *bx , *by; __ix32 N; };
+template<> struct bf< __fx32  >{ delay< __fx32  > *bx , *by; __ix32 N; };
 /*!
  *  \brief 64-bit floating point IIR filter coefficients matrix data structure
  *  \param[bx] pointer to the IIR filter second order sections input buffers
  *  \param[by] pointer to the IIR filter second order sections output buffers
  *  \param[N]  number of the IIR filter coefficients
 */
-template<> struct bf< __fx64  >{ mirror_ring_buffer< __fx64  > *bx , *by; __ix32 N; };
+template<> struct bf< __fx64  >{ delay< __fx64  > *bx , *by; __ix32 N; };
 /*!
  *  \brief extended 64-bit floating point IIR filter coefficients matrix data structure
  *  \param[bx] pointer to the IIR filter second order sections input buffers
  *  \param[by] pointer to the IIR filter second order sections output buffers
  *  \param[N]  number of the IIR filter coefficients
 */
-template<> struct bf< __fxx64 >{ mirror_ring_buffer< __fxx64 > *bx , *by; __ix32 N; };
+template<> struct bf< __fxx64 >{ delay< __fxx64 > *bx , *by; __ix32 N; };
 
 /*!
  *  \brief 32-bit floating point IIR filter frequency response data structure
@@ -1591,8 +1591,8 @@ template < typename T > cf<T> __cheb2_ellip_digital_bs__( __fx64 Fs , __fx64 Fc 
 
 template< typename T > bf<T> __bf_alloc__( __ix32 N )
 {
-    mirror_ring_buffer<T> *bx = new mirror_ring_buffer<T> [ N ];
-    mirror_ring_buffer<T> *by = new mirror_ring_buffer<T> [ N ];
+    delay<T> *bx = new delay<T> [ N ];
+    delay<T> *by = new delay<T> [ N ];
 
     for( __ix32 i = 0 ; i < N ; i++ )
     {
@@ -1611,7 +1611,7 @@ template< typename T > bf<T> __bf_alloc__( __ix32 N )
 
 template< typename T > bf<T> __bf_free__( bf<T> bf )
 {
-    mirror_ring_buffer<T> *bx = bf.bx , *by = bf.by;
+    delay<T> *bx = bf.bx , *by = bf.by;
     __ix32 N = bf.N;
 
     if( bx != 0 )
@@ -1673,7 +1673,7 @@ template< typename T > cf< T > __cf_free__( cf< T > cf )
  * \return    The function implements input signal filtering using the IIR second order sections coefficients, gains and input/output buffers
 */
 
-template< typename T > extern inline __attribute__( (always_inline) ) T __filt__( T *input , T *cfnum , T *cfden , T *gains  , __ix32 N ,  mirror_ring_buffer< T > *buff_sx , mirror_ring_buffer< T > *buff_sy )
+template< typename T > extern inline __attribute__( (always_inline) ) T __filt__( T *input , T *cfnum , T *cfden , T *gains  , __ix32 N ,  delay< T > *buff_sx , delay< T > *buff_sy )
 {
     if( !cfnum || !cfden || !gains || !input || !buff_sx || !buff_sy || ( N < 0 ) ) return 0;
 
@@ -1996,12 +1996,12 @@ protected:
     __fx64 m_Fc;
     __fx64 m_Gain;
 
-    mirror_ring_buffer< __type > m_bx;
-    mirror_ring_buffer< __type > m_by;
+    delay< __type > m_bx;
+    delay< __type > m_by;
     __type *m_cfnum;
     __type *m_cfden;
 
-    inline __type __tf_filt__( __type *input , __type *cfnum , __type *cfden , __type gain , __ix32 Nx , __ix32 Ny , mirror_ring_buffer<__type> &bx , mirror_ring_buffer<__type> &by )
+    inline __type __tf_filt__( __type *input , __type *cfnum , __type *cfden , __type gain , __ix32 Nx , __ix32 Ny , delay<__type> &bx , delay<__type> &by )
     {
         __type sum_num = 0 , sum_den = 0 , out = 0;
         bx( input );

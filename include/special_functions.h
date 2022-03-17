@@ -923,8 +923,10 @@ protected:
 
     /*! \brief window function coefficients buffer */
     __fx64 *m_buff;
+
 public:
 
+    /*! \brief window function name */
     char m_name[256];
 
     // constructor and destructor:
@@ -934,7 +936,10 @@ public:
         m_buff       = 0;
     }
 
-    ~wind_fcn() { deallocate(); }
+    ~wind_fcn()
+    {
+        deallocate();
+    }
 
     /*!
      * \brief window function class object initialization function
@@ -965,10 +970,10 @@ public:
     */
     void deallocate()
     {
-        if ( m_buff != 0 )
+        if ( m_buff != nullptr )
         {
             free( m_buff );
-            m_buff = 0;
+            m_buff = nullptr;
         }
     }
 
@@ -1513,12 +1518,18 @@ public:
     /*!
      * \brief the function returns m_wind_ready flag
     */
-    bool is_ready() { return m_wind_ready; }
+    bool is_ready()
+    {
+        return m_wind_ready;
+    }
 
     /*!
      * \brief operator extracts n-th value out of woindow function object buffer
     */
-    inline __fx64 operator [] ( __ix32 n ) { return m_buff[n]; }
+    inline __fx64 operator [] ( __ix32 n )
+    {
+        return m_buff[n];
+    }
 };
 
 /*! @} */

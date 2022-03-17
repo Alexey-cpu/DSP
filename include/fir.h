@@ -523,7 +523,7 @@ namespace FIR
         __type *m_cf;
 
         /*! \brief lowpass input buffer */
-        mirror_ring_buffer< __type > m_bx;
+        delay< __type > m_bx;
 
         /*!
          *  \brief  64-bit FIR filtering function
@@ -760,7 +760,7 @@ namespace FIR
         __ix32 m_order;
 
         /*! \brief comb filter buffer */
-         mirror_ring_buffer< __type > m_bx;
+         delay< __type > m_bx;
 
          /*!
           *  \brief 32-bit floating point filtering function
@@ -860,7 +860,7 @@ namespace FIR
         __ix32 m_ElemNum2;
 
         /*! \brief comb filter buffer */
-         mirror_ring_buffer< __type > m_bx;
+         delay< __type > m_bx;
 
          /*!
           *  \brief 32-bit floating point filtering function
@@ -1019,7 +1019,7 @@ namespace FIR
         /*! \brief recursive Fourier filter order */
         __ix32 m_order;
         /*! \brief recursive Fourier filter buffer */
-        mirror_ring_buffer<__type> m_buffer_sx;
+        delay<__type> m_buffer_sx;
 
         /*!
          *  \brief  32-bit recursive Fourier filter filtering function
@@ -1152,7 +1152,7 @@ namespace FIR
         /*! \brief recursive mean filter order */
         __ix32 m_order;
         /*! \brief recursive mean filter buffer */
-        mirror_ring_buffer<__type> m_buffer_sx;
+        delay<__type> m_buffer_sx;
 
         /*!
          *  \brief  32-bit recursive mean filter filtering function
@@ -1257,7 +1257,7 @@ namespace FIR
         /*! \brief recursive root mean square filter order */
         __ix32 m_order;
         /*! \brief recursive root mean square filter buffer */
-        mirror_ring_buffer<__type> m_buffer_sx;
+        delay<__type> m_buffer_sx;
 
         /*! \brief  32-bit recursive root mean square filter filtering function
          *  \param[input] - pointer to the nput signal frames
