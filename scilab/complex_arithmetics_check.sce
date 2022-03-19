@@ -7,6 +7,8 @@ z2 = 3.5 + %i * 4.5;
 
 disp(" complex functions: \n")
 sqrt(z0)
+z0 * z1
+z0 / z1
 z0 + z1 + z2
 z0 - z1 - z2
 z0 * z1 / z2

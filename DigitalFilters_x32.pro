@@ -17,13 +17,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     include/buffer.h \
+    include/dsp.h \
     include/examples.h \
     include/fcomplex.h \
-    include/filters_factory.h \
-    include/fir.h \
-    include/iir.h \
     include/logical.h \
-    include/quad_mltpx.h \
     include/sgen.h \
     include/special_functions.h \
     include/transformations.h

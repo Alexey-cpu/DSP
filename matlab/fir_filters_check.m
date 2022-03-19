@@ -16,11 +16,11 @@ ff    = TEXTFILE_TO_MATFILE( "ff.txt"    , logs );
 tt    = TEXTFILE_TO_MATFILE( "tt.txt"    , logs );
 
 %group plotting:
-plot( ff , lp_km , ff , hp_km , ff , bp_km , ff , bs_km );
+%plot( ff , lp_km , ff , hp_km , ff , bp_km , ff , bs_km );
 %plot( tt , lp_yt , tt , hp_yt , tt , bp_yt , tt , bs_yt );
 
 %individual plotting:
-%plot(ff , lp_km);
+plot(ff , lp_km);
 %plot(ff , hp_km);
 %plot(ff , bp_km);
 %plot(ff , bs_km);

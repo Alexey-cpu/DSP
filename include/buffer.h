@@ -5,7 +5,7 @@
  * \date    21.12.2021
  * \version 1.0
  *
- * The header declares ring buffer and mirror ring buffer template classes
+ * The header declares buffer and delay template classes
 */
 
 #ifndef BUFFER_H
@@ -14,7 +14,6 @@
 // identify if the compilation is for ProsoftSystems IDE
 #ifndef __ALG_PLATFORM
 #include <stdlib.h>
-//#include "malloc.h"
 #include <iostream>
 #endif
 
@@ -23,7 +22,7 @@
     @{
 */
 
-#include "fcomplex.h"
+//#include "fcomplex.h"
 
 /*! \brief defines 16-bit integer type */
 #ifndef __ix16
@@ -108,8 +107,7 @@ protected:
 
 public:
 
-
-    /*! \brief mirror ring buffer memory allocation function
+    /*! \brief delay memory allocation function
      *  \param[nelem] the mirror ring buffer size
     */
     __ix32 allocate( __ix32 nelem )
@@ -129,7 +127,7 @@ public:
         else return 0;
     }
 
-    /*! \brief mirror ring buffer memory deallocation function */
+    /*! \brief delay memory deallocation function */
     void deallocate()
     {
         if( m_data != 0 )
@@ -180,7 +178,7 @@ public:
 };
 
 /*! \brief ring buffer template abstract class */
-template< typename T > class ring_buffer_abstract
+template< typename T > class buffer_abstract
 {
     typedef T __type;
 protected:
@@ -236,7 +234,7 @@ public:
     }
 
     /*! \brief mirror ring buffer default constructor */
-    ring_buffer_abstract()
+    buffer_abstract()
     {
         m_lower   = 0;
         m_data    = 0;
@@ -245,7 +243,7 @@ public:
     }
 
     /*! \brief mirror ring buffer destructor */
-    virtual ~ring_buffer_abstract() { deallocate(); }
+    virtual ~buffer_abstract() { deallocate(); }
 
     /*!
      *  \brief  mirror ring buffer position function
@@ -278,7 +276,7 @@ public:
 template< typename T > class delay;
 
 /*! \brief classic ring buffer template class */
-template< typename T > class ring_buffer;
+template< typename T > class buffer;
 
 /*! \brief mirror ring buffer class floating point 32-bit realization */
 template<> class delay< __fx32 > : public delay_abstract< __fx32 >
@@ -371,35 +369,35 @@ public:
 };
 
 /*! \brief ring buffer class floating point 32-bit realization */
-template<> class ring_buffer< __fx32 > : public ring_buffer_abstract< __fx32 >
+template<> class buffer< __fx32 > : public buffer_abstract< __fx32 >
 {
     typedef __fx32 __type;
 public:
-      ring_buffer() : ring_buffer_abstract(){}
-     ~ring_buffer(){};
+      buffer() : buffer_abstract(){}
+     ~buffer(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( __fx64  *input ) { fill_buff< __fx64 >( input ); }
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
 /*! \brief ring buffer class floating point 64-bit realization */
-template<> class ring_buffer< __fx64 > : public ring_buffer_abstract< __fx64 >
+template<> class buffer< __fx64 > : public buffer_abstract< __fx64 >
 {
     typedef __fx64 __type;
 public:
-      ring_buffer() : ring_buffer_abstract(){}
-     ~ring_buffer(){};
+      buffer() : buffer_abstract(){}
+     ~buffer(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
 /*! \brief ring buffer class floating point extended 64-bit realization */
-template<> class ring_buffer< __fxx64 > : public ring_buffer_abstract< __fxx64 >
+template<> class buffer< __fxx64 > : public buffer_abstract< __fxx64 >
 {
     typedef __fxx64 __type;
 public:
-      ring_buffer() : ring_buffer_abstract(){}
-     ~ring_buffer(){};
+      buffer() : buffer_abstract(){}
+     ~buffer(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
@@ -441,23 +439,23 @@ public:
 #endif
 
 /*! \brief ring buffer class complex integer 32-bit realization */
-template<> class ring_buffer< __ix32 > : public ring_buffer_abstract< __ix32 >
+template<> class buffer< __ix32 > : public buffer_abstract< __ix32 >
 {
     typedef __ix32 __type;
 public:
-      ring_buffer() : ring_buffer_abstract(){}
-     ~ring_buffer(){};
+      buffer() : buffer_abstract(){}
+     ~buffer(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( __ix64  *input ) { fill_buff< __ix64 >( input ); }
 };
 
 /*! \brief ring buffer class complex integer 64-bit realization */
-template<> class ring_buffer< __ix64 > : public ring_buffer_abstract< __ix64 >
+template<> class buffer< __ix64 > : public buffer_abstract< __ix64 >
 {
     typedef __ix64 __type;
 public:
-      ring_buffer() : ring_buffer_abstract(){}
-     ~ring_buffer(){};
+      buffer() : buffer_abstract(){}
+     ~buffer(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 

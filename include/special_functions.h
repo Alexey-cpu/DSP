@@ -907,132 +907,52 @@ extern __fxx64 __modified_bessel_in__( __fxx64 x  , __ix32 order )
 */
 
 /*!
-* \brief Window function class
-* \details Window function class implements the range of window functions coefficients computation and storing
+ * \brief Barlett window function computation
+ * \return The function allocates memory sets, m_wind_ready = 1 and computes Barlett window coefficients as follows:
+ *  \f[
+ *      Ns = order \newline
+ *      n = 0 \dots Ns \newline
+ *      y( n ) = \begin{equation}
+ *      \begin{cases}
+ *      2 * n / ( Ns - 1 ) , n <= ( Ns - 1 ) / 2
+ *      \\
+ *      2 - 2 * n / ( Ns - 1 ) , n > ( Ns - 1 ) / 2
+ *      \end{cases}
+ *      \end{equation}
+ *  \f]
 */
-class wind_fcn
+__fx64 *Bartlett( __ix32 _order )
 {
-    typedef bool __bool ;
-protected:
+    // memory allocation:
+    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    // window function coefficients computation:
+    __fx64 Ns = ( __fx64 ) _order;
+    for ( __ix32 n = 0; n < Ns ; n++) { buff[n] = ( n <= ( Ns-1 ) / 2 ) ? ( 2*n / (Ns-1) ) : ( 2 - 2 * n / (Ns-1) ); }
+    return buff;
+}
 
-    /*! \brief window function order */
-    __fx64 m_order;
+/*!
+ * \brief Barlett Hanning window function computation
+ * \return The function allocates memory, sets m_wind_ready = 1 and computes Barlett-Hanning window coefficients as follows:
+ *  \f[
+ *      Ns = order \newline
+ *      n  = 0 \dots Ns \newline
+ *      y( n ) = 0.62 - 0.48 * \left|  \frac{ n }{ Ns - 1 } - 0.5 \right| + 0.38 * cos \left[ \ 2 * \pi * \left( \frac{ n }{ Ns - 1 } - 0.5 \right) \right]
+ *  \f]
+*/
+__fx64 *BartlettHanning( __ix32 _order )
+{
+    // memory allocation:
+    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    // window function coefficients computation:
+    __fx64 Ns = (__fx64)_order;
+    for (__ix32 n = 0; n < Ns ; n++) { buff[n] = 0.62 - 0.48 * fabs( n / (Ns-1)-0.5) + 0.38 * cos(PI2 * (n / (Ns - 1) - 0.5)); }
+    // window is ready to use:
+    return buff;
+}
 
-    /*! \brief window function completness flag */
-    __bool m_wind_ready;
 
-    /*! \brief window function coefficients buffer */
-    __fx64 *m_buff;
-
-public:
-
-    /*! \brief window function name */
-    char m_name[256];
-
-    // constructor and destructor:
-    wind_fcn()
-    {
-        m_wind_ready = 0;
-        m_buff       = 0;
-    }
-
-    ~wind_fcn()
-    {
-        deallocate();
-    }
-
-    /*!
-     * \brief window function class object initialization function
-     * \param[order] window function length ( in samples )
-    */
-    void init( __ix32 order )
-    {
-        m_order = order;
-        m_buff  = 0;
-    }
-
-    /*!
-     * \brief window function class object memory allocation function
-     * \details the function allocates coefficients buffer ( *m_buff )
-     *          of the window function class object
-    */
-    __ix32 allocate()
-    {
-        m_buff = ( __fx64* ) calloc( m_order , sizeof ( __fx64 ) );
-        return ( !m_buff );
-    }
-
-    /*!
-     * \brief window function class object memory deallocation function
-     * \details the function frees coefficients buffer ( *m_buff )
-     *          of the window function class object. Buffer memory
-     *          is freed if the buffer has not been freed earlier.
-    */
-    void deallocate()
-    {
-        if ( m_buff != nullptr )
-        {
-            free( m_buff );
-            m_buff = nullptr;
-        }
-    }
-
-    /*!
-     * \brief Barlett window function computation
-     * \return The function allocates memory sets, m_wind_ready = 1 and computes Barlett window coefficients as follows:
-     *  \f[
-     *      Ns = order \newline
-     *      n = 0 \dots Ns \newline
-     *      y( n ) = \begin{equation}
-     *      \begin{cases}
-     *      2 * n / ( Ns - 1 ) , n <= ( Ns - 1 ) / 2
-     *      \\
-     *      2 - 2 * n / ( Ns - 1 ) , n > ( Ns - 1 ) / 2
-     *      \end{cases}
-     *      \end{equation}
-     *  \f]
-    */
-    __ix32 Bartlett()
-    {
-        // memory allocation:
-        allocate();
-
-        // window function coefficients computation:
-        __fx64 Ns = ( __fx64 ) m_order;
-        for ( __ix32 n = 0; n < Ns ; n++) { m_buff[n] = ( n <= ( Ns-1 ) / 2 ) ? ( 2*n / (Ns-1) ) : ( 2 - 2 * n / (Ns-1) ); }
-
-        // window is ready to use:
-        m_wind_ready = 1;
-        strcpy( m_name , "Bartlett" );
-        return m_wind_ready;
-    }
-
-    /*!
-     * \brief Barlett Hanning window function computation
-     * \return The function allocates memory, sets m_wind_ready = 1 and computes Barlett-Hanning window coefficients as follows:
-     *  \f[
-     *      Ns = order \newline
-     *      n  = 0 \dots Ns \newline
-     *      y( n ) = 0.62 - 0.48 * \left|  \frac{ n }{ Ns - 1 } - 0.5 \right| + 0.38 * cos \left[ \ 2 * \pi * \left( \frac{ n }{ Ns - 1 } - 0.5 \right) \right]
-     *  \f]
-    */
-
-    __ix32 BartlettHanning()
-    {
-        // memory allocation:
-        allocate();
-
-        // window function coefficients computation:
-        __fx64 Ns = (__fx64)m_order;
-        for (__ix32 n = 0; n < Ns ; n++) { m_buff[n] = 0.62 - 0.48 * fabs( n / (Ns-1)-0.5) + 0.38 * cos(PI2 * (n / (Ns - 1) - 0.5)); }
-
-        // window is ready to use:
-        m_wind_ready = 1;
-        strcpy( m_name , "BartlettHanning" );
-        return m_wind_ready;
-    }
-
-    /*!
+/*!
      * \brief Balckman window function computation
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Balckman window coefficients as follows:
      *  \f[
@@ -1041,23 +961,18 @@ public:
      *      y( n ) = 0.42 - 0.50 * cos \left( 2 * \pi * \frac { n } { Ns - 1 } \right ) + 0.08 * cos \left( 4 * \pi * \frac{ n } { Ns - 1 } \right )
      *  \f]
     */
-    __ix32 Blackman()
-    {
-        // memory allocation:
-        allocate();
+__fx64 *Blackman(__ix32 _order)
+{
+    // memory allocation:
+    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    // window function coefficients computation:
+    __fx64 Ns = (__fx64)_order;
+    for (__ix32 n = 0; n < Ns ; n++) { buff[n] = 0.42 - 0.50 * cos(2 * PI0 * n / (Ns - 1) ) + 0.08 * cos(4 * PI0 * n / (Ns - 1)); }
+    // window is ready to use:
+    return buff;
+}
 
-        // window function coefficients computation:
-        __fx64 Ns = (__fx64)m_order;
-        for (__ix32 n = 0; n < Ns ; n++) { m_buff[n] = 0.42 - 0.50 * cos(2 * PI0 * n / (Ns - 1) ) + 0.08 * cos(4 * PI0 * n / (Ns - 1)); }
-
-        // window is ready to use:
-        m_wind_ready = 1;
-        strcpy( m_name , "Blackman" );
-
-        return 0;
-    }
-
-    /*!
+/*!
      * \brief Balckman-Harris window function computation
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Balckman-Harris window coefficients as follows:
      *  \f[
@@ -1066,23 +981,19 @@ public:
      *      y( n ) = 0.35875 - 0.48829 * cos \left( 2 * \pi * \frac{ n } { Ns - 1 } \right ) + 0.14128 * cos\left( 4 * \pi * \frac{ n } { Ns - 1 } \right ) - 0.01168 * cos \left( 6 * \pi * \frac{ n } { Ns - 1 } \right )
      *  \f]
     */
-    __ix32 BlackmanHarris()
-    {
-        // memory allocation:
-        allocate();
+__fx64 *BlackmanHarris(__ix32 _order)
+{
+    // memory allocation:
+    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    // window function coefficients computation:
+    __fx64 Ns = (__fx64)_order;
+    for (__ix32 n = 0; n < Ns; n++) { buff[n] = 0.35875 - 0.48829 * cos(2 * PI0 * n / (Ns - 1)) + 0.14128 * cos(4 * PI0 * n / (Ns - 1)) - 0.01168 * cos(6 * PI0 * n / (Ns - 1)); }
+    // window is ready to use:
+    return buff;
+}
 
-        // window function coefficients computation:
-        __fx64 Ns = (__fx64)m_order;
-        for (__ix32 n = 0; n < Ns; n++) { m_buff[n] = 0.35875 - 0.48829 * cos(2 * PI0 * n / (Ns - 1)) + 0.14128 * cos(4 * PI0 * n / (Ns - 1)) - 0.01168 * cos(6 * PI0 * n / (Ns - 1)); }
 
-        // window is ready to use:
-        m_wind_ready = 1;
-        strcpy( m_name , "BlackmanHarris" );
-
-        return m_wind_ready;
-    }
-
-    /*!
+/*!
      * \brief Bohman window function computation
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Bohman window coefficients as follows:
      *  \f[
@@ -1095,28 +1006,24 @@ public:
      *      \end{cases}
      *  \f]
     */
-    __ix32 Bohman()
+__fx64 *Bohman(__ix32 _order)
+{
+    // memory allocation:
+    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+
+    // window function coefficients computation:
+    __fx64 Ns = ceil( (__fx64)_order / 2) , n = 0;
+    for (__ix32 k = 0; k < _order; k++)
     {
-        // memory allocation:
-        allocate();
-
-        // window function coefficients computation:
-        __fx64 Ns = ceil( (__fx64)m_order / 2) , n = 0;
-        for (__ix32 k = 0; k < m_order; k++)
-        {
-            n = k - Ns;
-            if ( n >= 0 )  n = k - Ns + 1;
-            m_buff[k] = ( 1 - fabs( n / (Ns + 1) ) ) * cos( PI0 * fabs(n / (Ns + 1))) + 1 / PI0 * sin(PI0 * fabs(n / (Ns + 1)));
-        }
-
-        // window is ready to use:
-        m_wind_ready = 1;
-        strcpy( m_name , "Bohman" );
-
-        return m_wind_ready;
+        n = k - Ns;
+        if ( n >= 0 )  n = k - Ns + 1;
+        buff[k] = ( 1 - fabs( n / (Ns + 1) ) ) * cos( PI0 * fabs(n / (Ns + 1))) + 1 / PI0 * sin(PI0 * fabs(n / (Ns + 1)));
     }
+    // window is ready to use:
+    return buff;
+}
 
-    /*!
+/*!
      * \brief Auxiliary Chebhshev poly computation function
      * \param[n] Chebyshev poly order
      * \param[x] x-value at which n-th order Chebyshev poly value is computed
@@ -1130,50 +1037,49 @@ public:
      *      \end{cases}
      *  \f]
     */
-    __fx64 cheby_poly(__ix32 n, __fx64 x)
-    {
-        __fx64 res;
-        if (fabs(x) <= 1) res = cos(n*acos(x));
-        else              res = cosh(n*acosh(x));
-        return res;
-    }
+__fx64 cheby_poly(__ix32 n, __fx64 x)
+{
+    __fx64 res;
+    if (fabs(x) <= 1) res = cos(n*acos(x));
+    else              res = cosh(n*acosh(x));
+    return res;
+}
 
-    /*!
+/*!
      * \brief Chebyshev window computation function
      * \param[ atten ] sidelobe attenuation , Db
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Chebyshev window coefficients
     */
-    __ix32 Chebyshev( __fx64 atten )
+__fx64 *Chebyshev( __fx64 _atten , __ix32 _order )
+{
+    // memory allocation:
+    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+
+    // window function coefficients computation:
+    __ix32 Ns = _order , nn, kk;
+    __fx64 M, n, sum = 0, max = 0;
+    __fx64 tg = pow(10, _atten / 20);
+    __fx64 x0 = cosh((1.0 / (Ns - 1))*acosh(tg));
+    M = (Ns - 1) / 2;
+
+    if (Ns % 2 == 0) M = M + 0.5;
+    for (nn = 0; nn < (Ns / 2 + 1); nn++)
     {
-        // memory allocation:
-        allocate();
-
-        // window function coefficients computation:
-        __ix32 Ns = m_order , nn, kk;
-        __fx64 M, n, sum = 0, max = 0;
-        __fx64 tg = pow(10, atten / 20);
-        __fx64 x0 = cosh((1.0 / (Ns - 1))*acosh(tg));
-        M = (Ns - 1) / 2;
-
-        if (Ns % 2 == 0) M = M + 0.5;
-        for (nn = 0; nn < (Ns / 2 + 1); nn++)
-        {
-            n = nn - M;
-            sum = 0;
-            for (kk = 1; kk <= M; kk++)  { sum += cheby_poly(Ns - 1, x0*cos(PI0*kk / Ns))*cos(2.0*n*PI0*kk / Ns); }
-            m_buff[nn] = tg + 2 * sum;
-            m_buff[(__ix32)Ns - nn - 1] = m_buff[nn];
-            if (m_buff[nn] > max)max = m_buff[nn];
-        }
-        for (nn = 0; nn < Ns; nn++) m_buff[nn] /= max;
-
-        // window is ready to use:
-        m_wind_ready = true;
-        strcpy( m_name , "Chebyshev" );
-        return m_wind_ready;
+        n = nn - M;
+        sum = 0;
+        for (kk = 1; kk <= M; kk++)  { sum += cheby_poly(Ns - 1, x0*cos(PI0*kk / Ns))*cos(2.0*n*PI0*kk / Ns); }
+        buff[nn] = tg + 2 * sum;
+        buff[(__ix32)Ns - nn - 1] = buff[nn];
+        if (buff[nn] > max)max = buff[nn];
     }
+    for (nn = 0; nn < Ns; nn++) buff[nn] /= max;
 
-    /*!
+    // window is ready to use:
+    return buff;
+}
+
+
+/*!
      * \brief Flat-Top window computation function
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Flat-Top window coefficients as follows:
      *  \f[
@@ -1185,22 +1091,27 @@ public:
      *      + 0.006947368 * cos \left( 8 * \pi * \frac{ n } { Ns - 1 } \right)
      *  \f]
     */
-    __ix32 FlatTop()
+__fx64 *FlatTop(__ix32 _order)
+{
+    // memory allocation:
+    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+
+    // window coefficients computation:
+    __fx64 Ns = (__fx64)_order;
+    for (__ix32 n = 0 ; n < Ns; n++)
     {
-        // memory allocation:
-        allocate();
-
-        // window coefficients computation:
-        __fx64 Ns = (__fx64)m_order;
-        for (__ix32 n = 0 ; n < Ns; n++) { m_buff[n] = 0.21557895 - 0.41663158 * cos(PI2 * n / (Ns - 1) ) + 0.277263158 * cos(4 * PI0 * n / (Ns - 1) ) - 0.083578947 * cos(6 * PI0 * n / (Ns - 1) ) + 0.006947368 * cos(8 * PI0 * n / (Ns - 1) ); }
-
-        // window is ready to use:
-        m_wind_ready = true;
-        strcpy( m_name , "FlatTop" );
-        return m_wind_ready;
+        buff[n] = 0.21557895 - 0.41663158 * cos(PI2 * n / (Ns - 1) ) +
+                0.277263158 * cos(4 * PI0 * n / (Ns - 1) ) -
+                0.083578947 * cos(6 * PI0 * n / (Ns - 1) ) +
+                0.006947368 * cos(8 * PI0 * n / (Ns - 1) );
     }
 
-    /*!
+    // window is ready to use:
+    return buff;
+}
+
+
+/*!
      * \brief Gaussian window computation function
      * \param[ alpha ] Gaussian window parameter
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Gaussian window coefficients as follows:
@@ -1218,30 +1129,29 @@ public:
      *      \end{cases}
      *  \f]
     */
-    __ix32 Gaussian( __fx64 alpha )
+__fx64 *Gaussian( __fx64 _alpha, __ix32 _order )
+{
+    // memory allocation:
+    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+
+    // window function coefficients computation:
+    __ix32 Ns     = _order;
+    __ix32 n      = 0;
+    __fx64 sigma  = 0;
+
+    for (__ix32 k = 0 ; k < Ns; k++)
     {
-        // memory allocation:
-        allocate();
-
-        // window function coefficients computation:
-        __ix32 Ns = m_order;
-        __ix32 n     = 0;
-        __fx64 sigma = 0;
-        for (__ix32 k = 0 ; k < Ns; k++)
-        {
-            n = k - Ns/2;
-            if (n >= 0)  n = k - Ns/2 + 1;
-            sigma = ((__fx64)Ns-1) / 2 / alpha;
-            m_buff[k] = exp(-(__fx64)n * (__fx64)n / 2 / sigma / sigma);
-        }
-
-        // wind is ready to use:
-        m_wind_ready = true;
-        strcpy( m_name , "Gaussian" );
-        return m_wind_ready;
+        n = k - Ns/2;
+        if (n >= 0)  n = k - Ns/2 + 1;
+        sigma = ((__fx64)Ns-1) / 2 / _alpha;
+        buff[k] = exp(-(__fx64)n * (__fx64)n / 2 / sigma / sigma);
     }
 
-    /*!
+    // wind is ready to use:
+    return buff;
+}
+
+/*!
      * \brief Hamming window computation function
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Hamming window coefficients as follows:
      *  \f[
@@ -1250,22 +1160,21 @@ public:
      *      y( n ) = 0.54 - 0.46 * cos \left( 2 * \pi * \frac{ n } { Ns-1 } \right)
      *  \f]
     */
-    __ix32 Hamming()
-    {
-        // memory allocation:
-        allocate();
+__fx64 *Hamming(__ix32 _order )
+{
+    // memory allocation:
+    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
 
-        // window function coefficients computation:
-        __ix32 Ns = m_order;
-        for (__ix32 n = 0 ; n < Ns ; n++)  { m_buff[n] = 0.54 - 0.46 * cos(PI2 * n / (Ns-1)); }
+    // window function coefficients computation:
+    __ix32 Ns = _order;
+    for (__ix32 n = 0 ; n < Ns ; n++) buff[n] = 0.54 - 0.46 * cos(PI2 * n / (Ns-1));
 
-        // window is ready to use:
-        m_wind_ready = true;
-        strcpy( m_name , "Hamming" );
-        return m_wind_ready;
-    }
+    // window is ready to use:
+    return buff;
+}
 
-    /*!
+
+/*!
      * \brief Hann window computation function
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Hann window coefficients as follows:
      *  \f[
@@ -1274,22 +1183,21 @@ public:
      *      y( n ) = 0.5 - 0.5 * cos \left( 2 * \pi * \frac{ n } { Ns-1 } \right)
      *  \f]
     */
-    __ix32 Hann()
-    {
-        // memory allocation:
-        allocate();
+__fx64 *Hann(__ix32 _order)
+{
+    // memory allocation:
+    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
 
-        // window function coefficients computation:
-        __ix32 Ns = m_order;
-        for (__ix32 n = 0; n < Ns; n++) { m_buff[n] = 0.5 - 0.5 * cos( PI2 * n / (Ns-1) ); }
+    // window function coefficients computation:
+    __ix32 Ns = _order;
+    for (__ix32 n = 0; n < Ns; n++) buff[n] = 0.5 - 0.5 * cos( PI2 * n / (Ns-1) );
 
-        // window is ready to use:
-        m_wind_ready = true;
-        strcpy( m_name , "Hann" );
-        return m_wind_ready;
-    }
+    // window is ready to use:
+    return buff;
+}
 
-    /*!
+
+/*!
      * \brief Kaiser window computation function
      * \param[betta] Kaiser window function parameter
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Kaiser window coefficients as follows:
@@ -1302,31 +1210,30 @@ public:
      *      y(n) = \frac{ ModifiedBessel( B , 0 ) }{ ModifiedBessel( C , 0 ) }
      *  \f]
     */
-    __ix32 Kaiser( __fx64 betta )
+__fx64 *Kaiser(__fx64 betta, __ix32 _order )
+{
+    // memory allocation:
+    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+
+    // winfow function coefficients computation:
+    __ix32 Ns = _order;
+    __fx64 A  = 0;
+    __fx64 B  = 0;
+    __fx64 C  = 0;
+    for (__ix32 n = 0; n < Ns; n++)
     {
-        // memory allocation:
-        allocate();
-
-        // winfow function coefficients computation:
-        __ix32 Ns = m_order;
-        __fx64 A  = 0;
-        __fx64 B  = 0;
-        __fx64 C  = 0;
-        for (__ix32 n = 0; n < Ns; n++)
-        {
-            A = ((__fx64)n - ( (__fx64)Ns - 1 ) / 2) / ( ((__fx64)Ns - 1 ) / 2);
-            B = betta * sqrt(1 - A * A);
-            C = betta;
-            m_buff[n] = __modified_bessel_in__( B , 0 ) / __modified_bessel_in__( C , 0 );
-        }
-
-        // window is ready to use:
-        m_wind_ready = true;
-        strcpy( m_name , "Kaiser" );
-        return m_wind_ready;
+        A = ((__fx64)n - ( (__fx64)Ns - 1 ) / 2) / ( ((__fx64)Ns - 1 ) / 2);
+        B = betta * sqrt(1 - A * A);
+        C = betta;
+        buff[n] = __modified_bessel_in__( B , 0 ) / __modified_bessel_in__( C , 0 );
     }
 
-    /*!
+    // window is ready to use:
+    return buff;
+}
+
+
+/*!
      * \brief Nutall window computation function
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Nutall window coefficients as follows:
      *  \f[
@@ -1338,25 +1245,26 @@ public:
      *      - 0.0106411 * cos \left( 6 * \pi * \frac{ n }{ Ns - 1 } \right)
      *  \f]
     */
-    __ix32 Nutall()
+__fx64 *Nutall(__ix32 _order)
+{
+    // memory allocation:
+    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+
+    // window function coefficients computation:
+    __ix32 Ns = _order;
+    for (__ix32 n = 0; n < Ns; n++)
     {
-        // memory allocation:
-        allocate();
-
-        // window function coefficients computation:
-        __ix32 Ns = m_order;
-        for (__ix32 n = 0; n < Ns; n++)
-        {
-            m_buff[n] = 0.3635819 - 0.4891775 * cos(2 * PI0 * n / (Ns - 1) ) + 0.1365995 * cos(4 * PI0 * n / (Ns - 1)) - 0.0106411 * cos(6 * PI0 * n / (Ns - 1));
-        }
-
-        // window is ready to use:
-        m_wind_ready = true;
-        strcpy( m_name , "Nutall" );
-        return m_wind_ready;
+        buff[n] = 0.3635819 -
+                0.4891775 * cos(2 * PI0 * n / (Ns - 1) ) +
+                0.1365995 * cos(4 * PI0 * n / (Ns - 1)) -
+                0.0106411 * cos(6 * PI0 * n / (Ns - 1));
     }
 
-    /*!
+    // window is ready to use:
+    return buff;
+}
+
+/*!
      * \brief Parzen window computation function
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Parzen window coefficients as follows:
      *  \f[
@@ -1374,36 +1282,35 @@ public:
      *
      *  \f]
     */
-    __ix32 Parzen()
+__fx64 *Parzen(__ix32 _order)
+{
+    // memory allocation:
+    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+
+    // window function coefficients computation:
+    __ix32    Ns = _order;
+    __ix32    n = 0;
+    for (__ix32 k = 0; k < Ns; k++)
     {
-        // memory allocation:
-        allocate();
+        n = k - Ns / 2;
+        if (n >= 0)  n = k - Ns / 2 + 1;
 
-        // window function coefficients computation:
-        __ix32    Ns = m_order;
-        __ix32    n = 0;
-        for (__ix32 k = 0; k < Ns; k++)
+        if ( abs(n)>=0 && abs(n) <= (Ns-1)/4 )
         {
-            n = k - Ns / 2;
-            if (n >= 0)  n = k - Ns / 2 + 1;
-
-            if ( abs(n)>=0 && abs(n) <= (Ns-1)/4 )
-            {
-                m_buff[k] = 1 - 6 * fabs((__fx64)n)*fabs((__fx64)n) / ((__fx64)Ns*(__fx64)Ns / 4) + 6 * fabs((__fx64)n)*fabs((__fx64)n)*fabs((__fx64)n) / ((__fx64)Ns*(__fx64)Ns*(__fx64)Ns / 8);
-            }
-            else if( abs(n) < Ns/2 && abs(n) > (Ns - 1) / 4 )
-            {
-                m_buff[k] = 2 * pow( 1 - fabs((__fx64)n)/((__fx64)Ns/2) , 3);
-            }
+            buff[k] = 1 - 6 * fabs((__fx64)n)*fabs((__fx64)n) / ((__fx64)Ns*(__fx64)Ns / 4) +
+                    6 * fabs((__fx64)n)*fabs((__fx64)n)*fabs((__fx64)n) / ((__fx64)Ns*(__fx64)Ns*(__fx64)Ns / 8);
         }
-
-        // window is ready:
-        m_wind_ready = true;
-        strcpy( m_name , "Parzen" );
-        return m_wind_ready;
+        else if( abs(n) < Ns/2 && abs(n) > (Ns - 1) / 4 )
+        {
+            buff[k] = 2 * pow( 1 - fabs((__fx64)n)/((__fx64)Ns/2) , 3);
+        }
     }
 
-    /*!
+    // window is ready:
+    return buff;
+}
+
+/*!
      * \brief Rectangular window computation function
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Rectangular window coefficients as follows:
      *  \f[
@@ -1412,21 +1319,19 @@ public:
      *      y(n) = 1
      *  \f]
     */
-    __ix32 Rectangular()
-    {
-        // memory allocation:
-        allocate();
+__fx64 *Rectangular(__ix32 _order)
+{
+    // memory allocation:
+    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
 
-        // window coefficients vomputation:
-        for (__ix32 n = 0; n < m_order; n++)  m_buff[n] = 1;
+    // window coefficients vomputation:
+    for (__ix32 n = 0; n < _order; n++) buff[n] = 1;
 
-        // window is ready to use:
-        m_wind_ready = true;
-        strcpy( m_name , "Rectangular" );
-        return m_wind_ready;
-    }
+    // window is ready to use:
+    return buff;
+}
 
-    /*!
+/*!
      * \brief Triangular window computation function
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Triangular window coefficients as follows:
      *  \f[
@@ -1440,29 +1345,33 @@ public:
      *      \end{cases}
      *  \f]
     */
-    __ix32 Triangular()
+__fx64 *Triangular(__ix32 _order)
+{
+    // memory allocation:
+    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+
+    // window function coefficients computation:
+    __ix32 Ns = _order;
+    if ( Ns % 2 == 0)
     {
-        // memory allocation:
-        allocate();
-
-        // window function coefficients computation:
-        __ix32 Ns = m_order;
-        if ( Ns % 2 == 0)
+        for (__ix32 n = 0; n < Ns; n++)
         {
-            for (__ix32 n = 0; n < Ns; n++) { m_buff[n] = (1.0 - fabs(((__fx64)n - ((__fx64)Ns - 1) / 2) / ((((__fx64)Ns - 1) + 1) / 2))); }
+            buff[n] = (1.0 - fabs(((__fx64)n - ((__fx64)Ns - 1) / 2) / ((((__fx64)Ns - 1) + 1) / 2)));
         }
-        else
+    }
+    else
+    {
+        for (__ix32 n = 0; n < Ns; n++)
         {
-            for (__ix32 n = 0; n < Ns; n++) { m_buff[n] = (1.0 - fabs(((__fx64)n - ((__fx64)Ns - 1) / 2) / ((((__fx64)Ns - 1) + 2) / 2))); }
+            buff[n] = (1.0 - fabs(((__fx64)n - ((__fx64)Ns - 1) / 2) / ((((__fx64)Ns - 1) + 2) / 2)));
         }
-
-        // window is ready to use:
-        m_wind_ready = true;
-        strcpy( m_name , "Triangular" );
-        return m_wind_ready;
     }
 
-    /*!
+    // window is ready to use:
+    return buff;
+}
+
+/*!
      * \brief Tukey window computation function
      * \param[R] Tukey window function parameter
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Tukey window coefficients as follows:
@@ -1484,53 +1393,65 @@ public:
      *      \end{cases}
      *  \f]
     */
-    __ix32 Tukey( __fx64 R )
-    {
-        // memory allocation:
-        allocate();
+__fx64 *Tukey(__fx64 R, __ix32 _order )
+{
+    // memory allocation:
+    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
 
-        // window function coefficients computation:
-        __ix32 Ns = m_order;
-        __fx64 x  = 0;
-        for(__ix32 n = 0 ; n < Ns ; n++)
+    // window function coefficients computation:
+    __ix32 Ns = _order;
+    __fx64 x  = 0;
+    for(__ix32 n = 0 ; n < Ns ; n++)
+    {
+        x = (__fx64)n / ((__fx64)Ns - 1);
+        if ( x >=0 && x < R / 2 )
         {
-            x = (__fx64)n / ((__fx64)Ns - 1);
-            if ( x >=0 && x < R / 2 )
+            buff[n] = 0.5 + 0.5 * cos( PI2 / R * ( x - 0.5*R ) );
+        }
+        else if ( x >= 1 - 0.5 * R && x <= 1 )
+        {
+            buff[n] = 0.5 + 0.5 * cos(PI2 / R * (x - 1 + 0.5*R) );
+        }
+        else
+        {
+            buff[n] = 1;
+        }
+    }
+
+    // window is ready to use:
+    return buff;
+}
+
+/*!
+     * \brief Linear convolution function
+     * \param[*a] pointer to the poly a array
+     * \param[*b] pointer to the poly b array
+     * \param[*c] pointer to the poly c array
+     * \param[Na] size of poly a array
+     * \param[Nb] size of poly b array
+     * \param[Nc] size of poly c array
+    */
+template< typename __type > void conv
+(
+        __type *a,
+        __type *b,
+        __type *c,
+        __ix32 Na,
+        __ix32 Nb,
+        __ix32 Nc
+)
+{
+    if( ( Nc >= Na + Nb - 1 ) && ( a && b && c ) )
+    {
+        for( int i = 0 ; i < ( Na + Nb ) ; i++ )
+        {
+            for( int j = ( i - Na < 0 ) ? 0 : i-Na+1 , k = ( i < Na ) ? i : Na-1 ; ( j < Nb ) && ( k >= 0 ) ; j++ , k-- )
             {
-                m_buff[n] = 0.5 + 0.5 * cos( PI2 / R * ( x - 0.5*R ) );
-            }
-            else if ( x >= 1 - 0.5 * R && x <= 1 )
-            {
-                m_buff[n] = 0.5 + 0.5 * cos(PI2 / R * (x - 1 + 0.5*R) );
-            }
-            else
-            {
-                m_buff[n] = 1;
+                c[i] += a[k] * b[j];
             }
         }
-
-        // window is ready to use:
-        m_wind_ready = true;
-        strcpy( m_name , "Tukey" );
-        return m_wind_ready;
     }
-
-    /*!
-     * \brief the function returns m_wind_ready flag
-    */
-    bool is_ready()
-    {
-        return m_wind_ready;
-    }
-
-    /*!
-     * \brief operator extracts n-th value out of woindow function object buffer
-    */
-    inline __fx64 operator [] ( __ix32 n )
-    {
-        return m_buff[n];
-    }
-};
+}
 
 /*! @} */
 

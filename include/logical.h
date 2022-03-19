@@ -10,8 +10,8 @@
 #ifndef LOGICAL_H
 #define LOGICAL_H
 
-/*! \defgroup <DSP_TIMERS> ( Timers )
- *  \brief the module contains timers class
+/*! \defgroup <DSP_LOGICAL> ( Logical )
+ *  \brief the module contains DSP logical components
     @{
 */
 
