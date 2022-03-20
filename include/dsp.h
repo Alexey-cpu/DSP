@@ -3516,7 +3516,7 @@ namespace DSP
         // constructors and destructor:
         second_order_filter_abstract() : filter_abstract(){}
 
-        second_order_filter_abstract( __fx64 _Fs , __fx64 _Fn , __fx64 _Fc , __fx64 _Kd , filter_type _type )
+        second_order_filter_abstract(__fx64 _Fs , __fx64 _Fn , __fx64 _Fc , __fx64 _Kd , filter_type _type )
         {
             init( _Fs, _Fn, _Kd, _Fc, _type );
         }
@@ -3551,7 +3551,6 @@ namespace DSP
         @{
     */
 
-
     /*! \brief Child Butterworth IIR filter template class */
     template< typename __type > class butterworth ;
     /*! \brief Child Chebyshev type I IIR filter template class */
@@ -3568,16 +3567,19 @@ namespace DSP
     template< typename __type > class fcomb;
     /*! \brief Child combeq filter template class */
     template< typename __type > class fcombeq;
-
-    //----------------------------------------------------------------------------------------------------------------------
+    /*! \brief Child derivative transfer function */
     template< typename __type > class derivative;
+    /*! \brief Child aperiodic transfer function */
     template< typename __type > class aperiodic;
+    /*! \brief Child integrator transfer function */
     template< typename __type > class integrator;
+    /*! \brief Child leadlag transfer function */
     template< typename __type > class leadlag;
-    template< typename __type > class second_order_filter_type1;
-    //----------------------------------------------------------------------------------------------------------------------
+    /*! \brief Child second order filter transfer function */
+    template< typename __type > class second_order_filter;
 
     /*! @} */
+
 
     /*! \defgroup <DSPB_ImplementationIIR> (IIR filters implementation )
      *  \ingroup DSPB_Implementation
@@ -3927,6 +3929,117 @@ namespace DSP
     };
 
     /*! @} */
+
+
+    //------------------------------------------------------------------------------------------------------------------------------------------
+    template<> class derivative<__fx32> final : public derivative_abstract<__fx32>
+    {
+        typedef __fx32 __type;
+        derivative() : derivative_abstract(){}
+        derivative(__fx64 _Fs , __fx64 _Fn , __fx64 _Td ) : derivative_abstract( _Fs , _Fn , _Td ){}
+        ~derivative();
+
+        inline __type operator ()( __type  *input ) override
+        {
+            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 2, 1, m_bx, m_by );
+        }
+    };
+
+    template<> class derivative<__fx64> final : public derivative_abstract<__fx64>
+    {
+        typedef __fx64 __type;
+        derivative() : derivative_abstract(){}
+        derivative(__fx64 _Fs , __fx64 _Fn , __fx64 _Td )
+            : derivative_abstract( _Fs , _Fn , _Td ){}
+        ~derivative();
+
+        inline __type operator ()( __type *input ) override
+        {
+            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 2, 1, m_bx, m_by );
+        }
+    };
+
+    template<> class integrator<__fx32> final : public integrator_abstract<__fx32>
+    {
+        typedef __fx32 __type;
+        integrator() : integrator_abstract(){}
+        integrator(__fx64 _Fs , __fx64 _Fn ) : integrator_abstract( _Fs , _Fn ){}
+        ~integrator();
+
+        inline __type operator ()( __type  *input ) override
+        {
+            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 2, 1, m_bx, m_by );
+        }
+    };
+
+    template<> class integrator<__fx64> final : public integrator_abstract<__fx64>
+    {
+        typedef __fx64 __type;
+        integrator() : integrator_abstract(){}
+        integrator(__fx64 _Fs , __fx64 _Fn ) : integrator_abstract( _Fs , _Fn ){}
+        ~integrator();
+
+        inline __type operator ()( __type  *input ) override
+        {
+            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 2, 1, m_bx, m_by );
+        }
+    };
+
+    template<> class leadlag<__fx32> final : public leadlag_abstract<__fx32>
+    {
+        typedef __fx32 __type;
+        leadlag() : leadlag_abstract(){}
+        leadlag(__fx64 _Fs, __fx64 _Fn, __fx64 _T1, __fx64 _T2 ) : leadlag_abstract(_Fs, _Fn, _T1, _T2 ){}
+        ~leadlag();
+
+        inline __type operator ()( __type  *input ) override
+        {
+            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 2, 1, m_bx, m_by );
+        }
+    };
+
+    template<> class leadlag<__fx64> final : public leadlag_abstract<__fx64>
+    {
+        typedef __fx64 __type;
+        leadlag() : leadlag_abstract(){}
+        leadlag(__fx64 _Fs, __fx64 _Fn, __fx64 _T1, __fx64 _T2 ) : leadlag_abstract(_Fs, _Fn, _T1, _T2 ){}
+        ~leadlag();
+
+        inline __type operator ()( __type  *input ) override
+        {
+            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 2, 1, m_bx, m_by );
+        }
+    };
+
+    template<> class second_order_filter<__fx32> final : public second_order_filter_abstract<__fx32>
+    {
+        typedef __fx32 __type;
+        second_order_filter() : second_order_filter_abstract(){}
+        second_order_filter(__fx64 _Fs , __fx64 _Fn , __fx64 _Fc , __fx64 _Kd , filter_type _type)
+            : second_order_filter_abstract(_Fs , _Fn, _Fc, _Kd, _type ){}
+        ~second_order_filter();
+
+        inline __type operator ()( __type  *input ) override
+        {
+            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 3, 2, m_bx, m_by );
+        }
+    };
+
+    template<> class second_order_filter<__fx64> final : public second_order_filter_abstract<__fx64>
+    {
+        typedef __fx64 __type;
+        second_order_filter() : second_order_filter_abstract(){}
+        second_order_filter(__fx64 _Fs , __fx64 _Fn , __fx64 _Fc , __fx64 _Kd , filter_type _type)
+            : second_order_filter_abstract(_Fs , _Fn, _Fc, _Kd, _type ){}
+        ~second_order_filter();
+
+        inline __type operator ()( __type  *input ) override
+        {
+            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 3, 2, m_bx, m_by );
+        }
+    };
+    //------------------------------------------------------------------------------------------------------------------------------------------
+
 
     /*! @} */
 
