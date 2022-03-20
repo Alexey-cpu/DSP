@@ -17,6 +17,8 @@
     @{
 */
 
+#define DEBUG
+
 /*! \brief defines 32-bit floating point type */
 #ifndef __fx32
 #define __fx32 float
@@ -219,7 +221,27 @@ namespace DSP
         tsf *= (__fx64)gains[N];
 
         // output:
-        return fr{ __absf__<__fx64>( tsf ) , __argf__<__fx64>( tsf ) };
+        return fr{ __cabsf__<__fx64>( tsf ) , __cargf__<__fx64>( tsf ) };
+    }
+
+    template< typename __type > fr __freq_resp__
+    (
+            __type *_cfnum,
+            __type *_cfden,
+            __type  _gain,
+            __ix32 _N,
+            __fx64 _Fs,
+            __fx64 _F
+    )
+    {
+        fcomplex<__fx64> num(0,0), den(0,0), Wz (0,0);
+        for ( __ix32 i = 0; i <_N; i++)
+        {
+            num += fcomplex<__fx64>( cos(-PI2 * _F * (__fx64)i / _Fs) * _cfnum[i], sin(-PI2 * _F * (__fx64)i / _Fs) * _cfnum[i] );
+            den += fcomplex<__fx64>( cos(-PI2 * _F * (__fx64)i / _Fs) * _cfden[i], sin(-PI2 * _F * (__fx64)i / _Fs) * _cfden[i] );
+        }
+        Wz = num / den * (__fx64)_gain;
+        return { __cabsf__<__fx64>( Wz ) , __cargf__<__fx64>( Wz ) };
     }
 
     /*!
@@ -230,9 +252,15 @@ namespace DSP
      * \param[ F      ] input signal frequency
      * \return   The function computes FIR filter transfer function frequency response
     */
-    template< typename T > fr __freq_resp__(  T *cfbuff , __ix32 N , __fx64 Fs , __fx64 F )
+    template< typename __type > fr __freq_resp__
+    (
+            __type *cfbuff ,
+            __ix32 N ,
+            __fx64 Fs ,
+            __fx64 F
+    )
     {
-        T Re = 0 , Im = 0 , Ts = 1 / Fs;
+        __type Re = 0 , Im = 0 , Ts = 1 / Fs;
         for ( __ix32 i = 0; i < N; i++)
         {
             Re = Re + cos(-PI2 * i * F * Ts) * cfbuff[ i ];
@@ -304,7 +332,8 @@ namespace DSP
             __ix32 Nx ,
             __ix32 Ny ,
             delay<__type> &bx ,
-            delay<__type> &by )
+            delay<__type> &by
+    )
     {
         __type sum_num = 0 , sum_den = 0 , out = 0;
         bx( input );
@@ -1087,8 +1116,8 @@ namespace DSP
             fcomplex< __fx64 > b( -__realf__(plp[i]) * dW / w0 , -__imagf__(plp[i]) * dW / w0 );
             fcomplex< __fx64 > c( 1 , 0 );
             fcomplex< __fx64 > D = b * b - a * c * (__fx64)4;
-            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __sqrtf__( D ) ) / (__fx64)2 / a;
-            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __sqrtf__( D ) ) / (__fx64)2 / a;
+            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
+            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // zeros and poles bilinear transform:
             zbp[ j + 0 ] = fcomplex< __fx64 >( +1 , 0 );
@@ -1121,7 +1150,7 @@ namespace DSP
             fcomplex< __fx64 > gain3 = (fcomplex< __fx64 >(1,0) - p1)*(fcomplex< __fx64 >(1,0) - __conjf__(p1));
             fcomplex< __fx64 > gain4 = (fcomplex< __fx64 >(1,0) - p2)*(fcomplex< __fx64 >(1,0) - __conjf__(p2));
             fcomplex< __fx64 > gain5 = gain0 * gain1 * gain2 / gain3 / gain4 * dW * dW / w0 / w0;
-            gain5 = __sqrtf__( gain5 );
+            gain5 = __csqrtf__( gain5 );
             gains[j+0] = __realf__(gain5);
             gains[j+1] = __realf__(gain5);
         }
@@ -1134,8 +1163,8 @@ namespace DSP
             fcomplex< __fx64 > b( -__realf__(plp[ N - 1 ]) * dW / w0 , -__realf__(plp[ N - 1 ]) * dW / w0 );
             fcomplex< __fx64 > c( 1 , 0 );
             fcomplex< __fx64 > D = b * b - a * c * (__fx64)4;
-            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __sqrtf__( D ) ) / (__fx64)2 / a;
-            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __sqrtf__( D ) ) / (__fx64)2 / a;
+            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
+            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // zeros and poles bilinear transform:
             zbp[ j + 0 ] = fcomplex< __fx64 >( +1 , 0 );
@@ -1251,8 +1280,8 @@ namespace DSP
             fcomplex< __fx64 > b = fcomplex< __fx64 >( dW , 0 ) / plp[i] / w0;
             fcomplex< __fx64 > c = fcomplex< __fx64 >( -1 , 0 );
             fcomplex< __fx64 > D = b * b - a * c * (__fx64)4;
-            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __sqrtf__( D ) ) / (__fx64)2 / a;
-            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __sqrtf__( D ) ) / (__fx64)2 / a;
+            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
+            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // zeros and poles bilinear transform:
             zbs[ j + 0 ] = fcomplex< __fx64 >( +1 , 0 );
@@ -1285,7 +1314,7 @@ namespace DSP
             fcomplex< __fx64 > gain3 = (fcomplex< __fx64 >(1,0) - p1)*(fcomplex< __fx64 >(1,0) - __conjf__(p1));
             fcomplex< __fx64 > gain4 = (fcomplex< __fx64 >(1,0) - p2)*(fcomplex< __fx64 >(1,0) - __conjf__(p2));
             fcomplex< __fx64 > gain5 = gain0 * gain1 * gain2 / gain3 / gain4 / w0 / w0 * ( 1 + w0 ) * ( 1 + w0 );
-            gain5 = __sqrtf__( gain5 );
+            gain5 = __csqrtf__( gain5 );
             gains[j+0] = __realf__(gain5);
             gains[j+1] = gains[j+0];
         }
@@ -1298,8 +1327,8 @@ namespace DSP
             fcomplex< __fx64 > b = fcomplex< __fx64 >( dW , 0 ) / plp[N-1] / w0;
             fcomplex< __fx64 > c = fcomplex< __fx64 >( -1 , 0 );
             fcomplex< __fx64 > D = b * b - a * c * (__fx64)4;
-            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __sqrtf__( D ) ) / (__fx64)2 / a;
-            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __sqrtf__( D ) ) / (__fx64)2 / a;
+            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
+            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // zeros and poles bilinear transform:
             zbs[ j + 0 ] = fcomplex< __fx64 >( +1 , 0 );
@@ -1651,16 +1680,16 @@ namespace DSP
             b = zlp[i] * (__fx64)dW / (__fx64)w0 * (__fx64)(-1);
             c = 1;
             D = b * b - a * c * (__fx64)4;
-            z1 = ( b*(__fx64)(-1) - __sqrtf__( D ) ) / (__fx64)2 / a;
-            z2 = ( b*(__fx64)(-1) + __sqrtf__( D ) ) / (__fx64)2 / a;
+            z1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
+            z2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // poles frequency transformation by means of square equation solve:
             a = 1 / w0;
             b = plp[i] * (__fx64)dW / (__fx64)w0 * (__fx64)(-1);
             c = 1;
             D = b * b - a * c * (__fx64)4;
-            p1 = ( b*(__fx64)(-1) - __sqrtf__( D ) ) / (__fx64)2 / a;
-            p2 = ( b*(__fx64)(-1) + __sqrtf__( D ) ) / (__fx64)2 / a;
+            p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
+            p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // zeros and poles bilinear transform:
             zbp[ j + 0 ] = ( fcomplex< __fx64 >( 1 , 0 ) + z1 ) / ( fcomplex< __fx64 >( 1 , 0 ) - z1 );
@@ -1698,7 +1727,7 @@ namespace DSP
             fcomplex< __fx64 > gain8 = ( fcomplex< __fx64 >(1,0) - p2)*(fcomplex< __fx64 >(1,0) - __conjf__(p2) );
 
             fcomplex< __fx64 > gain9 = gain0 * gain1 * gain2 / ( gain3 * gain4 ) * ( gain5 * gain6 ) / ( gain7 * gain8 );
-            gain9 = __sqrtf__( gain9 );
+            gain9 = __csqrtf__( gain9 );
             gains[j+0] = __realf__(gain9);
             gains[j+1] = gains[j+0];
         }
@@ -1711,8 +1740,8 @@ namespace DSP
             fcomplex< __fx64 > b( -__realf__(plp[ N - 1 ]) * dW / w0 , -__realf__(plp[ N - 1 ]) * dW / w0 );
             fcomplex< __fx64 > c( 1 , 0 );
             fcomplex< __fx64 > D = b * b - a * c * (__fx64)4;
-            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __sqrtf__( D ) ) / (__fx64)2 / a;
-            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __sqrtf__( D ) ) / (__fx64)2 / a;
+            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
+            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // zeros and poles bilinear transform:
             zbp[ j + 0 ] = fcomplex< __fx64 >( +1 , 0 );
@@ -1832,16 +1861,16 @@ namespace DSP
             b = fcomplex< __fx64 >( 1 , 0 ) / zlp[i] * dW / w0;
             c = -1;
             D = b * b - a * c * (__fx64)4;
-            z1 = ( b*(__fx64)(-1) - __sqrtf__( D ) ) / (__fx64)2 / a;
-            z2 = ( b*(__fx64)(-1) + __sqrtf__( D ) ) / (__fx64)2 / a;
+            z1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
+            z2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // poles frequency transformation by means of square equation solve:
             a = -1 / w0;
             b = fcomplex< __fx64 >( 1 , 0 ) / plp[i] * dW / w0;
             c = -1;
             D = b * b - a * c * (__fx64)4;
-            p1 = ( b*(__fx64)(-1) - __sqrtf__( D ) ) / (__fx64)2 / a;
-            p2 = ( b*(__fx64)(-1) + __sqrtf__( D ) ) / (__fx64)2 / a;
+            p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
+            p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // zeros and poles bilinear transform:
             zbs[ j + 0 ] = ( fcomplex< __fx64 >( 1 , 0 ) + z1 ) / ( fcomplex< __fx64 >( 1 , 0 ) - z1 );
@@ -1877,7 +1906,7 @@ namespace DSP
             fcomplex< __fx64 > gain6 = ( fcomplex< __fx64 >(1,0) - p1)*(fcomplex< __fx64 >(1,0) - __conjf__(p1) );
             fcomplex< __fx64 > gain7 = ( fcomplex< __fx64 >(1,0) - p2)*(fcomplex< __fx64 >(1,0) - __conjf__(p2) );
             fcomplex< __fx64 > gain8 = ( gain0 * gain1 ) / ( gain2 * gain3 ) * ( gain4 * gain5 ) / ( gain6 * gain7 );
-            gain8 = __sqrtf__( gain8 );
+            gain8 = __csqrtf__( gain8 );
             gains[j+0] = __realf__(gain8);
             gains[j+1] = gains[j+0];
         }
@@ -1890,8 +1919,8 @@ namespace DSP
             fcomplex< __fx64 > b = fcomplex< __fx64 >( dW , 0 ) / plp[N-1] / w0;
             fcomplex< __fx64 > c = fcomplex< __fx64 >( -1 , 0 );
             fcomplex< __fx64 > D = b * b - a * c * (__fx64)4;
-            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __sqrtf__( D ) ) / (__fx64)2 / a;
-            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __sqrtf__( D ) ) / (__fx64)2 / a;
+            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
+            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // zeros and poles bilinear transform:
             zbs[ j + 0 ] = fcomplex< __fx64 >( +1 , 0 );
@@ -2326,11 +2355,36 @@ namespace DSP
         {
             // input / output buffers memory deallcoation:
             int N = m_cfmatrix.N;
-            if( m_buff_sx != nullptr ) { for( int i = 0 ; i < N ; i++ ) { m_buff_sx[i].deallocate(); } m_buff_sx = nullptr; }
-            if( m_buff_sy != nullptr ) { for( int i = 0 ; i < N ; i++ ) { m_buff_sy[i].deallocate(); } m_buff_sy = nullptr; }
+            if( m_buff_sx != nullptr )
+            {
+                for( int i = 0 ; i < N ; i++ )
+                {
+                    m_buff_sx[i].deallocate();
+                }
+                m_buff_sx = nullptr;
+            }
+
+            if( m_buff_sy != nullptr )
+            {
+                for( int i = 0 ; i < N ; i++ )
+                {
+                    m_buff_sy[i].deallocate();
+                }
+                m_buff_sy = nullptr;
+            }
 
             // filter coefficient matrix memory deallocation:
             m_cfmatrix = __cf_free__( m_cfmatrix );
+
+            #ifdef DEBUG
+                std::cout << "memory deallocation invocation" << "\n";
+                std::cout << "m_cfmatrix.cfnum cleand = " << !m_cfmatrix.cfnum << "\n";
+                std::cout << "m_cfmatrix.cfden cleand = " << !m_cfmatrix.cfden << "\n";
+                std::cout << "m_cfmatrix.gains cleand = " << !m_cfmatrix.gains << "\n";
+                std::cout << "m_buff_sx        cleand = " << !m_buff_sx        << "\n";
+                std::cout << "m_buff_sy        cleand = " << !m_buff_sy        << "\n";
+                std::cout << "\n";
+            #endif
 
             // return the result:
             return ( !m_cfmatrix.cfden && !m_cfmatrix.cfnum && !m_cfmatrix.gains && !m_buff_sx && !m_buff_sy );
@@ -2439,25 +2493,25 @@ namespace DSP
             switch ( m_filter_type )
             {
                 case filter_type::lowpass:
-                m_cfmatrix = __fir_wind_digital_lp__<__type>( m_Fs , m_bandwidth.Fc , m_order , m_scale , _window == nullptr ? Chebyshev(60, m_order) : _window );
+                m_cfmatrix = __fir_wind_digital_lp__<__type>( m_Fs , m_bandwidth.Fc , m_order , m_scale , _window );
                 break;
 
                 case filter_type::highpass:
-                m_cfmatrix = __fir_wind_digital_hp__<__type>( m_Fs , m_bandwidth.Fc , m_order , m_scale , _window == nullptr ? Chebyshev(60, m_order) : _window );
+                m_cfmatrix = __fir_wind_digital_hp__<__type>( m_Fs , m_bandwidth.Fc , m_order , m_scale , _window );
                 break;
 
                 case filter_type::bandpass:
-                m_cfmatrix = __fir_wind_digital_bp__<__type>( m_Fs , m_bandwidth.Fc , m_bandwidth.BW , m_order , m_scale , _window == nullptr ? Chebyshev(60, m_order) : _window );
+                m_cfmatrix = __fir_wind_digital_bp__<__type>( m_Fs , m_bandwidth.Fc , m_bandwidth.BW , m_order , m_scale , _window );
                 break;
 
                 case filter_type::bandstop:
-                m_cfmatrix = __fir_wind_digital_bs__<__type>( m_Fs , m_bandwidth.Fc , m_bandwidth.BW , m_order , m_scale , _window == nullptr ? Chebyshev(60, m_order) : _window );
+                m_cfmatrix = __fir_wind_digital_bs__<__type>( m_Fs , m_bandwidth.Fc , m_bandwidth.BW , m_order , m_scale , _window );
                 break;
             }
 
             if( m_cfmatrix.cfnum != nullptr )
             {
-                m_order = m_cfmatrix.N;
+                m_order  = m_cfmatrix.N;
                 m_coeffs = m_cfmatrix.cfnum;
                 return m_buff_sx.allocate( m_cfmatrix.N + 1 );
             }
@@ -2492,6 +2546,15 @@ namespace DSP
             // filter data memory deallocation:
             m_buff_sx.deallocate();
             m_cfmatrix = __cf_free__( m_cfmatrix );
+
+            #ifdef DEBUG
+                std::cout << "memory deallocation invocation" << "\n";
+                std::cout << "m_cfmatrix.cfnum cleand = " << !m_cfmatrix.cfnum << "\n";
+                std::cout << "m_cfmatrix.cfden cleand = " << !m_cfmatrix.cfden << "\n";
+                std::cout << "m_cfmatrix.gains cleand = " << !m_cfmatrix.gains << "\n";
+                std::cout << "\n";
+            #endif
+
             return ( !m_cfmatrix.cfnum && !m_cfmatrix.cfden );
         }
 
@@ -2557,9 +2620,10 @@ namespace DSP
         #endif
     };
 
-    //--------------------------------------------------------------------------------------------------------------------
-    // not implemented yet:
-    //--------------------------------------------------------------------------------------------------------------------
+    /*!
+     *  \class recursive_fir_abstract
+     *  \brief defines recursive Fourier FIR filter
+    */
     template< typename __type > class recursive_fir_abstract : public  filter_abstract
     {
     protected:
@@ -2611,6 +2675,8 @@ namespace DSP
             return { m_a , m_b , 0 , m_Fn };
         }
 
+       public:
+
         /*! \brief  recursive Fourier filter initialization function
          *  \param[Fn  ] - input signal nominal frequency  , Hz
          *  \param[Fs  ] - input signal sampling frequency , hz
@@ -2638,11 +2704,25 @@ namespace DSP
             allocate();
         }
 
+        recursive_fir_abstract() : filter_abstract() {}
+
+        recursive_fir_abstract(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum, __ix32 _order_multiplier = 1 )
+        {
+            init(_Fs, _Fn, _hnum, _order_multiplier);
+        }
+
+        virtual ~recursive_fir_abstract()
+        {
+            deallocate();
+        }
+
+        virtual inline harmonic operator ()(__type  *input ) = 0;
+
         /*! \brief recursive Fourier filter frequency response computation function
          *  \param[F] - input signal frequency , Hz
          *  \return The function computes phase and amplitude frequency response for the signal having frequency F
         */
-        fr freq_resp( __type F )
+        fr frequency_response( __fx64 F ) override
         {
             // complex frequency coeffs:
             __type Re1 = 0;
@@ -2650,7 +2730,6 @@ namespace DSP
             __type Re2 = 0;
             __type Im2 = 0;
             __type K = (__fx64)1 / (__fx64)m_order;
-            __type Km, pH;
 
             // transfer function:
             Re1 = 1 - cos( -PI2 * F * m_order * m_Ts );
@@ -2669,21 +2748,791 @@ namespace DSP
                             , atan2( Im1 , Re1 ) - atan2( Im2 , Re2 ) };
             }
         }
+    };
 
-        recursive_fir_abstract() : filter_abstract() {}
+    /*!
+     *  \class comb filter abstract class
+     *  \brief defines comb FIR filter
+    */
+    template < typename T > class fcomb_abstract : public  filter_abstract
+    {
+        typedef T __type ;
+    protected:
+        /*! \brief odd flag */
+        __ix32 m_odd;
+        /*! \brief filter output */
+        __fx64 m_out;
 
-        recursive_fir_abstract(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum, __ix32 _order_multiplier = 1 )
+        /*! \brief comb filter buffer */
+         delay< __type > m_bx;
+
+         /*!
+          *  \brief 32-bit floating point filtering function
+          *  \param[input] - pointer to the input signal samples buffer
+          *  \return The function returns filtering result
+         */
+         template< typename F > inline __type filt( F *input)
+         {
+             m_bx( input );
+             return ( m_out = (m_odd)? (__fx64)*input + (__fx64)m_bx[ m_order ] : (__fx64)*input - (__fx64)m_bx[ m_order ] );
+         }
+
+    public:
+
+        /*!
+         *  \brief comb filter initialization function
+         *  \param[Fs] - input signal sampling frequency
+         *  \param[Fn] - input signal nominal frequency
+        */
+        __ix32 init( __fx64 _Fs , __fx64 _Fn, __ix32 _odd )
         {
-            init(_Fs, _Fn, _hnum, _order_multiplier);
+            m_Fs      = _Fs;
+            m_Fn      = _Fn;
+            m_Ts      = 1 / m_Fs;
+            m_odd     = _odd;
+            m_order   = m_Fs / m_Fn / 2;
+            m_out     = 0;
+
+            // memory allocation:
+            allocate();
+
+            return 0;
         }
 
-        virtual ~recursive_fir_abstract()
+        /*! \brief memory allocation function */
+        __ix32 allocate() override
+        {
+            return m_bx.allocate( m_order + 1 );
+        }
+
+        /*! \brief memory deallocation function */
+        __ix32 deallocate() override
+        {
+            m_bx.deallocate();
+            return 0;
+        }
+
+        /*! \brief default constructor */
+        fcomb_abstract(){}
+
+        /*!
+         *  \brief initializinf constructor
+         *  \param[Fs] - input signal sampling frequency
+         *  \param[Fn] - input signal nominal frequency
+        */
+        fcomb_abstract( __fx64 _Fs , __fx64 _Fn, __ix32 _odd )
+        {
+            init( _Fs , _Fn, _odd );
+        }
+
+        /*! \brief default destructor */
+        virtual ~fcomb_abstract()
         {
             deallocate();
         }
 
+        /*! \brief frequency response computation function */
+        fr frequency_response( __fx64 F ) override
+        {
+            __fx64 Re = 0;
+            __fx64 Im = 0;
+            if(!m_odd)
+            {
+                Re = 1 - cos(-PI2  * m_order * F * m_Ts);
+                Im = 0 - sin(-PI2  * m_order * F * m_Ts);
+            }
+            else
+            {
+                Re = 1 + cos(-PI2  * m_order * F * m_Ts);
+                Im = 0 + sin(-PI2  * m_order * F * m_Ts);
+            }
+
+            return { sqrt(Re * Re + Im * Im) * 0.5 , atan2(Im, Re) };
+        }
+
+        /*!
+         *  \brief 32-bit floating point filtering operator
+         *  \param[input] - pointer to the input signal samples buffer
+         *  \return The operatoe calls the function that returns filtering result
+        */
+        virtual inline __type operator ()( __type *input ) = 0;
     };
-    //--------------------------------------------------------------------------------------------------------------------
+
+    /*!
+     *  \class equalized comb filter abstract class
+     *  \brief defines equalized comb FIR filter
+    */
+    template < typename __type > class fcombeq_abstract : public  filter_abstract
+    {
+    protected:
+
+        /*! \brief input signal frequency deviation from nominal for which the amplitude frequency response slope compensation is implemented , Hz */
+        __fx64 m_dF;
+        /*! \brief residual amplitude frequency response slope for the input signal frequency deviation dF from nominal , p.u. */
+        __fx64 m_d_Amp;
+        /*! \brief auxiliary coefficient K1 */
+        __fx64 m_K1;
+        /*! \brief auxiliary coefficient K2 */
+        __fx64 m_K2;
+        /*! \brief auxiliary coefficient ElemNum1 */
+        __ix32 m_ElemNum1;
+        /*! \brief auxiliary coefficient ElemNum2 */
+        __ix32 m_ElemNum2;
+        /*! \brief odd flag */
+        __ix32 m_odd;
+
+        /*! \brief comb filter buffer */
+         delay< __type > m_bx;
+
+         /*!
+          *  \brief 32-bit floating point filtering function
+          *  \param[input] - pointer to the input signal samples buffer
+          *  \return The function returns filtering result
+         */
+         template< typename F > inline __type filt( F *input )
+         {
+             m_bx(input);
+             return ( m_out = ( m_odd ) ? ( (__fx64)*input * m_K1 - (__fx64)m_bx[m_ElemNum1] - (__fx64)m_bx[m_ElemNum2] * m_K2 ) : ( (__fx64)*input * m_K1 + (__fx64)m_bx[m_ElemNum1] - (__fx64)m_bx[m_ElemNum2] * m_K2 ) );
+         }
+
+         /*! \brief filter output */
+         __fx64 m_out;
+
+    public:
+
+        /*!
+         *  \brief comb filter initialization function
+         *  \param[ Fs    ] - input signal sampling frequency
+         *  \param[ Fn    ] - input signal nominal frequency
+         *  \param[ dF    ] - input signal frequency deviation from nominal for which the amplitude frequency response slope compensation is implemented , Hz
+         *  \param[ d_Amp ] - residual amplitude frequency response slope for the input signal frequency deviation dF from nominal , p.u.
+        */
+        void init( __fx64 _Fs, __fx64 _Fn, __fx64 _dF, __fx64 _d_Amp, __ix32 _odd )
+        {
+            // system parameters:
+            m_Fs       = _Fs;
+            m_Fn       = _Fn;
+            m_dF       = _dF;
+            m_d_Amp	   = _d_Amp;
+            m_order    = m_Fs / m_Fn / 2;
+            m_ElemNum1 = 1 * m_order;
+            m_ElemNum2 = 2 * m_order;
+            m_Ts       = 1 / m_Fs;
+            m_out      = 0;
+            m_odd      = _odd;
+
+            // memory allocation function call:
+            allocate();
+        }
+
+        /*! \brief default constructor */
+        fcombeq_abstract() {}
+
+        /*!
+         *  \brief comb filter initialization function
+         *  \param[ Fs    ] - input signal sampling frequency
+         *  \param[ Fn    ] - input signal nominal frequency
+         *  \param[ dF    ] - input signal frequency deviation from nominal for which the amplitude frequency response slope compensation is implemented , Hz
+         *  \param[ d_Amp ] - residual amplitude frequency response slope for the input signal frequency deviation dF from nominal , p.u.
+        */
+        fcombeq_abstract( __fx64 _Fs, __fx64 _Fn, __fx64 _dF, __fx64 _d_Amp, __ix32 _odd )
+        {
+            init( _Fs , _Fn , _dF , _d_Amp , _odd );
+        }
+
+        /*! \brief default destructor */
+        virtual ~fcombeq_abstract()
+        {
+            deallocate();
+        }
+
+        /*! \brief memory allocation function */
+        __ix32 allocate() override
+        {
+            // auxiliary coefficients:
+            __fx64 A =  0.5 - 0.5 * cos(-PI2 * (m_Fn + m_dF) * (__fx64)m_order * m_Ts );
+            __fx64 B =  1.0 - cos(-PI2 * (m_Fn + m_dF) * (__fx64)m_order * 2.0 * m_Ts);
+            __fx64 C = -0.5 * sin(-PI2 * (m_Fn + m_dF) * (__fx64)m_order * m_Ts);
+            __fx64 D = -sin(-PI2 * (m_Fn + m_dF) * (__fx64)m_order * 2.0 * m_Ts);
+
+            // square equation coefficients:
+            __fx64 a  = 1;
+            __fx64 b  = 2 * ( A * B + C * D ) / (B * B + D * D);
+            __fx64 c  = (A * A + C * C - (1 + m_d_Amp / 100) * (1 + m_d_Amp / 100) ) / (B * B + D * D);
+
+            // square equation solve:
+            __fx64 discr  = b * b - 4 * a * c;
+            __fx64 K1     = 0;
+            __fx64 K2     = 0;
+
+            if ( discr > 0 ) // discriminant check
+            {
+                // roots computation:
+                K1 = ( -b - sqrt( discr ) ) * 0.5;
+                K2 = ( -b + sqrt( discr ) ) * 0.5;
+
+                // take the greates of the roots ( although, it does not matter which root you take... ):
+                m_K1 = (1 + fmax(K1 , K2) / 0.5);
+                m_K2 = fmax(K1, K2) / 0.5;
+            }
+            else // if discriminant is negative, then the amplitude frequency slope is not compensated
+            {
+                m_K1 = 1;
+                m_K2 = 0;
+            }
+
+            return m_bx.allocate( m_ElemNum2 + 1 );
+        }
+
+        /*! \brief memory deallocation function */
+        __ix32 deallocate() override
+        {
+            m_bx.deallocate();
+            return 0;
+        }
+
+        /*! \brief frequency response computation function */
+        fr frequency_response( __fx64 F ) override
+        {
+            __fx64 Re = 0;
+            __fx64 Im = 0;
+
+            if( !m_odd ) // even filter
+            {
+                Re = m_K1 - cos(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * cos(-PI2 * 2 * (__fx64)m_order * F * m_Ts);
+                Im = 0    - sin(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * sin(-PI2 * 2 * (__fx64)m_order * F * m_Ts);
+            }
+            else // odd filter
+            {
+                Re = m_K1 + cos(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * cos(-PI2 * 2 * (__fx64)m_order * F * m_Ts);
+                Im = 0    + sin(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * sin(-PI2 * 2 * (__fx64)m_order * F * m_Ts);
+            }
+
+            return { sqrt(Re * Re + Im * Im) , atan2(Im, Re) };
+        }
+
+        /*!
+         *  \brief 32-bit floating point filtering operator
+         *  \param[input] - pointer to the input signal samples buffer
+         *  \return The operatoe calls the function that returns filtering result
+        */
+        virtual inline __type operator ()( __type *input ) = 0;
+    };
+
+    template< typename __type > class derivative_abstract : public filter_abstract
+    {
+    protected:
+        __fx64 m_T1;
+        __type *m_cfnum;
+        __type *m_cfden;
+        __type  m_Gain;
+        delay<__type> m_bx;
+        delay<__type> m_by;
+
+        // initialization:
+        void init( __fx64 Fs , __fx64 Fn , __fx64 Td )
+        {
+            m_Fs = Fs;
+            m_Ts = 1 / Fs;
+            m_Fn = Fn;
+            m_T1 = Td;
+
+            // memory allocation function call:
+            allocate();
+        }
+
+        // memory allocation:
+        __ix32 allocate() override
+        {
+            // transfer function input/output and coefficicents buffers memory allocation:
+            m_cfnum = ( __type* )calloc( 2 , sizeof ( __type ) );
+            m_cfden = ( __type* )calloc( 2 , sizeof ( __type ) );
+            m_bx.allocate(3);
+            m_by.allocate(3);
+
+            // coefficients and gain computation:
+            m_Gain     = 2 / ( m_Ts * ( 1 + 2 * m_T1 / m_Ts ) );
+            m_cfnum[0] = +1;
+            m_cfnum[1] = -1;
+            m_cfden[0] = +1;
+            m_cfden[1] = (1 - 2 * m_T1 / m_Ts) / (1 + 2 * m_T1 / m_Ts);
+
+            return 0;
+        }
+
+        __ix32 deallocate() override
+        {
+            if(m_cfnum!=nullptr)
+            {
+                free(m_cfnum);
+                m_cfnum = nullptr;
+            }
+
+            if(m_cfden!=nullptr)
+            {
+                free(m_cfden);
+                m_cfden = nullptr;
+            }
+
+            m_bx.deallocate();
+            m_by.deallocate();
+
+            return 0;
+        }
+
+        /*!
+         *  \brief Frequency response computation function
+         *  \param[_F] input signal frequency, Hz
+        */
+        fr frequency_response(__fx64 _F ) override
+        {
+            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, m_Fs, _F );
+        }
+
+        // constructors and destructor:
+        derivative_abstract() : filter_abstract(){}
+
+        derivative_abstract( __fx64 Fs , __fx64 Fn , __fx64 Td )
+        {
+            init( Fs , Fn , Td );
+        };
+
+        ~derivative_abstract()
+        {
+            deallocate();
+        };
+
+        /*!
+         *  \brief 32-bit floating point filtering operator
+         *  \param[input] - pointer to the input signal samples buffer
+         *  \return The operatoe calls the function that returns filtering result
+        */
+        virtual inline __type operator ()( __type *input ) = 0;
+    };
+
+    template< typename __type > class aperiodic_abstract : public filter_abstract
+    {
+    protected:
+        __fx64 m_T1;
+        __type *m_cfnum;
+        __type *m_cfden;
+        __type  m_Gain;
+        delay<__type> m_bx;
+        delay<__type> m_by;
+
+        // initialization function:
+        void init( __fx64 Fs , __fx64 Fn , __fx64 Ta )
+        {
+            m_Fs = Fs;
+            m_Ts = 1 / Fs;
+            m_Fn = Fn;
+            m_T1 = Ta;
+
+            // memory allocation function call:
+            allocate();
+        }
+
+        // memory allocation function:
+        __ix32 allocate() override
+        {
+            // transfer function input/output and coefficicents buffers memory allocation:
+            m_cfnum = ( __type* )calloc( 2 , sizeof ( __type ) );
+            m_cfden = ( __type* )calloc( 2 , sizeof ( __type ) );
+            m_bx.allocate(3);
+            m_by.allocate(3);
+
+            // transfer function coefficients:
+            m_Gain     = 1 / (1 + 2 * m_T1 / m_Ts);
+            m_cfnum[0] = 1;
+            m_cfnum[1] = 1;
+            m_cfden[0] = 1;
+            m_cfden[1] = (1 - 2 * m_T1 / m_Ts) / (1 + 2 * m_T1 / m_Ts);
+            return 0;
+        }
+
+        __ix32 deallocate() override
+        {
+            if(m_cfnum!=nullptr)
+            {
+                free(m_cfnum);
+                m_cfnum = nullptr;
+            }
+
+            if(m_cfden!=nullptr)
+            {
+                free(m_cfden);
+                m_cfden = nullptr;
+            }
+
+            m_bx.deallocate();
+            m_by.deallocate();
+
+            return 0;
+        }
+
+        /*!
+         *  \brief Frequency response computation function
+         *  \param[_F] input signal frequency, Hz
+        */
+        fr frequency_response(__fx64 _F ) override
+        {
+            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, m_Fs, _F );
+        }
+
+        // constructors and destructors:
+        aperiodic_abstract() : filter_abstract(){}
+        aperiodic_abstract(__fx64 Fs , __fx64 Fn , __fx64 Ta )
+        {
+            init( Fs , Fn , Ta );
+        }
+
+        ~aperiodic_abstract()
+        {
+            deallocate();
+        };
+
+        /*!
+         *  \brief 32-bit floating point filtering operator
+         *  \param[input] - pointer to the input signal samples buffer
+         *  \return The operatoe calls the function that returns filtering result
+        */
+        virtual inline __type operator ()( __type *input ) = 0;
+    };
+
+    template< typename __type > class integrator_abstract : public filter_abstract
+    {
+    protected:
+
+        __fx64 m_T1;
+        __type *m_cfnum;
+        __type *m_cfden;
+        __type  m_Gain;
+        delay<__type> m_bx;
+        delay<__type> m_by;
+
+        // initialization function:
+        void init( __fx64 Fs , __fx64 Fn )
+        {
+            m_Fs = Fs;
+            m_Ts = 1 / Fs;
+            m_Fn = Fn;
+
+            // memory allocation function call:
+            allocate();
+        }
+
+        // memory allocation function:
+        __ix32 allocate() override
+        {
+            // transfer function input/output and coefficicents buffers memory allocation:
+            m_cfnum = ( __type* )calloc( 2 , sizeof ( __type ) );
+            m_cfden = ( __type* )calloc( 2 , sizeof ( __type ) );
+            m_bx.allocate(3);
+            m_by.allocate(3);
+
+            // transfer function coefficients:
+            m_Gain = 0.5 * m_Ts;
+            m_cfnum[0] = +1;
+            m_cfnum[1] = +1;
+            m_cfden[0] = +1;
+            m_cfden[1] = -1;
+            return 0;
+        }
+
+        // memory deallocation function:
+        __ix32 deallocate() override
+        {
+            if(m_cfnum!=nullptr)
+            {
+                free(m_cfnum);
+                m_cfnum = nullptr;
+            }
+
+            if(m_cfden!=nullptr)
+            {
+                free(m_cfden);
+                m_cfden = nullptr;
+            }
+
+            m_bx.deallocate();
+            m_by.deallocate();
+
+            return 0;
+        }
+
+        /*!
+         *  \brief Frequency response computation function
+         *  \param[_F] input signal frequency, Hz
+        */
+        fr frequency_response(__fx64 _F ) override
+        {
+            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, m_Fs, _F );
+        }
+
+        // constructors and destructor:
+        integrator_abstract() : filter_abstract(){}
+
+        integrator_abstract( __fx64 _Fs , __fx64 _Fn )
+        {
+            init(_Fs , _Fn ); allocate();
+        }
+
+        ~integrator_abstract()
+        {
+            deallocate();
+        };
+
+        /*!
+         *  \brief 32-bit floating point filtering operator
+         *  \param[input] - pointer to the input signal samples buffer
+         *  \return The operatoe calls the function that returns filtering result
+        */
+        virtual inline __type operator ()( __type *input ) = 0;
+    };
+
+    template< typename __type > class leadlag_abstract : public filter_abstract
+    {
+    protected:
+
+        __fx64 m_T1;
+        __fx64 m_T2;
+        __type *m_cfnum;
+        __type *m_cfden;
+        __type  m_Gain;
+        delay<__type> m_bx;
+        delay<__type> m_by;
+
+        // initialization function:
+        void init( __fx64 _Fs , __fx64 _Fn , __fx64 _T1 , __fx64 _T2 )
+        {
+            m_Fs = _Fs;
+            m_Ts = 1 / _Fs;
+            m_Fn = _Fn;
+            m_T1 = _T1;
+            m_T2 = _T2;
+
+            // memory allocation function call:
+            allocate();
+        }
+
+        // memory allocation function:
+        __ix32 allocate() override
+        {
+            // transfer function input/output and coefficicents buffers memory allocation:
+            m_cfnum = ( __type* )calloc( 2 , sizeof ( __type ) );
+            m_cfden = ( __type* )calloc( 2 , sizeof ( __type ) );
+            m_bx.allocate(3);
+            m_by.allocate(3);
+
+            // transfer function coefficients:
+            m_Gain     = (1 + 2 * m_T1 / m_Ts) / (1 + 2 * m_T2 / m_Ts);
+            m_cfnum[0] = 1;
+            m_cfnum[1] = (1 - 2 * m_T1 / m_Ts) / (1 + 2 * m_T1 / m_Ts);;
+            m_cfden[0] = 1;
+            m_cfden[1] = (1 - 2 * m_T2 / m_Ts) / (1 + 2 * m_T2 / m_Ts);
+            return 0;
+        }
+
+        // memory deallocation function:
+        __ix32 deallocate() override
+        {
+            if(m_cfnum!=nullptr)
+            {
+                free(m_cfnum);
+                m_cfnum = nullptr;
+            }
+
+            if(m_cfden!=nullptr)
+            {
+                free(m_cfden);
+                m_cfden = nullptr;
+            }
+
+            m_bx.deallocate();
+            m_by.deallocate();
+
+            return 0;
+        }
+
+        /*!
+         *  \brief Frequency response computation function
+         *  \param[_F] input signal frequency, Hz
+        */
+        fr frequency_response(__fx64 _F ) override
+        {
+            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, m_Fs, _F );
+        }
+
+        // constructors and destructor:
+        leadlag_abstract() : filter_abstract(){}
+
+        leadlag_abstract(__fx64 _Fs , __fx64 _Fn , __fx64 _T1 , __fx64 _T2 )
+        {
+            init( _Fs , _Fn , _T1 , _T2 );
+        }
+
+        ~leadlag_abstract()
+        {
+            deallocate();
+        };
+
+        /*!
+         *  \brief 32-bit floating point filtering operator
+         *  \param[input] - pointer to the input signal samples buffer
+         *  \return The operatoe calls the function that returns filtering result
+        */
+        virtual inline __type operator ()( __type *input ) = 0;
+    };
+
+    template< typename __type > class second_order_filter_abstract : public filter_abstract
+    {
+    protected:
+        __type       *m_cfnum;
+        __type       *m_cfden;
+        __type        m_Gain;
+        __type        m_Fc;
+        __type        m_Kd;
+        filter_type   m_type;
+        delay<__type> m_bx;
+        delay<__type> m_by;
+
+        __ix32 allocate() override
+        {
+            // transfer function input/output and coefficicents buffers memory allocation:
+            m_cfnum = ( __type* )calloc( 3 , sizeof ( __type ) );
+            m_cfden = ( __type* )calloc( 3 , sizeof ( __type ) );
+            m_bx.allocate(4);
+            m_by.allocate(4);
+
+            // auxiliary variables:
+            __fx64 omega = tan( ( PI2 * m_Fc ) * m_Ts / 2);
+            __fx64 a     = 1;
+            __fx64 b     = omega / m_Kd;
+            __fx64 c     = omega * omega;
+            __fx64 k1    = a + b + c;
+            __fx64 k2    = 2 * c - 2 * a;
+            __fx64 k3    = a - b + c;
+
+            switch ( m_type )
+            {
+                case filter_type::lowpass:
+                    m_Gain     = omega * omega / k1;
+                    m_cfnum[0] = 1;
+                    m_cfnum[1] = 2;
+                    m_cfnum[2] = 1;
+                    m_cfden[0] = 1;
+                    m_cfden[1] = k2 / k1;
+                    m_cfden[2] = k3 / k1;
+                break;
+
+                case filter_type::highpass:
+                    m_Gain     = 1 / k1;
+                    m_cfnum[0] = +1;
+                    m_cfnum[1] = -2;
+                    m_cfnum[2] = +1;
+                    m_cfden[0] = +1;
+                    m_cfden[1] = k2 / k1;
+                    m_cfden[2] = k3 / k1;
+                break;
+
+                case filter_type::bandpass:
+                    m_Gain     = omega / m_Kd / k1;;
+                    m_cfnum[0] = +1;
+                    m_cfnum[1] = -0;
+                    m_cfnum[2] = -1;
+                    m_cfden[0] = +1;
+                    m_cfden[1] = k2 / k1;
+                    m_cfden[2] = k3 / k1;
+                break;
+
+                case filter_type::bandstop:
+                    m_Gain     = 1 / k1;
+                    m_cfnum[0] = 1 + omega * omega;
+                    m_cfnum[1] = 2 * omega*omega - 2;
+                    m_cfnum[2] = 1 + omega * omega;
+                    m_cfden[0] = 1;
+                    m_cfden[1] = k2 / k1;
+                    m_cfden[2] = k3 / k1;
+                break;
+
+                default:
+                k1 = -cos(2 * PI0 * m_Fc * m_Ts);
+                k2 = (1 - tan(PI0 * m_Kd * m_Ts)) / (1 + tan(PI0 * m_Kd * m_Ts));
+                m_Gain     = 0.5 * (1 + k2);
+                m_cfnum[0] = 1;
+                m_cfnum[1] = 2 * k1;
+                m_cfnum[2] = 1;
+                m_cfden[0] = 1;
+                m_cfden[1] = k1 * (1 + k2);
+                m_cfden[2] = k2;
+                break;
+            }
+            return 0;
+        }
+
+        // memory deallocation function:
+        __ix32 deallocate() override
+        {
+            if(m_cfnum!=nullptr)
+            {
+                free(m_cfnum);
+                m_cfnum = nullptr;
+            }
+
+            if(m_cfden!=nullptr)
+            {
+                free(m_cfden);
+                m_cfden = nullptr;
+            }
+
+            m_bx.deallocate();
+            m_by.deallocate();
+
+            return 0;
+        }
+
+        /*!
+         *  \brief Frequency response computation function
+         *  \param[_F] input signal frequency, Hz
+        */
+        fr frequency_response(__fx64 _F ) override
+        {
+            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 3, m_Fs, _F );
+        }
+
+        void init( __fx64 _Fs , __fx64 _Fn , __fx64 _Fc , __fx64 _Kd , filter_type _type )
+        {
+            m_Fs   = _Fs;
+            m_Ts   = 1 / _Fs;
+            m_Fn   = _Fn;
+            m_Kd   = _Kd;
+            m_Fc   = _Fc;
+            m_type = _type;
+
+            // memory allocation function call:
+            allocate();
+        }
+
+        // constructors and destructor:
+        second_order_filter_abstract() : filter_abstract(){}
+
+        second_order_filter_abstract( __fx64 _Fs , __fx64 _Fn , __fx64 _Fc , __fx64 _Kd , filter_type _type )
+        {
+            init( _Fs, _Fn, _Kd, _Fc, _type );
+        }
+
+        ~second_order_filter_abstract()
+        {
+            deallocate();
+        }
+
+        /*!
+         *  \brief 32-bit floating point filtering operator
+         *  \param[input] - pointer to the input signal samples buffer
+         *  \return The operatoe calls the function that returns filtering result
+        */
+        virtual inline __type operator ()( __type *input ) = 0;
+    };
 
     /*! @} */
 
@@ -2693,6 +3542,15 @@ namespace DSP
      *  \brief The module contains implementations of Digital Signal Processing base models
         @{
     */
+
+
+    /*! \defgroup <DSPB_ImplementationContent> (Group of filters to implement within the DSP basics context )
+     *  \ingroup DSPB_Implementation
+     *  \brief The module contains the schedule of the filters that are implemented within the DSP basics
+     *         context
+        @{
+    */
+
 
     /*! \brief Child Butterworth IIR filter template class */
     template< typename __type > class butterworth ;
@@ -2706,50 +3564,26 @@ namespace DSP
     template< typename __type > class fir;
     /*! \brief Child recursive Fourier filter template class */
     template< typename __type > class recursive_fourier;
+    /*! \brief Child comb filter template class */
+    template< typename __type > class fcomb;
+    /*! \brief Child combeq filter template class */
+    template< typename __type > class fcombeq;
 
-    /*! \brief Child recursive Fourier filter 32-bit realization */
-    template<> class recursive_fourier<__fx32> : recursive_fir_abstract<__fx32>
-    {
-        typedef __fx32 __type;
-    public:
-        // construction / destruction:
-        recursive_fourier() : recursive_fir_abstract(){}
-        recursive_fourier(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum, __ix32 _order_multiplier = 1 )
-            : recursive_fir_abstract(_Fs, _Fn, _hnum, _order_multiplier){}
-        ~recursive_fourier(){}
+    //----------------------------------------------------------------------------------------------------------------------
+    template< typename __type > class derivative;
+    template< typename __type > class aperiodic;
+    template< typename __type > class integrator;
+    template< typename __type > class leadlag;
+    template< typename __type > class second_order_filter_type1;
+    //----------------------------------------------------------------------------------------------------------------------
 
-        // initialization:
-        void init(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum, __ix32 _order_multiplier = 1 )
-        {
-            recursive_fir_abstract::init(_Fs, _Fn, _hnum, _order_multiplier);
-        }
+    /*! @} */
 
-        // filtering
-        inline harmonic operator ()(__type  *input ){ return filt<__type> ( input ); }
-        inline harmonic operator ()(__fx64  *input ){ return filt<__fx64> ( input ); }
-        inline harmonic operator ()(__fxx64 *input ){ return filt<__fxx64>( input ); }
-    };
-
-    /*! \brief Child recursive Fourier filter 32-bit realization */
-    template<> class recursive_fourier<__fx64> : recursive_fir_abstract<__fx64>
-    {
-        typedef __fx64 __type;
-    public:
-        // construction / destruction:
-        recursive_fourier() : recursive_fir_abstract(){}
-        recursive_fourier(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum, __ix32 _order_multiplier = 1 )
-            : recursive_fir_abstract(_Fs, _Fn, _hnum, _order_multiplier){}
-        ~recursive_fourier(){}
-
-        // initialization:
-        void init(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum, __ix32 _order_multiplier = 1 ) { recursive_fir_abstract::init(_Fs, _Fn, _hnum, _order_multiplier); }
-
-        // filtering
-        inline harmonic operator ()(__type  *input ){ return filt<__type> ( input ); }
-        inline harmonic operator ()(__fxx64 *input ){ return filt<__fxx64>( input ); }
-    };
-
-    // IIR filters realizations:
+    /*! \defgroup <DSPB_ImplementationIIR> (IIR filters implementation )
+     *  \ingroup DSPB_Implementation
+     *  \brief The module contains IIR filters fimplementation
+        @{
+    */
 
     // butterworth filter 32-bit realization:
     template<> class butterworth< __fx32 > final : public classic_iir_abstract< __fx32 >
@@ -2940,6 +3774,14 @@ namespace DSP
         }
     };
 
+    /*! @} */
+
+    /*! \defgroup <DSPB_ImplementationFIR> (FIR filters implementation )
+     *  \ingroup DSPB_Implementation
+     *  \brief The module contains FIR filters fimplementation
+        @{
+    */
+
     // FIR filter 32-bit realization:
     template<> class fir< __fx32 > final : public classic_fir_abstract< __fx32 >
     {
@@ -2975,6 +3817,116 @@ namespace DSP
         inline void operator << ( __type*  _input ) override { m_buff_sx(_input ); }
         inline void operator << ( __fxx64* _input ) { m_buff_sx(_input ); }
     };
+
+    /*! @} */
+
+    /*! \defgroup <DSPB_ImplementationRecursiveFIR> (Recursive FIR filters implementation )
+     *  \ingroup DSPB_Implementation
+     *  \brief The module contains FIR filters fimplementation
+        @{
+    */
+
+    /*! \brief Child recursive Fourier filter 32-bit realization */
+    template<> class recursive_fourier<__fx32> final : public recursive_fir_abstract<__fx32>
+    {
+        typedef __fx32 __type;
+    public:
+        // construction / destruction:
+        recursive_fourier() : recursive_fir_abstract(){}
+        recursive_fourier(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum, __ix32 _order_multiplier = 1 )
+            : recursive_fir_abstract(_Fs, _Fn, _hnum, _order_multiplier){}
+        ~recursive_fourier(){}
+
+        // filtering
+        inline harmonic operator ()(__type  *input ) override { return filt<__type> ( input ); }
+        inline harmonic operator ()(__fx64  *input ){ return filt<__fx64> ( input ); }
+        inline harmonic operator ()(__fxx64 *input ){ return filt<__fxx64>( input ); }
+    };
+
+    /*! \brief Child recursive Fourier filter 32-bit realization */
+    template<> class recursive_fourier<__fx64> final : public recursive_fir_abstract<__fx64>
+    {
+        typedef __fx64 __type;
+    public:
+        // construction / destruction:
+        recursive_fourier() : recursive_fir_abstract(){}
+        recursive_fourier(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum, __ix32 _order_multiplier = 1 )
+            : recursive_fir_abstract(_Fs, _Fn, _hnum, _order_multiplier){}
+        ~recursive_fourier(){}
+
+        // filtering
+        inline harmonic operator ()(__type  *input ) override { return filt<__type> ( input ); }
+        inline harmonic operator ()(__fxx64 *input ){ return filt<__fxx64>( input ); }
+    };
+
+    /*! @} */
+
+    /*! \defgroup <DSPB_ImplementationComb> (Comb filters implementation )
+     *  \ingroup DSPB_Implementation
+     *  \brief The module contains Comb FIR filters fimplementation
+        @{
+    */
+
+    /*! \brief Child comb FIR filter 32-bit rea;ization */
+    template<> class fcomb<__fx32> final : public fcomb_abstract<__fx32>
+    {
+        typedef __fx32 __type;
+    public:
+        fcomb() : fcomb_abstract(){}
+        fcomb( __fx64 _Fs, __fx64 _Fn , __ix32 _odd ) : fcomb_abstract(_Fs, _Fn , _odd ){}
+        ~fcomb(){}
+
+        inline __type operator ()( __type  *input ) override { return filt<__type>(input); }
+        inline __type operator ()( __fx64  *input ) { return filt<__fx64 >(input); }
+        inline __type operator ()( __fxx64 *input ) { return filt<__fxx64>(input); }
+
+    };
+
+    /*! \brief Child comb FIR filter 64-bit realization */
+    template<> class fcomb<__fx64> final : public fcomb_abstract<__fx64>
+    {
+        typedef __fx64 __type;
+    public:
+        fcomb() : fcomb_abstract(){}
+        fcomb( __fx64 _Fs, __fx64 _Fn , __ix32 _odd ) : fcomb_abstract(_Fs, _Fn , _odd ){}
+        ~fcomb(){}
+
+        inline __type operator ()( __type  *input ) override { return filt<__type>(input); }
+        inline __type operator ()( __fxx64 *input ) { return filt<__fxx64>(input); }
+
+    };
+
+    /*! \brief Child equilized comb FIR filter 32-bit realization */
+    template<> class fcombeq<__fx32> final : public fcombeq_abstract<__fx32>
+    {
+        typedef __fx32 __type;
+    public:
+        fcombeq() : fcombeq_abstract(){}
+        fcombeq( __fx64 _Fs, __fx64 _Fn, __fx64 _dF, __fx64 _d_Amp, __ix32 _odd )
+            : fcombeq_abstract(_Fs, _Fn, _dF, _d_Amp, _odd ){}
+        ~fcombeq(){}
+
+        inline __type operator ()( __type  *input ) override { return filt<__type>(input); }
+        inline __type operator ()( __fx64  *input ) { return filt<__fx64 >(input); }
+        inline __type operator ()( __fxx64 *input ) { return filt<__fxx64>(input); }
+
+    };
+
+    /*! \brief Child equilized comb FIR filter 64-bit realization */
+    template<> class fcombeq<__fx64> final : public fcombeq_abstract<__fx64>
+    {
+        typedef __fx64 __type;
+    public:
+        fcombeq() : fcombeq_abstract(){}
+        fcombeq( __fx64 _Fs, __fx64 _Fn, __fx64 _dF, __fx64 _d_Amp, __ix32 _odd )
+            : fcombeq_abstract(_Fs, _Fn, _dF, _d_Amp, _odd ){}
+        ~fcombeq(){}
+
+        inline __type operator ()( __type  *input ) override { return filt<__type>(input); }
+        inline __type operator ()( __fxx64 *input ) { return filt<__fxx64>(input); }
+    };
+
+    /*! @} */
 
     /*! @} */
 

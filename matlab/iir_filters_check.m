@@ -20,8 +20,10 @@ tt      = TEXTFILE_TO_MATFILE ( "tt.txt"        , logs );
 %plot( ff , cheb1_km  );
 %plot( ff , cheb2_km  );
 %plot( ff , ellip_km  );
-plot( ff , cheb1_km , ff , cheb2_km , ff , buttf_km , ff , ellip_km );
-%plot( tt , cheb1_y )
+%plot( ff , cheb1_km , ff , cheb2_km , ff , buttf_km , ff , ellip_km );
+
+%plot( ff , cheb1_km , ff , cheb2_km , ff , buttf_km , ff , ellip_km );
+plot( tt , cheb1_y )
 %plot( tt , cheb2_y )
 %plot( tt , buttf_y )
 %plot( tt , ellip_y )

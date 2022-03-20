@@ -283,7 +283,7 @@ bool __cle__(const __type _c1[2], const  __type _c2[2] )
     return __cabs__(_c1) <= __cabs__(_c2);
 }
 
-template<typename __type> class fcomplex
+template<typename __type = __fx32> class fcomplex
 {
     __type m_data[2]{};
 public:
@@ -458,8 +458,8 @@ public:
     // friend scalar functions:
     template<typename T> friend T __realf__(fcomplex<T> _complex );
     template<typename T> friend T __imagf__(fcomplex<T> _complex );
-    template<typename T> friend T __absf__ (fcomplex<T> _complex );
-    template<typename T> friend T __argf__ (fcomplex<T> _complex );
+    template<typename T> friend T __cabsf__ (fcomplex<T> _complex );
+    template<typename T> friend T __cargf__ (fcomplex<T> _complex );
 };
 
 template<typename __type> __type
@@ -483,7 +483,7 @@ __imagf__(fcomplex<__type> _complex )
 * \f]
 */
 template<typename __type>
-__type __absf__(fcomplex<__type> _complex )
+__type __cabsf__(fcomplex<__type> _complex )
 {
     return __cabs__<__type>(_complex.m_data );
 }
@@ -497,7 +497,7 @@ __type __absf__(fcomplex<__type> _complex )
 * \f]
 */
 template<typename __type>
-__type __argf__( fcomplex<__type> _complex )
+__type __cargf__( fcomplex<__type> _complex )
 {
     return __carg__<__type>(_complex.m_data );
 }
@@ -511,10 +511,10 @@ __type __argf__( fcomplex<__type> _complex )
 * \f]
 */
 template<typename __type> fcomplex<__type>
-__sqrtf__(fcomplex<__type> _complex )
+__csqrtf__(fcomplex<__type> _complex )
 {
-    __type abs = __absf__(_complex );
-    __type arg = __argf__(_complex );
+    __type abs = __cabsf__(_complex );
+    __type arg = __cargf__(_complex );
     return fcomplex<__type>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
 }
 
@@ -542,9 +542,9 @@ __conjf__( fcomplex<__type> _complex )
 * \f]
 */
 template<typename __type> fcomplex<__type>
-__normf__( fcomplex<__type> _complex )
+__cnormf__( fcomplex<__type> _complex )
 {
-    return fcomplex<__type>( _complex / __absf__( _complex ) );
+    return fcomplex<__type>( _complex / __cabsf__( _complex ) );
 }
 
 /*!
@@ -562,7 +562,7 @@ __normf__( fcomplex<__type> _complex )
 * \f]
 */
 template<typename __type> fcomplex<__type>
-__rotf__(__fx64 _arg, bool _mode )
+__crotf__(__fx64 _arg, bool _mode )
 {
     if(_mode ) { _arg = __TO_RADIANS( _arg ); }
     return fcomplex<__type>( cos(_arg) , sin(_arg) );

@@ -147,7 +147,7 @@ int example1()
 
     printf( "z0 * z1          = %.4f \t %.4f \n" , __realf__( z0 * z1 )                   , __imagf__( z0 * z1 )                   );
     printf( "z0 / z1          = %.4f \t %.4f \n" , __realf__( z0 / z1 )                   , __imagf__( z0 / z1 )                   );
-    printf( "sqrt( z0 )       = %.4f \t %.4f \n" , __realf__( __sqrtf__(z0))              , __imagf__( __sqrtf__(z0) )             );
+    printf( "sqrt( z0 )       = %.4f \t %.4f \n" , __realf__( __csqrtf__(z0))              , __imagf__( __csqrtf__(z0) )             );
     printf( "z0 + z1 + z2     = %.4f \t %.4f \n" , __realf__( z0 + z1 + z2 )              , __imagf__( z0 + z1 + z2  )             );
     printf( "z0 - z1 - z2     = %.4f \t %.4f \n" , __realf__( z0 - z1 - z2 )              , __imagf__( z0 - z1 - z2  )             );
     printf( "z0 * z1 / z2     = %.4f \t %.4f \n" , __realf__( z0 * z1 / z2 )              , __imagf__( z0 * z1 / z2  )             );
@@ -163,13 +163,13 @@ int example1()
     printf( " tanh( z0 )       = %.4f \t %.4f \n" , __realf__( __tanhf__(z0) ) , __imagf__( __tanhf__(z0) ) );
     printf( " ctnh( z0 )       = %.4f \t %.4f \n" , __realf__( __ctnhf__(z0) ) , __imagf__( __ctnhf__(z0) ) );
     printf( " conj( z0 )       = %.4f \t %.4f \n" , __realf__( __conjf__(z0) ) , __imagf__( __conjf__(z0) ) );
-    printf( " norm( z0 )       = %.4f \t %.4f \n" , __realf__( __normf__(z0) ) , __imagf__( __normf__(z0) ) );
-    z0 *=__rotf__<double>( 60.0 , 1); printf( " z0*rot( 60 , 1 ) = %.4f \t %.4f \n" , __realf__( z0 ) , __imagf__( z0 ) );
+    printf( " norm( z0 )       = %.4f \t %.4f \n" , __realf__( __cnormf__(z0) ) , __imagf__( __cnormf__(z0) ) );
+    z0 *=__crotf__<double>( 60.0 , 1); printf( " z0*rot( 60 , 1 ) = %.4f \t %.4f \n" , __realf__( z0 ) , __imagf__( z0 ) );
     printf( "\n\n");
 
     printf( " scalar functions : \n" );
-    printf( " abs( z0 )  = %.4f \n" , __absf__<double>(z0) );
-    printf( " arg( z0 )  = %.4f \n" , __argf__<double>(z0) * 180.0 / 3.1415926535897932384626433832795);
+    printf( " abs( z0 )  = %.4f \n" , __cabsf__<double>(z0) );
+    printf( " arg( z0 )  = %.4f \n" , __cargf__<double>(z0) * 180.0 / 3.1415926535897932384626433832795);
 
 
     return 0;
@@ -192,7 +192,7 @@ int example2()
     int    CycleWidth        = 5;
     int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
     int    frames_per_cycle  = CycleWidth * Fs / 1000;
-    int    flt_type          = 3; // ( 0 - lowpass 1 , 1 - highpass 2 , 2 - bandpass , 3 - bandstop )
+    int    flt_type          = 0; // ( 0 - lowpass 1 , 1 - highpass 2 , 2 - bandpass , 3 - bandstop )
 
     // logs directory:
     std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
@@ -242,31 +242,31 @@ int example2()
     switch ( flt_type )
     {
         case 0: // lowpass
-            cheb1.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , -1 } , { 1  , -1 } );
-            cheb2.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , -1 } , { 80 , -1 } );
-            buttf.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , -1 } , { 1  , -1 } );
-            ellip.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , -1 } , { 80 , +1 } );
+            cheb1.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , 100 } , { 1  , 1 } );
+            cheb2.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , 100 } , { 80 , 1 } );
+            buttf.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , 100 } , { 1  , 1 } );
+            ellip.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , 100 } , { 80 , 1 } );
         break;
 
         case 1: // highpass
-            cheb1.init( Fs , 8 , DSP::filter_type::highpass , { 100 , -1 } , { 1  , -1 } );
-            cheb2.init( Fs , 8 , DSP::filter_type::highpass , { 100 , -1 } , { 80 , -1 } );
-            buttf.init( Fs , 8 , DSP::filter_type::highpass , { 100 , -1 } , { 1  , -1 } );
-            ellip.init( Fs , 8 , DSP::filter_type::highpass , { 100 , -1 } , { 80 , +1 } );
+            cheb1.init( Fs , 8 , DSP::filter_type::highpass , { 100 , 100 } , { 1  , 1 } );
+            cheb2.init( Fs , 8 , DSP::filter_type::highpass , { 100 , 100 } , { 80 , 1 } );
+            buttf.init( Fs , 8 , DSP::filter_type::highpass , { 100 , 100 } , { 1  , 1 } );
+            ellip.init( Fs , 8 , DSP::filter_type::highpass , { 100 , 100 } , { 80 , 1 } );
         break;
 
         case 2: // bandpass
-            cheb1.init( Fs , 8 , DSP::filter_type::bandpass , { 100 , 100 } , { 1  , -1 } );
-            cheb2.init( Fs , 8 , DSP::filter_type::bandpass , { 100 , 100 } , { 80 , -1 } );
-            buttf.init( Fs , 8 , DSP::filter_type::bandpass , { 100 , 100 } , { 1  , -1 } );
-            ellip.init( Fs , 8 , DSP::filter_type::bandpass , { 100 , 100 } , { 80 , +1 } );
+            cheb1.init( Fs , 8 , DSP::filter_type::bandpass , { 100 , 100 } , { 1  , 1 } );
+            cheb2.init( Fs , 8 , DSP::filter_type::bandpass , { 100 , 100 } , { 80 , 1 } );
+            buttf.init( Fs , 8 , DSP::filter_type::bandpass , { 100 , 100 } , { 1  , 1 } );
+            ellip.init( Fs , 8 , DSP::filter_type::bandpass , { 100 , 100 } , { 80 , 1 } );
         break;
 
         case 3: // bandstop
-            cheb1.init( Fs , 8 , DSP::filter_type::bandstop , { 100 , 100 } , { 1  , -1 } );
-            cheb2.init( Fs , 8 , DSP::filter_type::bandstop , { 100 , 100 } , { 80 , -1 } );
-            buttf.init( Fs , 8 , DSP::filter_type::bandstop , { 100 , 100 } , { 1  , -1 } );
-            ellip.init( Fs , 8 , DSP::filter_type::bandstop , { 100 , 100 } , { 80 , +1 } );
+            cheb1.init( Fs , 8 , DSP::filter_type::bandstop , { 100 , 100 } , { 1  , 1 } );
+            cheb2.init( Fs , 8 , DSP::filter_type::bandstop , { 100 , 100 } , { 80 , 1 } );
+            buttf.init( Fs , 8 , DSP::filter_type::bandstop , { 100 , 100 } , { 1  , 1 } );
+            ellip.init( Fs , 8 , DSP::filter_type::bandstop , { 100 , 100 } , { 80 , 1 } );
         break;
 
     }
@@ -331,16 +331,8 @@ int example2()
     cheb2_ph.close();
     buttf_ph.close();
     ellip_ph.close();
-    ff.close();
-
-
-    tt     .close();
-
-    // memory deallocation:
-    cheb1 .deallocate();
-    cheb2 .deallocate();
-    buttf .deallocate();
-    ellip .deallocate();
+    ff      .close();
+    tt      .close();
 
     return 0;
 }
@@ -380,40 +372,59 @@ int example3()
     std::ofstream bp_ph;
     std::ofstream bs_km;
     std::ofstream bs_ph;
+    std::ofstream rdft_re;
+    std::ofstream rdft_im;
+    std::ofstream rdft_km;
+    std::ofstream rdft_ph;
+    std::ofstream rdft_abs;
     std::ofstream ff;
     std::ofstream tt;
 
     // opening files:
-    yt   .open( directory + "\\yt.txt"    );
-    lp_yt.open( directory + "\\lp_yt.txt" );
-    hp_yt.open( directory + "\\hp_yt.txt" );
-    bp_yt.open( directory + "\\bp_yt.txt" );
-    bs_yt.open( directory + "\\bs_yt.txt" );
-    yt   .open( directory + "\\yt.txt"    );
-    lp_km.open( directory + "\\lp_km.txt" );
-    lp_ph.open( directory + "\\lp_ph.txt" );
-    hp_km.open( directory + "\\hp_km.txt" );
-    hp_ph.open( directory + "\\hp_ph.txt" );
-    bp_km.open( directory + "\\bp_km.txt" );
-    bp_ph.open( directory + "\\bp_ph.txt" );
-    bs_km.open( directory + "\\bs_km.txt" );
-    bs_ph.open( directory + "\\bs_ph.txt" );
-    tt   .open( directory + "\\tt.txt"    );
-    tt   .open( directory + "\\ff.txt"    );
+    yt   .open  ( directory + "\\yt.txt"      );
+    lp_yt.open  ( directory + "\\lp_yt.txt"   );
+    hp_yt.open  ( directory + "\\hp_yt.txt"   );
+    bp_yt.open  ( directory + "\\bp_yt.txt"   );
+    bs_yt.open  ( directory + "\\bs_yt.txt"   );
+    yt   .open  ( directory + "\\yt.txt"      );
+    lp_km.open  ( directory + "\\lp_km.txt"   );
+    lp_ph.open  ( directory + "\\lp_ph.txt"   );
+    hp_km.open  ( directory + "\\hp_km.txt"   );
+    hp_ph.open  ( directory + "\\hp_ph.txt"   );
+    bp_km.open  ( directory + "\\bp_km.txt"   );
+    bp_ph.open  ( directory + "\\bp_ph.txt"   );
+    bs_km.open  ( directory + "\\bs_km.txt"   );
+    bs_ph.open  ( directory + "\\bs_ph.txt"   );
+    rdft_km.open( directory + "\\rdft_km.txt" );
+    rdft_ph.open( directory + "\\rdft_ph.txt" );
+    rdft_re.open( directory + "\\rdft_re.txt" );
+    rdft_im.open( directory + "\\rdft_im.txt" );
+    rdft_abs.open( directory + "\\rdft_abs.txt" );
+    tt   .open  ( directory + "\\tt.txt"      );
+    ff   .open  ( directory + "\\ff.txt"      );
 
     // signal generator:
     sgen< __gen_type > gen;
 
     // filter configuration:
+    DSP::fir              < __flt_type > lp_flt;
+    DSP::fir              < __flt_type > hp_flt;
+    DSP::fir              < __flt_type > bp_flt;
+    DSP::fir              < __flt_type > bs_flt;
+    DSP::recursive_fourier< __flt_type > rdft;
+
+    // allocating window function:
     int order = 80;
-    DSP::fir< __flt_type > lp_flt;
-    DSP::fir< __flt_type > hp_flt;
-    DSP::fir< __flt_type > bp_flt;
-    DSP::fir< __flt_type > bs_flt;
-    lp_flt.init(Fs , order , DSP::filter_type::lowpass  , { 100 , 500 } , Chebyshev(60, order) , true );
-    hp_flt.init(Fs , order , DSP::filter_type::highpass , { 100 , 500 } , Chebyshev(60, order) , true );
-    bp_flt.init(Fs , order , DSP::filter_type::bandpass , { 100 , 500 } , Chebyshev(60, order) , true );
-    bs_flt.init(Fs , order , DSP::filter_type::bandstop , { 100 , 500 } , Chebyshev(60, order) , true );
+    __fx64 *window = Chebyshev(60, order);
+
+    // allocating filters:
+    lp_flt.init(Fs , order , DSP::filter_type::lowpass  , { 100 , 500 } , window , true );
+    hp_flt.init(Fs , order , DSP::filter_type::highpass , { 100 , 500 } , window , true );
+    bp_flt.init(Fs , order , DSP::filter_type::bandpass , { 100 , 500 } , window , true );
+    bs_flt.init(Fs , order , DSP::filter_type::bandstop , { 100 , 500 } , window , true );
+
+    // recursive Fourier filter allocation:
+    rdft.init(Fs, 50 , 1 , 1);
 
     // emulation:
     for( int i = 0 ; i < cycles_num ; i++ )
@@ -428,14 +439,18 @@ int example3()
             double yt2 = hp_flt( &gen.m_out );
             double yt3 = bp_flt( &gen.m_out );
             double yt4 = bs_flt( &gen.m_out );
+            DSP::harmonic v = rdft( &gen.m_out );
 
             // store signal and filter output:
-            lp_yt << yt1       << "\n";
-            hp_yt << yt2       << "\n";
-            bp_yt << yt3       << "\n";
-            bs_yt << yt4       << "\n";
-            yt    << gen.m_out << "\n";
-            tt    << time      << "\n";
+            lp_yt   << yt1       << "\n";
+            hp_yt   << yt2       << "\n";
+            bp_yt   << yt3       << "\n";
+            bs_yt   << yt4       << "\n";
+            rdft_re << v.re      << "\n";
+            rdft_im << v.im      << "\n";
+            rdft_abs << sqrt( v.re*v.re + v.im*v.im )      << "\n";
+            yt      << gen.m_out << "\n";
+            tt      << time      << "\n";
 
             // time increment:
             time += 1 / Fs;
@@ -450,41 +465,45 @@ int example3()
         DSP::fr fr2 = hp_flt.frequency_response(i);
         DSP::fr fr3 = bp_flt.frequency_response(i);
         DSP::fr fr4 = bs_flt.frequency_response(i);
+        DSP::fr fr5 = rdft  .frequency_response(i);
 
         // frequency response recording:
-        lp_km << fr1.Km << "\n";
-        lp_ph << fr1.pH << "\n";
-        hp_km << fr2.Km << "\n";
-        hp_ph << fr2.pH << "\n";
-        bp_km << fr3.Km << "\n";
-        bp_ph << fr3.pH << "\n";
-        bs_km << fr4.Km << "\n";
-        bs_ph << fr4.pH << "\n";
+        lp_km   << fr1.Km << "\n";
+        lp_ph   << fr1.pH << "\n";
+        hp_km   << fr2.Km << "\n";
+        hp_ph   << fr2.pH << "\n";
+        bp_km   << fr3.Km << "\n";
+        bp_ph   << fr3.pH << "\n";
+        bs_km   << fr4.Km << "\n";
+        bs_ph   << fr4.pH << "\n";
+        rdft_km << fr5.Km << "\n";
+        rdft_ph << fr5.pH << "\n";
     }
 
     // close files:
-    yt   .close();
-    lp_yt.close();
-    hp_yt.close();
-    bp_yt.close();
-    bs_yt.close();
-    yt   .close();
-    lp_km.close();
-    lp_ph.close();
-    hp_km.close();
-    hp_ph.close();
-    bp_km.close();
-    bp_ph.close();
-    bs_km.close();
-    bs_ph.close();
-    tt   .close();
-    tt   .close();
+    yt     .close();
+    lp_yt  .close();
+    hp_yt  .close();
+    bp_yt  .close();
+    bs_yt  .close();
+    yt     .close();
+    lp_km  .close();
+    lp_ph  .close();
+    hp_km  .close();
+    hp_ph  .close();
+    bp_km  .close();
+    bp_ph  .close();
+    bs_km  .close();
+    bs_ph  .close();
+    rdft_re.close();
+    rdft_im.close();
+    rdft_km.close();
+    rdft_ph.close();
+    tt     .close();
+    rdft_abs.close();
 
     // memory deallocation:
-    lp_flt.deallocate();
-    hp_flt.deallocate();
-    bp_flt.deallocate();
-    bs_flt.deallocate();
+    free(window);
 
     return 0;
 }
