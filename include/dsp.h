@@ -101,7 +101,8 @@ namespace DSP
         lowpass,
         highpass,
         bandpass,
-        bandstop
+        bandstop,
+        other
     };
 
     /*!
@@ -167,63 +168,82 @@ namespace DSP
      * \param[ cfmatrix ] IIR filter quadratic sections coefficiets matrix data structure
      * \return The function cleans the memory of IIR filter quadratic sections coefficiets matrix
     */
-    template<typename __type> cf<__type> __cf_free__( cf<__type> cfmatrix )
+    template<typename __type> cf<__type> __cf_free__( cf<__type> _cfmatrix )
     {
-        if( cfmatrix.cfden != nullptr ) free( cfmatrix.cfden );
-        if( cfmatrix.cfnum != nullptr ) free( cfmatrix.cfnum );
-        if( cfmatrix.gains != nullptr ) free( cfmatrix.gains );
+        if( _cfmatrix.cfden != nullptr ) free( _cfmatrix.cfden );
+        if( _cfmatrix.cfnum != nullptr ) free( _cfmatrix.cfnum );
+        if( _cfmatrix.gains != nullptr ) free( _cfmatrix.gains );
         return { nullptr , nullptr , nullptr , -1 , -1 , -1 };
     }
 
     /*!
-     * \brief Frequency response computation function
+     * \brief Biquadratic form IIR filter frequency response computation function
+     * \param[ _cfnum ] IIR filter numerator quadratic sections coefficients matrix
+     * \param[ _cfden ] IIR filter denominator quadratic sections coefficients matrix
+     * \param[ _gains ] IIR filter quadratic sections gains vector
+     * \param[ _N     ] IIR filter filter order
+     * \param[ _Fs    ] sampling frequency, Hz
+     * \param[ _F     ] input signal frequency, Hz
+     * \return The function computes IIR filter transfer function frequency response:
+     * \f[
+     *      W(j*2*\pi*f) = \prod_{i=0}^N \frac{ a_{0i} + a_{1i} * e^{-j*2*\pi*f*Ts} + a_{2i} * e^{-j*4*\pi*f*Ts} }
+     *                                        { b_{0i} + b_{1i} * e^{-j*2*\pi*f*Ts} + b_{2i} * e^{-j*4*\pi*f*Ts} }
+     * \f]
+    */
+    template<typename __type> fr __freq_resp__
+    (
+            __type *_cfnum ,
+            __type *_cfden ,
+            __type *_gains ,
+            __ix32 _N ,
+            __fx64 _Fs ,
+            __fx64 _F
+    )
+    {
+        // check the input:
+        if( !_cfnum || !_cfden || !_gains ) return { -1 , -1 };
+
+        // sampling period:
+        __fx64 Ts = 1 / _Fs;
+
+        // transfer function initialization:
+        fcomplex< __fx64 > tsf = fcomplex< __fx64 >( 1, 0 );
+
+        for( __ix32 i = 0 ; i < _N ; i++ )
+        {
+            // fcomplex exponents:
+            fcomplex< __fx64 > z0 = fcomplex<__fx64>( cos( -PI2 * _F * Ts * 0 ) , sin( -PI2 * _F * Ts * 0 ) );
+            fcomplex< __fx64 > z1 = fcomplex<__fx64>( cos( -PI2 * _F * Ts * 1 ) , sin( -PI2 * _F * Ts * 1 ) );
+            fcomplex< __fx64 > z2 = fcomplex<__fx64>( cos( -PI2 * _F * Ts * 2 ) , sin( -PI2 * _F * Ts * 2 ) );
+
+            // transfer function:
+            fcomplex< __fx64 > num =  z0 * (__fx64)_cfnum[ 3 * i + 0 ] + z1 * (__fx64)_cfnum[ 3 * i + 1 ] + z2 * (__fx64)_cfnum[ 3 * i + 2 ];
+            fcomplex< __fx64 > den =  z0 * (__fx64)_cfden[ 3 * i + 0 ] + z1 * (__fx64)_cfden[ 3 * i + 1 ] + z2 * (__fx64)_cfden[ 3 * i + 2 ];
+            tsf *= num / den * (__fx64)_gains[i];
+        }
+
+        // multiply by an output gain:
+        tsf *= (__fx64)_gains[_N];
+
+        // output:
+        return fr{ __cabsf__<__fx64>( tsf ) , __cargf__<__fx64>( tsf ) };
+    }
+
+
+    /*!
+     * \brief  Polynominal IIR filter frequency response computation function
      * \param[ cfnum ] IIR filter numerator quadratic sections coefficients matrix
      * \param[ cfden ] IIR filter denominator quadratic sections coefficients matrix
      * \param[ gains ] IIR filter quadratic sections gains vector
      * \param[ N     ] IIR filter filter order
      * \param[ Fs    ] sampling frequency, Hz
      * \param[ F     ] input signal frequency, Hz
-     * \return The function computes IIR filter transfer function frequency response
+     * \return The function computes IIR filter transfer function frequency response:
+     * \f[
+     *      W(j*2*\pi*f) = \frac{ \sum_{i=0}^N a_{i} * e^{-j*2*\pi*f*Ts } }
+     *                          { \sum_{k=0}^M b_{k} * e^{-j*2*\pi*f*Ts s} }
+     * \f]
     */
-    template<typename __type> fr __freq_resp__
-    (
-            __type *cfnum ,
-            __type *cfden ,
-            __type *gains ,
-            __ix32 N ,
-            __fx64 Fs ,
-            __fx64 F
-    )
-    {
-        // check the input:
-        if( !cfnum || !cfden || !gains ) return { -1 , -1 };
-
-        // sampling period:
-        __fx64 Ts = 1 / Fs;
-
-        // transfer function initialization:
-        fcomplex< __fx64 > tsf = fcomplex< __fx64 >( 1, 0 );
-
-        for( __ix32 i = 0 ; i < N ; i++ )
-        {
-            // fcomplex exponents:
-            fcomplex< __fx64 > z0 = fcomplex<__fx64>( cos( -PI2 * F * Ts * 0 ) , sin( -PI2 * F * Ts * 0 ) );
-            fcomplex< __fx64 > z1 = fcomplex<__fx64>( cos( -PI2 * F * Ts * 1 ) , sin( -PI2 * F * Ts * 1 ) );
-            fcomplex< __fx64 > z2 = fcomplex<__fx64>( cos( -PI2 * F * Ts * 2 ) , sin( -PI2 * F * Ts * 2 ) );
-
-            // transfer function:
-            fcomplex< __fx64 > num =  z0 * (__fx64)cfnum[ 3 * i + 0 ] + z1 * (__fx64)cfnum[ 3 * i + 1 ] + z2 * (__fx64)cfnum[ 3 * i + 2 ];
-            fcomplex< __fx64 > den =  z0 * (__fx64)cfden[ 3 * i + 0 ] + z1 * (__fx64)cfden[ 3 * i + 1 ] + z2 * (__fx64)cfden[ 3 * i + 2 ];
-            tsf *= num / den * (__fx64)gains[i];
-        }
-
-        // multiply by an output gain:
-        tsf *= (__fx64)gains[N];
-
-        // output:
-        return fr{ __cabsf__<__fx64>( tsf ) , __cargf__<__fx64>( tsf ) };
-    }
-
     template< typename __type > fr __freq_resp__
     (
             __type *_cfnum,
@@ -245,54 +265,65 @@ namespace DSP
     }
 
     /*!
-     * \brief Frequency response computation function
+     * \brief FIR filter frequency response computation function
      * \param[ cfbuff ] FIR filter coefficients buffer
      * \param[ N      ] FIR filter order
      * \param[ Fs     ] sampling frequency
      * \param[ F      ] input signal frequency
-     * \return   The function computes FIR filter transfer function frequency response
+     * \f[
+     *      W(j*2*\pi*f) = \sum_{i=0}^N a_{i} * e^{-j*2*\pi*f*Ts }
+     * \f]
     */
     template< typename __type > fr __freq_resp__
     (
-            __type *cfbuff ,
-            __ix32 N ,
-            __fx64 Fs ,
-            __fx64 F
+            __type *_cfbuff ,
+            __ix32 _N,
+            __fx64 _Fs,
+            __fx64 _F
     )
     {
-        __type Re = 0 , Im = 0 , Ts = 1 / Fs;
-        for ( __ix32 i = 0; i < N; i++)
-        {
-            Re = Re + cos(-PI2 * i * F * Ts) * cfbuff[ i ];
-            Im = Im + sin(-PI2 * i * F * Ts) * cfbuff[ i ];
-        }
-        return { sqrt (Re * Re + Im * Im) , atan2( Im , Re ) };
+        __type           Ts = 1 / _Fs;
+        fcomplex<__fx64> Wz(0,0);
+        for ( __ix32 i = 0; i < _N; i++) Wz += fcomplex<__fx64>(cos(-PI2 * i * _F * Ts), sin(-PI2 * i * _F * Ts))*_cfbuff[ i ];
+        return { __cabsf__<__fx64>(Wz) , __cargf__<__fx64>(Wz) };
     }
 
     /*!
-     * \brief IIR filter filtering function
-     * \param[ *input   ] pointer to the input signal samples buffer
-     * \param[ *cfnum   ] IIR filter numerator quadratic sections coefficients matrix
-     * \param[ *cfden   ] IIR filter denominator quadratic sections coefficients matrix
-     * \param[ *gains   ] IIR filter quadratic sections gains vector
-     * \param[ N        ] IIR filter filter order
-     * \param[ *buff_sx ] IIR filter quadratic sections input  buffers vector
-     * \param[ *buff_sy ] IIR filter quadratic sections output buffers vector
-     * \return   The function implements input signal filtering using
-     *           IIR filter coefficients matrix, gains and I/O buffers vectors
+     * \brief Biquadratic IIR filter filtering function
+     * \param[ *_input   ] pointer to the input signal samples buffer
+     * \param[ *_cfnum   ] IIR filter numerator quadratic sections coefficients matrix
+     * \param[ *_cfden   ] IIR filter denominator quadratic sections coefficients matrix
+     * \param[ *_gains   ] IIR filter quadratic sections gains vector
+     * \param[ _N        ] IIR filter filter order
+     * \param[ *_buff_sx ] IIR filter quadratic sections input  buffers vector
+     * \param[ *_buff_sy ] IIR filter quadratic sections output buffers vector
+     * \returns   The function implements input signal filtering using
+     *           IIR filter coefficients matrix, gains and I/O buffers vectors.
+     *           The input signal is going trough the group of the second order filters cascade:
+     *           \f[
+     *
+     *              y_{0}(k) = gain_{0} * [ a_{00} * x(k-1) + a_{10} * x(k-2) + a_{20} * x(k-3) ] -
+     *                      [ b_{10} * y_{0}(k-1)+ b_{20} * y_{0}(k-2) ] \newline
+     *              y_{1}(k) = gain_{1} * [ a_{0i} * y_{0}(k-1) + a_{11} * y_{0}(k-2) + a_{21} * y_{0}(k-3) ] -
+     *                      [ b_{11} * y_{1}(k-1) + b_{21} * y_{1}(k-2) ] \newline
+     *                      \dots \dots \dots \dots \dots \newline
+     *              y_{n}(k) = gain_{1} * [ a_{0i} * y_{n-1}(k-1) + a_{11} * y_{n-1}(k-2) + a_{21} * y_{n-1}(k-3) ] -
+     *                      [ b_{11} * y_{n}(k-1) + b_{21} * y_{n}(k-2) ]
+     *           \f]
     */
-    template< typename __type > inline __attribute__( (always_inline) ) __type __filt__
+    template< typename __type >
+    inline __type __filt__
     (
-            __type *input,
-            __type *cfnum,
-            __type *cfden,
-            __type *gains,
-            __ix32 N,
-            delay< __type > *buff_sx,
-            delay< __type > *buff_sy
+            __type *_input,
+            __type *_cfnum,
+            __type *_cfden,
+            __type *_gains,
+            __ix32 _N,
+            delay< __type > *_buff_sx,
+            delay< __type > *_buff_sy
     )
     {
-        if( !cfnum || !cfden || !gains || !input || !buff_sx || !buff_sy || ( N < 0 ) ) return 0;
+        if( !_cfnum || !_cfden || !_gains || !_input || !_buff_sx || !_buff_sy || (_N < 0 ) ) return 0;
 
         // initialization:
         __type sum_num = 0;
@@ -300,13 +331,13 @@ namespace DSP
         __type out     = 0;
 
         // filtering:
-        buff_sx[0]( input );
-        for ( __ix32 i = 0 ; i < N ; i++)
+        _buff_sx[0](_input );
+        for ( __ix32 i = 0 ; i < _N ; i++)
         {
-            sum_num = gains[i]*( buff_sx[ i ][ 0 ] * cfnum[ 3 * i + 0 ] + buff_sx[ i ][ 1 ] * cfnum[ 3 * i + 1 ] + buff_sx[ i ][ 2 ] * cfnum[ 3 * i + 2 ] );
-            sum_den = ( buff_sy[ i ][ 0 ] * cfden[ 3 * i + 1 ] + buff_sy[ i ][ 1 ] * cfden[ 3 * i + 2 ] );
-            buff_sy[ i ]( &( out = sum_num - sum_den ) );
-            if( i < N - 1 ) buff_sx[ i + 1 ]( &out );
+            sum_num = _gains[i]*( _buff_sx[ i ][ 0 ] * _cfnum[ 3 * i + 0 ] + _buff_sx[ i ][ 1 ] * _cfnum[ 3 * i + 1 ] + _buff_sx[ i ][ 2 ] * _cfnum[ 3 * i + 2 ] );
+            sum_den = ( _buff_sy[ i ][ 0 ] * _cfden[ 3 * i + 1 ] + _buff_sy[ i ][ 1 ] * _cfden[ 3 * i + 2 ] );
+            _buff_sy[ i ]( &( out = sum_num - sum_den ) );
+            if( i < _N - 1 ) _buff_sx[ i + 1 ]( &out );
         }
         return out;
     }
@@ -317,75 +348,90 @@ namespace DSP
      * \param[ *cfnum   ] IIR filter numerator quadratic sections coefficients vector
      * \param[ *cfden   ] IIR filter denominator quadratic sections coefficients vector
      * \param[ *gains   ] IIR filter quadratic sections gains vector
-     * \param[ N        ] IIR filter filter order
+     * \param[ Nx       ] IIR filter numerator order
+     * \param[ Nx       ] IIR filter denominator order
      * \param[ *buff_sx ] IIR filter quadratic sections input  buffers vector
      * \param[ *buff_sy ] IIR filter quadratic sections output buffers vector
-     * \return   The function implements input signal filtering using
+     * \returns   The function implements input signal filtering using
      *           IIR filter coefficients, gains and I/O buffers vectors
+     *
+     *           \f[
+     *              y(k) = \left( \sum_{i=0}^N gain_{i} * [ a_{0i} * x(k-1) + a_{1i} * x(k-2) + a_{1i} * x(k-3) ] \right) -
+     *                     \left( \sum_{i=0}^N b_{1i} * y(k-1) + b_{2i} * y(k-2) \right)
+     *           \f]
     */
-    template< typename __type > inline __attribute__( (always_inline) ) __type __filt__
+    template< typename __type >
+    inline __type __filt__
     (
-            __type *input ,
-            __type *cfnum ,
-            __type *cfden ,
-            __type gain ,
-            __ix32 Nx ,
-            __ix32 Ny ,
-            delay<__type> &bx ,
-            delay<__type> &by
+            __type *_input,
+            __type *_cfnum,
+            __type *_cfden,
+            __type _gain,
+            __ix32 _Nx,
+            __ix32 _Ny,
+            delay<__type> &_bx,
+            delay<__type> &_by
     )
     {
         __type sum_num = 0 , sum_den = 0 , out = 0;
-        bx( input );
-        for ( __ix32 m = 0 ; m < Nx ; m++)
+        _bx( _input );
+        for ( __ix32 m = 0 ; m < _Nx ; m++)
         {
-            sum_num += gain * bx[m] * cfnum[m];
-            if ( m < Ny ) sum_den += by[m] * cfden[m + 1];
+            sum_num += _gain * _bx[m] * _cfnum[m];
+            if ( m < _Ny ) sum_den += _by[m] * _cfden[m + 1];
         }
-        by( &( out = sum_num - sum_den ) );
+        _by( &( out = sum_num - sum_den ) );
         return out;
     }
 
     /*!
      * \brief FIR filter filtering function
-     * \param[ *input   ] pointer to the input signal samples buffer
-     * \param[ *coeffs  ] FIR filter coefficitns vector
-     * \param[ *buff_sx ] FIR filter buffer
-     * \param[ N        ] FIR filter filter order
+     * \param[ *_input   ] pointer to the input signal samples buffer
+     * \param[ *_coeffs  ] FIR filter coefficitns vector
+     * \param[ *_buff_sx ] FIR filter buffer
+     * \param[ _N        ] FIR filter filter order
      * \return   The function implements input signal filtering using
-     *           FIR filter coefficients vector and buffer
+     *           FIR filter coefficients vector and buffer:
+     *           \f[
+     *              y(k) = \sum_{i=0}^N a_{i} * x_{k-i}
+     *           \f]
     */
-    template< typename CoefficientsType , typename BufferType > inline  BufferType __filt__
+    template< typename CoefficientsType , typename BufferType >
+    inline  BufferType __filt__
     (
-            CoefficientsType    *input,
-            BufferType          *coeffs,
-            delay< BufferType > &buff_sx,
-            __ix32               N
+            CoefficientsType    *_input,
+            BufferType          *_coeffs,
+            delay< BufferType > &_buff_sx,
+            __ix32 _N
     )
     {
-        buff_sx( input );
+        _buff_sx( _input );
         BufferType out = 0;
-        for ( __ix32 n = N-1 ; n >= 0; n--) out += buff_sx[ n ] * coeffs[n];
+        for ( __ix32 n = _N-1 ; n >= 0; n--) out += _buff_sx[ n ] * _coeffs[n];
         return out;
     }
 
     /*!
      * \brief FIR filter filtering function
-     * \param[ *coeffs  ] FIR filter coefficitns vector
-     * \param[ *buff_sx ] FIR filter buffer
-     * \param[ N        ] FIR filter filter order
+     * \param[ *_coeffs  ] FIR filter coefficitns vector
+     * \param[ *_buff_sx ] FIR filter buffer
+     * \param[ _N        ] FIR filter filter order
      * \return   The function implements input signal filtering using
      *           FIR filter coefficients vector and ALREADY FILLED buffer
+     *           \f[
+     *              y(k) = \sum_{i=0}^N a_{i} * x_{k-i}
+     *           \f]
     */
-    template< typename __type > inline  __type __filt__
+    template< typename __type >
+    inline  __type __filt__
     (
-            __type          *coeffs ,
-            delay< __type > &buff_sx ,
-            __ix32 N
+            __type *_coeffs,
+            delay< __type > &_buff_sx ,
+            __ix32 _N
     )
     {
         __type out = 0;
-        for ( __ix32 n = N-1 ; n >= 0; n--) out += buff_sx[ n ] * coeffs[n];
+        for ( __ix32 n = _N-1 ; n >= 0; n--) out += _buff_sx[ n ] * _coeffs[n];
         return out;
     }
 
@@ -396,7 +442,13 @@ namespace DSP
      *  \param[ _N      ] FIR filter order
      *  \param[ _type   ] FIR filter type (lowpass, highpass, bandpass )
      */
-    template<typename __type> void __show__(__type _coeffs, __ix32 _N, filter_type _type )
+    template<typename __type>
+    void __show__
+    (
+            __type _coeffs,
+            __ix32 _N,
+            filter_type _type
+    )
     {
         if( _coeffs )
         {
@@ -417,6 +469,9 @@ namespace DSP
                 case filter_type::bandstop:
                 printf("BandStop coefficients vector:\n");
                 break;
+
+                case filter_type::other:
+                break;
             }
             for( __ix32 i = 0 ; i <= _N ; i++ ) printf("a[%d] = %.12f \n" , i , _coeffs[i]);
         }
@@ -430,7 +485,12 @@ namespace DSP
      * \brief             IIR filter coefficients show function
      * \param[coeffs  ] - IIR coefficients data structure
     */
-    template < typename __type > void __show__( cf< __type > _coeffs, filter_type _type )
+    template < typename __type >
+    void __show__
+    (
+            cf< __type > _coeffs,
+            filter_type _type
+    )
     {
         if( _coeffs.cfnum && _coeffs.cfden && _coeffs.gains )
         {
@@ -450,6 +510,9 @@ namespace DSP
 
                 case filter_type::bandstop:
                 printf("BandStop coefficients vector:\n");
+                break;
+
+                case filter_type::other:
                 break;
             }
 
@@ -475,7 +538,7 @@ namespace DSP
         }
         else
         {
-
+             printf("The filter has been destryed or it's coeffcients have not been computed yet...\n");
         }
     }
 
@@ -483,106 +546,163 @@ namespace DSP
 
     /*!
      * \brief Butterworth lowpass analogue prototype zeros/poles plain computation function
-     * \param[g_stop] stopband attenuation , Db
-     * \param[order]  filter order
-     * \return   The function computes Butterworth zeros/poles pairs of the Butterworth lowpass
-     *           analogue prototype. It also compute zero frequency gains. All the data is stored
-     *           within zp data structure and returned.
+     * \param[_g_stop] stopband attenuation, Db
+     * \param[_order]  filter order
+     * \return   The function computes zeros/poles pairs of the Butterworth lowpass
+     *           analogue prototype represented as:
+     *
+     *           \f[
+     *              W(s) = \frac{ 1 }{ ( s - p_r ) } * \sum_{i=0}^L \frac{ 1 }{ ( s - p_i ) * ( s - conj(p_i) ) }
+     *           \f]
+     *
+     *           All the data is stored within zp data structure and returned.
+     *           The computation is implemented according the followoing formulas:
+     *
+     *           Complex conjugate pairs:
+     *
+     *           \f[
+     *             p_i             = -\frac{1}{\beta*sin(\alpha)} + j*\frac{1}{\beta*cos(\alpha)} \newline
+     *             z_i             = 0                                                            \newline
+     *             g_i             = p_i * conj( p_i )                                            \newline
+     *             \beta           = \frac{1}{ \sqrt{ \epsilon_{stop}^{ \frac{1}{order} } } }     \newline
+     *             \alpha          = \frac{ ( 2*(i+1)-1 ) * \pi }{2*order}                        \newline
+     *             \epsilon_{stop} = \sqrt{ 10^{ \frac{ g_{stop} }{ 10 } } - 1 }                  \newline
+     *             i \in 0 \dots trunc\left( \frac{order}{2} \right)                              \newline
+     *           \f]
+     *
+     *           Real odd pole computation:
+     *
+     *           \f[
+     *             p_r        = -\frac{1}{\beta} \newline
+     *             g_r        = -p_r             \newline
+     *             g_{output} = 1
+     *           \f]
     */
-    template< typename T > zp< T > __butt_zeros_poles_plain__
+    template< typename __type >
+    zp< __type > __butt_zeros_poles_plain__
     (
-            __ix32 order,
-            __fx64 g_stop
+            __ix32 _order,
+            __fx64 _g_stop
     )
     {
         // number of zeros, poles, coeffs:
-        __ix32 L = trunc( order / 2 ) , R = order - 2 * L , N = L + R;
+        __ix32 L = trunc( _order / 2 ) , R = _order - 2 * L , N = L + R;
 
         // stopband attenuation:
-        T epsilon_stop = sqrt(pow(10, g_stop / 10) - 1);
+        __type epsilon_stop = sqrt(pow(10, _g_stop / 10) - 1);
 
         // memory allocation for the lowpass analogue prototype poles, zeros and gains:
-        fcomplex<T> *plp = ( fcomplex<T>* ) calloc( N+0 , sizeof ( fcomplex<T> ) );
-        fcomplex<T> *zlp = ( fcomplex<T>* ) calloc( N+0 , sizeof ( fcomplex<T> ) );
-        fcomplex<T> *glp = ( fcomplex<T>* ) calloc( N+1 , sizeof ( fcomplex<T> ) );
+        fcomplex<__type> *plp = ( fcomplex<__type>* ) calloc( N+0 , sizeof ( fcomplex<__type> ) );
+        fcomplex<__type> *zlp = ( fcomplex<__type>* ) calloc( N+0 , sizeof ( fcomplex<__type> ) );
+        fcomplex<__type> *glp = ( fcomplex<__type>* ) calloc( N+1 , sizeof ( fcomplex<__type> ) );
 
         if( plp == 0 || zlp == 0 || glp == 0 )
         {
             free( plp );
             free( zlp );
             free( glp );
-            return zp<T>{ 0 , 0 , 0 , -1 , -1 , -1 };
+            return zp<__type>{ 0 , 0 , 0 , -1 , -1 , -1 };
         }
 
         // fcomplex-conjugate pairs:
-        T alpha = 0 , betta = 1 / sqrt( pow( epsilon_stop , 1 / order ) );
+        __type alpha = 0 , beta = 1 / sqrt( pow( epsilon_stop , 1 / _order ) );
 
         for( __ix32 i = 0 ; i < L ; i++ )
         {
-            alpha = (2 * (i + 1) - 1) * PI0 / (2 * order);
-            plp[i] = fcomplex<T>( ( -1 / betta * sin(alpha) ) , ( +1 / betta * cos(alpha) ) );
+            alpha = (2 * (i + 1) - 1) * PI0 / (2 * _order);
+            plp[i] = fcomplex<__type>( ( -1 / beta * sin(alpha) ) , ( +1 / beta * cos(alpha) ) );
             glp[i] = plp[i] * __conjf__( plp[i] ) ;
         }
 
         // real odd pole:
         if( R == 1 )
         {
-            plp[ N - 1 ] = fcomplex< T >( ( -1 / betta ) , 0 );
+            plp[ N - 1 ] = fcomplex< __type >( ( -1 / beta ) , 0 );
             glp[ N - 1 ] = -__realf__<__fx64>( plp[ N - 1 ] );
         }
 
         // setting the output gain:
         glp[ N ] = 1;
 
-        return zp< T > { plp , zlp , glp , L , R , N };
+        return zp< __type > { plp , zlp , glp , L , R , N };
     }
 
     /*!
      * \brief Chebyshev I lowpass analogue prototype zeros/poles plain computation function
-     * \param[g_stop] stopband attenuation , Db
-     * \param[order]  filter order
-     * \return   The function computes Chebyshev I zeros/poles pairs of the Butterworth lowpass
-     *           analogue prototype. It also compute zero frequency gains. All the data is stored
-     *           within zp data structure and returned.
+     * \param[_g_stop] stopband attenuation , Db
+     * \param[_order]  filter order
+     * \return   The function computes zeros/poles pairs of  Chebyshev I lowpass
+     *           analogue prototype represented as:
+     *
+     *           \f[
+     *              W(s) = \frac{ 1 }{ ( s - p_r ) } * \sum_{i=0}^L \frac{ 1 }{ ( s - p_i ) * ( s - conj(p_i) ) }
+     *           \f]
+     *
+     *           All the data is stored within zp data structure and returned.
+     *           The computation is done according the following formulas:
+     *           Complex conjugate pairs:
+     *
+     *           \f[
+     *             p_i             = -sin(\alpha)*sinh(\beta) + j*cos(\alpha)*cosh(\beta)              \newline
+     *             z_i             = 0                                                                 \newline
+     *             g_i             = p_i * conj( p_i )                                                 \newline
+     *             \beta           = \frac{ asinh\left(  \frac{1}{\epsilon_{stop} } \right) }{ order } \newline
+     *             \alpha          = \frac{ ( 2*(i+1)-1 ) * \pi }{2*order}                             \newline
+     *             \epsilon_{stop} = \sqrt{ 10^{ \frac{ g_{stop} }{ 10 } } - 1 }                       \newline
+     *             i \in 0 \dots trunc\left( \frac{order}{2} \right)                                   \newline
+     *           \f]
+     *
+     *           Real odd pole computation:
+     *
+     *           \f[
+     *             p_r        = -sinh( \beta )   \newline
+     *             g_r        = -p_r             \newline
+     *             g_{output} = \begin{cases}
+     *                          \sqrt{ \frac{1}{1+\epsilon_{stop}^2} }, \quad order-2*L = 0
+     *                          \\
+     *                          1
+     *                          \end{cases}
+     *           \f]
     */
-    template< typename T > zp< T > __cheb1_zeros_poles_plain__
+    template< typename __type >
+    zp< __type > __cheb1_zeros_poles_plain__
     (
-            __ix32 order,
-            __fx64 g_stop
+            __ix32 _order,
+            __fx64 _g_stop
     )
     {
         // number of zeros, poles, coeffs:
-        __ix32 L = trunc( order / 2 ) , R = order - 2 * L , N = L + R;
+        __ix32 L = trunc( _order / 2 ) , R = _order - 2 * L , N = L + R;
 
         // stopband attenuation:
-        T epsilon_stop = sqrt(pow(10, g_stop / 10) - 1);
+        __type epsilon_stop = sqrt(pow(10, _g_stop / 10) - 1);
 
         // memory allocation for the lowpass analogue prototype poles, zeros and gains:
-        fcomplex< T >  *plp = ( fcomplex<T>* ) calloc( N   , sizeof ( fcomplex< T > ) );
-        fcomplex< T >  *zlp = ( fcomplex<T>* ) calloc( N   , sizeof ( fcomplex< T > ) );
-        fcomplex< T >  *glp = ( fcomplex<T>* ) calloc( N+1 , sizeof ( fcomplex< T > ) );
+        fcomplex< __type >  *plp = ( fcomplex<__type>* ) calloc( N   , sizeof ( fcomplex< __type > ) );
+        fcomplex< __type >  *zlp = ( fcomplex<__type>* ) calloc( N   , sizeof ( fcomplex< __type > ) );
+        fcomplex< __type >  *glp = ( fcomplex<__type>* ) calloc( N+1 , sizeof ( fcomplex< __type > ) );
 
         if( plp == 0 || zlp == 0 || glp == 0 )
         {
             free( plp );
             free( zlp );
             free( glp );
-            return zp< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+            return zp< __type >{ 0 , 0 , 0 , -1 , -1 , -1 };
         }
 
         // fcomplex conjugate pairs:
-        T alpha = 0 , betta = asinh( 1 / epsilon_stop ) / order;
+        __type alpha = 0 , betta = asinh( 1 / epsilon_stop ) / _order;
         for ( __ix32 i = 0; i < L; i++)
         {
-            alpha = (2 * (i + 1) - 1) * PI0 / (2 * order);
-            plp[i] = fcomplex< T >( -sin( alpha ) * sinh( betta ) , +cos( alpha ) * cosh( betta ) );
+            alpha = (2 * (i + 1) - 1) * PI0 / (2 * _order);
+            plp[i] = fcomplex< __type >( -sin( alpha ) * sinh( betta ) , +cos( alpha ) * cosh( betta ) );
             glp[i] = plp[i] * __conjf__( plp[i] );
         }
 
         // real odd pole:
         if ( R == 1 )
         {
-            plp[ N - 1 ] = fcomplex< T >( -sinh( betta ) , 0 );
+            plp[ N - 1 ] = fcomplex< __type >( -sinh( betta ) , 0 );
             glp[ N - 1 ] = -__realf__<__fx64>( plp[ N - 1 ] );
         }
 
@@ -590,40 +710,66 @@ namespace DSP
         glp[N] = ( R < 1 ) ? ( sqrt(1 / (1 + epsilon_stop * epsilon_stop) ) ) : 1;
 
         // end the computation and return the filter info:
-        return zp< T >{ plp , zlp , glp , L , R , N };
+        return zp< __type >{ plp , zlp , glp , L , R , N };
     }
 
     /*!
      * \brief Chebyshev II lowpass analogue prototype zeros/poles plain computation function
-     * \param[g_stop] stopband attenuation , Db
-     * \param[order]  filter order
-     * \return   The function computes Chebyshev II zeros/poles pairs of the Butterworth lowpass
-     *           analogue prototype. It also compute zero frequency gains. All the data is stored
-     *           within zp data structure and returned.
+     * \param[_g_stop] stopband attenuation , Db
+     * \param[_order]  filter order
+     * \return   The function computes zeros/poles pairs of the Chebyshev II analogue lowpass
+     *           prototype represented as:
+     *
+     *           \f[
+     *              W(s) = \frac{1}{ ( s - p_r ) } * \sum_{i=0}^L \frac{ ( s - z_i ) * ( s - conj(z_i) ) }{ ( s - p_i ) * ( s - conj(p_i) ) }
+     *           \f]
+     *
+     *           All the data is stored within zp data structure and returned. The computation is done according the
+     *           following formulas:
+     *
+     *          Complex conjugate pairs:
+     *
+     *           \f[
+     *              z_i    = 0 + j*\frac{1}{cos(\alpha)}                                                                                                   \newline
+     *              p_i    = \frac{ sin(\alpha) * sinh(\beta) + j*cos(\alpha) * cosh(\beta) }{ cos(\alpha)^2*cosh(\beta^2) + sin(\alpha)^2*sinh(\beta^2) } \newline
+     *              g_i    = \frac{ p_i * conj(p_i) }{ z_i * conj(z_i) }                                                                                   \newline
+     *              \alpha = \frac{ ( 2*(i+1)-1 ) * \pi }{ 2 * order }                                                                                     \newline
+     *              \beta  = \frac{ asinh( \epsilon_{stop} ) }{ order }                                                                                    \newline
+     *              i \in 0 \dots trunc\left( \frac{order}{2} \right)                                                                                      \newline
+     *           \f]
+     *
+     *           Real odd pole:
+     *
+     *           \f[
+     *              p_r        = -\frac{1}{ sinh( \beta ) }
+     *              g_r        = -p_r
+     *              g_{output} = 1
+     *           \f]
     */
-    template< typename T > zp< T > __cheb2_zeros_poles_plain__
+    template< typename __type >
+    zp< __type > __cheb2_zeros_poles_plain__
     (
-            __ix32 order,
-            __fx64 g_stop
+            __ix32 _order,
+            __fx64 _g_stop
     )
     {
         // stopband attenuation:
-        __fx64 epsilon_stop = sqrt(pow(10, g_stop / 10) - 1);
+        __fx64 epsilon_stop = sqrt(pow(10, _g_stop / 10) - 1);
 
         // identify the number of zeros and poles:
-        __ix32 L = trunc( order / 2 ) , R = order - 2 * L , N = L + R;
+        __ix32 L = trunc( _order / 2 ) , R = _order - 2 * L , N = L + R;
 
         // allocate zeros and poles arrays:
-        fcomplex< T > *plp = ( fcomplex< T >* ) calloc( N   , sizeof ( fcomplex< T > ) );
-        fcomplex< T > *zlp = ( fcomplex< T >* ) calloc( N   , sizeof ( fcomplex< T > ) );
-        fcomplex< T > *glp = ( fcomplex< T >* ) calloc( N+1 , sizeof ( fcomplex< T > ) );
+        fcomplex< __type > *plp = ( fcomplex< __type >* ) calloc( N   , sizeof ( fcomplex< __type > ) );
+        fcomplex< __type > *zlp = ( fcomplex< __type >* ) calloc( N   , sizeof ( fcomplex< __type > ) );
+        fcomplex< __type > *glp = ( fcomplex< __type >* ) calloc( N+1 , sizeof ( fcomplex< __type > ) );
 
         if( plp == 0 || zlp == 0 || glp == 0 )
         {
             free( plp );
             free( zlp );
             free( glp );
-            return zp< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+            return zp< __type >{ 0 , 0 , 0 , -1 , -1 , -1 };
         }
 
         // ZEROS AND POLES COMPUTATION:
@@ -631,134 +777,225 @@ namespace DSP
         // fcomplex conjugate pairs:
 
         // auxiliary variables:
-        T alpha , betta = asinh( epsilon_stop ) / order , re , im;
+        __type alpha , betta = asinh( epsilon_stop ) / _order , re , im;
 
         // zeros , poles, gains computation:
         for ( __ix32 i = 0 ; i < L ; i++ )
         {
-            alpha = (2 * ( i + 1 ) - 1) * PI0 / ( 2 * order );
+            alpha = (2 * ( i + 1 ) - 1) * PI0 / ( 2 * _order );
 
             // zeros:
-            zlp[i] = fcomplex< T >( 0 , 1 / cos( alpha ) );
+            zlp[i] = fcomplex< __type >( 0 , 1 / cos( alpha ) );
 
             // poles:
             re = -( sin( alpha ) * sinh( betta ) ) / ( cos( alpha ) * cos( alpha ) * cosh( betta ) * cosh( betta ) + sin( alpha ) * sin( alpha ) * sinh( betta ) * sinh( betta ) );
             im = +( cos( alpha ) * cosh( betta ) ) / ( cos( alpha ) * cos( alpha ) * cosh( betta ) * cosh( betta ) + sin( alpha ) * sin( alpha ) * sinh( betta ) * sinh( betta ) );
-            plp[i] = fcomplex< T >( re , im );
+            plp[i] = fcomplex< __type >( re , im );
 
             // gains:
             glp[i] = ( zlp[i] * __conjf__( zlp[i] ) ) / ( plp[i] * __conjf__( plp[i] ) );
-            glp[i] = fcomplex< T >( 1 , 0 ) / glp[i];
+            glp[i] = fcomplex< __type >( 1 , 0 ) / glp[i];
         }
 
         // real odd pole:
         if( R >= 1 )
         {
-            plp[ N - 1 ] = fcomplex< T >( -1 / sinh( betta ) , 0 );
+            plp[ N - 1 ] = fcomplex< __type >( -1 / sinh( betta ) , 0 );
             glp[ N - 1 ] = -__realf__<__fx64>( plp[ N - 1 ] );
         }
 
         // set the output gain:
         glp[N] = 1;
 
-        return zp< T >{ plp , zlp , glp , L , R , N };
+        return zp< __type >{ plp , zlp , glp , L , R , N };
     }
 
 
     /*!
      * \brief Elliptic lowpass analogue prototype zeros/poles plain computation function
-     * \param[g_stop] stopband attenuation , Db
-     * \param[order]  filter order
+     * \param[_g_stop] stopband attenuation , Db
+     * \param[_g_pass] passband attenuation , Db
+     * \param[_order]  filter order
      * \return   The function computes Elliptic zeros/poles pairs of the Butterworth lowpass
      *           analogue prototype. It also compute zero frequency gains. All the data is stored
      *           within zp data structure and returned.
+     *
+     *           Attenuation normalizing:
+     *           \f[
+     *              \epsilon_{ stop } = \sqrt{ 10^{ \frac{ g_{stop} } { 10 } } } \newline
+     *              \epsilon_{ pass } = \sqrt{ 10^{ \frac{ g_{stop} } { 10 } } } \newline
+     *           \f]
+     *
+     *           Analyzling the zeros/poles pattern:
+     *
+     *           \f[
+     *              L = trunc( order / 2 ) \newline
+     *              R = order - 2 * L      \newline
+     *           \f]
+     *
+     *           Transient suppression factors computation - Kp, Kw:
+     *
+     *           \f[
+     *              K_e    = \frac{ \epsilon_{ pass } }{ \epsilon_{ stop } } \newline
+     *              m      = \sqrt{ 1 - K_e^2 }                              \newline
+     *              \alpha = \frac{ 2 *( i + 1 ) - 1 }{ order }              \newline
+     *              KE     = ellip_k( m )                                    \newline
+     *              K_p    = Kp * sn( \alpha * KE , m )^4                    \newline
+     *              i \in 0 \dots L                                          \newline
+     *              K_p = m^{order} * Kp                                     \newline
+     *              K_w = \sqrt{ 1 - k_p^2 }                                 \newline
+     *           \f]
+     *
+     *           Zeros computation:
+     *           \f[
+     *              KE     = ellip_k( K_w ) \newline
+     *
+     *              \alpha = \begin{cases}
+     *                       \frac{ 2 * i + 1 } { order } * KE, \quad mod(order,2) = 0
+     *                       \\
+     *                       \alpha = \frac{ 2 * i + 2 } { order } * KE
+     *                       \end{cases}
+     *                       \newline
+     *
+     *              z_i    = 0 + j*\frac{ 1 }{ K_w * sn( \alpha , K_w ) } \newline
+     *              i \in 0 \dots L
+     *           \f]
+     *
+     *           Complex conjugate poles pairs computaion:
+     *           \f[
+     *              V_0 = -\frac{ ellip_k( Kw ) * isc\left( \frac{ 1 }{ epsilon_{pass} } , \sqrt{ 1 - K_e * K_e} \right) } { ellip_k( K_e ) * _order } \newline
+     *              KE  = ellip_k( Kw )                                                                                                                \newline
+     *              \alpha = \begin{cases}
+     *                       \frac{ 2 * i + 1 } { order } * KE, \quad mod(order,2) = 0
+     *                       \\
+     *                       \alpha = \frac{ 2 * i + 2 } { order } * KE
+     *                       \end{cases}
+     *                       \newline
+     *
+     *              A  = cn( \alpha , K_w )             \newline
+     *              B  = dn( \alpha , K_w )             \newline
+     *              C  = sn( V0, \sqrt{ 1 - Kw^2 } )    \newline
+     *              D  = \sqrt{1 - C^2}                 \newline
+     *              E  = B^2                            \newline
+     *              F  = C^2                            \newline
+     *              RE = A * B * C * D / (1 - E * F)    \newline
+     *
+     *              A = sn( \alpha, K_w )               \newline
+     *              B = dn( V0 , \sqrt{1 - K_w^2 } )    \newline
+     *              C = dn( \alpha, K_w )               \newline
+     *              D = sn( V0, sqrt{ 1 - K_w } )       \newline
+     *              E = C^2                             \newline
+     *              F = D^2                             \newline
+     *              IM = A * B / (1 - E * F)            \newline
+     *              p_i = RE + j*IM                     \newline
+     *              i \in 0 \dots L                     \newline
+     *        \f]
+     *
+     *        Real odd pole computation:
+     *        \f[
+     *          A   = sn( V0 , sqrt( 1 - K_w^2 ) )
+     *          B   = cn( V0 , sqrt( 1 - K_w^2 ) )
+     *          C   = A^2
+     *          p_r = \frac{ A * B }{ 1 - C }
+     *        \f]
+     *
+     *        Gains computation:
+     *        \f[
+     *
+     *              g_i = \begin{cases}
+     *                    \frac{ p_i * conj(p_i) } {  z_i * conj(z_i) }
+     *                    \\
+     *                    \sqrt{ \frac{1} { 1 + \epsilon_{stop}^2 } }^{ \frac{1}{L} }
+     *                    \end{cases}
+     *                    \newline
+     *
+     *              g_r = \begin{cases}
+     *                    -p_r
+     *                    \\
+     *                    \sqrt{ \frac{1} { 1 + \epsilon_{stop}^2 } }^{ \frac{1}{L} }
+     *                    \end{cases}
+     *        \f]
+     *
     */
-    template< typename T > zp< T > __ellip_zeros_poles_plain__
+    template< typename __type >
+    zp< __type > __ellip_zeros_poles_plain__
     (
-            __ix32 order,
-            __fx64 g_pass,
-            __fx64 g_stop
+            __ix32 _order,
+            __fx64 _g_pass,
+            __fx64 _g_stop
     )
     {
         // INITIALIZATION:
 
         // stopband and passband attenuation:
-        __fx64 epsilon_stop = sqrt(pow(10, g_stop / 10) - 1);
-        __fx64 epsilon_pass = sqrt(pow(10, g_pass / 10) - 1);
+        __fx64 epsilon_stop = sqrt(pow(10, _g_stop / 10) - 1);
+        __fx64 epsilon_pass = sqrt(pow(10, _g_pass / 10) - 1);
 
         // identify the number of zeros and poles:
-        __ix32 L = trunc( order / 2 ) , R = order - 2 * L , N = L + R;
+        __ix32 L = trunc( _order / 2 ) , R = _order - 2 * L , N = L + R;
 
         // allocate zeros and poles arrays:
-        fcomplex< T > *plp = ( fcomplex< T >* ) calloc( N   , sizeof ( fcomplex< T > ) );
-        fcomplex< T > *zlp = ( fcomplex< T >* ) calloc( N   , sizeof ( fcomplex< T > ) );
-        fcomplex< T > *glp = ( fcomplex< T >* ) calloc( N+1 , sizeof ( fcomplex< T > ) );
+        fcomplex< __type > *plp = ( fcomplex< __type >* ) calloc( N   , sizeof ( fcomplex< __type > ) );
+        fcomplex< __type > *zlp = ( fcomplex< __type >* ) calloc( N   , sizeof ( fcomplex< __type > ) );
+        fcomplex< __type > *glp = ( fcomplex< __type >* ) calloc( N+1 , sizeof ( fcomplex< __type > ) );
 
         if( plp == 0 || zlp == 0 || glp == 0 )
         {
             free( plp );
             free( zlp );
             free( glp );
-            return zp< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+            return zp< __type >{ 0 , 0 , 0 , -1 , -1 , -1 };
         }
 
         // TRANSIENT SUPPRESSION FACTORS COMPUTATION:
 
         // auxiliary variables:
-        T SN , KE;
-        T Ke = epsilon_pass / epsilon_stop , Kp = 1;
-        T m = sqrt( 1 - Ke * Ke ) , alpha , Kw;
+        __type SN , KE;
+        __type Ke = epsilon_pass / epsilon_stop , Kp = 1;
+        __type m = sqrt( 1 - Ke * Ke ) , alpha , Kw;
 
         // transient suppression factors computation:
         for ( __ix32 i = 0; i < L; i++ )
         {
-            alpha = (2 * ( i + 1 ) - 1) / ( ( T )order);
-            KE = __ellip_k__( m );
-            SN = __sn__( alpha * KE , m );
-            Kp = Kp * SN*SN*SN*SN;
+            alpha = (2 * ( i + 1 ) - 1) / ( ( __type )_order);
+            KE    = __ellip_k__( m );
+            SN    = __sn__( alpha * KE , m );
+            Kp    = Kp * SN*SN*SN*SN;
         }
 
-        Kp = pow( m , order) * Kp;
+        Kp = pow( m , _order) * Kp;
         Kw = sqrt(1 - Kp * Kp);
 
         // ZEROS COMPUTATION:
 
         KE = __ellip_k__( Kw );
-        if( order % 2 == 0 ) // even order filter
+        if( _order % 2 == 0 ) // even order filter
         {
             for ( __ix32 i = 0; i < L; i++)
             {
-                alpha = (2 * i + 1) / ( ( T )order) * KE;
-                SN = __sn__( alpha , Kw );
-                zlp[i] = fcomplex< T >( 0 , 1 /( Kw * SN ) );
+                alpha  = (2 * i + 1) / ( ( __type )_order) * KE;
+                zlp[i] = fcomplex< __type >( 0 , 1 /( Kw * __sn__( alpha , Kw ) ) );
             }
         }
-        else if( order % 2 != 0 ) // odd order filter
+        else if( _order % 2 != 0 ) // odd order filter
         {
             for ( __ix32 i = 0; i < L; i++)
             {
-                alpha = (2 * i + 2) / ( ( T )order) * KE;
-                SN = __sn__( alpha , Kw );
-                zlp[i] = fcomplex< T >( 0 , 1 /( Kw * SN ) );
+                alpha  = (2 * i + 2) / ( ( __type )_order) * KE;
+                zlp[i] = fcomplex< __type >( 0 , 1 /( Kw * __sn__( alpha , Kw ) ) );
             }
         }
 
         // POLES COMPUTATION:
-        T V0 = 0 , A = 0 , B = 0 , C = 0 , D = 0 , E = 0 , F = 0;
-        V0 = -__ellip_k__( Kw ) * __isc__(1 / epsilon_pass, sqrt(1 - Ke * Ke)) / ( __ellip_k__( Ke ) * ( ( T ) order ) );
-        KE =  __ellip_k__( Kw );
+        __type V0 = 0 , A = 0 , B = 0 , C = 0 , D = 0 , E = 0 , F = 0;
+        V0        = -__ellip_k__( Kw ) * __isc__(1 / epsilon_pass, sqrt(1 - Ke * Ke)) / ( __ellip_k__( Ke ) * ( ( __type )_order ) );
+        KE        =  __ellip_k__( Kw );
 
         // fcomplex conjugate pairs:
         for ( __ix32 i = 0; i < L; i++)
         {
-            if( order % 2 == 0 ) // even order filter
-            {
-                alpha = (2 * i + 1) / ( ( T ) order ) * KE;
-            }
-            else // odd order filter
-            {
-                alpha = (2 * i + 2) / ( ( T ) order ) * KE;
-            }
+            alpha = ( _order % 2 == 0 ) ? (2 * i + 1) / ( ( __type )_order ) * KE
+                                        : (2 * i + 2) / ( ( __type )_order ) * KE;
 
             // compute auxiliary variables:
             A = __cn__( alpha , Kw );
@@ -795,64 +1032,59 @@ namespace DSP
             C = A * A;
 
             // compute the real odd pole:
-            plp[ N - 1 ] = fcomplex< T >( A * B / ( 1 - C )  , 0 );
+            plp[ N - 1 ] = fcomplex< __type >( A * B / ( 1 - C )  , 0 );
         }
 
         // GAINS COMPUTATION:
-
-        // fcomplex conjugate pairs:
         if( R >= 1 )
         {
             // fcomplex conjugate pairs:
             for ( __ix32 i = 0; i < L; i++)
             {
                 glp[i] = ( zlp[i] * __conjf__( zlp[i] ) ) / ( plp[i] * __conjf__( plp[i] ) );
-                glp[i] = fcomplex< T >( 1 , 0 ) / glp[i];
+                glp[i] = fcomplex< __type >( 1 , 0 ) / glp[i];
             }
 
             // real odd pole:
             glp[ N - 1 ] = -__realf__<__fx64>( plp[ N - 1 ] );
-
-            // output gain:
-            glp[N] = 1;
         }
         else
         {
-            T a = sqrt( 1 / (1 + epsilon_stop * epsilon_stop) );
-            glp[N] = pow ( a , 1 / ( ( T ) L ) );
-            for ( __ix32 i = 0; i < L; i++) glp[i] = glp[N];
+            for ( __ix32 i = 0; i < L; i++) glp[i] = pow ( sqrt( 1 / (1 + epsilon_stop * epsilon_stop) ) , 1 / ( ( __type ) L ) );
         }
 
         // output gain:
         glp[N] = 1;
 
-        return zp< T >{ plp , zlp , glp , L , R , N };
+        return zp< __type >{ plp , zlp , glp , L , R , N };
     }
 
     // IIR coefficients computation functions:
     /*!
      * \brief Butterworth or Chebyshev I digital lowpass filter coefficients computation function
-     * \param[Fs]     sampling frequency , Hz
-     * \param[Fc]     cut-off frequency , Hz
-     * \param[order]  filter order
-     * \param[type]   filter type ( 0 - Butterworth , 1 - Chebyshev_I )
-     * \param[g_stop] stopband attenuation , Db
+     * \param[_Fs     ] sampling frequency , Hz
+     * \param[_Fc     ] cut-off frequency , Hz
+     * \param[_order  ] filter order
+     * \param[_type   ] filter type ( 0 - Butterworth , 1 - Chebyshev_I )
+     * \param[_g_stop ] stopband attenuation , Db
      * \return   The function computes Butterworth or Chebyshev I digital lowpass filter coefficients that are represented
      *           in the way of second order sections and their gains. All the data is stored within cf data structure
      *           and returned.
     */
 
-    template < typename T > cf< T > __butt_cheb1_digital_lp__
+    template < typename __type >
+    cf< __type > __butt_cheb1_digital_lp__
     (
-            __fx64 Fs,
-            __fx64 Fc,
-            __ix32 order,
-            __ix32 type   = 0,
-            __fx64 g_stop = 1
+            __fx64 _Fs,
+            __fx64 _Fc,
+            __ix32 _order,
+            __ix32 _type   = 0,
+            __fx64 _g_stop = 1
     )
     {
         // COMPUTE LOWPASS ANALOGUE PROTOTYPE ZEROS, POLES AND GAINS:
-        zp< __fx64 > zp = ( !type ) ? __butt_zeros_poles_plain__< __fx64 >( order , g_stop ) : __cheb1_zeros_poles_plain__< __fx64 >( order , g_stop );
+        zp< __fx64 > zp = ( !_type ) ? __butt_zeros_poles_plain__ < __fx64 >( _order , _g_stop )
+                                     : __cheb1_zeros_poles_plain__< __fx64 >( _order , _g_stop );
 
         // allocate zeros and poles arrays:
         fcomplex< __fx64 > *plp = zp.plp;
@@ -861,18 +1093,18 @@ namespace DSP
         __ix32 L = zp.L , R = zp.R , N = L + R;
 
         // frequency deformation coefficient:
-        __fx64 K = tan( PI2 * Fc / 2 / Fs );
+        __fx64 K = tan( PI2 * _Fc / 2 / _Fs );
 
         // coefficients matrix computation:
-        T *cfnum = ( T* )calloc( 3 * N , sizeof ( T ) );
-        T *cfden = ( T* )calloc( 3 * N , sizeof ( T ) );
-        T *gains = ( T* )calloc( N + 1 , sizeof ( T ) );
+        __type *cfnum = ( __type* )calloc( 3 * N , sizeof ( __type ) );
+        __type *cfden = ( __type* )calloc( 3 * N , sizeof ( __type ) );
+        __type *gains = ( __type* )calloc( N + 1 , sizeof ( __type ) );
 
         if( cfnum == 0 || cfden == 0 || gains == 0 || plp == 0 || zlp == 0 || glp == 0 )
         {
             free( cfnum ); free( cfden ); free( gains );
             free( plp )  ; free( zlp )  ; free( glp );
-            return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+            return cf< __type >{ 0 , 0 , 0 , -1 , -1 , -1 };
         }
 
         // BILLINEAR LP-LP TRANSFORM:
@@ -935,50 +1167,53 @@ namespace DSP
         free( zlp  );
         free( glp  );
 
-        return cf< T >{ cfnum , cfden , gains , L , R , N };
+        return cf< __type >{ cfnum , cfden , gains , L , R , N };
     }
 
     /*!
      * \brief Butterworth or Chebyshev I digital highpass filter coefficients computation function
-     * \param[Fs]     sampling frequency , Hz
-     * \param[Fp]     pass frequency , Hz
-     * \param[order]  filter order
-     * \param[type]   filter type ( 0 - Butterworth , 1 - Chebyshev_I )
-     * \param[g_stop] stopband attenuation , Db
+     * \param[ _Fs     ] sampling frequency , Hz
+     * \param[ _Fp     ] pass frequency , Hz
+     * \param[ _order  ] filter order
+     * \param[ _type   ] filter type ( 0 - Butterworth , 1 - Chebyshev_I )
+     * \param[ _g_stop ] stopband attenuation , Db
      * \return   The function computes Butterworth or Chebyshev I digital highpass filter coefficients that are represented
      *           in the way of second order sections and their gains. All the data is stored within cf data structure
      *           and returned.
     */
 
-    template < typename T > cf< T > __butt_cheb1_digital_hp__
+    template < typename __type > cf< __type >
+    __butt_cheb1_digital_hp__
     (
-            __fx64 Fs,
-            __fx64 Fp,
-            __ix32 order,
-            __ix32 type   = 0,
-            __fx64 g_stop = 1
+            __fx64 _Fs,
+            __fx64 _Fp,
+            __ix32 _order,
+            __ix32 _type   = 0,
+            __fx64 _g_stop = 1
     )
     {
         // INITIALIZATION:
-        zp < __fx64 > zp = ( !type ) ? __butt_zeros_poles_plain__< __fx64 >( order , g_stop ) : __cheb1_zeros_poles_plain__< __fx64 >( order , g_stop );
+        zp < __fx64 > zp = ( !_type ) ? __butt_zeros_poles_plain__ < __fx64 >( _order , _g_stop )
+                                      : __cheb1_zeros_poles_plain__< __fx64 >( _order , _g_stop );
+
         fcomplex< __fx64 > *plp = zp.plp;
         fcomplex< __fx64 > *zlp = zp.zlp;
         fcomplex< __fx64 > *glp = zp.glp;
         __ix32 L = zp.L , R = zp.R , N = L + R;
 
         // frequency deformation coefficient:
-        T w = tan( PI2 * Fp / 2 / Fs );
+        __type w = tan( PI2 * _Fp / 2 / _Fs );
 
         // coefficients matrix computation:
-        T *cfnum = ( T* )calloc( 3 * N , sizeof ( T ) );
-        T *cfden = ( T* )calloc( 3 * N , sizeof ( T ) );
-        T *gains = ( T* )calloc( N + 1 , sizeof ( T ) );
+        __type *cfnum = ( __type* )calloc( 3 * N , sizeof ( __type ) );
+        __type *cfden = ( __type* )calloc( 3 * N , sizeof ( __type ) );
+        __type *gains = ( __type* )calloc( N + 1 , sizeof ( __type ) );
 
         if( cfnum == 0 || cfden == 0 || gains == 0 || plp == 0 || zlp == 0 || glp == 0 )
         {
             free( cfnum ); free( cfden ); free( gains );
             free( plp )  ; free( zlp )  ; free( glp );
-            return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+            return cf< __type >{ 0 , 0 , 0 , -1 , -1 , -1 };
         }
 
         // BILLINEAR LP-HP TRANSFORM:
@@ -1041,41 +1276,44 @@ namespace DSP
         free( zlp  );
         free( glp  );
 
-        return cf< T >{ cfnum , cfden , gains , L , R , N };
+        return cf< __type >{ cfnum , cfden , gains , L , R , N };
     }
 
     /*!
      * \brief Butterworth or Chebyshev I digital bandpass filter coefficients computation function
-     * \param[Fs]        sampling frequency , Hz
-     * \param[Fp]        pass frequency , Hz
-     * \param[BandWidth] passband width , Hz
-     * \param[order]     filter order
-     * \param[type]      filter type ( 0 - Butterworth , 1 - Chebyshev_I )
-     * \param[g_stop]    stopband attenuation , Db
+     * \param[ _Fs        ] sampling frequency , Hz
+     * \param[ _Fp        ] pass frequency , Hz
+     * \param[ _BandWidth ] passband width , Hz
+     * \param[ _order     ] filter order
+     * \param[ _type      ] filter type ( 0 - Butterworth , 1 - Chebyshev_I )
+     * \param[ _g_stop    ] stopband attenuation , Db
      * \return   The function computes Butterworth or Chebyshev I digital bandpass filter coefficients that are represented
      *           in the way of second order sections and their gains. All the data is stored within cf data structure
      *           and returned.
     */
 
-    template < typename T > cf<T> __butt_cheb1_digital_bp__
+    template < typename __type > cf<__type>
+    __butt_cheb1_digital_bp__
     (
-            __fx64 Fs,
-            __fx64 Fp,
-            __fx64 BandWidth,
-            __ix32 order,
-            __ix32 type   = 0,
-            __fx64 g_stop = 1
+            __fx64 _Fs,
+            __fx64 _Fp,
+            __fx64 _BandWidth,
+            __ix32 _order,
+            __ix32 _type   = 0,
+            __fx64 _g_stop = 1
     )
     {
-        order /= 2;
+        _order /= 2;
 
         // frequency deformation coefficient:
-        __fx64 w1 = tan( PI2 * Fp / 2 / Fs ) , w2 = tan( PI2 * ( Fp + BandWidth ) / 2 / Fs );
+        __fx64 w1 = tan( PI2 * _Fp / 2 / _Fs ) , w2 = tan( PI2 * ( _Fp + _BandWidth ) / 2 / _Fs );
 
         // allocate zeros and poles arrays:
 
         // lowpass analogue prototype poles, zeros and gains:
-        zp < __fx64 > zp = ( !type ) ? __butt_zeros_poles_plain__< __fx64 >( order , g_stop ) : __cheb1_zeros_poles_plain__< __fx64 >( order , g_stop );
+        zp < __fx64 > zp = ( !_type ) ? __butt_zeros_poles_plain__ < __fx64 >( _order, _g_stop )
+                                      : __cheb1_zeros_poles_plain__< __fx64 >( _order, _g_stop );
+
         fcomplex< __fx64 > *plp = zp.plp;
         fcomplex< __fx64 > *glp = zp.glp;
         fcomplex< __fx64 > *zlp = zp.zlp;
@@ -1087,9 +1325,9 @@ namespace DSP
         fcomplex< __fx64 > *gbp = ( fcomplex< __fx64 >* ) calloc( 2*N , sizeof ( fcomplex< __fx64 > ) );
 
         // coefficients matrix computation:
-        T *cfnum = ( T* )calloc( 3 * (2*L+R) , sizeof ( T ) );
-        T *cfden = ( T* )calloc( 3 * (2*L+R) , sizeof ( T ) );
-        T *gains = ( T* )calloc( (2*L+R + 1) , sizeof ( T ) );
+        __type *cfnum = ( __type* )calloc( 3 * (2*L+R) , sizeof ( __type ) );
+        __type *cfden = ( __type* )calloc( 3 * (2*L+R) , sizeof ( __type ) );
+        __type *gains = ( __type* )calloc( (2*L+R + 1) , sizeof ( __type ) );
 
         if( cfnum == 0 || cfden == 0 || gains == 0 ||
             plp == 0 || zlp == 0 || glp == 0 ||
@@ -1098,7 +1336,7 @@ namespace DSP
             free( cfnum ); free( cfden ); free( gains );
             free( plp )  ; free( zlp )  ; free( glp );
             free( pbp )  ; free( zbp )  ; free( gbp );
-            return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+            return cf< __type >{ 0 , 0 , 0 , -1 , -1 , -1 };
         }
 
         // LP-BP BILLINEAR TRANSFORM:
@@ -1203,43 +1441,46 @@ namespace DSP
         free( zbp );
         free( gbp );
 
-        return cf<  T  >{ cfnum , cfden , gains , 2*L , R , 2*L+R  };
+        return cf< __type >{ cfnum , cfden , gains , 2*L , R , 2*L+R  };
     }
 
     /*!
      * \brief Butterworth or Chebyshev I digital bandstop filter coefficients computation function
-     * \param[Fs]        sampling frequency , Hz
-     * \param[Fc]        cut-off frequency  , Hz
-     * \param[BandWidth] cut-off bandwidth  , Hz
-     * \param[order]     filter order
-     * \param[type]      filter type ( 0 - Butterworth , 1 - Chebyshev_I )
-     * \param[g_stop]    stopband attenuation , Db
+     * \param[ _Fs        ] sampling frequency , Hz
+     * \param[ _Fc        ] cut-off frequency  , Hz
+     * \param[ _BandWidth ] cut-off bandwidth  , Hz
+     * \param[ _order     ] filter order
+     * \param[ _type      ] filter type ( 0 - Butterworth , 1 - Chebyshev_I )
+     * \param[ _g_stop    ] stopband attenuation , Db
      * \return   The function computes Butterworth or Chebyshev I digital bandstop filter coefficients that are represented
      *           in the way of second order sections and their gains. All the data is stored within cf data structure
      *           and returned.
     */
 
-    template < typename T > cf<T> __butt_cheb1_digital_bs__
+    template < typename __type >
+    cf<__type> __butt_cheb1_digital_bs__
     (
-            __fx64 Fs,
-            __fx64 Fc,
-            __fx64 BandWidth,
-            __ix32 order,
-            __fx32 type   = 0,
-            __fx64 g_stop = 1
+            __fx64 _Fs,
+            __fx64 _Fc,
+            __fx64 _BandWidth,
+            __ix32 _order,
+            __fx32 _type   = 0,
+            __fx64 _g_stop = 1
     )
     {
 
        // INITIALIZATION:
-       order /= 2;
+       _order /= 2;
 
        // frequency deformation coefficient:
-       __fx64 w1 = tan( PI2 * Fc / 2 / Fs ) , w2 = tan( PI2 * ( Fc + BandWidth ) / 2 / Fs );
+       __fx64 w1 = tan( PI2 * _Fc / 2 / _Fs ) , w2 = tan( PI2 * ( _Fc + _BandWidth ) / 2 / _Fs );
 
        // allocate zeros and poles arrays:
 
        // lowpass analogue prototype poles, zeros and gains:
-       zp < __fx64 > zp = ( !type ) ? __butt_zeros_poles_plain__< __fx64 >( order , g_stop ) : __cheb1_zeros_poles_plain__< __fx64 >( order , g_stop );
+       zp < __fx64 > zp = ( !_type ) ? __butt_zeros_poles_plain__ < __fx64 >( _order, _g_stop )
+                                     : __cheb1_zeros_poles_plain__< __fx64 >( _order, _g_stop );
+
        fcomplex< __fx64 > *plp = zp.plp;
        fcomplex< __fx64 > *glp = zp.glp;
        fcomplex< __fx64 > *zlp = zp.zlp;
@@ -1251,9 +1492,9 @@ namespace DSP
         fcomplex< __fx64 > *gbs = ( fcomplex< __fx64 >* ) calloc( 2*N , sizeof ( fcomplex< __fx64 > ) );
 
         // coefficients matrix computation:
-        T *cfnum = (T* )calloc( 3 * (2*L+R) , sizeof ( T ) );
-        T *cfden = (T* )calloc( 3 * (2*L+R) , sizeof ( T ) );
-        T *gains = (T* )calloc( (2*L+R+1)   , sizeof ( T ) );
+        __type *cfnum = (__type* )calloc( 3 * (2*L+R) , sizeof ( __type ) );
+        __type *cfden = (__type* )calloc( 3 * (2*L+R) , sizeof ( __type ) );
+        __type *gains = (__type* )calloc( (2*L+R+1)   , sizeof ( __type ) );
 
         if( cfnum == 0 || cfden == 0 || gains == 0 ||
             plp == 0 || zlp == 0 || glp == 0 ||
@@ -1262,7 +1503,7 @@ namespace DSP
             free( cfnum ); free( cfden ); free( gains );
             free( plp )  ; free( zlp )  ; free( glp );
             free( pbs )  ; free( zbs )  ; free( gbs );
-            return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+            return cf< __type >{ 0 , 0 , 0 , -1 , -1 , -1 };
         }
 
         // LP-BS BILLINEAR TRANSFORM:
@@ -1368,37 +1609,39 @@ namespace DSP
         free( zbs );
         free( gbs );
 
-        return cf< T >{ cfnum , cfden , gains , 2 * L , R , 2 * L + R };
+        return cf< __type >{ cfnum , cfden , gains , 2 * L , R , 2 * L + R };
     }
 
 
     /*!
      * \brief Chebyshev II or Elliptic digital lowpass filter coefficients computation function
-     * \param[Fs]     sampling frequency , Hz
-     * \param[Fc]     cut-off frequency , Hz
-     * \param[order]  filter order
-     * \param[type]   filter type ( 0 - Chebyshev II , 1 - Elliptic )
-     * \param[g_stop] stopband attenuation , Db
-     * \param[g_pass] passband attenuation , Db
+     * \param[ _Fs     ] sampling frequency , Hz
+     * \param[ _Fc     ] cut-off frequency , Hz
+     * \param[ _order  ] filter order
+     * \param[ _type   ] filter type ( 0 - Chebyshev II , 1 - Elliptic )
+     * \param[ _g_stop ] stopband attenuation , Db
+     * \param[ _g_pass ] passband attenuation , Db
      * \return   The function computes Chebyshev II or Elliptic digital lowpass filter coefficients that are represented
      *           in the way of second order sections and their gains. All the data is stored within cf data structure
      *           and returned.
     */
 
-    template < typename T > cf<T> __cheb2_ellip_digital_lp__
+    template < typename __type >
+    cf< __type > __cheb2_ellip_digital_lp__
     (
-            __fx64 Fs,
-            __fx64 Fc,
-            __ix32 order,
-            __ix32 type   = 0,
-            __fx64 g_pass = 1,
-            __fx64 g_stop = 80
+            __fx64 _Fs,
+            __fx64 _Fc,
+            __ix32 _order,
+            __ix32 _type   = 0,
+            __fx64 _g_pass = 1,
+            __fx64 _g_stop = 80
     )
     {
-        __fx64 w = tan( PI2 * Fc / 2 / Fs );
+        __fx64 w = tan( PI2 * _Fc / 2 / _Fs );
 
         // digital lowpass coefficients computation:
-        zp< __fx64 > zp = ( !type ) ? __cheb2_zeros_poles_plain__< __fx64 >( order , g_stop ) : __ellip_zeros_poles_plain__< __fx64 >( order , g_pass , g_stop );
+        zp< __fx64 > zp = ( !_type ) ? __cheb2_zeros_poles_plain__< __fx64 >( _order, _g_stop )
+                                     : __ellip_zeros_poles_plain__< __fx64 >( _order , _g_pass , _g_stop );
 
         // zeros/poles and coefficients number:
         __ix32 L = zp.L;
@@ -1411,16 +1654,16 @@ namespace DSP
         fcomplex< __fx64 > *glp = zp.glp;
 
         // coefficients matrix computation:
-         T  *cfnum = ( T * )calloc( 3 * N , sizeof ( T ) );
-         T  *cfden = ( T * )calloc( 3 * N , sizeof ( T ) );
-         T  *gains = ( T * )calloc( N + 1 , sizeof ( T ) );
+         __type *cfnum = ( __type* )calloc( 3 * N , sizeof ( __type ) );
+         __type *cfden = ( __type* )calloc( 3 * N , sizeof ( __type ) );
+         __type *gains = ( __type* )calloc( N + 1 , sizeof ( __type ) );
 
         if( cfnum == 0 || cfden == 0 || gains == 0 ||
             plp == 0 || zlp == 0 || glp == 0 )
         {
             free( cfnum ); free( cfden ); free( gains );
             free( plp )  ; free( zlp )  ; free( glp );
-            return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+            return cf< __type >{ 0 , 0 , 0 , -1 , -1 , -1 };
         }
 
         // fcomplex conjugate pairs:
@@ -1483,36 +1726,38 @@ namespace DSP
         free( zlp );
         free( glp );
 
-        return cf< T >{ cfnum , cfden , gains , L , R , N };
+        return cf< __type >{ cfnum , cfden , gains , L , R , N };
     }
 
     /*!
      * \brief Chebyshev II or Elliptic digital highpass filter coefficients computation function
-     * \param[Fs]     sampling frequency , Hz
-     * \param[Fp]     pass frequency , Hz
-     * \param[order]  filter order
-     * \param[type]   filter type ( 0 - Chebyshev II , 1 - Elliptic )
-     * \param[g_stop] stopband attenuation , Db
-     * \param[g_pass] passband attenuation , Db
+     * \param[ _Fs     ] sampling frequency , Hz
+     * \param[ _Fp     ] pass frequency , Hz
+     * \param[ _order  ] filter order
+     * \param[ _type   ] filter type ( 0 - Chebyshev II , 1 - Elliptic )
+     * \param[ _g_stop ] stopband attenuation , Db
+     * \param[ _g_pass ] passband attenuation , Db
      * \return   The function computes Chebyshev II or Elliptic digital lowpass filter coefficients that are represented
      *           in the way of second order sections and their gains. All the data is stored within cf data structure
      *           and returned.
     */
 
-    template < typename T > cf<T> __cheb2_ellip_digital_hp__
+    template < typename __type >
+    cf< __type > __cheb2_ellip_digital_hp__
     (
-            __fx64 Fs,
-            __fx64 Fc,
-            __ix32 order,
-            __ix32 type   = 0,
-            __fx64 g_pass = 1,
-            __fx64 g_stop = 80
+            __fx64 _Fs,
+            __fx64 _Fc,
+            __ix32 _order,
+            __ix32 _type   = 0,
+            __fx64 _g_pass = 1,
+            __fx64 _g_stop = 80
     )
     {
-         __fx64  w = tan( PI2 * Fc / 2 / Fs );
+         __fx64  w = tan( PI2 * _Fc / 2 / _Fs );
 
         // digital lowpass coefficients computation:
-        zp< __fx64 > zp = ( !type ) ? __cheb2_zeros_poles_plain__< __fx64 >( order , g_stop ) : __ellip_zeros_poles_plain__< __fx64 >( order , g_pass , g_stop );
+        zp< __fx64 > zp = ( !_type ) ?__cheb2_zeros_poles_plain__< __fx64 >(_order, _g_stop )
+                                     :__ellip_zeros_poles_plain__< __fx64 >(_order, _g_pass, _g_stop );
 
         // zeros/poles and coefficients number:
         __ix32 L = zp.L;
@@ -1525,16 +1770,16 @@ namespace DSP
         fcomplex< __fx64 > *glp = zp.glp;
 
         // coefficients matrix memory allocation:
-         T *cfnum = (T* )calloc( 3 * N , sizeof ( T ) );
-         T *cfden = (T* )calloc( 3 * N , sizeof ( T ) );
-         T *gains = (T* )calloc( N + 1 , sizeof ( T ) );
+         __type *cfnum = (__type* )calloc( 3 * N , sizeof ( __type ) );
+         __type *cfden = (__type* )calloc( 3 * N , sizeof ( __type ) );
+         __type *gains = (__type* )calloc( N + 1 , sizeof ( __type ) );
 
          if( cfnum == 0 || cfden == 0 || gains == 0 ||
              plp == 0 || zlp == 0 || glp == 0 )
          {
              free( cfnum ); free( cfden ); free( gains );
              free( plp )  ; free( zlp )  ; free( glp );
-             return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+             return cf< __type >{ 0 , 0 , 0 , -1 , -1 , -1 };
          }
 
         // coefficients matrix computation:
@@ -1599,43 +1844,46 @@ namespace DSP
         free( zlp );
         free( glp );
 
-        return cf< T >{ cfnum , cfden , gains , L , R , N };
+        return cf< __type >{ cfnum , cfden , gains , L , R , N };
     }
 
     /*!
      * \brief Chebyshev II or Elliptic digital bandpass filter coefficients computation function
-     * \param[Fs]        sampling frequency , Hz
-     * \param[Fp]        pass frequency     , Hz
-     * \param[BandWidth] passband width     , Hz
-     * \param[order]     filter order
-     * \param[type]      filter type ( 0 - Chebyshev II , 1 - Elliptic )
-     * \param[g_stop]    stopband attenuation , Db
-     * \param[g_pass]    passband attenuation , Db
+     * \param[ _Fs        ] sampling frequency , Hz
+     * \param[ _Fp        ] pass frequency     , Hz
+     * \param[ _BandWidth ] passband width     , Hz
+     * \param[ _order     ] filter order
+     * \param[ _type      ] filter type ( 0 - Chebyshev II , 1 - Elliptic )
+     * \param[ _g_stop    ] stopband attenuation , Db
+     * \param[ _g_pass    ] passband attenuation , Db
      * \return   The function computes Chebyshev II or Elliptic digital bandpass filter coefficients that are represented
      *           in the way of second order sections and their gains. All the data is stored within cf data structure
      *           and returned.
     */
 
-    template < typename T > cf<T> __cheb2_ellip_digital_bp__
+    template < typename __type >
+    cf<__type> __cheb2_ellip_digital_bp__
     (
-            __fx64 Fs,
-            __fx64 Fp,
-            __fx64 BandWidth,
-            __ix32 order,
-            __ix32 type   = 0,
-            __fx64 g_pass = 1,
-            __fx64 g_stop = 80
+            __fx64 _Fs,
+            __fx64 _Fp,
+            __fx64 _BandWidth,
+            __ix32 _order,
+            __ix32 _type   = 0,
+            __fx64 _g_pass = 1,
+            __fx64 _g_stop = 80
     )
     {
-        order /= 2;
+        _order /= 2;
 
         // frequency deformation coefficient:
-        __fx64 w1 = tan( PI2 * Fp / 2 / Fs ) , w2 = tan( PI2 * ( Fp + BandWidth ) / 2 / Fs );
+        __fx64 w1 = tan( PI2 * _Fp / 2 / _Fs ) , w2 = tan( PI2 * ( _Fp + _BandWidth ) / 2 / _Fs );
 
         // allocate zeros and poles arrays:
 
         // lowpass analogue prototype poles, zeros and gains:
-        zp< __fx64 > zp = ( !type ) ? __cheb2_zeros_poles_plain__< __fx64 >( order , g_stop ) : __ellip_zeros_poles_plain__< __fx64 >( order , g_pass , g_stop );
+        zp< __fx64 > zp = ( !_type ) ?__cheb2_zeros_poles_plain__< __fx64 >(_order, _g_stop )
+                                     :__ellip_zeros_poles_plain__< __fx64 >(_order, _g_pass, _g_stop );
+
         fcomplex< __fx64 > *plp = zp.plp;
         fcomplex< __fx64 > *glp = zp.glp;
         fcomplex< __fx64 > *zlp = zp.zlp;
@@ -1647,9 +1895,9 @@ namespace DSP
         fcomplex< __fx64 > *gbp = ( fcomplex< __fx64 >* ) calloc( 2*N , sizeof ( fcomplex< __fx64 > ) );
 
         // coefficients matrix computation:
-         T  *cfnum = ( T * )calloc( 3 * (2*L+R) , sizeof (  T  ) );
-         T  *cfden = ( T * )calloc( 3 * (2*L+R) , sizeof (  T  ) );
-         T  *gains = ( T * )calloc( (2*L+R + 1) , sizeof (  T  ) );
+         __type *cfnum = ( __type* )calloc( 3 * (2*L+R) , sizeof (__type ) );
+         __type *cfden = ( __type* )calloc( 3 * (2*L+R) , sizeof (__type ) );
+         __type *gains = ( __type* )calloc( (2*L+R + 1) , sizeof (__type ) );
 
         if( cfnum == 0 || cfden == 0 || gains == 0 ||
             plp == 0 || zlp == 0 || glp == 0 ||
@@ -1658,7 +1906,7 @@ namespace DSP
             free( cfnum ); free( cfden ); free( gains );
             free( plp )  ; free( zlp )  ; free( glp );
             free( pbp )  ; free( zbp )  ; free( gbp );
-            return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+            return cf< __type >{ 0 , 0 , 0 , -1 , -1 , -1 };
         }
 
         // LP-BP BILLINEAR TRANSFORM:
@@ -1780,43 +2028,46 @@ namespace DSP
         free( zbp );
         free( gbp );
 
-        return cf< T >{ cfnum , cfden , gains , 2*L , R , 2*L+R  };
+        return cf< __type >{ cfnum , cfden , gains , 2*L , R , 2*L+R  };
     }
 
     /*!
      * \brief Chebyshev II or Elliptic digital bandstop filter coefficients computation function
-     * \param[Fs]        sampling frequency , Hz
-     * \param[Fc]        cut-off frequency  , Hz
-     * \param[BandWidth] stopband width     , Hz
-     * \param[order]     filter order
-     * \param[type]      filter type ( 0 - Chebyshev II , 1 - Elliptic )
-     * \param[g_stop]    stopband attenuation , Db
-     * \param[g_pass]    passband attenuation , Db
+     * \param[ _Fs        ] sampling frequency , Hz
+     * \param[ _Fc        ] cut-off frequency  , Hz
+     * \param[ _BandWidth ] stopband width     , Hz
+     * \param[ _order     ] filter order
+     * \param[ _type      ] filter type ( 0 - Chebyshev II , 1 - Elliptic )
+     * \param[ _g_stop    ] stopband attenuation , Db
+     * \param[ _g_pass    ] passband attenuation , Db
      * \return   The function computes Chebyshev II or Elliptic digital bandstop filter coefficients that are represented
      *           in the way of second order sections and their gains. All the data is stored within cf data structure
      *           and returned.
     */
 
-    template < typename T > cf<T> __cheb2_ellip_digital_bs__
+    template < typename __type >
+    cf< __type > __cheb2_ellip_digital_bs__
     (
-            __fx64 Fs,
-            __fx64 Fc,
-            __fx64 BandWidth,
-            __ix32 order,
-            __ix32 type   = 0,
-            __fx64 g_pass = 1,
-            __fx64 g_stop = 80
+            __fx64 _Fs,
+            __fx64 _Fc,
+            __fx64 _BandWidth,
+            __ix32 _order,
+            __ix32 _type   = 0,
+            __fx64 _g_pass = 1,
+            __fx64 _g_stop = 80
     )
     {
-        order /= 2;
+        _order /= 2;
 
         // frequency deformation coefficient:
-        __fx64 w1 = tan( PI2 * Fc / 2 / Fs ) , w2 = tan( PI2 * ( Fc + BandWidth ) / 2 / Fs );
+        __fx64 w1 = tan( PI2 * _Fc / 2 / _Fs ) , w2 = tan( PI2 * (_Fc + _BandWidth ) / 2 / _Fs );
 
         // allocate zeros and poles arrays:
 
         // lowpass analogue prototype poles, zeros and gains:
-        zp < __fx64 > zp = ( !type ) ? __cheb2_zeros_poles_plain__< __fx64 >( order , g_stop ) : __ellip_zeros_poles_plain__< __fx64 >( order , g_pass , g_stop );
+        zp < __fx64 > zp = ( !_type ) ?__cheb2_zeros_poles_plain__< __fx64 >(_order, _g_stop )
+                                      :__ellip_zeros_poles_plain__< __fx64 >(_order, _g_pass, _g_stop );
+
         fcomplex< __fx64 > *plp = zp.plp;
         fcomplex< __fx64 > *glp = zp.glp;
         fcomplex< __fx64 > *zlp = zp.zlp;
@@ -1828,9 +2079,9 @@ namespace DSP
         fcomplex< __fx64 > *gbs = ( fcomplex< __fx64 >* ) calloc( 2*N , sizeof ( fcomplex< __fx64 > ) );
 
         // coefficients matrix computation:
-         T  *cfnum = ( T * )calloc( 3 * (2*L+R) , sizeof ( T ) );
-         T  *cfden = ( T * )calloc( 3 * (2*L+R) , sizeof ( T ) );
-         T  *gains = ( T * )calloc( (2*L+R + 1) , sizeof ( T ) );
+         __type *cfnum = ( __type* )calloc( 3 * (2*L+R) , sizeof ( __type ) );
+         __type *cfden = ( __type* )calloc( 3 * (2*L+R) , sizeof ( __type ) );
+         __type *gains = ( __type* )calloc( (2*L+R + 1) , sizeof ( __type ) );
 
          if( cfnum == 0 || cfden == 0 || gains == 0 ||
              plp == 0 || zlp == 0 || glp == 0 ||
@@ -1839,7 +2090,7 @@ namespace DSP
              free( cfnum ); free( cfden ); free( gains );
              free( plp )  ; free( zlp )  ; free( glp );
              free( pbs )  ; free( zbs )  ; free( gbs );
-             return cf< T >{ 0 , 0 , 0 , -1 , -1 , -1 };
+             return cf< __type >{ 0 , 0 , 0 , -1 , -1 , -1 };
          }
 
         // LP-BP BILLINEAR TRANSFORM:
@@ -1960,257 +2211,374 @@ namespace DSP
         free( zbs );
         free( gbs );
 
-        return cf< T >{ cfnum , cfden , gains , 2*L , R , 2*L+R  };
+        return cf< __type >{ cfnum , cfden , gains , 2*L , R , 2*L+R  };
     }
-
-    // FIR coefficients computation functions:
 
     /*!
       * \brief FIR digital lowpass filter coefficients computation function
-      * \param[Fs]     sampling frequency , Hz
-      * \param[Fc]     cut-off frequency  , Hz
-      * \param[N]      filter order
-      * \param[scale]  scaling factor ( scale = 0 - not-scaled coefficients , scale = 1 - scaled coefficients )
-      * \param[wind]   input window function object
+      * \param[ _Fs    ] sampling frequency , Hz
+      * \param[ _Fc    ] cut-off frequency  , Hz
+      * \param[ _N     ] filter order
+      * \param[ _scale ] scaling factor ( scale = 0 - not-scaled coefficients , scale = 1 - scaled coefficients )
+      * \param[ _wind  ] input window function object
       * \return The function returns digital lowpass FIR filter coefficients buffer.
+      *         Even order FIR filter coefficients are computed as follows:
+      * \f[
+      *     Fc = \frac{ Fc }{ Fs }
+      *     n \in \left[ 0 ; \frac{ N }{ 2 } \right]       \newline
+      *     k   = \left | n - \frac{ N + 1 }{ 2 } \right | \newline
+      *     a_k = \begin{cases}
+      *             2 * F_c * w_i \quad , \quad n = 0
+      *             \\
+      *             2 * Fc * \frac{ \sin{ ( 2 * \pi * n * F_c ) } }{ 2 * \pi * n * F_c } \quad , \quad n > 0
+      *             \\
+      *             a_{N-k} = a_k , \quad , \quad n > 0
+      *           \end{cases}
+      * \f]
+      *         Odd order FIR filter coefficients are computed as follows:
+      * \f[
+      *         Fc = \frac{ Fc }{ Fs }
+      *         n \in \left[ 0 ; \frac{ N }{ 2 } \right]            \newline
+      *         k   = \left | n - \frac{ N + 1 }{ 2 } \right |      \newline
+      *         r   = ceil \left( \frac{N}{2} \right) - \frac{N}{2} \newline
+      *         a_k = 2 * F_c * \frac{ \sin{ ( 2 * \pi * F_c * ( n + r ) ) } }{ 2 * \pi * F_c * ( n + r ) } \newline
+      *         a_{N-k} = a_k
+      * \f]
+      *
+      *         If the flag scale = 1, then coefficients are scaled as follows:
+      * \f[
+      *         n \in \left[ 0 ; N \right]                          \newline
+      *         a_n = \frac{ a_n }{ \left| W(j*\omega) \right| }
+      * \f]
     */
     template< typename __type > cf<__type> __fir_wind_digital_lp__
     (
-            __fx64 Fs,
-            __fx64 Fc,
-            __ix32 N,
-            bool scale,
-            __fx64 *wind
+            __fx64 _Fs,
+            __fx64 _Fc,
+            __ix32 _N,
+            __ix32 _scale,
+            __fx64 *_wind
     )
     {
         // coefficients buffer memory allocation:
-        __type *cfbuff = ( __type* ) calloc( N , sizeof ( __type ) );
+        __type *cfbuff = ( __type* ) calloc(_N , sizeof ( __type ) );
 
         // coefficients computation:
         __ix32 k = 0;
-        Fc /= Fs;
+        _Fc /= _Fs;
 
-        if ( N % 2 == 0) // even order filter coefficients computation
+        if ( _N % 2 == 0) // even order filter coefficients computation
         {
-            for ( __ix32 n = 0; n < N / 2; n++)
+            for ( __ix32 n = 0; n < _N / 2; n++)
             {
-                k = abs(n - N / 2);
+                k = abs(n - _N / 2);
                 if (n == 0)
                 {
-                    cfbuff[k] = 2 * Fc * wind[k];
+                    cfbuff[k] = 2 * _Fc * _wind[k];
                 }
                 else
                 {
-                    cfbuff[k] = 2 * Fc * sin(n * PI2 * Fc ) / (n * PI2 * Fc ) * wind[k];
-                    cfbuff[N - k] = cfbuff[k];
+                    cfbuff[k] = 2 * _Fc * sin(n * PI2 * _Fc ) / (n * PI2 * _Fc ) * _wind[k];
+                    cfbuff[_N - k] = cfbuff[k];
                 }
             }
         }
-        else if ( N % 2 != 0) // odd order filter coefficients computation
+        else if (_N % 2 != 0) // odd order filter coefficients computation
         {
-            __type rem = ceil( (__type)N / 2) - (__type)N / 2;
+            __type rem = ceil( (__type)_N / 2) - (__type)_N / 2;
 
-            for ( __ix32 n = 0; n < ceil(N / 2); n++)
+            for ( __ix32 n = 0; n < ceil(_N / 2); n++)
             {
-                k = abs(n - N / 2);
-                cfbuff[k] = 2 * Fc * sin((n + rem) * PI2 * Fc ) / ((n + rem) * PI2 * Fc ) * wind[k];
-                cfbuff[ N - k] = cfbuff[k];
+                k = abs(n - _N / 2);
+                cfbuff[k] = 2 * _Fc * sin((n + rem) * PI2 * _Fc ) / ((n + rem) * PI2 * _Fc ) * _wind[k];
+                cfbuff[_N - k] = cfbuff[k];
             }
         }
 
         // filter pulse characteristic normalization:
-        if ( scale )
+        if (_scale )
         {
-            fr fr = __freq_resp__( cfbuff , N , Fs , 0 );
-            for ( __ix32 n = 0; n < N; n++) cfbuff[n] /= fr.Km;
+            fr fr = __freq_resp__( cfbuff, _N, _Fs, 0 );
+            for ( __ix32 n = 0; n < _N; n++) cfbuff[n] /= fr.Km;
         }
 
         // returning the result
-        return cf< __type >{ cfbuff , 0 , 0 , -1 , -1 , N  };
+        return cf< __type >{ cfbuff , 0 , 0 , -1 , -1 , _N };
     }
 
     /*!
       * \brief FIR digital lowpass filter coefficients computation function
-      * \param[Fs]     sampling frequency , Hz
-      * \param[Fp]     pass-off frequency , Hz
-      * \param[N]      filter order
-      * \param[scale]  scaling factor ( scale = 0 - not-scaled coefficients , scale = 1 - scaled coefficients )
-      * \param[wind]   input window function object
+      * \param[ _Fs    ] sampling frequency , Hz
+      * \param[ _Fp    ] pass-off frequency , Hz
+      * \param[ _N     ] filter order
+      * \param[ _scale ] scaling factor ( scale = 0 - not-scaled coefficients , scale = 1 - scaled coefficients )
+      * \param[ _wind  ] input window function object
       * \return The function returns digital lowpass FIR filter coefficients buffer.
+      *         Even order FIR highpass filter coefficients are computed as follows:
+      *
+      *         \f[
+      *             Fp = \frac{ Fp }{ Fs }
+      *             n \in \left[ 0 ; \frac{ N }{ 2 } \right]       \newline
+      *             k   = \left | n - \frac{ N + 1 }{ 2 } \right | \newline
+      *             a_k = \begin{cases}
+      *                   ( 1 - 2 * F_p ) * w_i \quad , \quad n = 0
+      *                   \\
+      *                   ( 1 - 2 * F_p ) * \frac{ \sin{ ( 2 * \pi * n * F_p ) } }{ 2 * \pi * n * F_p } * w_i \quad , \quad n > 0
+      *                   \end{cases}
+      *                   a_{N-k} = a_k \quad , \quad n > 0
+      *         \f]
+      *
+      *         Odd order FIR highpass filter coefficients are computed as follows:
+      *
+      *         \f[
+      *             Fp = \frac{ Fp }{ Fs }
+      *             n \in \left[ 0 ; \frac{ N }{ 2 } \right]                \newline
+      *             k   = \left | n - \frac{ N + 1 }{ 2 } \right |          \newline
+      *             r   = ceil \left( n - \frac{N}{2} \right) - \frac{N}{2} \newline
+      *             a_k = -1^{n} * 2 * \left[ 0.5 - F_p \right]
+      *                    * \frac{ \sin{ \left[ ( n + r ) * 2 * \pi * ( 0.5 - F_p ) \right] } }{ \left[ ( n + r ) * 2 * \pi * ( 0.5 - F_p ) \right] }
+      *         \f]
+      *
+      *         If the flag scale = 1, then coefficients are scaled as follows:
+      *
+      *         \f[
+      *             n \in \left[ 0 ; N \right]                          \newline
+      *             a_n = \frac{ a_n }{ \left| W(j*\omega) \right| }
+      *         \f]
     */
     template< typename __type > cf<__type> __fir_wind_digital_hp__
     (
-            __fx64 Fs,
-            __fx64 Fp,
-            __ix32 N,
-            bool scale,
-           __fx64 *wind
+            __fx64 _Fs,
+            __fx64 _Fp,
+            __ix32 _N,
+            __ix32 _scale,
+            __fx64 *_wind
     )
     {
         // coefficients buffer memory allocation:
-        __type *cfbuff = ( __type* ) calloc( N , sizeof ( __type ) );
+        __type *cfbuff = ( __type* ) calloc( _N , sizeof ( __type ) );
 
         // coefficients computation:
         __ix32 k = 0;
-        Fp /= Fs;
+        _Fp /= _Fs;
 
-        if ( N % 2 == 0) // even order highpass
+        if ( _N % 2 == 0) // even order highpass
         {
-            for ( __ix32 n = 0; n < N / 2; n++)
+            for ( __ix32 n = 0; n < _N / 2; n++)
             {
-                k = abs(n - N / 2);
+                k = abs(n - _N / 2);
 
                 if (n == 0)
                 {
-                    cfbuff[k] = (1 - 2 * Fp) * wind[k];
+                    cfbuff[k] = (1 - 2 * _Fp) * _wind[k];
                 }
                 else
                 {
-                    cfbuff[k] = -2 * Fp * sin(n * PI2 * Fp ) / (n * PI2 * Fp ) * wind[k];
-                    cfbuff[N - k] = cfbuff[k];
+                    cfbuff[k] = -2 * _Fp * sin(n * PI2 * _Fp ) / (n * PI2 * _Fp ) * _wind[k];
+                    cfbuff[_N - k] = cfbuff[k];
                 }
             }
         }
-        else if (N % 2 != 0) // odd order highpass
+        else if (_N % 2 != 0) // odd order highpass
         {
-            __type rem = ceil( (__type)N / 2) - (__type)N / 2;
-            for ( __ix32 n = 0; n < ceil(N / 2); n++)
+            __type rem = ceil( (__type)_N / 2) - (__type)_N / 2;
+            for ( __ix32 n = 0; n < ceil(_N / 2); n++)
             {
-                k = abs(n - N / 2);
-                cfbuff[k]     = -pow(-1 , n) * 2 * (0.5-Fp) * sin((n + rem) * PI2 * (0.5-Fp) ) / ((n + rem) * PI2 * (0.5 - Fp) )* wind[k];
-                cfbuff[N - k] = -cfbuff[k];
+                k = abs(n - _N / 2);
+                cfbuff[k]     = -pow(-1 , n) * 2 * (0.5-_Fp) * sin((n + rem) * PI2 * (0.5-_Fp) ) / ((n + rem) * PI2 * (0.5 - _Fp) )* _wind[k];
+                cfbuff[_N - k] = -cfbuff[k];
             }
         }
 
         // filter pulse characteristic scaling:
-        if ( scale )
+        if (_scale )
         {
-            fr fr = __freq_resp__( cfbuff , N , Fs , Fs / 2 );
-            for ( __ix32 n = 0; n < N; n++) cfbuff[n] /= fr.Km;
+            fr fr = __freq_resp__( cfbuff, _N, _Fs, _Fs / 2 );
+            for ( __ix32 n = 0; n < _N; n++) cfbuff[n] /= fr.Km;
         }
 
         // returning the result
-        return cf< __type >{ cfbuff , 0 , 0 , -1 , -1 , N  };
+        return cf< __type >{ cfbuff , 0 , 0 , -1 , -1 , _N };
     }
 
     /*!
       * \brief FIR digital lowpass filter coefficients computation function
-      * \param[Fs]     sampling frequency , Hz
-      * \param[Fp]     pass frequency     , Hz
-      * \param[BW]     passband width     , Hz
-      * \param[N]      filter order
-      * \param[scale]  scaling factor ( scale = 0 - not-scaled coefficients , scale = 1 - scaled coefficients )
-      * \param[wind]   input window function object
+      * \param[ _Fs    ] sampling frequency , Hz
+      * \param[ _Fp    ] pass frequency     , Hz
+      * \param[ _BW    ] passband width     , Hz
+      * \param[ _N     ] filter order
+      * \param[ _scale ] scaling factor ( scale = 0 - not-scaled coefficients , scale = 1 - scaled coefficients )
+      * \param[ _wind  ] input window function object
       * \return The function returns digital lowpass FIR filter coefficients buffer.
+      *         Even order FIR bandpass filter coefficients are computed as follows:
+      *
+      *         \f[
+      *             F_{p1} = \frac{ F_{p1} }{ Fs }                 \newline
+      *             F_{p2} = \frac{ F_{p1}+BW }{ Fs }              \newline
+      *             n \in \left[ 0 ; \frac{ N }{ 2 } \right]       \newline
+      *             k   = \left | n - \frac{ N + 1 }{ 2 } \right | \newline
+      *
+      *             a_k = \begin{cases}
+      *                   2 * ( F_{p1} - F_{p2} ) * w_i \quad , \quad n = 0
+      *                   \\
+      *                   2 * \left[ F_{p2} * \frac{ \sin{ ( 2 * \pi * F_{p2} * n ) } }{ 2 * \pi * F_{p2} * n } -
+      *                              F_{p1} * \frac{ \sin{ ( 2 * \pi * F_{p1} * n ) } }{ 2 * \pi * F_{p1} * n }
+      *                       \right] * w_i \quad , \quad n > 0
+      *                   \\
+      *                   a_{N-k} = a_k \quad , \quad n > 0
+      *                   \end{cases}
+      *         \f]
+      *
+      *         Odd order FIR bandpass filter coefficients are computed as follows:
+      *
+      *         \f[
+      *             F_{p1} = \frac{ F_{p1} }{ Fs }                          \newline
+      *             F_{p2} = \frac{ F_{p1}+BW }{ Fs }                       \newline
+      *             n \in \left[ 0 ; \frac{ N }{ 2 } \right]                \newline
+      *             k   = \left | n - \frac{ N + 1 }{ 2 } \right |          \newline
+      *             r   = ceil\left(n - \frac{N}{2} \right) - \frac{N}{2}   \newline
+      *
+      *             a_k = 2 * \left[ F_{p2} * \frac{ \sin{ ( 2 * \pi * F_{p2} * ( n + r ) ) } }{ 2 * \pi * F_{p2} * ( n + r ) } -
+      *                              F_{p1} * \frac{ \sin{ ( 2 * \pi * F_{p1} * ( n + r ) ) } }{ 2 * \pi * F_{p1} * ( n + r ) }
+      *                      \right] * w_i \newline
+      *             a_{N-k} = a_k \quad , \quad n > 0
+      *         \f]
+      *
+      *         If the flag scale = 1, then coefficients are scaled as follows:
+      *
+      *         \f[
+      *             n \in \left[ 0 ; N \right]                          \newline
+      *             a_n = \frac{ a_n }{ \left| W(j*\omega) \right| }
+      *         \f]
     */
     template< typename __type > cf<__type> __fir_wind_digital_bp__
     (
-            __fx64 Fs,
-            __fx64 Fp,
-            __fx64 BW,
-            __ix32 N,
-            bool scale,
-            __fx64 *wind
+            __fx64 _Fs,
+            __fx64 _Fp,
+            __fx64 _BW,
+            __ix32 _N,
+            __ix32 _scale,
+            __fx64 *_wind
     )
     {
         // coefficients buffer memory allocation:
-        __type *cfbuff = ( __type* ) calloc( N , sizeof ( __type ) );
+        __type *cfbuff = ( __type* ) calloc(_N , sizeof ( __type ) );
 
         // coefficients computation:
         __ix32 k = 0;
-        __fx64 Fp1 = Fp / Fs , Fp2 = ( Fp + BW )/ Fs;
+        __fx64 Fp1 = _Fp / _Fs , Fp2 = (_Fp + _BW)/ _Fs;
 
-        if ( N % 2 == 0) // even order bandpass
+        if ( _N % 2 == 0) // even order bandpass
         {
-            for ( __ix32 n = 0; n < N / 2; n++)
+            for ( __ix32 n = 0; n < _N / 2; n++)
             {
-                k = abs(n - N / 2);
+                k = abs(n - _N / 2);
 
                 if (n == 0)
                 {
-                    cfbuff[k] = 2 * ( Fp2 - Fp1) * wind[k];
+                    cfbuff[k] = 2 * ( Fp2 - Fp1) * _wind[k];
                 }
                 else
                 {
-                    cfbuff[k] = 2 * (Fp2 * sin(n * PI2 * Fp2) / (n * PI2 * Fp2) - Fp1 * sin(n * PI2 * Fp1) / (n * PI2 * Fp1)) * wind[k];
-                    cfbuff[N - k] = cfbuff[k];
+                    cfbuff[k] = 2 * (Fp2 * sin(n * PI2 * Fp2) / (n * PI2 * Fp2) - Fp1 * sin(n * PI2 * Fp1) / (n * PI2 * Fp1)) * _wind[k];
+                    cfbuff[_N - k] = cfbuff[k];
                 }
             }
         }
-        else if (N % 2 != 0) // odd order bandpass
+        else if (_N % 2 != 0) // odd order bandpass
         {
-            __type rem = ceil((__type)N / 2) - (__type)N / 2;
+            __type rem = ceil((__type)_N / 2) - (__type)_N / 2;
 
-            for ( __ix32 n = 0; n < ceil(N / 2); n++)
+            for ( __ix32 n = 0; n < ceil(_N / 2); n++)
             {
-                k = abs(n - N / 2);
-                cfbuff[k] = 2 * (Fp2 * sin((n + rem) * PI2 * Fp2) / ((n + rem) * PI2 * Fp2) - Fp1 * sin((n + rem) * PI2 * Fp1) / ((n + rem) * PI2 * Fp1)) * wind[k];
-                cfbuff[N - k] = cfbuff[k];
+                k = abs(n - _N / 2);
+                cfbuff[k] = 2 * (Fp2 * sin((n + rem) * PI2 * Fp2) / ((n + rem) * PI2 * Fp2) - Fp1 * sin((n + rem) * PI2 * Fp1) / ((n + rem) * PI2 * Fp1)) * _wind[k];
+                cfbuff[_N - k] = cfbuff[k];
             }
         }
 
         // filter pulse characteristic normalization:
-        if ( scale )
+        if (_scale )
         {
-            fr fr = __freq_resp__( cfbuff , N , Fs , ( ( Fp1 + 0.5 * ( Fp2 - Fp1 ) ) * Fs ) );
-            for ( __ix32 n = 0; n < N; n++) cfbuff[n] /= fr.Km;
+            fr fr = __freq_resp__( cfbuff , _N , _Fs , ( ( Fp1 + 0.5 * ( Fp2 - Fp1 ) ) * _Fs ) );
+            for ( __ix32 n = 0; n < _N; n++) cfbuff[n] /= fr.Km;
         }
 
         // returning the result:
-        return cf< __type >{ cfbuff , 0 , 0 , -1 , -1 , N  };
+        return cf< __type >{ cfbuff , 0 , 0 , -1 , -1 , _N };
     }
 
     /*!
       * \brief FIR digital bandpass filter coefficients computation function
-      * \param[Fs]     sampling frequency , Hz
-      * \param[Fc]     cut-off frequency  , Hz
-      * \param[BW]     stopband width     , Hz
-      * \param[N]      filter order
-      * \param[scale]  scaling factor ( scale = 0 - not-scaled coefficients , scale = 1 - scaled coefficients )
-      * \param[wind]   input window function object
+      * \param[ _Fs    ] sampling frequency , Hz
+      * \param[ _Fc    ] cut-off frequency  , Hz
+      * \param[ _BW    ] stopband width     , Hz
+      * \param[ _N     ] filter order
+      * \param[ _scale ] scaling factor ( scale = 0 - not-scaled coefficients , scale = 1 - scaled coefficients )
+      * \param[ _wind  ] input window function object
       * \return The function returns digital lowpass FIR filter coefficients buffer.
+      *         \f[
+      *             F_{c1} = \frac{ F_{c1} }{ Fs }                 \newline
+      *             F_{c2} = \frac{ F_{c1}+BW }{ Fs }              \newline
+      *             n \in \left[ 0 ; \frac{ N }{ 2 } \right]       \newline
+      *             k   = \left | n - \frac{ N + 1 }{ 2 } \right | \newline
+      *             a_k = \begin{cases}
+      *                   1 - 2 * ( F_{c2} - F_{c1} ) * w_k \quad , \quad n = 0
+      *                   \\
+      *                   2 * \left[ F_{c1} * \frac{ \sin{ ( 2 * \pi * n * F_{c1} ) } }{ 2 * \pi * n * F_{c1} } -
+      *                              F_{c2} * \frac{ \sin{ ( 2 * \pi * n * F_{c2} ) } }{ 2 * \pi * n * F_{c2} }
+      *                       \right] * w_k \quad , \quad n > 0
+      *                   \end{cases}
+      *         \f]
+      *
+      *         If the flag scale = 1, then coefficients are scaled as follows:
+      *
+      *         \f[
+      *             n \in \left[ 0 ; N \right]                          \newline
+      *             a_n = \frac{ a_n }{ \left| W(j*\omega) \right| }
+      *         \f]
     */
     template< typename __type > cf<__type> __fir_wind_digital_bs__
     (
-            __fx64 Fs,
-            __fx64 Fc,
-            __fx64 BW,
-            __ix32 N,
-            bool scale,
-            __fx64 *wind
+            __fx64 _Fs,
+            __fx64 _Fc,
+            __fx64 _BW,
+            __ix32 _N,
+            __ix32 _scale,
+            __fx64 *_wind
     )
     {
         // coefficients buffer memory allocation:
-        __type *cfbuff = ( __type* ) calloc( N , sizeof ( __type ) );
+        __type *cfbuff = ( __type* ) calloc(_N , sizeof ( __type ) );
 
         // coefficients computation:
         __ix32 k = 0;
-        __fx64 Fc1 = Fc / Fs , Fc2 = ( Fc + BW ) / Fs;
+        __fx64 Fc1 = _Fc / _Fs , Fc2 = (_Fc + _BW ) / _Fs;
 
-        for (int n = 0; n < N / 2; n++)
+        for (__ix32 n = 0; n < _N / 2; n++)
         {
-            k = abs(n - N / 2);
+            k = abs(n - _N / 2);
 
             if (n == 0)
             {
-                cfbuff[k] = 1 - 2 * ( Fc2 - Fc1 ) * wind[k];
+                cfbuff[k] = 1 - 2 * ( Fc2 - Fc1 ) * _wind[k];
             }
             else
             {
-                cfbuff[k] = 2 * ( Fc1 * sin(n * PI2 * Fc1) / (n * PI2 * Fc1 ) - Fc2 * sin(n * PI2 * Fc2) / (n * PI2 * Fc2) ) * wind[k];
-                cfbuff[ N - k] = cfbuff[k];
+                cfbuff[k] = 2 * ( Fc1 * sin(n * PI2 * Fc1) / (n * PI2 * Fc1 ) - Fc2 * sin(n * PI2 * Fc2) / (n * PI2 * Fc2) ) * _wind[k];
+                cfbuff[_N - k] = cfbuff[k];
             }
         }
 
         // filter pulse characteristic normalization:
-        if ( scale )
+        if (_scale )
         {
-            fr fr = __freq_resp__( cfbuff , N , Fs , 0 );
-            for ( __ix32 n = 0; n < N; n++) cfbuff[n] /= fr.Km;
+            fr fr = __freq_resp__(cfbuff, _N, _Fs , 0 );
+            for ( __ix32 n = 0; n < _N; n++) cfbuff[n] /= fr.Km;
         }
 
         // return the result:
-        return cf< __type >{ cfbuff , 0 , 0 , -1 , -1 , N  };
+        return cf< __type >{ cfbuff , 0 , 0 , -1 , -1 , _N };
     }
 
     /*! @} */
@@ -2265,7 +2633,11 @@ namespace DSP
 
     /*!
      *  \class classic_iir_abstract
-     *  \brief defines classic IIR filter structure
+     *  \details Defines classic IIR filter represented in a biquadratic form:
+     *  \f[
+     *      W(z) = \prod_{i=0}^N gain_{i} * \frac{ a_{0i} + a_{1i} * z^{-1} + a_{2i} * z^{-2} }
+     *                                           { b_{0i} + b_{1i} * z^{-1} + b_{2i} * z^{-2} }
+     *  \f]
     */
     template< typename __type > class classic_iir_abstract : public  filter_abstract
     {
@@ -2316,6 +2688,10 @@ namespace DSP
 
                 case filter_type::bandstop:
                 m_cfmatrix = compute_bandstop();
+                break;
+
+                default:
+                m_cfmatrix = compute_lowpass ();
                 break;
             }
 
@@ -2432,21 +2808,6 @@ namespace DSP
             m_attenuation = { 80  , 1   };
         }
 
-        /*!
-         *  \brief initializing constructor
-         *  \param[_Fs         ] input signal sampling frequency, Hz
-         *  \param[_order      ] filter order
-         *  \param[_type       ] filter type
-         *  \param[_bandwidth  ] filter passband/stopband bandwidth
-         *  \param[_attenuation] filter passband/stopband attenuation
-         *  \details Initializes filter and calls memory allocation and coefficients
-         *           computation function
-        */
-        classic_iir_abstract( __fx64 _Fs , __ix32 _order , filter_type _type , bandwidth _bandwidth , attenuation _attenuation )
-        {
-            init(_Fs, _order,  _type, _bandwidth, _attenuation );
-        }
-
         #ifndef __ALG_PLATFORM
         void show()
         {
@@ -2457,7 +2818,10 @@ namespace DSP
 
     /*!
      *  \class classic_fir_abstract
-     *  \brief defines classic IIR filter structure
+     *  \details Defines classic IIR filter with a transfer function:
+     *  \f[
+     *      W(z) = \sum_{i=0}^N a_{i} * z^{-i}
+     *  \f]
     */
     template< typename __type > class classic_fir_abstract : public  filter_abstract
     {
@@ -2506,6 +2870,10 @@ namespace DSP
 
                 case filter_type::bandstop:
                 m_cfmatrix = __fir_wind_digital_bs__<__type>( m_Fs , m_bandwidth.Fc , m_bandwidth.BW , m_order , m_scale , _window );
+                break;
+
+                default:
+                m_cfmatrix = __fir_wind_digital_lp__<__type>( m_Fs , m_bandwidth.Fc , m_order , m_scale , _window );
                 break;
             }
 
@@ -2622,7 +2990,11 @@ namespace DSP
 
     /*!
      *  \class recursive_fir_abstract
-     *  \brief defines recursive Fourier FIR filter
+     *  \details Defines recursive FIR filter having the following transfer function:
+     *   \f[
+     *      W(z) = \sum_{i=0}^N a_{i} * z^{-i}
+     *  \f]
+     *
     */
     template< typename __type > class recursive_fir_abstract : public  filter_abstract
     {
@@ -2751,8 +3123,15 @@ namespace DSP
     };
 
     /*!
-     *  \class comb filter abstract class
-     *  \brief defines comb FIR filter
+     *  \class fcomb_abstract
+     *  \details defines comb FIR filter having the following transfer function:
+     *  \f[
+     *      W(z) = \begin{cases}
+     *             1 + z^{Fs/Fn/2}, \quad odd = 1
+     *             \\
+     *             1 - z^{Fs/Fn/2}, \quad ddd = 0
+     *             \end{cases}
+     *  \f]
     */
     template < typename T > class fcomb_abstract : public  filter_abstract
     {
@@ -2765,6 +3144,12 @@ namespace DSP
 
         /*! \brief comb filter buffer */
          delay< __type > m_bx;
+
+         /*! \brief memory allocation function */
+         __ix32 allocate() override
+         {
+             return m_bx.allocate( m_order + 1 );
+         }
 
          /*!
           *  \brief 32-bit floating point filtering function
@@ -2784,25 +3169,17 @@ namespace DSP
          *  \param[Fs] - input signal sampling frequency
          *  \param[Fn] - input signal nominal frequency
         */
-        __ix32 init( __fx64 _Fs , __fx64 _Fn, __ix32 _odd )
+        void init( __fx64 _Fs , __fx64 _Fn, __ix32 _odd )
         {
             m_Fs      = _Fs;
             m_Fn      = _Fn;
-            m_Ts      = 1 / m_Fs;
+            m_Ts      = (__fx64)1 / m_Fs;
             m_odd     = _odd;
             m_order   = m_Fs / m_Fn / 2;
             m_out     = 0;
 
             // memory allocation:
             allocate();
-
-            return 0;
-        }
-
-        /*! \brief memory allocation function */
-        __ix32 allocate() override
-        {
-            return m_bx.allocate( m_order + 1 );
         }
 
         /*! \brief memory deallocation function */
@@ -2834,20 +3211,17 @@ namespace DSP
         /*! \brief frequency response computation function */
         fr frequency_response( __fx64 F ) override
         {
-            __fx64 Re = 0;
-            __fx64 Im = 0;
+            fcomplex<__fx64> Wz;
             if(!m_odd)
             {
-                Re = 1 - cos(-PI2  * m_order * F * m_Ts);
-                Im = 0 - sin(-PI2  * m_order * F * m_Ts);
+                Wz(1 - cos(-PI2  * (__fx64)m_order * F * m_Ts), -sin(-PI2  * (__fx64)m_order * F * m_Ts) );
             }
             else
             {
-                Re = 1 + cos(-PI2  * m_order * F * m_Ts);
-                Im = 0 + sin(-PI2  * m_order * F * m_Ts);
+                Wz(1 + cos(-PI2  * (__fx64)m_order * F * m_Ts), +sin(-PI2  * (__fx64)m_order * F * m_Ts) );
             }
 
-            return { sqrt(Re * Re + Im * Im) * 0.5 , atan2(Im, Re) };
+            return { __cabsf__(Wz) , __cargf__(Wz) };
         }
 
         /*!
@@ -2859,8 +3233,19 @@ namespace DSP
     };
 
     /*!
-     *  \class equalized comb filter abstract class
-     *  \brief defines equalized comb FIR filter
+     *  \class fcombeq_abstract
+     *  \details defines equalized comb FIR filter having the following transfer function:
+     *  \f[
+     *      W(z) = \begin{cases}
+     *             1 * K1 - z^{Fs/Fn} - K2 * z^{2*Fs/Fn} , \quad if the filter is odd
+     *             \\
+     *             1 * K1 + z^{Fs/Fn} - K2 * z^{2*Fs/Fn} , \quad if the filter is not odd
+     *             \end{cases}
+     *  \f]
+     *
+     *  K1, K2 are the roots of the following square equation: \newline
+     *  \f[
+     *  \f]
     */
     template < typename __type > class fcombeq_abstract : public  filter_abstract
     {
@@ -2892,14 +3277,42 @@ namespace DSP
          template< typename F > inline __type filt( F *input )
          {
              m_bx(input);
-             return ( m_out = ( m_odd ) ? ( (__fx64)*input * m_K1 - (__fx64)m_bx[m_ElemNum1] - (__fx64)m_bx[m_ElemNum2] * m_K2 ) : ( (__fx64)*input * m_K1 + (__fx64)m_bx[m_ElemNum1] - (__fx64)m_bx[m_ElemNum2] * m_K2 ) );
+             return ( m_out = ( !m_odd ) ? ( (__fx64)*input * m_K1 - (__fx64)m_bx[m_ElemNum1] - (__fx64)m_bx[m_ElemNum2] * m_K2 )
+                                         : ( (__fx64)*input * m_K1 + (__fx64)m_bx[m_ElemNum1] - (__fx64)m_bx[m_ElemNum2] * m_K2 ) );
+         }
+
+         /*! \brief memory allocation function */
+         __ix32 allocate() override
+         {
+             // Complex Transfer functions:
+             fcomplex<__fx64> WZ1(0.5 - 0.5 * cos(-PI2 * (m_Fn + m_dF) * (__fx64)m_order * m_Ts), -0.5 * sin(-PI2 * (m_Fn + m_dF) * (__fx64)m_order * m_Ts) );
+             fcomplex<__fx64> WZ2(1.0 - cos(-PI2 * (m_Fn + m_dF) * (__fx64)m_order * 2.0 * m_Ts), -sin(-PI2 * (m_Fn + m_dF) * (__fx64)m_order * 2.0 * m_Ts) );
+
+             // square equation coefficients:
+             __fx64 aa = 1;
+             __fx64 bb = __realf__( ( WZ1 * __conjf__(WZ2) + WZ2*__conjf__(WZ1) ) / WZ2 / __conjf__(WZ2) );
+             __fx64 cc = __realf__( ( WZ1 * __conjf__(WZ1) - fcomplex<__fx64>((1 + m_d_Amp / 100) * (1 + m_d_Amp / 100) , 0 ) ) / WZ2 / __conjf__(WZ2) );
+             __fx64 DD = bb*bb - 4*aa*cc;
+
+             if( DD > (__fx64)0 )
+             {
+                 __fx64 maxroot = fmax( ( -bb - sqrt(DD) ) * (__fx64)0.5, ( -bb + sqrt(DD) ) * (__fx64)0.5 ) * (__fx64)2;
+                 m_K1 = ( 1 + maxroot );
+                 m_K2 = maxroot;
+             }
+             else
+             {
+                 m_K1 = 1;
+                 m_K2 = 0;
+             }
+
+             return m_bx.allocate( m_ElemNum2 + 1 );
          }
 
          /*! \brief filter output */
          __fx64 m_out;
 
     public:
-
         /*!
          *  \brief comb filter initialization function
          *  \param[ Fs    ] - input signal sampling frequency
@@ -2946,44 +3359,6 @@ namespace DSP
             deallocate();
         }
 
-        /*! \brief memory allocation function */
-        __ix32 allocate() override
-        {
-            // auxiliary coefficients:
-            __fx64 A =  0.5 - 0.5 * cos(-PI2 * (m_Fn + m_dF) * (__fx64)m_order * m_Ts );
-            __fx64 B =  1.0 - cos(-PI2 * (m_Fn + m_dF) * (__fx64)m_order * 2.0 * m_Ts);
-            __fx64 C = -0.5 * sin(-PI2 * (m_Fn + m_dF) * (__fx64)m_order * m_Ts);
-            __fx64 D = -sin(-PI2 * (m_Fn + m_dF) * (__fx64)m_order * 2.0 * m_Ts);
-
-            // square equation coefficients:
-            __fx64 a  = 1;
-            __fx64 b  = 2 * ( A * B + C * D ) / (B * B + D * D);
-            __fx64 c  = (A * A + C * C - (1 + m_d_Amp / 100) * (1 + m_d_Amp / 100) ) / (B * B + D * D);
-
-            // square equation solve:
-            __fx64 discr  = b * b - 4 * a * c;
-            __fx64 K1     = 0;
-            __fx64 K2     = 0;
-
-            if ( discr > 0 ) // discriminant check
-            {
-                // roots computation:
-                K1 = ( -b - sqrt( discr ) ) * 0.5;
-                K2 = ( -b + sqrt( discr ) ) * 0.5;
-
-                // take the greates of the roots ( although, it does not matter which root you take... ):
-                m_K1 = (1 + fmax(K1 , K2) / 0.5);
-                m_K2 = fmax(K1, K2) / 0.5;
-            }
-            else // if discriminant is negative, then the amplitude frequency slope is not compensated
-            {
-                m_K1 = 1;
-                m_K2 = 0;
-            }
-
-            return m_bx.allocate( m_ElemNum2 + 1 );
-        }
-
         /*! \brief memory deallocation function */
         __ix32 deallocate() override
         {
@@ -2994,21 +3369,19 @@ namespace DSP
         /*! \brief frequency response computation function */
         fr frequency_response( __fx64 F ) override
         {
-            __fx64 Re = 0;
-            __fx64 Im = 0;
-
+            fcomplex<__fx64> Wz;
             if( !m_odd ) // even filter
             {
-                Re = m_K1 - cos(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * cos(-PI2 * 2 * (__fx64)m_order * F * m_Ts);
-                Im = 0    - sin(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * sin(-PI2 * 2 * (__fx64)m_order * F * m_Ts);
+
+                Wz( m_K1 - cos(-PI2 * ( __fx64)m_order * F * m_Ts) - m_K2 * cos(-PI2 * 2 * (__fx64)m_order * F * m_Ts),
+                                                                    -sin(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * sin(-PI2 * 2 * (__fx64)m_order * F * m_Ts));
             }
             else // odd filter
             {
-                Re = m_K1 + cos(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * cos(-PI2 * 2 * (__fx64)m_order * F * m_Ts);
-                Im = 0    + sin(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * sin(-PI2 * 2 * (__fx64)m_order * F * m_Ts);
+                Wz( m_K1 + cos(-PI2 * ( __fx64)m_order * F * m_Ts) - m_K2 * cos(-PI2 * 2 * (__fx64)m_order * F * m_Ts),
+                                                                    +sin(-PI2 * (__fx64)m_order * F * m_Ts) - m_K2 * sin(-PI2 * 2 * (__fx64)m_order * F * m_Ts));
             }
-
-            return { sqrt(Re * Re + Im * Im) , atan2(Im, Re) };
+            return { __cabsf__(Wz) , __cargf__(Wz) };
         }
 
         /*!
@@ -3019,27 +3392,21 @@ namespace DSP
         virtual inline __type operator ()( __type *input ) = 0;
     };
 
+    /*!
+     *  \class derivative transfer function abstract class
+     *  \details defines derivative transfer function class
+    */
     template< typename __type > class derivative_abstract : public filter_abstract
     {
     protected:
-        __fx64 m_T1;
+        /*! \brief derivative time constant */
+        __fx64  m_T1;
+        /*! \brief transfer function numerator coefficients vector*/
         __type *m_cfnum;
         __type *m_cfden;
         __type  m_Gain;
         delay<__type> m_bx;
         delay<__type> m_by;
-
-        // initialization:
-        void init( __fx64 Fs , __fx64 Fn , __fx64 Td )
-        {
-            m_Fs = Fs;
-            m_Ts = 1 / Fs;
-            m_Fn = Fn;
-            m_T1 = Td;
-
-            // memory allocation function call:
-            allocate();
-        }
 
         // memory allocation:
         __ix32 allocate() override
@@ -3058,6 +3425,19 @@ namespace DSP
             m_cfden[1] = (1 - 2 * m_T1 / m_Ts) / (1 + 2 * m_T1 / m_Ts);
 
             return 0;
+        }
+
+    public:
+        // initialization:
+        void init( __fx64 Fs , __fx64 Fn , __fx64 Td )
+        {
+            m_Fs = Fs;
+            m_Ts = 1 / Fs;
+            m_Fn = Fn;
+            m_T1 = Td;
+
+            // memory allocation function call:
+            allocate();
         }
 
         __ix32 deallocate() override
@@ -3097,7 +3477,7 @@ namespace DSP
             init( Fs , Fn , Td );
         };
 
-        ~derivative_abstract()
+        virtual ~derivative_abstract()
         {
             deallocate();
         };
@@ -3120,18 +3500,6 @@ namespace DSP
         delay<__type> m_bx;
         delay<__type> m_by;
 
-        // initialization function:
-        void init( __fx64 Fs , __fx64 Fn , __fx64 Ta )
-        {
-            m_Fs = Fs;
-            m_Ts = 1 / Fs;
-            m_Fn = Fn;
-            m_T1 = Ta;
-
-            // memory allocation function call:
-            allocate();
-        }
-
         // memory allocation function:
         __ix32 allocate() override
         {
@@ -3148,6 +3516,20 @@ namespace DSP
             m_cfden[0] = 1;
             m_cfden[1] = (1 - 2 * m_T1 / m_Ts) / (1 + 2 * m_T1 / m_Ts);
             return 0;
+        }
+
+    public:
+
+        // initialization function:
+        void init( __fx64 Fs , __fx64 Fn , __fx64 Ta )
+        {
+            m_Fs = Fs;
+            m_Ts = 1 / Fs;
+            m_Fn = Fn;
+            m_T1 = Ta;
+
+            // memory allocation function call:
+            allocate();
         }
 
         __ix32 deallocate() override
@@ -3181,12 +3563,13 @@ namespace DSP
 
         // constructors and destructors:
         aperiodic_abstract() : filter_abstract(){}
+
         aperiodic_abstract(__fx64 Fs , __fx64 Fn , __fx64 Ta )
         {
             init( Fs , Fn , Ta );
         }
 
-        ~aperiodic_abstract()
+        virtual ~aperiodic_abstract()
         {
             deallocate();
         };
@@ -3210,17 +3593,6 @@ namespace DSP
         delay<__type> m_bx;
         delay<__type> m_by;
 
-        // initialization function:
-        void init( __fx64 Fs , __fx64 Fn )
-        {
-            m_Fs = Fs;
-            m_Ts = 1 / Fs;
-            m_Fn = Fn;
-
-            // memory allocation function call:
-            allocate();
-        }
-
         // memory allocation function:
         __ix32 allocate() override
         {
@@ -3237,6 +3609,19 @@ namespace DSP
             m_cfden[0] = +1;
             m_cfden[1] = -1;
             return 0;
+        }
+
+    public:
+
+        // initialization function:
+        void init( __fx64 Fs , __fx64 Fn )
+        {
+            m_Fs = Fs;
+            m_Ts = 1 / Fs;
+            m_Fn = Fn;
+
+            // memory allocation function call:
+            allocate();
         }
 
         // memory deallocation function:
@@ -3277,7 +3662,7 @@ namespace DSP
             init(_Fs , _Fn ); allocate();
         }
 
-        ~integrator_abstract()
+        virtual ~integrator_abstract()
         {
             deallocate();
         };
@@ -3302,19 +3687,6 @@ namespace DSP
         delay<__type> m_bx;
         delay<__type> m_by;
 
-        // initialization function:
-        void init( __fx64 _Fs , __fx64 _Fn , __fx64 _T1 , __fx64 _T2 )
-        {
-            m_Fs = _Fs;
-            m_Ts = 1 / _Fs;
-            m_Fn = _Fn;
-            m_T1 = _T1;
-            m_T2 = _T2;
-
-            // memory allocation function call:
-            allocate();
-        }
-
         // memory allocation function:
         __ix32 allocate() override
         {
@@ -3331,6 +3703,21 @@ namespace DSP
             m_cfden[0] = 1;
             m_cfden[1] = (1 - 2 * m_T2 / m_Ts) / (1 + 2 * m_T2 / m_Ts);
             return 0;
+        }
+
+    public:
+
+        // initialization function:
+        void init( __fx64 _Fs , __fx64 _Fn , __fx64 _T1 , __fx64 _T2 )
+        {
+            m_Fs = _Fs;
+            m_Ts = 1 / _Fs;
+            m_Fn = _Fn;
+            m_T1 = _T1;
+            m_T2 = _T2;
+
+            // memory allocation function call:
+            allocate();
         }
 
         // memory deallocation function:
@@ -3371,7 +3758,7 @@ namespace DSP
             init( _Fs , _Fn , _T1 , _T2 );
         }
 
-        ~leadlag_abstract()
+        virtual ~leadlag_abstract()
         {
             deallocate();
         };
@@ -3455,7 +3842,7 @@ namespace DSP
                     m_cfden[2] = k3 / k1;
                 break;
 
-                default:
+                case filter_type::other:
                 k1 = -cos(2 * PI0 * m_Fc * m_Ts);
                 k2 = (1 - tan(PI0 * m_Kd * m_Ts)) / (1 + tan(PI0 * m_Kd * m_Ts));
                 m_Gain     = 0.5 * (1 + k2);
@@ -3468,6 +3855,21 @@ namespace DSP
                 break;
             }
             return 0;
+        }
+
+    public:
+
+        void init( __fx64 _Fs , __fx64 _Fn , __fx64 _Fc , __fx64 _Kd , filter_type _type )
+        {
+            m_Fs   = _Fs;
+            m_Ts   = 1 / _Fs;
+            m_Fn   = _Fn;
+            m_Kd   = _Kd;
+            m_Fc   = _Fc;
+            m_type = _type;
+
+            // memory allocation function call:
+            allocate();
         }
 
         // memory deallocation function:
@@ -3500,19 +3902,6 @@ namespace DSP
             return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 3, m_Fs, _F );
         }
 
-        void init( __fx64 _Fs , __fx64 _Fn , __fx64 _Fc , __fx64 _Kd , filter_type _type )
-        {
-            m_Fs   = _Fs;
-            m_Ts   = 1 / _Fs;
-            m_Fn   = _Fn;
-            m_Kd   = _Kd;
-            m_Fc   = _Fc;
-            m_type = _type;
-
-            // memory allocation function call:
-            allocate();
-        }
-
         // constructors and destructor:
         second_order_filter_abstract() : filter_abstract(){}
 
@@ -3521,7 +3910,7 @@ namespace DSP
             init( _Fs, _Fn, _Kd, _Fc, _type );
         }
 
-        ~second_order_filter_abstract()
+        virtual ~second_order_filter_abstract()
         {
             deallocate();
         }
@@ -3594,8 +3983,7 @@ namespace DSP
         public:
         // constructors:
          butterworth< __type >() : classic_iir_abstract< __type >(){}
-         butterworth< __type >( __fx64 _Fs , __ix32 _order , filter_type _type , bandwidth _bandwidth , attenuation _attenuation )
-             : classic_iir_abstract< __type >( _Fs , _order , _type , _bandwidth , _attenuation ) {}
+         butterworth< __type >( __fx64 _Fs , __ix32 _order , filter_type _type , bandwidth _bandwidth , attenuation _attenuation ) { init(_Fs, _order,  _type, _bandwidth, _attenuation ); }
         ~butterworth< __type >(){};
 
         // base class virtual functions overriding:
@@ -3618,8 +4006,7 @@ namespace DSP
         public:
         // constructors:
         butterworth< __type >() : classic_iir_abstract< __type >(){}
-        butterworth< __type >( __fx64 _Fs , __ix32 _order , filter_type _type , bandwidth _bandwidth , attenuation _attenuation )
-            : classic_iir_abstract< __type >( _Fs , _order , _type , _bandwidth , _attenuation ) {}
+        butterworth< __type >( __fx64 _Fs , __ix32 _order , filter_type _type , bandwidth _bandwidth , attenuation _attenuation ) { init(_Fs, _order,  _type, _bandwidth, _attenuation ); }
        ~butterworth< __type >(){};
 
         // base class virtual functions overriding:
@@ -3642,8 +4029,7 @@ namespace DSP
         public:
         // constructors:
          chebyshev_1< __type >() : classic_iir_abstract< __type >(){}
-         chebyshev_1< __type >( __fx64 _Fs , __ix32 _order , filter_type _type, bandwidth _bandwidth , attenuation _attenuation )
-             : classic_iir_abstract< __type >(_Fs, _order, _type, _bandwidth, _attenuation ) {}
+         chebyshev_1< __type >( __fx64 _Fs , __ix32 _order , filter_type _type, bandwidth _bandwidth , attenuation _attenuation ) { init(_Fs, _order,  _type, _bandwidth, _attenuation ); }
         ~chebyshev_1< __type >(){};
 
         // base class virtual functions overriding:
@@ -3663,8 +4049,7 @@ namespace DSP
         public:
         // constructors:
         chebyshev_1< __type >() : classic_iir_abstract< __type >(){}
-        chebyshev_1< __type >( __fx64 _Fs , __ix32 _order , filter_type _type, bandwidth _bandwidth , attenuation _attenuation )
-            : classic_iir_abstract< __type >(_Fs, _order, _type, _bandwidth, _attenuation ) {}
+        chebyshev_1< __type >( __fx64 _Fs , __ix32 _order , filter_type _type, bandwidth _bandwidth , attenuation _attenuation ) { init(_Fs, _order,  _type, _bandwidth, _attenuation ); }
        ~chebyshev_1< __type >(){};
 
         // base class virtual functions overriding:
@@ -3687,8 +4072,7 @@ namespace DSP
         public:
         // constructors:
          chebyshev_2< __type >() : classic_iir_abstract< __type >(){}
-         chebyshev_2< __type >( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, attenuation _attenuation )
-             : classic_iir_abstract< __type >( _Fs, _order, _type, _bandwidth, _attenuation ) {}
+         chebyshev_2< __type >( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, attenuation _attenuation ) { init(_Fs, _order,  _type, _bandwidth, _attenuation ); }
         ~chebyshev_2< __type >(){};
 
         // base class virtual functions overriding:
@@ -3711,8 +4095,7 @@ namespace DSP
         public:
         // constructors:
          chebyshev_2< __type >() : classic_iir_abstract< __type >(){}
-         chebyshev_2< __type >( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, attenuation _attenuation )
-             : classic_iir_abstract< __type >( _Fs, _order, _type, _bandwidth, _attenuation ) {}
+         chebyshev_2< __type >( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, attenuation _attenuation ) { init(_Fs, _order,  _type, _bandwidth, _attenuation ); }
         ~chebyshev_2< __type >(){};
 
         // base class virtual functions overriding:
@@ -3735,8 +4118,7 @@ namespace DSP
         public:
         // constructors:
          elliptic< __type >() : classic_iir_abstract< __type >(){}
-         elliptic< __type >( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, attenuation _attenuation )
-             : classic_iir_abstract< __type >( _Fs, _order, _type, _bandwidth, _attenuation ) {}
+         elliptic< __type >( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, attenuation _attenuation ) { init(_Fs, _order,  _type, _bandwidth, _attenuation ); }
         ~elliptic< __type >(){};
 
         // base class virtual functions overriding:
@@ -3759,8 +4141,7 @@ namespace DSP
         public:
         // constructors:
          elliptic< __type >() : classic_iir_abstract< __type >(){}
-         elliptic< __type >( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, attenuation _attenuation )
-             : classic_iir_abstract< __type >( _Fs, _order, _type, _bandwidth, _attenuation ) {}
+         elliptic< __type >( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, attenuation _attenuation ) { init(_Fs, _order,  _type, _bandwidth, _attenuation ); }
         ~elliptic< __type >(){};
 
         // base class virtual functions overriding:
@@ -3931,13 +4312,22 @@ namespace DSP
     /*! @} */
 
 
-    //------------------------------------------------------------------------------------------------------------------------------------------
+    /*! @} */
+
+    /*! \defgroup <DSPB_ImplementationTransferFunctions> (Elementary transfer functions implementation )
+     *  \ingroup DSPB_Implementation
+     *  \brief The module contains elementary transfer functions fimplementation
+        @{
+    */
+
+    /*! \brief Child derivative transfer function 32-bit realization */
     template<> class derivative<__fx32> final : public derivative_abstract<__fx32>
     {
         typedef __fx32 __type;
+    public:
         derivative() : derivative_abstract(){}
         derivative(__fx64 _Fs , __fx64 _Fn , __fx64 _Td ) : derivative_abstract( _Fs , _Fn , _Td ){}
-        ~derivative();
+        ~derivative(){};
 
         inline __type operator ()( __type  *input ) override
         {
@@ -3945,13 +4335,15 @@ namespace DSP
         }
     };
 
+    /*! \brief Child derivative transfer function 64-bit realization */
     template<> class derivative<__fx64> final : public derivative_abstract<__fx64>
     {
         typedef __fx64 __type;
+    public:
         derivative() : derivative_abstract(){}
         derivative(__fx64 _Fs , __fx64 _Fn , __fx64 _Td )
             : derivative_abstract( _Fs , _Fn , _Td ){}
-        ~derivative();
+        ~derivative(){};
 
         inline __type operator ()( __type *input ) override
         {
@@ -3959,12 +4351,14 @@ namespace DSP
         }
     };
 
+     /*! \brief Child integrator transfer function 32-bit realization */
     template<> class integrator<__fx32> final : public integrator_abstract<__fx32>
     {
         typedef __fx32 __type;
+    public:
         integrator() : integrator_abstract(){}
         integrator(__fx64 _Fs , __fx64 _Fn ) : integrator_abstract( _Fs , _Fn ){}
-        ~integrator();
+        ~integrator(){};
 
         inline __type operator ()( __type  *input ) override
         {
@@ -3972,12 +4366,14 @@ namespace DSP
         }
     };
 
+    /*! \brief Child integrator transfer function 64-bit realization */
     template<> class integrator<__fx64> final : public integrator_abstract<__fx64>
     {
         typedef __fx64 __type;
+    public:
         integrator() : integrator_abstract(){}
         integrator(__fx64 _Fs , __fx64 _Fn ) : integrator_abstract( _Fs , _Fn ){}
-        ~integrator();
+        ~integrator(){};
 
         inline __type operator ()( __type  *input ) override
         {
@@ -3985,12 +4381,14 @@ namespace DSP
         }
     };
 
+    /*! \brief Child lead-lag transfer function 32-bit realization */
     template<> class leadlag<__fx32> final : public leadlag_abstract<__fx32>
     {
         typedef __fx32 __type;
+    public:
         leadlag() : leadlag_abstract(){}
         leadlag(__fx64 _Fs, __fx64 _Fn, __fx64 _T1, __fx64 _T2 ) : leadlag_abstract(_Fs, _Fn, _T1, _T2 ){}
-        ~leadlag();
+        ~leadlag(){};
 
         inline __type operator ()( __type  *input ) override
         {
@@ -3998,12 +4396,14 @@ namespace DSP
         }
     };
 
+    /*! \brief Child lead-lag transfer function 64-bit realization */
     template<> class leadlag<__fx64> final : public leadlag_abstract<__fx64>
     {
         typedef __fx64 __type;
+    public:
         leadlag() : leadlag_abstract(){}
         leadlag(__fx64 _Fs, __fx64 _Fn, __fx64 _T1, __fx64 _T2 ) : leadlag_abstract(_Fs, _Fn, _T1, _T2 ){}
-        ~leadlag();
+        ~leadlag(){};
 
         inline __type operator ()( __type  *input ) override
         {
@@ -4011,13 +4411,15 @@ namespace DSP
         }
     };
 
+    /*! \brief Child second order filter transfer function 32-bit realization */
     template<> class second_order_filter<__fx32> final : public second_order_filter_abstract<__fx32>
     {
         typedef __fx32 __type;
+    public:
         second_order_filter() : second_order_filter_abstract(){}
         second_order_filter(__fx64 _Fs , __fx64 _Fn , __fx64 _Fc , __fx64 _Kd , filter_type _type)
             : second_order_filter_abstract(_Fs , _Fn, _Fc, _Kd, _type ){}
-        ~second_order_filter();
+        ~second_order_filter(){};
 
         inline __type operator ()( __type  *input ) override
         {
@@ -4025,20 +4427,22 @@ namespace DSP
         }
     };
 
+    /*! \brief Child second order filter transfer function 64-bit realization */
     template<> class second_order_filter<__fx64> final : public second_order_filter_abstract<__fx64>
     {
         typedef __fx64 __type;
+    public:
         second_order_filter() : second_order_filter_abstract(){}
         second_order_filter(__fx64 _Fs , __fx64 _Fn , __fx64 _Fc , __fx64 _Kd , filter_type _type)
             : second_order_filter_abstract(_Fs , _Fn, _Fc, _Kd, _type ){}
-        ~second_order_filter();
+        ~second_order_filter(){};
 
         inline __type operator ()( __type  *input ) override
         {
             return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 3, 2, m_bx, m_by );
         }
     };
-    //------------------------------------------------------------------------------------------------------------------------------------------
+    /*! @} */
 
 
     /*! @} */

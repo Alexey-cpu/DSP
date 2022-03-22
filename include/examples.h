@@ -350,7 +350,7 @@ int example3()
     double Fs                = 4000;
     double Fn                = 50;
     double time              = 0;
-    double EmulationDuration = 1;
+    double EmulationDuration = 0.08;
     int    CycleWidth        = 5;
     int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
     int    frames_per_cycle  = CycleWidth * Fs / 1000;
@@ -386,7 +386,6 @@ int example3()
     hp_yt.open  ( directory + "\\hp_yt.txt"   );
     bp_yt.open  ( directory + "\\bp_yt.txt"   );
     bs_yt.open  ( directory + "\\bs_yt.txt"   );
-    yt   .open  ( directory + "\\yt.txt"      );
     lp_km.open  ( directory + "\\lp_km.txt"   );
     lp_ph.open  ( directory + "\\lp_ph.txt"   );
     hp_km.open  ( directory + "\\hp_km.txt"   );
@@ -478,6 +477,8 @@ int example3()
         bs_ph   << fr4.pH << "\n";
         rdft_km << fr5.Km << "\n";
         rdft_ph << fr5.pH << "\n";
+
+        ff << i << "\n";
     }
 
     // close files:
@@ -486,7 +487,6 @@ int example3()
     hp_yt  .close();
     bp_yt  .close();
     bs_yt  .close();
-    yt     .close();
     lp_km  .close();
     lp_ph  .close();
     hp_km  .close();
@@ -504,6 +504,201 @@ int example3()
 
     // memory deallocation:
     free(window);
+
+    return 0;
+}
+
+// Elementary transfer functions tests:
+int example4()
+{
+    printf( " ...FIR filters utilization example and test... \n " );
+
+    // define filter and it's input signal data types:
+    typedef double  __flt_type;
+    typedef double __gen_type;
+
+    // emulation parameters:
+    double Fs                = 4000;
+    double Fn                = 50;
+    double time              = 0;
+    double EmulationDuration = 0.08;
+    int    CycleWidth        = 5;
+    int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
+    int    frames_per_cycle  = CycleWidth * Fs / 1000;
+
+    // logs directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // logs:
+    std::ofstream yt;
+    std::ofstream comb_yt;
+    std::ofstream combeq_yt;
+    std::ofstream diff_yt;
+    std::ofstream intg_yt;
+    std::ofstream lead_yt;
+    std::ofstream flt2_yt;
+    std::ofstream aper_yt;
+
+    std::ofstream comb_km;
+    std::ofstream combeq_km;
+    std::ofstream diff_km;
+    std::ofstream intg_km;
+    std::ofstream lead_km;
+    std::ofstream flt2_km;
+    std::ofstream aper_km;
+
+    std::ofstream comb_ph;
+    std::ofstream combeq_ph;
+    std::ofstream diff_ph;
+    std::ofstream intg_ph;
+    std::ofstream lead_ph;
+    std::ofstream flt2_ph;
+    std::ofstream aper_ph;
+
+    std::ofstream tt;
+    std::ofstream ff;
+
+    yt       .open( directory + "\\yt.txt");
+    comb_yt  .open( directory + "\\comb_yt.txt");
+    combeq_yt.open( directory + "\\combeq_yt.txt");
+    diff_yt  .open( directory + "\\diff_yt.txt");
+    intg_yt  .open( directory + "\\intg_yt.txt");
+    lead_yt  .open( directory + "\\lead_yt.txt");
+    flt2_yt  .open( directory + "\\flt2_yt.txt");
+    aper_yt  .open( directory + "\\aper_yt.txt");
+
+    comb_km  .open( directory + "\\comb_km.txt");
+    combeq_km.open( directory + "\\combeq_km.txt");
+    diff_km  .open( directory + "\\diff_km.txt");
+    intg_km  .open( directory + "\\intg_km.txt");
+    lead_km  .open( directory + "\\lead_km.txt");
+    flt2_km  .open( directory + "\\flt2_km.txt");
+    aper_km  .open( directory + "\\aper_km.txt");
+
+    comb_ph  .open( directory + "\\comb_ph.txt");
+    combeq_ph.open( directory + "\\combeq_ph.txt");
+    diff_ph  .open( directory + "\\diff_ph.txt");
+    intg_ph  .open( directory + "\\intg_ph.txt");
+    lead_ph  .open( directory + "\\lead_ph.txt");
+    flt2_ph  .open( directory + "\\flt2_ph.txt");
+    aper_ph  .open( directory + "\\aper_ph.txt");
+
+    tt       .open( directory + "\\tt.txt");
+    ff       .open( directory + "\\ff.txt");
+
+    // signal generator:
+    sgen< __gen_type > gen;
+
+    // fitters:
+    DSP::derivative         < __flt_type > diff;
+    DSP::integrator         < __flt_type > intg;
+    DSP::leadlag            < __flt_type > lead;
+    DSP::second_order_filter< __flt_type > sof;
+    DSP::fcomb              < __flt_type > comb;
+    DSP::fcombeq            < __flt_type > combeq;
+    DSP::derivative         < __flt_type > aper;
+
+    // filters initialization:
+    diff.init  (Fs, Fn, (__flt_type)1 / Fs );
+    intg.init  (Fs, Fn );
+    lead.init  (Fs, Fn, 0.01, 0.02 );
+    sof .init  (Fs, Fn, 100, 0.707, DSP::lowpass);
+    comb.init  (Fs, Fn, 0);
+    combeq.init(Fs, Fn, 5, 0.05, 0);
+    aper  .init(Fs, Fn, 0.01);
+
+    // emulation:
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            // signal generation and filtering:
+            gen.sine( 1 , Fn , 0 , Fs );
+
+            // filtering:
+            double yt1 = diff  (&gen.m_out);
+            double yt2 = intg  (&gen.m_out);
+            double yt3 = lead  (&gen.m_out);
+            double yt4 = sof   (&gen.m_out);
+            double yt5 = comb  (&gen.m_out);
+            double yt6 = combeq(&gen.m_out);
+            double yt7 = aper  (&gen.m_out);
+
+            // logging:
+            yt        << gen.m_out << "\n";
+            diff_yt   << yt1       << "\n";
+            intg_yt   << yt2       << "\n";
+            lead_yt   << yt3       << "\n";
+            flt2_yt   << yt4       << "\n";
+            comb_yt   << yt5       << "\n";
+            combeq_yt << yt6       << "\n";
+            aper_yt   << yt7       << "\n";
+            tt        << time << "\n";
+
+            // time increment:
+            time += 1 / Fs;
+        }
+    }
+
+    // filter frequency response computation:
+    for( int i = 0 ; i < Fs / 2 ; i++ )
+    {
+        DSP::fr fr1 = diff  .frequency_response(i);
+        DSP::fr fr2 = intg  .frequency_response(i);
+        DSP::fr fr3 = lead  .frequency_response(i);
+        DSP::fr fr4 = sof   .frequency_response(i);
+        DSP::fr fr5 = comb  .frequency_response(i);
+        DSP::fr fr6 = combeq.frequency_response(i);
+        DSP::fr fr7 = aper  .frequency_response(i);
+
+        // logging:
+        diff_km   << fr1.Km << "\n";
+        intg_km   << fr2.Km << "\n";
+        lead_km   << fr3.Km << "\n";
+        flt2_km   << fr4.Km << "\n";
+        comb_km   << fr5.Km << "\n";
+        combeq_km << fr6.Km << "\n";
+        aper_km   << fr7.Km << "\n";
+
+        diff_ph   << fr1.pH << "\n";
+        intg_ph   << fr2.pH << "\n";
+        lead_ph   << fr3.pH << "\n";
+        flt2_ph   << fr4.pH << "\n";
+        comb_ph   << fr5.pH << "\n";
+        combeq_ph << fr6.pH << "\n";
+        aper_ph   << fr7.pH << "\n";
+
+        ff << i << "\n";
+    }
+
+    // closing files:
+    yt       .close();
+    comb_yt  .close();
+    combeq_yt.close();
+    diff_yt  .close();
+    intg_yt  .close();
+    lead_yt  .close();
+    flt2_yt  .close();
+    aper_yt  .close();
+
+    comb_km  .close();
+    combeq_km.close();
+    diff_km  .close();
+    intg_km  .close();
+    lead_km  .close();
+    flt2_km  .close();
+    aper_km  .close();
+
+    comb_ph  .close();
+    combeq_ph.close();
+    diff_ph  .close();
+    intg_ph  .close();
+    lead_ph  .close();
+    flt2_ph  .close();
+    aper_ph  .close();
+
+    ff       .close();
+    tt       .close();
 
     return 0;
 }
