@@ -257,7 +257,7 @@ extern __fx64 __am__( __fx64 u , __fx64 k )
 /*!
     Elliptic Jacobi SN function
     \param[u] incomplete elliptic integral of the first kind
-    \param[k] elliptical modulus
+    \param[x] elliptical modulus
     \return  returns Ellptic Jacobi SN( u , x ) = sin( am( u , x ) ) function
 */
 extern __fx64 __sn__( __fx64 u , __fx64 x ) { return sin( __am__( u , x ) ); }
@@ -265,7 +265,7 @@ extern __fx64 __sn__( __fx64 u , __fx64 x ) { return sin( __am__( u , x ) ); }
 /*!
     Elliptic Jacobi CN function
     \param[u] incomplete elliptic integral of the first kind
-    \param[k] elliptical modulus
+    \param[x] elliptical modulus
     \return  returns Ellptic Jacobi CN( u , x ) = cos( am( u , x ) ) function
 */
 extern __fx64 __cn__( __fx64 u , __fx64 x ) { return cos( __am__( u , x ) ); }
@@ -273,7 +273,7 @@ extern __fx64 __cn__( __fx64 u , __fx64 x ) { return cos( __am__( u , x ) ); }
 /*!
     Elliptic Jacobi DN function
     \param[u] incomplete elliptic integral of the first kind
-    \param[k] elliptical modulus
+    \param[x] elliptical modulus
     \return  returns Ellptic Jacobi DN( u , x ) = sqrt( 1 - x * x * SN( u , x ) * SN( u , x ) ) function
 */
 extern __fx64 __dn__( __fx64 u , __fx64 x ) { __fx64 SN = __sn__( u , x ); return sqrt(1.0 - x * x * SN * SN); }
@@ -281,7 +281,7 @@ extern __fx64 __dn__( __fx64 u , __fx64 x ) { __fx64 SN = __sn__( u , x ); retur
 /*!
     Elliptic Jacobi CD function
     \param[u] incomplete elliptic integral of the first kind
-    \param[k] elliptical modulus
+    \param[x] elliptical modulus
     \return  returns Ellptic Jacobi CD( u , x ) = CN( u , x ) / DN( u , x ) function
 */
 extern __fx64 __cd__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __dn__( u , x ); }
@@ -289,7 +289,7 @@ extern __fx64 __cd__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __dn__( u
 /*!
     Elliptic Jacobi SD function
     \param[u] incomplete elliptic integral of the first kind
-    \param[k] elliptical modulus
+    \param[x] elliptical modulus
     \return  returns Ellptic Jacobi SD( u , x ) = SN( u , x ) / DN( u , x ) function
 */
 extern __fx64 __sd__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __dn__( u , x ); }
@@ -297,7 +297,7 @@ extern __fx64 __sd__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __dn__( u
 /*!
     Elliptic Jacobi ND function
     \param[u] incomplete elliptic integral of the first kind
-    \param[k] elliptical modulus
+    \param[x] elliptical modulus
     \return  returns Ellptic Jacobi ND( u , x ) = SN( u , x ) / DN( u , x ) function
 */
 extern __fx64 __nd__( __fx64 u , __fx64 x ) { return 1 / __dn__( u , x ); }
@@ -305,7 +305,7 @@ extern __fx64 __nd__( __fx64 u , __fx64 x ) { return 1 / __dn__( u , x ); }
 /*!
     Elliptic Jacobi DC function
     \param[u] incomplete elliptic integral of the first kind
-    \param[k] elliptical modulus
+    \param[x] elliptical modulus
     \return  returns Ellptic Jacobi DC( u , x ) = 1 / ND( u , x ) function
 */
 extern __fx64 __dc__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __cn__( u , x ); }
@@ -313,7 +313,7 @@ extern __fx64 __dc__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __cn__( u
 /*!
     Elliptic Jacobi NC function
     \param[u] incomplete elliptic integral of the first kind
-    \param[k] elliptical modulus
+    \param[x] elliptical modulus
     \return  returns Ellptic Jacobi NC( u , x ) = 1 / CN( u , x ) function
 */
 extern __fx64 __nc__( __fx64 u , __fx64 x ) { return 1 / __cn__(u, x); }
@@ -321,7 +321,7 @@ extern __fx64 __nc__( __fx64 u , __fx64 x ) { return 1 / __cn__(u, x); }
 /*!
     Elliptic Jacobi SC function
     \param[u] incomplete elliptic integral of the first kind
-    \param[k] elliptical modulus
+    \param[x] elliptical modulus
     \return  returns Ellptic Jacobi SC( u , x ) = SN( u , x ) / CN( u , x ) function
 */
 extern __fx64 __sc__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __cn__( u , x ); }
@@ -329,7 +329,7 @@ extern __fx64 __sc__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __cn__( u
 /*!
     Elliptic Jacobi NS function
     \param[u] incomplete elliptic integral of the first kind
-    \param[k] elliptical modulus
+    \param[x] elliptical modulus
     \return  returns Ellptic Jacobi NS( u , x ) = 1 / SN( u , x ) function
 */
 extern __fx64 __ns__( __fx64 u , __fx64 x ) { return 1 / __sn__( u , x ); }
@@ -337,7 +337,7 @@ extern __fx64 __ns__( __fx64 u , __fx64 x ) { return 1 / __sn__( u , x ); }
 /*!
     Elliptic Jacobi DS function
     \param[u] incomplete elliptic integral of the first kind
-    \param[k] elliptical modulus
+    \param[x] elliptical modulus
     \return  returns Ellptic Jacobi DS( u , x ) = DN( u , x ) / SN( u , x ) function
 */
 extern __fx64 __ds__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __sn__( u , x ); }
@@ -345,7 +345,7 @@ extern __fx64 __ds__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __sn__( u
 /*!
  * Elliptic Jacobi CS function
  * \param[u] incomplete elliptic integral of the first kind
- * \param[k] elliptical modulus
+ * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi CS( u , x ) = CN( u , x ) / SN( u , x ) function
 */
 extern __fx64 __cs__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __sn__( u , x ); }
@@ -353,7 +353,7 @@ extern __fx64 __cs__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __sn__( u
 /*!
  * Elliptic Jacobi inverse SN function
  * \param[sn] Elliptic Jacobi SN function
- * \param[k] elliptical modulus
+ * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi inverse SN function
 */
 extern __fx64 __isn__( __fx64 sn , __fx64 x )
@@ -406,7 +406,7 @@ extern __fx64 __isn__( __fx64 sn , __fx64 x )
  * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi inverse CN function
 */
-extern __fx64 __icn__( __fx64 sn , __fx64 x )
+extern __fx64 __icn__( __fx64 cn , __fx64 x )
 {
     __fx64 a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ] , s[ __ITERATIONS_NUMBER__ + 1 ];
     __fx64 two_n , phi , phi_old , k;
@@ -428,7 +428,7 @@ extern __fx64 __icn__( __fx64 sn , __fx64 x )
     }
 
     // backward substitution:
-    phi = acos(sn);
+    phi = acos(cn);
     for (n = 1; n < __ITERATIONS_NUMBER__ ; n++)
     {
         phi_old = phi;
@@ -449,7 +449,7 @@ extern __fx64 __icn__( __fx64 sn , __fx64 x )
 /*!
  * Elliptic Jacobi inverse DN function\
  * \param[dn] Elliptic Jacobi DN function
- * \param[k] elliptical modulus
+ * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi inverse DN function
 */
 extern __fx64 __idn__( __fx64 dn , __fx64 x )
@@ -495,8 +495,8 @@ extern __fx64 __idn__( __fx64 dn , __fx64 x )
 
 /*!
  * Elliptic Jacobi inverse CD function\
- * \param[dn] Elliptic Jacobi CD function
- * \param[k] elliptical modulus
+ * \param[cd] Elliptic Jacobi CD function
+ * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi inverse CD function
 */
 extern __fx64 __icd__( __fx64 cd , __fx64 x )
@@ -541,8 +541,8 @@ extern __fx64 __icd__( __fx64 cd , __fx64 x )
 
 /*!
  * Elliptic Jacobi inverse SD function\
- * \param[dn] Elliptic Jacobi SD function
- * \param[k] elliptical modulus
+ * \param[sd] Elliptic Jacobi SD function
+ * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi inverse SD function
 */
 extern __fx64 __isd__( __fx64 sd , __fx64 x )
@@ -587,16 +587,16 @@ extern __fx64 __isd__( __fx64 sd , __fx64 x )
 
 /*!
 * Elliptic Jacobi inverse ND function
-* \param[dn] Elliptic Jacobi ND function
-* \param[k] elliptical modulus
+* \param[nd] Elliptic Jacobi ND function
+* \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse ND function
 */
 extern __fx64 __ind__( __fx64 nd , __fx64 x ) { return __idn__( 1 / nd , x ); }
 
 /*!
 * Elliptic Jacobi inverse DC function
-* \param[dn] Elliptic Jacobi DC function
-* \param[k] elliptical modulus
+* \param[dc] Elliptic Jacobi DC function
+* \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse DC function
 */
 extern __fx64 __idc__( __fx64 dc , __fx64 x )
@@ -642,16 +642,16 @@ extern __fx64 __idc__( __fx64 dc , __fx64 x )
 
 /*!
 * Elliptic Jacobi inverse NC function
-* \param[dn] Elliptic Jacobi NC function
-* \param[k] elliptical modulus
+* \param[nc] Elliptic Jacobi NC function
+* \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse NC function
 */
 extern __fx64 __inc__( __fx64 nc , __fx64 x ) { return  __icn__( 1 / nc , x ); }
 
 /*!
 * Elliptic Jacobi inverse SC function
-* \param[dn] Elliptic Jacobi SC function
-* \param[k] elliptical modulus
+* \param[sc] Elliptic Jacobi SC function
+* \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse SC function
 */
 extern __fx64 __isc__( __fx64 sc , __fx64 x )
@@ -696,24 +696,24 @@ extern __fx64 __isc__( __fx64 sc , __fx64 x )
 
 /*!
 * Elliptic Jacobi inverse NS function
-* \param[dn] Elliptic Jacobi NS function
-* \param[k] elliptical modulus
+* \param[ns] Elliptic Jacobi NS function
+* \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse NS function
 */
 extern __fx64 __ins__( __fx64 ns , __fx64 x ) { return  __isn__( 1 / ns , x ); }
 
 /*!
 * Elliptic Jacobi inverse DS function
-* \param[dn] Elliptic Jacobi DS function
-* \param[k] elliptical modulus
+* \param[ds] Elliptic Jacobi DS function
+* \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse DS function
 */
 extern __fx64 __ids__( __fx64 ds , __fx64 x ) { return  __isd__( 1 / ds , x ); }
 
 /*!
 * Elliptic Jacobi inverse CS function
-* \param[dn] Elliptic Jacobi CS function
-* \param[k] elliptical modulus
+* \param[cs] Elliptic Jacobi CS function
+* \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse CS function
 */
 extern __fx64 __ics__( __fx64 cs , __fx64 x ) { return  __isc__( 1 / cs , x ); }
@@ -864,7 +864,7 @@ extern __fxx64 __bessel_i1__( __fxx64 x )
 /*!
 * N-th order Bessel function
 * \param[x] input x
-* \param[n] Bessel function order
+* \param[order] Bessel function order
 * \return  returns N-th order Bessel function value
 */
 extern __fxx64 __bessel_in__( __fxx64 x  , __ix32 order )
@@ -883,7 +883,7 @@ extern __fxx64 __bessel_in__( __fxx64 x  , __ix32 order )
 /*!
 * N-th order modified Bessel function
 * \param[x] input x
-* \param[n] Modified Bessel function order
+* \param[order] Modified Bessel function order
 * \return  returns N-th order modified Bessel function value
 */
 extern __fxx64 __modified_bessel_in__( __fxx64 x  , __ix32 order )
@@ -908,6 +908,7 @@ extern __fxx64 __modified_bessel_in__( __fxx64 x  , __ix32 order )
 
 /*!
  * \brief Barlett window function computation
+ * \param[order] window function size
  * \return The function allocates memory sets, m_wind_ready = 1 and computes Barlett window coefficients as follows:
  *  \f[
  *      Ns = order \newline
@@ -933,6 +934,7 @@ __fx64 *Bartlett( __ix32 _order )
 
 /*!
  * \brief Barlett Hanning window function computation
+ * \param[order] window function size
  * \return The function allocates memory, sets m_wind_ready = 1 and computes Barlett-Hanning window coefficients as follows:
  *  \f[
  *      Ns = order \newline
@@ -954,6 +956,7 @@ __fx64 *BartlettHanning( __ix32 _order )
 
 /*!
      * \brief Balckman window function computation
+     * \param[order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Balckman window coefficients as follows:
      *  \f[
      *      Ns = order \newline
@@ -974,6 +977,7 @@ __fx64 *Blackman(__ix32 _order)
 
 /*!
      * \brief Balckman-Harris window function computation
+     * \param[order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Balckman-Harris window coefficients as follows:
      *  \f[
      *      Ns = order \newline
@@ -995,6 +999,7 @@ __fx64 *BlackmanHarris(__ix32 _order)
 
 /*!
      * \brief Bohman window function computation
+     * \param[order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Bohman window coefficients as follows:
      *  \f[
      *      Ns = ceil \left( \frac{ order } { 2 } \right ) \quad , \quad n  = 0 \dots Ns \newline
@@ -1047,7 +1052,8 @@ __fx64 cheby_poly(__ix32 n, __fx64 x)
 
 /*!
      * \brief Chebyshev window computation function
-     * \param[ atten ] sidelobe attenuation , Db
+     * \param[_atten] sidelobe attenuation , Db
+     * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Chebyshev window coefficients
     */
 __fx64 *Chebyshev( __fx64 _atten , __ix32 _order )
@@ -1081,6 +1087,7 @@ __fx64 *Chebyshev( __fx64 _atten , __ix32 _order )
 
 /*!
      * \brief Flat-Top window computation function
+     * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Flat-Top window coefficients as follows:
      *  \f[
      *      Ns = order \newline
@@ -1113,7 +1120,8 @@ __fx64 *FlatTop(__ix32 _order)
 
 /*!
      * \brief Gaussian window computation function
-     * \param[ alpha ] Gaussian window parameter
+     * \param[_alpha] Gaussian window parameter
+     * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Gaussian window coefficients as follows:
      *  \f[
      *      Ns = order      \newline
@@ -1153,6 +1161,7 @@ __fx64 *Gaussian( __fx64 _alpha, __ix32 _order )
 
 /*!
      * \brief Hamming window computation function
+     * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Hamming window coefficients as follows:
      *  \f[
      *      Ns = order      \newline
@@ -1176,6 +1185,7 @@ __fx64 *Hamming(__ix32 _order )
 
 /*!
      * \brief Hann window computation function
+     * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Hann window coefficients as follows:
      *  \f[
      *      Ns = order      \newline
@@ -1199,7 +1209,8 @@ __fx64 *Hann(__ix32 _order)
 
 /*!
      * \brief Kaiser window computation function
-     * \param[betta] Kaiser window function parameter
+     * \param[_betta] Kaiser window function parameter
+     * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Kaiser window coefficients as follows:
      *  \f[
      *      Ns = order                                                                      \newline
@@ -1210,7 +1221,7 @@ __fx64 *Hann(__ix32 _order)
      *      y(n) = \frac{ ModifiedBessel( B , 0 ) }{ ModifiedBessel( C , 0 ) }
      *  \f]
     */
-__fx64 *Kaiser(__fx64 betta, __ix32 _order )
+__fx64 *Kaiser(__fx64 _betta, __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1223,8 +1234,8 @@ __fx64 *Kaiser(__fx64 betta, __ix32 _order )
     for (__ix32 n = 0; n < Ns; n++)
     {
         A = ((__fx64)n - ( (__fx64)Ns - 1 ) / 2) / ( ((__fx64)Ns - 1 ) / 2);
-        B = betta * sqrt(1 - A * A);
-        C = betta;
+        B = _betta * sqrt(1 - A * A);
+        C = _betta;
         buff[n] = __modified_bessel_in__( B , 0 ) / __modified_bessel_in__( C , 0 );
     }
 
@@ -1235,6 +1246,7 @@ __fx64 *Kaiser(__fx64 betta, __ix32 _order )
 
 /*!
      * \brief Nutall window computation function
+     * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Nutall window coefficients as follows:
      *  \f[
      *      Ns = order      \newline
@@ -1266,6 +1278,7 @@ __fx64 *Nutall(__ix32 _order)
 
 /*!
      * \brief Parzen window computation function
+     * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Parzen window coefficients as follows:
      *  \f[
      *      Ns = order      \newline
@@ -1312,6 +1325,7 @@ __fx64 *Parzen(__ix32 _order)
 
 /*!
      * \brief Rectangular window computation function
+     * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Rectangular window coefficients as follows:
      *  \f[
      *      Ns = order      \newline
@@ -1333,6 +1347,7 @@ __fx64 *Rectangular(__ix32 _order)
 
 /*!
      * \brief Triangular window computation function
+     * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Triangular window coefficients as follows:
      *  \f[
      *      Ns = order      \newline
@@ -1373,7 +1388,8 @@ __fx64 *Triangular(__ix32 _order)
 
 /*!
      * \brief Tukey window computation function
-     * \param[R] Tukey window function parameter
+     * \param[_R] Tukey window function parameter
+     * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Tukey window coefficients as follows:
      *  \f[
      *      Ns = order      \newline
@@ -1393,7 +1409,7 @@ __fx64 *Triangular(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 *Tukey(__fx64 R, __ix32 _order )
+__fx64 *Tukey(__fx64 _R, __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1404,13 +1420,13 @@ __fx64 *Tukey(__fx64 R, __ix32 _order )
     for(__ix32 n = 0 ; n < Ns ; n++)
     {
         x = (__fx64)n / ((__fx64)Ns - 1);
-        if ( x >=0 && x < R / 2 )
+        if ( x >=0 && x < _R / 2 )
         {
-            buff[n] = 0.5 + 0.5 * cos( PI2 / R * ( x - 0.5*R ) );
+            buff[n] = 0.5 + 0.5 * cos( PI2 / _R * ( x - 0.5*_R ) );
         }
-        else if ( x >= 1 - 0.5 * R && x <= 1 )
+        else if ( x >= 1 - 0.5 * _R && x <= 1 )
         {
-            buff[n] = 0.5 + 0.5 * cos(PI2 / R * (x - 1 + 0.5*R) );
+            buff[n] = 0.5 + 0.5 * cos(PI2 / _R * (x - 1 + 0.5*_R) );
         }
         else
         {
@@ -1433,21 +1449,21 @@ __fx64 *Tukey(__fx64 R, __ix32 _order )
     */
 template< typename __type > void conv
 (
-        __type *a,
-        __type *b,
-        __type *c,
-        __ix32 Na,
-        __ix32 Nb,
-        __ix32 Nc
+        __type *_a,
+        __type *_b,
+        __type *_c,
+        __ix32 _Na,
+        __ix32 _Nb,
+        __ix32 _Nc
 )
 {
-    if( ( Nc >= Na + Nb - 1 ) && ( a && b && c ) )
+    if( ( _Nc >= _Na + _Nb - 1 ) && ( _a && _b && _c ) )
     {
-        for( int i = 0 ; i < ( Na + Nb ) ; i++ )
+        for( int i = 0 ; i < ( _Na + _Nb ) ; i++ )
         {
-            for( int j = ( i - Na < 0 ) ? 0 : i-Na+1 , k = ( i < Na ) ? i : Na-1 ; ( j < Nb ) && ( k >= 0 ) ; j++ , k-- )
+            for( int j = ( i - _Na < 0 ) ? 0 : i-_Na+1 , k = ( i < _Na ) ? i : _Na-1 ; ( j < _Nb ) && ( k >= 0 ) ; j++ , k-- )
             {
-                c[i] += a[k] * b[j];
+                _c[i] += _a[k] * _b[j];
             }
         }
     }

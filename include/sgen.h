@@ -72,11 +72,11 @@ public:
         m_out  = 0;
     }
 
-    /*! \brief test signal generator function
+    /*! \brief test sine generator function
      *  \param[amp] - test signal amplitude
-     *  \param[fn ] - test signal frequency          , Hz
+     *  \param[fn] - test signal frequency          , Hz
      *  \param[phs] - test signal phase              , degrees
-     *  \param[fs ] - test signal sampling frequency , Hz
+     *  \param[fs] - test signal sampling frequency , Hz
      *  \returns The function returns sine function output. Timer counter is dropped to a zero every hour
      *           to avoid overflow within the real time
     */
@@ -91,9 +91,9 @@ public:
 
     /*! \brief test pulse signal generator
      *  \param[amp] - test pulse amplitude
-     *  \param[fn ] - test pulse frequency                        , Hz
+     *  \param[fn] - test pulse frequency                        , Hz
      *  \param[phs] - phase angle between two neighboirung pulses , degrees
-     *  \param[fs ] - test signal sampling frequency              , Hz
+     *  \param[fs] - test signal sampling frequency              , Hz
      *  \returns The function returns sine function output. Timer counter is dropped to a zero every hour
      *           to avoid overflow within the real time
     */

@@ -76,7 +76,7 @@ public:
     ~timers(){};
 
     /*! \brief timers class initialization function
-     *  \param[Fs            ] - sampling frequency , Hz
+     *  \param[Fs] - sampling frequency , Hz
      *  \param[FramesPerCycle] - number frames per IDE cycle
     */
     __void init( __fx64 Fs, __ix32 FramesPerCycle )
@@ -92,8 +92,8 @@ public:
     }
 
     /*! \brief timer "on" function
-     *  \param[ S  ] - controlled logical input signal
-     *  \param[ dT ] - time to wait , s
+     *  \param[S] - controlled logical input signal
+     *  \param[dT] - time to wait , s
      *  \return the function returns true if the input signal S stays true within the time greater than dT.
      *          The function returns false if the input signal S stays true within the time less than dT.
      *          The true output is dropped if the input S becomes false.
@@ -124,8 +124,8 @@ public:
 
 
     /*! \brief timer "off" function
-     *  \param[ S  ] - controlled logical input signal
-     *  \param[ dT ] - time to wait , s
+     *  \param[S] - controlled logical input signal
+     *  \param[dT] - time to wait , s
      *  \return the function returns true if the input signal S is true. If the input S drops to false
      *          the true output exists during the time dT. Then, if dT has expired and the input signal S
      *          is false - the function output becomes false.
@@ -157,8 +157,8 @@ public:
     }
 
     /*! \brief pulse timer function
-     *  \param[ S  ] - controlled logical input signal
-     *  \param[ dT ] - time to wait , s
+     *  \param[S] - controlled logical input signal
+     *  \param[dT] - time to wait , s
      *  \return The function outputs true if the input signal changes from 0 to 1.
      *          The true output exists untill time dT is expired
     */

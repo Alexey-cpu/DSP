@@ -17,12 +17,12 @@
 #include <iostream>
 #endif
 
-/*! \defgroup <BUFFERS> ( Buffers )
- *  \brief the module contains mirror ring buffer and classic ring buffer template classes
+/*! \defgroup <DelayAndBuffer> ( Delay and buffer )
+ *  \brief the module contains delay and ring buffer models
     @{
 */
 
-//#include "fcomplex.h"
+#include "fcomplex.h"
 
 /*! \brief defines 16-bit integer type */
 #ifndef __ix16
@@ -68,6 +68,12 @@
 #ifndef __fxx64
 #define __fxx64 long double
 #endif
+
+/*! \defgroup <DelayAndBufferAbstractModels> ( Delay and buffer abstract models )
+ *  \ingroup DelayAndBuffer
+ *  \brief the module contains buffer and delay abstract models
+    @{
+*/
 
 /*! \brief mirror ring buffer template abstract class */
 template< typename T > class delay_abstract
@@ -272,6 +278,14 @@ public:
     virtual inline void operator () ( __type *input ) = 0;
 };
 
+/*! @} */
+
+/*! \defgroup <DelayAndBufferRealization> ( Delay and buffer realizations )
+ *  \ingroup DelayAndBuffer
+ *  \brief the module contains buffer and delay realizations for different data types
+    @{
+*/
+
 /*! \brief mirror ring buffer template class */
 template< typename T > class delay;
 
@@ -311,42 +325,6 @@ public:
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
-#ifdef FCOMPLEX_H
-/*! \brief mirror ring buffer class complex floating point 32-bit realization */
-template<> class delay< complex< __fx32 > > : public delay_abstract< complex< __fx32 > >
-{
-    typedef complex< __fx32 > __type;
-public:
-      delay() : delay_abstract(){}
-     ~delay(){};
-     inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
-     inline void operator () ( complex< __fx64  > *input ) { fill_buff< complex< __fx64  > >( input ); }
-     inline void operator () ( complex< __fxx64 > *input ) { fill_buff< complex< __fxx64  > >( input ); }
-};
-
-/*! \brief mirror ring buffer class complex floating point 64-bit realization */
-template<> class delay< complex< __fx64 > > : public delay_abstract< complex< __fx64 > >
-{
-    typedef complex< __fx64 > __type;
-public:
-      delay() : delay_abstract(){}
-     ~delay(){};
-     inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
-     inline void operator () ( complex< __fxx64 > *input ) { fill_buff< complex< __fxx64  > >( input ); }
-};
-
-/*! \brief mirror ring buffer class complex floating point extended 64-bit realization */
-template<> class delay< complex< __fxx64 > > : public delay_abstract< complex< __fxx64 > >
-{
-    typedef complex< __fxx64 > __type;
-public:
-      delay() : delay_abstract(){}
-     ~delay(){};
-     inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
-};
-
-#endif
-
 /*! \brief mirror ring buffer class integer 32-bit realization */
 template<> class delay< __ix32 > : public delay_abstract< __ix32 >
 {
@@ -367,6 +345,43 @@ public:
      ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
+
+
+#ifdef FCOMPLEX_H
+/*! \brief mirror ring buffer class complex floating point 32-bit realization */
+template<> class delay< fcomplex< __fx32 > > : public delay_abstract< fcomplex< __fx32 > >
+{
+    typedef fcomplex< __fx32 > __type;
+public:
+      delay() : delay_abstract(){}
+     ~delay(){};
+     inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
+     inline void operator () ( fcomplex< __fx64  > *input ) { fill_buff< fcomplex< __fx64  > >( input ); }
+     inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64  > >( input ); }
+};
+
+/*! \brief mirror ring buffer class complex floating point 64-bit realization */
+template<> class delay< fcomplex< __fx64 > > : public delay_abstract< fcomplex< __fx64 > >
+{
+    typedef fcomplex< __fx64 > __type;
+public:
+      delay() : delay_abstract(){}
+     ~delay(){};
+     inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
+     inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64  > >( input ); }
+};
+
+/*! \brief mirror ring buffer class complex floating point extended 64-bit realization */
+template<> class delay< fcomplex< __fxx64 > > : public delay_abstract< fcomplex< __fxx64 > >
+{
+    typedef fcomplex< __fxx64 > __type;
+public:
+      delay() : delay_abstract(){}
+     ~delay(){};
+     inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
+};
+
+#endif
 
 /*! \brief ring buffer class floating point 32-bit realization */
 template<> class buffer< __fx32 > : public buffer_abstract< __fx32 >
@@ -401,43 +416,6 @@ public:
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
-#ifdef FCOMPLEX_H
-
-/*! \brief ring buffer class complex floating point 32-bit realization */
-template<> class ring_buffer< complex< __fx32 > > : public ring_buffer_abstract< complex< __fx32 > >
-{
-    typedef complex< __fx32 > __type;
-public:
-      ring_buffer() : ring_buffer_abstract(){}
-     ~ring_buffer(){};
-     inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
-     inline void operator () ( complex< __fx64  > *input ) { fill_buff< complex< __fx64  > >( input ); }
-     inline void operator () ( complex< __fxx64 > *input ) { fill_buff< complex< __fxx64 > >( input ); }
-};
-
-/*! \brief ring buffer class complex floating point 64-bit realization */
-template<> class ring_buffer< complex< __fx64 > > : public ring_buffer_abstract< complex< __fx64 > >
-{
-    typedef complex< __fx64 > __type;
-public:
-      ring_buffer() : ring_buffer_abstract(){}
-     ~ring_buffer(){};
-     inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
-     inline void operator () ( complex< __fxx64 > *input ) { fill_buff< complex< __fxx64 > >( input ); }
-};
-
-/*! \brief ring buffer class complex floating point extended 64-bit realization */
-template<> class ring_buffer< complex< __fxx64 > > : public ring_buffer_abstract< complex< __fxx64 > >
-{
-    typedef complex< __fxx64 > __type;
-public:
-      ring_buffer() : ring_buffer_abstract(){}
-     ~ring_buffer(){};
-     inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
-};
-
-#endif
-
 /*! \brief ring buffer class complex integer 32-bit realization */
 template<> class buffer< __ix32 > : public buffer_abstract< __ix32 >
 {
@@ -458,6 +436,45 @@ public:
      ~buffer(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
+
+#ifdef FCOMPLEX_H
+
+/*! \brief ring buffer class complex floating point 32-bit realization */
+template<> class buffer< fcomplex< __fx32 > > : public buffer_abstract< fcomplex< __fx32 > >
+{
+    typedef fcomplex< __fx32 > __type;
+public:
+      buffer() : buffer_abstract(){}
+     ~buffer(){};
+     inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
+     inline void operator () ( fcomplex< __fx64  > *input ) { fill_buff< fcomplex< __fx64  > >( input ); }
+     inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64 > >( input ); }
+};
+
+/*! \brief ring buffer class complex floating point 64-bit realization */
+template<> class buffer< fcomplex< __fx64 > > : public buffer_abstract< fcomplex< __fx64 > >
+{
+    typedef fcomplex< __fx64 > __type;
+public:
+      buffer() : buffer_abstract(){}
+     ~buffer(){};
+     inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
+     inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64 > >( input ); }
+};
+
+/*! \brief ring buffer class complex floating point extended 64-bit realization */
+template<> class buffer< fcomplex< __fxx64 > > : public buffer_abstract< fcomplex< __fxx64 > >
+{
+    typedef fcomplex< __fxx64 > __type;
+public:
+      buffer() : buffer_abstract(){}
+     ~buffer(){};
+     inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
+};
+
+#endif
+
+/*! @} */
 
 /*! @} */
 

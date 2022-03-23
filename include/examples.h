@@ -414,7 +414,7 @@ int example3()
 
     // allocating window function:
     int order = 80;
-    __fx64 *window = Chebyshev(60, order);
+    double *window = Chebyshev(60, order);
 
     // allocating filters:
     lp_flt.init(Fs , order , DSP::filter_type::lowpass  , { 100 , 500 } , window , true );
@@ -536,7 +536,10 @@ int example4()
     std::ofstream diff_yt;
     std::ofstream intg_yt;
     std::ofstream lead_yt;
-    std::ofstream flt2_yt;
+    std::ofstream lp2_yt;
+    std::ofstream hp2_yt;
+    std::ofstream bp2_yt;
+    std::ofstream bs2_yt;
     std::ofstream aper_yt;
 
     std::ofstream comb_km;
@@ -564,7 +567,10 @@ int example4()
     diff_yt  .open( directory + "\\diff_yt.txt");
     intg_yt  .open( directory + "\\intg_yt.txt");
     lead_yt  .open( directory + "\\lead_yt.txt");
-    flt2_yt  .open( directory + "\\flt2_yt.txt");
+    lp2_yt   .open( directory + "\\lp2_yt.txt");
+    hp2_yt   .open( directory + "\\hp2_yt.txt");
+    bp2_yt   .open( directory + "\\bp2_yt.txt");
+    bs2_yt   .open( directory + "\\bs2_yt.txt");
     aper_yt  .open( directory + "\\aper_yt.txt");
 
     comb_km  .open( directory + "\\comb_km.txt");
@@ -593,19 +599,25 @@ int example4()
     DSP::derivative         < __flt_type > diff;
     DSP::integrator         < __flt_type > intg;
     DSP::leadlag            < __flt_type > lead;
-    DSP::second_order_filter< __flt_type > sof;
+    DSP::second_order_filter< __flt_type > lp;
+     DSP::second_order_filter< __flt_type > hp;
+      DSP::second_order_filter< __flt_type > bp;
+       DSP::second_order_filter< __flt_type > bs;
     DSP::fcomb              < __flt_type > comb;
     DSP::fcombeq            < __flt_type > combeq;
-    DSP::derivative         < __flt_type > aper;
+    DSP::aperiodic          < __flt_type > aper;
 
     // filters initialization:
-    diff.init  (Fs, Fn, (__flt_type)1 / Fs );
-    intg.init  (Fs, Fn );
-    lead.init  (Fs, Fn, 0.01, 0.02 );
-    sof .init  (Fs, Fn, 100, 0.707, DSP::lowpass);
+    diff.init  (Fs, 0.01 );
+    intg.init  (Fs);
+    lead.init  (Fs, 0.01, 0.02 );
+    lp .init  (Fs, 120, 0.707, DSP::lowpass);
+    hp .init  (Fs, 120, 0.707, DSP::highpass);
+    bp .init  (Fs, 120, 0.707, DSP::bandpass);
+    bs .init  (Fs, 120, 0.707, DSP::bandstop);
     comb.init  (Fs, Fn, 0);
     combeq.init(Fs, Fn, 5, 0.05, 0);
-    aper  .init(Fs, Fn, 0.01);
+    aper  .init(Fs, 0.01);
 
     // emulation:
     for( int i = 0 ; i < cycles_num ; i++ )
@@ -619,20 +631,28 @@ int example4()
             double yt1 = diff  (&gen.m_out);
             double yt2 = intg  (&gen.m_out);
             double yt3 = lead  (&gen.m_out);
-            double yt4 = sof   (&gen.m_out);
-            double yt5 = comb  (&gen.m_out);
-            double yt6 = combeq(&gen.m_out);
-            double yt7 = aper  (&gen.m_out);
+            double yt4 = lp   (&gen.m_out);
+            double yt5 = hp   (&gen.m_out);
+            double yt6 = bp   (&gen.m_out);
+            double yt7 = bs   (&gen.m_out);
+            double yt8 = comb  (&gen.m_out);
+            double yt9 = combeq(&gen.m_out);
+            double yt10 = aper  (&gen.m_out);
 
             // logging:
             yt        << gen.m_out << "\n";
             diff_yt   << yt1       << "\n";
             intg_yt   << yt2       << "\n";
             lead_yt   << yt3       << "\n";
-            flt2_yt   << yt4       << "\n";
-            comb_yt   << yt5       << "\n";
-            combeq_yt << yt6       << "\n";
-            aper_yt   << yt7       << "\n";
+            lp2_yt   << yt4       << "\n";
+            hp2_yt   << yt5       << "\n";
+            bp2_yt   << yt6       << "\n";
+            bs2_yt   << yt7       << "\n";
+
+
+            comb_yt   << yt8       << "\n";
+            combeq_yt << yt9       << "\n";
+            aper_yt   << yt10       << "\n";
             tt        << time << "\n";
 
             // time increment:
@@ -646,7 +666,7 @@ int example4()
         DSP::fr fr1 = diff  .frequency_response(i);
         DSP::fr fr2 = intg  .frequency_response(i);
         DSP::fr fr3 = lead  .frequency_response(i);
-        DSP::fr fr4 = sof   .frequency_response(i);
+        //DSP::fr fr4 = sof   .frequency_response(i);
         DSP::fr fr5 = comb  .frequency_response(i);
         DSP::fr fr6 = combeq.frequency_response(i);
         DSP::fr fr7 = aper  .frequency_response(i);
@@ -655,7 +675,7 @@ int example4()
         diff_km   << fr1.Km << "\n";
         intg_km   << fr2.Km << "\n";
         lead_km   << fr3.Km << "\n";
-        flt2_km   << fr4.Km << "\n";
+        //flt2_km   << fr4.Km << "\n";
         comb_km   << fr5.Km << "\n";
         combeq_km << fr6.Km << "\n";
         aper_km   << fr7.Km << "\n";
@@ -663,7 +683,7 @@ int example4()
         diff_ph   << fr1.pH << "\n";
         intg_ph   << fr2.pH << "\n";
         lead_ph   << fr3.pH << "\n";
-        flt2_ph   << fr4.pH << "\n";
+        //flt2_ph   << fr4.pH << "\n";
         comb_ph   << fr5.pH << "\n";
         combeq_ph << fr6.pH << "\n";
         aper_ph   << fr7.pH << "\n";
@@ -678,7 +698,10 @@ int example4()
     diff_yt  .close();
     intg_yt  .close();
     lead_yt  .close();
-    flt2_yt  .close();
+    lp2_yt  .close();
+    hp2_yt  .close();
+    bp2_yt  .close();
+    bs2_yt  .close();
     aper_yt  .close();
 
     comb_km  .close();

@@ -91,9 +91,9 @@ public:
 
     /*!
      *  \brief Clarke's toward 32-bit transformation function
-     *  \param[ A ] phase A input signal
-     *  \param[ B ] phase B input signal
-     *  \param[ C ] phase C input signal
+     *  \param[A] phase A input signal
+     *  \param[B] phase B input signal
+     *  \param[C] phase C input signal
      *  \return the function fills Clarke's filter template class filelds as follows:
      *          \f[
      *
@@ -134,9 +134,9 @@ public:
 
     /*!
      *  \brief Clarke's toward 64-bit transformation function
-     *  \param[ A ] phase A input signal
-     *  \param[ B ] phase B input signal
-     *  \param[ C ] phase C input signal
+     *  \param[A] phase A input signal
+     *  \param[B] phase B input signal
+     *  \param[C] phase C input signal
      *  \return the function fills Clarke's filter template class filelds as follows:
      *          \f[
      *
@@ -177,9 +177,9 @@ public:
 
     /*!
      *  \brief Clarke's backward 32-bit transformation function
-     *  \param[ A ] pointer to alpha component
-     *  \param[ B ] pointer to beta component
-     *  \param[ C ] pointer to 0 component
+     *  \param[A] pointer to alpha component
+     *  \param[B] pointer to beta component
+     *  \param[C] pointer to 0 component
      *  \return the function fills Clarke's filter template class filelds as follows:
      *          \f[
      *
@@ -220,9 +220,9 @@ public:
 
     /*!
      *  \brief Clarke's backward 32-bit transformation function
-     *  \param[ A ] pointer to alpha component
-     *  \param[ B ] pointer to beta component
-     *  \param[ C ] pointer to 0 component
+     *  \param[A] pointer to alpha component
+     *  \param[B] pointer to beta component
+     *  \param[C] pointer to 0 component
      *  \return the function fills Clarke's filter template class filelds as follows:
      *          \f[
      *
@@ -303,9 +303,9 @@ public:
 
     /*!
      *  \brief Clarke's toward 32-bit transformation function
-     *  \param[ A ] phase A input signal
-     *  \param[ B ] phase B input signal
-     *  \param[ C ] phase C input signal
+     *  \param[A] phase A input signal
+     *  \param[B] phase B input signal
+     *  \param[C] phase C input signal
      *  \return the function fills Clarke's filter template class filelds as follows:
      *          \f[
      *
@@ -346,9 +346,9 @@ public:
 
     /*!
      *  \brief Clarke's backward 32-bit transformation function
-     *  \param[ A ] pointer to alpha component
-     *  \param[ B ] pointer to beta component
-     *  \param[ C ] pointer to 0 component
+     *  \param[A] pointer to alpha component
+     *  \param[B] pointer to beta component
+     *  \param[C] pointer to 0 component
      *  \return the function fills Clarke's filter template class filelds as follows:
      *          \f[
      *
@@ -424,12 +424,12 @@ public:
 
     /*!
      *  \brief toward Park transformation
-     *  \param[ A                ] - pointer to the phase A samples
-     *  \param[ B                ] - pointer to the phase B samples
-     *  \param[ C                ] - pointer to the phase C samples
-     *  \param[ Fn               ] - nominal frequency               , Hz
-     *  \param[ Fs               ] - input signal sampling frequency , Hz
-     *  \param[ a_axis_alignment ] - phase A alignment
+     *  \param[A] - pointer to the phase A samples
+     *  \param[B] - pointer to the phase B samples
+     *  \param[C] - pointer to the phase C samples
+     *  \param[Fn] - nominal frequency               , Hz
+     *  \param[Fs] - input signal sampling frequency , Hz
+     *  \param[a_axis_alignment] - phase A alignment
      *  \return if a_axis_alignment = 0 the function fills Park's filter template class filelds as follows:
      *          \f[
      *
@@ -526,12 +526,12 @@ public:
 
     /*!
      *  \brief backward Park transformation
-     *  \param[ D                ] - pointer to the D component samples
-     *  \param[ Q                ] - pointer to the Q component samples
-     *  \param[ Z                ] - pointer to the Z component samples
-     *  \param[ Fn               ] - nominal frequency               , Hz
-     *  \param[ Fs               ] - input signal sampling frequency , Hz
-     *  \param[ a_axis_alignment ] - phase A alignment
+     *  \param[D] - pointer to the D component samples
+     *  \param[Q] - pointer to the Q component samples
+     *  \param[Z] - pointer to the Z component samples
+     *  \param[Fn] - nominal frequency               , Hz
+     *  \param[Fs] - input signal sampling frequency , Hz
+     *  \param[a_axis_alignment] - phase A alignment
      *  \return if a_axis_alignment = 0 the function fills Park's filter template class filelds as follows:
      *          \f[
      *
@@ -658,12 +658,12 @@ public:
 
     /*!
      *  \brief toward Park transformation
-     *  \param[ A                ] - pointer to the phase A samples
-     *  \param[ B                ] - pointer to the phase B samples
-     *  \param[ C                ] - pointer to the phase C samples
-     *  \param[ Fn               ] - nominal frequency               , Hz
-     *  \param[ Fs               ] - input signal sampling frequency , Hz
-     *  \param[ a_axis_alignment ] - phase A alignment
+     *  \param[A] - pointer to the phase A samples
+     *  \param[B] - pointer to the phase B samples
+     *  \param[C] - pointer to the phase C samples
+     *  \param[Fn] - nominal frequency               , Hz
+     *  \param[Fs] - input signal sampling frequency , Hz
+     *  \param[a_axis_alignment] - phase A alignment
      *  \return if a_axis_alignment = 0 the function fills Park's filter template class filelds as follows:
      *          \f[
      *
@@ -760,12 +760,12 @@ public:
 
     /*!
      *  \brief backward Park transformation
-     *  \param[ D                ] - pointer to the D component samples
-     *  \param[ Q                ] - pointer to the Q component samples
-     *  \param[ Z                ] - pointer to the Z component samples
-     *  \param[ Fn               ] - nominal frequency               , Hz
-     *  \param[ Fs               ] - input signal sampling frequency , Hz
-     *  \param[ a_axis_alignment ] - phase A alignment
+     *  \param[D] - pointer to the D component samples
+     *  \param[Q] - pointer to the Q component samples
+     *  \param[Z] - pointer to the Z component samples
+     *  \param[Fn] - nominal frequency               , Hz
+     *  \param[Fs] - input signal sampling frequency , Hz
+     *  \param[a_axis_alignment] - phase A alignment
      *  \return if a_axis_alignment = 0 the function fills Park's filter template class filelds as follows:
      *          \f[
      *

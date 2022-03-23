@@ -10,9 +10,6 @@
 
 int main()
 {
-    DSP::fcombeq<double> c;
-    c.init(4000, 50, 1, 0.05,0);
-
     // run examples code:
     // example0();
     // example1();
