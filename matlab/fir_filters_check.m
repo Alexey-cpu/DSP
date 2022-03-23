@@ -20,15 +20,17 @@ rdft_ph  = TEXTFILE_TO_MATFILE( "rdft_ph.txt" , logs );
 ff       = TEXTFILE_TO_MATFILE( "ff.txt"      , logs );
 tt       = TEXTFILE_TO_MATFILE( "tt.txt"      , logs );
 
-plot(tt , yt);
+%plot(tt , yt);
 
 %group plotting:
 %plot( ff , lp_km , ff , hp_km , ff , bp_km , ff , bs_km );
 %plot( tt , lp_yt , tt , hp_yt , tt , bp_yt , tt , bs_yt );
 
 %individual plotting:
-%plot( tt , rdft_re , tt , rdft_im );
+plot( tt , rdft_re , tt , rdft_im, tt , rdft_abs );
 %plot( tt , rdft_abs);
+
+%plot(ff , rdft_km);
 %plot(ff , lp_km);
 %plot(ff , hp_km);
 %plot(ff , bp_km);

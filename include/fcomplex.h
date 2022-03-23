@@ -386,10 +386,11 @@ public:
      *  \brief assigning operator
      *  \param[_c] input complex number
     */
-    inline void operator = ( fcomplex<__type> _c )
+    inline fcomplex<__type> operator = ( fcomplex<__type> _c )
     {
         m_data[REAL] = _c.m_data[REAL];
         m_data[IMAG] = _c.m_data[IMAG];
+        return *this;
     };
 
     /*!

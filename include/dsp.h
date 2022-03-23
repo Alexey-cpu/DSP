@@ -79,18 +79,6 @@ namespace DSP
     };
 
     /*!
-     *  \struct harmonic
-     *  \brief harmonic data structure
-    */
-    struct harmonic
-    {
-        __fx64 re; ///< harmonic real component
-        __fx64 im; ///< harmonic imaginary component
-        __fx64 df; ///< harmonic frequency deviation from nominal, Hz
-        __fx64 f;  ///< harmonic nominal/computed frequency      , Hz
-    };
-
-    /*!
      *  \enum filter_type
      *  \brief filter type enumeration
     */
@@ -153,7 +141,7 @@ namespace DSP
     /*!
      * \brief IIR filter quadratic sections coefficiets matrix memory clean
      * \param[_cfmatrix] IIR filter quadratic sections coefficiets matrix data structure
-     * \return The function cleans the memory of IIR filter quadratic sections coefficiets matrix
+     * \details The function cleans the memory of IIR filter quadratic sections coefficiets matrix
     */
     template<typename __type> cf<__type> __cf_free__( cf<__type> _cfmatrix )
     {
@@ -179,11 +167,11 @@ namespace DSP
     */
     template<typename __type> fr __freq_resp__
     (
-            __type *_cfnum ,
-            __type *_cfden ,
-            __type *_gains ,
-            __ix32 _N ,
-            __fx64 _Fs ,
+            __type *_cfnum,
+            __type *_cfden,
+            __type *_gains,
+            __ix32 _N,
+            __fx64 _Fs,
             __fx64 _F
     )
     {
@@ -236,17 +224,30 @@ namespace DSP
             __type *_cfnum,
             __type *_cfden,
             __type  _gain,
-            __ix32 _N,
+            __ix32 _Nx,
+            __ix32 _Ny,
             __fx64 _Fs,
             __fx64 _F
     )
     {
-        fcomplex<__fx64> num(0,0), den(0,0), Wz (0,0);
-        for ( __ix32 i = 0; i <_N; i++)
+        fcomplex<__fx64> num(0,0);
+        fcomplex<__fx64> den(0,0);
+        fcomplex<__fx64> Wz (0,0);
+
+        // numerator sum computation:
+        for (__ix32 i = 0; i <_Nx; i++)
         {
-            num += fcomplex<__fx64>( cos(-PI2 * _F * (__fx64)i / _Fs) * _cfnum[i], sin(-PI2 * _F * (__fx64)i / _Fs) * _cfnum[i] );
-            den += fcomplex<__fx64>( cos(-PI2 * _F * (__fx64)i / _Fs) * _cfden[i], sin(-PI2 * _F * (__fx64)i / _Fs) * _cfden[i] );
+            num += fcomplex<__fx64>(cos(-PI2 * _F * (__fx64)i / _Fs) * _cfnum[i],
+                                    sin(-PI2 * _F * (__fx64)i / _Fs) * _cfnum[i]);
         }
+
+        // denominator sum computation:
+        for (__ix32 i = 0; i <_Ny; i++)
+        {
+            den += fcomplex<__fx64>(cos(-PI2 * _F * (__fx64)i / _Fs) * _cfden[i],
+                                    sin(-PI2 * _F * (__fx64)i / _Fs) * _cfden[i]);
+        }
+
         Wz = num / den * (__fx64)_gain;
         return { __cabsf__<__fx64>( Wz ) , __cargf__<__fx64>( Wz ) };
     }
@@ -263,7 +264,7 @@ namespace DSP
     */
     template< typename __type > fr __freq_resp__
     (
-            __type *_cfbuff ,
+            __type *_cfbuff,
             __ix32 _N,
             __fx64 _Fs,
             __fx64 _F
@@ -2980,7 +2981,7 @@ namespace DSP
      *  \class recursive_fir_abstract
      *  \details Defines recursive FIR filter having the following transfer function:
      *   \f[
-     *      W(z) = \sum_{i=0}^N a_{i} * z^{-i}
+     *      W(z) = \frac{1}{N} * \frac{ 1 - z^-N }{ 1 - z^-1 * e^{-2*\pi * T_s} }
      *  \f]
      *
     */
@@ -2989,18 +2990,12 @@ namespace DSP
     protected:
         /*! \brief recursive FIR filter gain */
         __fx64 m_Gain;
-        /*! \brief auxiliary variable */
-        __fx64 m_Ks;
-        /*! \brief auxiliary variable */
-        __fx64 m_Kc;
         /*! \brief computed harmonic number */
         __fx64 m_hnum;
-        /*! \brief auxiliary variable */
-        __fx64 m_a0;
-        /*! \brief harmonic real output component */
-        __fx64 m_a;
-       /*! \brief harmonic imaginary output component */
-        __fx64 m_b;
+        /*! \brief rotation vector */
+        fcomplex<__fx64> m_rot;
+        /*! \brief filter output */
+        fcomplex<__fx64> m_out;
         /*! \brief recursive Fourier filter buffer */
         delay<__type> m_buffer_sx;
 
@@ -3022,43 +3017,35 @@ namespace DSP
        }
 
         /*!
-         *  \brief  Recursive FIR filter filtering function
-         *  \param[input] - pointer to the nput signal frames
-         *  \return The function computes real and imaginary harmonic component
+         *  \brief Recursive FIR filter filtering function
+         *  \param[_input] - pointer to the nput signal frames
+         *  \return The function computes real and imaginary component of a result
         */
-        template< typename T > inline harmonic filt ( T *input )
+        template< typename T > inline fcomplex<__type> filt ( T *_input )
         {
-            m_buffer_sx( input );
-            m_a0 = m_a + ( ( __fx64 )*input - ( __fx64 )m_buffer_sx[ m_order ] ) * m_Gain;
-            m_a  = m_a0 * m_Kc - m_b * m_Ks;
-            m_b  = m_a0 * m_Ks + m_b * m_Kc;
-            return { m_a , m_b , 0 , m_Fn };
+            m_buffer_sx(_input );
+            return (m_out = m_out * m_rot + ( ( __fx64 )*_input - ( __fx64 )m_buffer_sx[ m_order ] ) * m_Gain);
         }
 
        public:
 
         /*! \brief  recursive Fourier filter initialization function
-         *  \param[Fn  ] - input signal nominal frequency  , Hz
-         *  \param[Fs  ] - input signal sampling frequency , hz
-         *  \param[hnum] - number of computed harmonic
+         *  \param[_Fs] input signal sampling frequency , hz
+         *  \param[_Fn] input signal nominal frequency  , Hz
+         *  \param[_hnum] number of computed harmonic
+         *  \param[_order_multiplier] order multiplier
          *  \return the function initializes recursive Fourier filter
        */
-        void init( __fx64 _Fs, __fx64 _Fn, __ix32 _hnum, __ix32 _order_multiplier = 1 )
+        void init( __fx64 _Fs, __fx64 _Fn, __ix32 _hnum )
         {
             // system variables initialization:
             m_Fn      = _Fn;
             m_Fs      = _Fs;
             m_Ts      = 1 / m_Fs;
-            m_order   = ceil( _Fs / _Fn ) * _order_multiplier;
+            m_order   = ceil( _Fs / _Fn );
             m_Gain    = ( _hnum == 0 ) ? ( 1.0 / (__fx64)m_order ) : ( 2.0 / (__fx64)m_order / sqrt(2) );
             m_hnum    = _hnum;
-            m_Ks      = sin( PI2 * (__fx64)m_hnum / (__fx64)m_order );
-            m_Kc      = cos( PI2 * (__fx64)m_hnum / (__fx64)m_order );
-
-            // filter output initialization:
-            m_a0 = 0;
-            m_a  = 0;
-            m_b  = 0;
+            m_rot(cos( PI2 * (__fx64)m_hnum / (__fx64)m_order ), sin( PI2 * (__fx64)m_hnum / (__fx64)m_order ) );
 
             // memory allocation:
             allocate();
@@ -3066,9 +3053,9 @@ namespace DSP
 
         recursive_fir_abstract() : filter_abstract() {}
 
-        recursive_fir_abstract(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum, __ix32 _order_multiplier = 1 )
+        recursive_fir_abstract(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum )
         {
-            init(_Fs, _Fn, _hnum, _order_multiplier);
+            init(_Fs, _Fn, _hnum);
         }
 
         virtual ~recursive_fir_abstract()
@@ -3076,7 +3063,7 @@ namespace DSP
             deallocate();
         }
 
-        virtual inline harmonic operator ()(__type  *input ) = 0;
+        virtual inline fcomplex<__type> operator ()(__type  *input ) = 0;
 
         /*! \brief recursive Fourier filter frequency response computation function
          *  \param[F] - input signal frequency , Hz
@@ -3084,29 +3071,10 @@ namespace DSP
         */
         fr frequency_response( __fx64 F ) override
         {
-            // complex frequency coeffs:
-            __type Re1 = 0;
-            __type Im1 = 0;
-            __type Re2 = 0;
-            __type Im2 = 0;
-            __type K = (__fx64)1 / (__fx64)m_order;
-
-            // transfer function:
-            Re1 = 1 - cos( -PI2 * F * m_order * m_Ts );
-            Im1 = 0 - sin( -PI2 * F * m_order * m_Ts );
-            Re2 = 1 - ( cos(-PI2 * F * m_Ts) * m_Kc - sin(-PI2 * F * m_Ts) * m_Ks );
-            Im2 = 0 - ( cos(-PI2 * F * m_Ts) * m_Ks + sin(-PI2 * F * m_Ts) * m_Kc );
-
-            // amplitude and phase response:
-            if( F == m_Fn * m_hnum )
-            {
-                return  { 1 , 0 };
-            }
-            else
-            {
-                return { sqrt( Re1 * Re1 + Im1 * Im1 ) / sqrt( Re2 * Re2 + Im2 * Im2 ) * K
-                            , atan2( Im1 , Re1 ) - atan2( Im2 , Re2 ) };
-            }
+            fcomplex<__fx64> num = fcomplex<__fx64>(1,0) - fcomplex<__fx64>( cos( -PI2 * F * m_order * m_Ts ) , sin( -PI2 * F * m_order * m_Ts ) );
+            fcomplex<__fx64> den = fcomplex<__fx64>(1,0) - fcomplex<__fx64>( cos( -PI2 * F * m_Ts ) , sin( -PI2 * F * m_Ts ) ) * m_rot;
+            fcomplex<__fx64> Wz = num / den / (__fx64)m_order;
+            return { __cabsf__(Wz), __cargf__(Wz) };
         }
     };
 
@@ -3484,7 +3452,7 @@ namespace DSP
         */
         fr frequency_response(__fx64 _F ) override
         {
-            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, m_Fs, _F );
+            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, 2, m_Fs, _F );
         }
 
         /*! \brief default constructor */
@@ -3600,7 +3568,7 @@ namespace DSP
         */
         fr frequency_response(__fx64 _F ) override
         {
-            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, m_Fs, _F );
+            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, 2, m_Fs, _F );
         }
 
         /*! \brief default constructor */
@@ -3713,7 +3681,7 @@ namespace DSP
         */
         fr frequency_response(__fx64 _F ) override
         {
-            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, m_Fs, _F );
+            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, 2, m_Fs, _F );
         }
 
         /*! \brief default constructor */
@@ -3836,7 +3804,7 @@ namespace DSP
         */
         fr frequency_response(__fx64 _F ) override
         {
-            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, m_Fs, _F );
+            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, 2, m_Fs, _F );
         }
 
         /*! \brief default constructor */
@@ -4071,7 +4039,7 @@ namespace DSP
         */
         fr frequency_response(__fx64 _F ) override
         {
-            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 3, m_Fs, _F );
+            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 3, 3, m_Fs, _F );
         }
 
         // constructors and destructor:
@@ -4181,7 +4149,7 @@ namespace DSP
         // filtering operator override:
         inline __type operator()( __type* _input ) override
         {
-            return __filt__< __type >( _input , m_cfmatrix.cfnum , m_cfmatrix.cfden , m_cfmatrix.gains  , m_cfmatrix.N ,  m_buff_sx , m_buff_sy );
+            return __filt__< __type >(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N,  m_buff_sx, m_buff_sy );
         }
     };
 
@@ -4204,7 +4172,7 @@ namespace DSP
         // filtering operator override:
         inline __type operator()( __type* _input ) override
         {
-            return __filt__< __type >( _input , m_cfmatrix.cfnum , m_cfmatrix.cfden , m_cfmatrix.gains  , m_cfmatrix.N ,  m_buff_sx , m_buff_sy );
+            return __filt__< __type >(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N,  m_buff_sx, m_buff_sy );
         }
     };
 
@@ -4225,7 +4193,10 @@ namespace DSP
         cf< __type > compute_bandstop() override { return __butt_cheb1_digital_bs__< __type >( m_Fs , m_bandwidth.Fc , m_bandwidth.BW , m_order , 1 , m_attenuation.G1 ); }
 
         // filtering operator override:
-        inline __type operator()( __type *input ) override { return __filt__< __type >( input , m_cfmatrix.cfnum , m_cfmatrix.cfden , m_cfmatrix.gains  , m_cfmatrix.N ,  m_buff_sx , m_buff_sy ); }
+        inline __type operator()( __type *_input ) override
+        {
+            return __filt__< __type >(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N,  m_buff_sx, m_buff_sy );
+        }
     };
 
     /*! \brief Child Chebyshev I filter 64-bit realization */
@@ -4247,7 +4218,7 @@ namespace DSP
         // filtering operator override:
         inline __type operator()( __type* _input ) override
         {
-            return __filt__< __type >( _input , m_cfmatrix.cfnum , m_cfmatrix.cfden , m_cfmatrix.gains  , m_cfmatrix.N ,  m_buff_sx , m_buff_sy );
+            return __filt__< __type >(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N,  m_buff_sx, m_buff_sy );
         }
     };
 
@@ -4270,7 +4241,7 @@ namespace DSP
         // filtering operator override:
         inline __type operator()( __type* _input ) override
         {
-            return __filt__< __type >(_input , m_cfmatrix.cfnum , m_cfmatrix.cfden , m_cfmatrix.gains  , m_cfmatrix.N ,  m_buff_sx , m_buff_sy );
+            return __filt__< __type >(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N,  m_buff_sx, m_buff_sy );
         }
     };
 
@@ -4293,7 +4264,7 @@ namespace DSP
         // filtering operator override:
         inline __type operator()( __type* _input ) override
         {
-            return __filt__< __type >(_input , m_cfmatrix.cfnum , m_cfmatrix.cfden , m_cfmatrix.gains  , m_cfmatrix.N ,  m_buff_sx , m_buff_sy );
+            return __filt__< __type >(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N,  m_buff_sx, m_buff_sy );
         }
     };
 
@@ -4316,7 +4287,7 @@ namespace DSP
         // filtering operator override:
         inline __type operator()( __type* _input ) override
         {
-            return __filt__< __type >( _input , m_cfmatrix.cfnum , m_cfmatrix.cfden , m_cfmatrix.gains  , m_cfmatrix.N ,  m_buff_sx , m_buff_sy );
+            return __filt__< __type >(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N,  m_buff_sx, m_buff_sy );
         }
     };
 
@@ -4339,7 +4310,7 @@ namespace DSP
         // filtering operator override:
         inline __type operator()( __type* _input ) override
         {
-            return __filt__< __type >( _input , m_cfmatrix.cfnum , m_cfmatrix.cfden , m_cfmatrix.gains  , m_cfmatrix.N ,  m_buff_sx , m_buff_sy );
+            return __filt__< __type >(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N,  m_buff_sx, m_buff_sy );
         }
     };
 
@@ -4402,14 +4373,14 @@ namespace DSP
     public:
         // construction / destruction:
         recursive_fourier() : recursive_fir_abstract(){}
-        recursive_fourier(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum, __ix32 _order_multiplier = 1 )
-            : recursive_fir_abstract(_Fs, _Fn, _hnum, _order_multiplier){}
+        recursive_fourier(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum )
+            : recursive_fir_abstract(_Fs, _Fn, _hnum){}
         ~recursive_fourier(){}
 
         // filtering
-        inline harmonic operator ()(__type  *input ) override { return filt<__type> ( input ); }
-        inline harmonic operator ()(__fx64  *input ){ return filt<__fx64> ( input ); }
-        inline harmonic operator ()(__fxx64 *input ){ return filt<__fxx64>( input ); }
+        inline fcomplex<__type> operator ()(__type  *input ) override { return filt<__type> ( input ); }
+        inline fcomplex<__type> operator ()(__fx64  *input ){ return filt<__fx64> ( input ); }
+        inline fcomplex<__type> operator ()(__fxx64 *input ){ return filt<__fxx64>( input ); }
     };
 
     /*! \brief Child recursive Fourier filter 32-bit realization */
@@ -4419,13 +4390,13 @@ namespace DSP
     public:
         // construction / destruction:
         recursive_fourier() : recursive_fir_abstract(){}
-        recursive_fourier(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum, __ix32 _order_multiplier = 1 )
-            : recursive_fir_abstract(_Fs, _Fn, _hnum, _order_multiplier){}
+        recursive_fourier(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum )
+            : recursive_fir_abstract(_Fs, _Fn, _hnum){}
         ~recursive_fourier(){}
 
         // filtering
-        inline harmonic operator ()(__type  *input ) override { return filt<__type> ( input ); }
-        inline harmonic operator ()(__fxx64 *input ){ return filt<__fxx64>( input ); }
+        inline fcomplex<__type> operator ()(__type  *input ) override { return filt<__type> ( input ); }
+        inline fcomplex<__type> operator ()(__fxx64 *input ){ return filt<__fxx64>( input ); }
     };
 
     /*! @} */

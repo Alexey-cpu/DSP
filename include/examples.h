@@ -423,7 +423,7 @@ int example3()
     bs_flt.init(Fs , order , DSP::filter_type::bandstop , { 100 , 500 } , window , true );
 
     // recursive Fourier filter allocation:
-    rdft.init(Fs, 50 , 1 , 1);
+    rdft.init(Fs, Fn, 1);
 
     // emulation:
     for( int i = 0 ; i < cycles_num ; i++ )
@@ -438,18 +438,18 @@ int example3()
             double yt2 = hp_flt( &gen.m_out );
             double yt3 = bp_flt( &gen.m_out );
             double yt4 = bs_flt( &gen.m_out );
-            DSP::harmonic v = rdft( &gen.m_out );
+            fcomplex<double> v = rdft( &gen.m_out );
 
             // store signal and filter output:
-            lp_yt   << yt1       << "\n";
-            hp_yt   << yt2       << "\n";
-            bp_yt   << yt3       << "\n";
-            bs_yt   << yt4       << "\n";
-            rdft_re << v.re      << "\n";
-            rdft_im << v.im      << "\n";
-            rdft_abs << sqrt( v.re*v.re + v.im*v.im )      << "\n";
-            yt      << gen.m_out << "\n";
-            tt      << time      << "\n";
+            lp_yt    << yt1          << "\n";
+            hp_yt    << yt2          << "\n";
+            bp_yt    << yt3          << "\n";
+            bs_yt    << yt4          << "\n";
+            rdft_re  << __realf__(v) << "\n";
+            rdft_im  << __imagf__(v) << "\n";
+            rdft_abs << __cabsf__(v) << "\n";
+            yt       << gen.m_out << "\n";
+            tt       << time      << "\n";
 
             // time increment:
             time += 1 / Fs;
