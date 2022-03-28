@@ -1,21 +1,22 @@
-#include <iostream>
-#include <fstream>
-#include <QElapsedTimer>
+#include "include/special_functions.h"
+#include "iostream"
 
-#include <iostream>
-#include <complex>
+//#include <iostream>
+//#include <fstream>
+//#include <QElapsedTimer>
+
+//#include <iostream>
+//#include <complex>
 
 // examples:
-#include "include/examples.h"
+//#include "include/examples.h"
+
+
+#include "include/special_functions.h"
+#include "iostream"
+
 
 int main()
 {
-    // run examples code:
-    // example0();
-    // example1();
-    // example2();
-     example3();
-    // example4();
-
     return 0;
 }

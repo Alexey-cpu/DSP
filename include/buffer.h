@@ -487,5 +487,6 @@ public:
 #undef __uix64
 #undef __fx32
 #undef __fx64
+#undef __fxx64
 
 #endif // BUFFER_H

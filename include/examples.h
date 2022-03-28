@@ -43,7 +43,7 @@ int example0()
     int     NN   = (upper - lower) / step+2;
     double  *u   = ( double* ) calloc( NN , sizeof ( double ) );
 
-    // inout vector filling:
+    // input vector filling:
     for( int i = 0 ; i < NN ; i++ )
     {
         u[i] = lower;
@@ -83,7 +83,7 @@ int example0()
     cs.open( logs + "\\cs.txt" );
     uu.open( logs + "\\uu.txt" );
 
-    // write files:
+    // write files (compute elliptic functions):
     for( int i = 0 ; i < NN ; i++ )
     {
         sn << __sn__( u[i] , k ) << "\n";
@@ -145,16 +145,16 @@ int example1()
 
     printf( "arithmetics: \n" );
 
-    printf( "z0 * z1          = %.4f \t %.4f \n" , __realf__( z0 * z1 )                   , __imagf__( z0 * z1 )                   );
-    printf( "z0 / z1          = %.4f \t %.4f \n" , __realf__( z0 / z1 )                   , __imagf__( z0 / z1 )                   );
-    printf( "sqrt( z0 )       = %.4f \t %.4f \n" , __realf__( __csqrtf__(z0))              , __imagf__( __csqrtf__(z0) )             );
-    printf( "z0 + z1 + z2     = %.4f \t %.4f \n" , __realf__( z0 + z1 + z2 )              , __imagf__( z0 + z1 + z2  )             );
-    printf( "z0 - z1 - z2     = %.4f \t %.4f \n" , __realf__( z0 - z1 - z2 )              , __imagf__( z0 - z1 - z2  )             );
-    printf( "z0 * z1 / z2     = %.4f \t %.4f \n" , __realf__( z0 * z1 / z2 )              , __imagf__( z0 * z1 / z2  )             );
-    printf( "(z1-z2)/(z1+z2)  = %.4f \t %.4f \n" , __realf__( ( z1 - z2 ) / ( z1 + z2 ) ) , __imagf__( ( z1 - z2 ) / ( z1 + z2 ) ) );
-    z0 += z2; printf( "( z0 = z0 + z2 ) = %.4f \t %.4f \n" , __realf__(z0)                , __imagf__(z0)                          );
-    z1 *= z2; printf( "( z1 = z1 * z2 ) = %.4f \t %.4f \n" , __realf__(z1)                , __imagf__(z1)                          );
-    z2 /= z1; printf( "( z2 = z2 / z1 ) = %.4f \t %.4f \n" , __realf__(z2)                , __imagf__(z2)                          );
+    printf( "z0 * z1          = %.4f \t %.4f \n" , __realf__( z0 * z1 ) , __imagf__( z0 * z1 ));
+    printf( "z0 / z1          = %.4f \t %.4f \n" , __realf__( z0 / z1 ) , __imagf__( z0 / z1 ));
+    printf( "sqrt( z0 )       = %.4f \t %.4f \n" , __realf__( __csqrtf__(z0)), __imagf__( __csqrtf__(z0)));
+    printf( "z0 + z1 + z2     = %.4f \t %.4f \n" , __realf__( z0 + z1 + z2 ), __imagf__( z0 + z1 + z2  ));
+    printf( "z0 - z1 - z2     = %.4f \t %.4f \n" , __realf__( z0 - z1 - z2 ), __imagf__( z0 - z1 - z2  ));
+    printf( "z0 * z1 / z2     = %.4f \t %.4f \n" , __realf__( z0 * z1 / z2 ), __imagf__( z0 * z1 / z2  ));
+    printf( "(z1-z2)/(z1+z2)  = %.4f \t %.4f \n" , __realf__( ( z1 - z2 ) / ( z1 + z2 ) ) , __imagf__( ( z1 - z2 ) / ( z1 + z2 ) ));
+    z0 += z2; printf( "( z0 = z0 + z2 ) = %.4f \t %.4f \n" , __realf__(z0), __imagf__(z0));
+    z1 *= z2; printf( "( z1 = z1 * z2 ) = %.4f \t %.4f \n" , __realf__(z1), __imagf__(z1));
+    z2 /= z1; printf( "( z2 = z2 / z1 ) = %.4f \t %.4f \n" , __realf__(z2), __imagf__(z2));
     printf( "\n\n");
 
     printf( " complex functions : \n" );
@@ -170,8 +170,6 @@ int example1()
     printf( " scalar functions : \n" );
     printf( " abs( z0 )  = %.4f \n" , __cabsf__<double>(z0) );
     printf( " arg( z0 )  = %.4f \n" , __cargf__<double>(z0) * 180.0 / 3.1415926535897932384626433832795);
-
-
     return 0;
 }
 

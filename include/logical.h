@@ -243,7 +243,7 @@ public:
     */
     __bool rr_trig( __bool CLK )
     {
-        m_Q  = ( (CLK == true) && (m_CC == false) ) ? true : false;
+        m_Q  = CLK && m_CC;
         m_CC = CLK;
         return m_Q;
     }
@@ -254,7 +254,7 @@ public:
     */
     __bool ff_trig( __bool CLK )
     {
-        m_Q  = ( (CLK == false) && (m_CC == true) ) ? true : false;
+        m_Q  = !CLK && m_CC;
         m_CC = CLK;
         return m_Q;
     }
@@ -268,7 +268,7 @@ public:
     */
     __bool rs_trig( __bool S , __bool R )
     {
-        if ( ( (S == true) && (R == false) ) || ( (m_QQ == true) && (R == false) ) )
+        if ( ( S && !R ) || ( m_QQ && !R ) )
         {
             m_QQ = true;
             m_Q  = m_QQ;
@@ -291,7 +291,7 @@ public:
     */
     __bool sr_trig( __bool S , __bool R )
     {
-        if ( (S == true) || ( (m_QQ == true) && (R == false) ) )
+        if ( S || ( S && !R ) )
         {
             m_QQ = true;
             m_Q  = m_QQ;

@@ -908,7 +908,7 @@ extern __fxx64 __modified_bessel_in__( __fxx64 x  , __ix32 order )
 
 /*!
  * \brief Barlett window function computation
- * \param[order] window function size
+ * \param[_order] window function size
  * \return The function allocates memory sets, m_wind_ready = 1 and computes Barlett window coefficients as follows:
  *  \f[
  *      Ns = order \newline
@@ -934,7 +934,7 @@ __fx64 *Bartlett( __ix32 _order )
 
 /*!
  * \brief Barlett Hanning window function computation
- * \param[order] window function size
+ * \param[_order] window function size
  * \return The function allocates memory, sets m_wind_ready = 1 and computes Barlett-Hanning window coefficients as follows:
  *  \f[
  *      Ns = order \newline
@@ -956,7 +956,7 @@ __fx64 *BartlettHanning( __ix32 _order )
 
 /*!
      * \brief Balckman window function computation
-     * \param[order] window function size
+     * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Balckman window coefficients as follows:
      *  \f[
      *      Ns = order \newline
@@ -977,7 +977,7 @@ __fx64 *Blackman(__ix32 _order)
 
 /*!
      * \brief Balckman-Harris window function computation
-     * \param[order] window function size
+     * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Balckman-Harris window coefficients as follows:
      *  \f[
      *      Ns = order \newline
@@ -999,7 +999,7 @@ __fx64 *BlackmanHarris(__ix32 _order)
 
 /*!
      * \brief Bohman window function computation
-     * \param[order] window function size
+     * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Bohman window coefficients as follows:
      *  \f[
      *      Ns = ceil \left( \frac{ order } { 2 } \right ) \quad , \quad n  = 0 \dots Ns \newline
@@ -1440,14 +1440,14 @@ __fx64 *Tukey(__fx64 _R, __ix32 _order )
 
 /*!
      * \brief Linear convolution function
-     * \param[*a] pointer to the poly a array
-     * \param[*b] pointer to the poly b array
-     * \param[*c] pointer to the poly c array
-     * \param[Na] size of poly a array
-     * \param[Nb] size of poly b array
-     * \param[Nc] size of poly c array
+     * \param[*_a] pointer to the poly a array
+     * \param[*_b] pointer to the poly b array
+     * \param[*_c] pointer to the poly c array
+     * \param[_Na] size of poly a array
+     * \param[_Nb] size of poly b array
+     * \param[_Nc] size of poly c array
     */
-template< typename __type > void conv
+template< typename __type > void __convf__
 (
         __type *_a,
         __type *_b,
@@ -1468,6 +1468,10 @@ template< typename __type > void conv
         }
     }
 }
+
+/*!
+*   \example convolution_example.cpp
+*/
 
 /*! @} */
 

@@ -11,10 +11,6 @@
 #ifndef FCOMPLEX_H
 #define FCOMPLEX_H
 
-/*! \defgroup <COMPLEX_ARITHMETICS> ( Complex numbers functions )
- *  \brief the module describes complex numbers functions
-    @{
-*/
 
 #ifndef __ALG_PLATFORM
 #include "math.h"
@@ -92,17 +88,7 @@ enum complex_plain
     IMAG  ///< complex number imaginary part
 };
 
-/*!
-* \brief   complex numbers addition function
-* \param[_c1] input complex number 1
-* \param[_c2] input complex number 2
-* \param[_c3] input complex number answer
-* \return the function returns complex:
-* \f[
-*       real(_c3) = real(_c1) + real(_c2)
-*       imag(_c3) = imag(_c1) + imag(_c2)
-* \f]
-*/
+// complex numbers addtion function
 template<typename __type> __attribute__( (always_inline) ) inline
 void __cadd__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
 {
@@ -110,17 +96,7 @@ void __cadd__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
     _c3[IMAG] = _c1[IMAG] + _c2[IMAG];
 }
 
-/*!
-* \brief   complex numbers substraction function
-* \param[_c1] input complex number 1
-* \param[_c2] input complex number 2
-* \param[_c3] input complex number answer
-* \return the function returns complex:
-* \f[
-*       real(_c3) = real(_c1) - real(_c2)
-*       imag(_c3) = imag(_c1) - imag(_c2)
-* \f]
-*/
+// complex numbers substraction function
 template<typename __type> inline __attribute__( (always_inline) )
 void __csub__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
 {
@@ -128,17 +104,7 @@ void __csub__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
     _c3[IMAG] = _c1[IMAG] - _c2[IMAG];
 }
 
-/*!
-* \brief   complex numbers multiplication function
-* \param[_c1] input complex number 1
-* \param[_c2] input complex number 2
-* \param[_c3] input complex number answer
-* \return the function returns complex:
-* \f[
-*       real(_c3) = real(_c1) * real(_c2) - imag(_c1) * imag(_c2)
-*       imag(_c3) = real(_c1) * imag(_c2) + imag(_c1) * real(_c2)
-* \f]
-*/
+// complex numbers multiplication function
 template<typename __type> inline __attribute__( (always_inline) )
 void __cmul__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
 {
@@ -146,17 +112,7 @@ void __cmul__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
     _c3[IMAG] = _c1[REAL] * _c2[IMAG] + _c1[IMAG] * _c2[REAL];
 }
 
-/*!
-* \brief   complex numbers division function
-* \param[_c1] input complex number 1
-* \param[_c2] input complex number 2
-* \param[_c3] input complex number answer
-* \return the function returns complex:
-* \f[
-*       real(_c3) = \frac{ real(_c1) * real(_c2) + imag(_c1) * imag(_c2)  }{ real(_c2) * real(_c2) + imag(_c2) * imag(_c2) }
-*       imag(_c3) = \frac{ -real(_c1) * imag(_c2) + imag(_c1) * real(_c2) }{ real(_c2) * real(_c2) + imag(_c2) * imag(_c2) }
-* \f]
-*/
+// complex numbers division function
 template<typename __type> inline __attribute__( (always_inline) )
 void __cdiv__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
 {
@@ -176,114 +132,60 @@ void __cdiv__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
     }
 }
 
-/*!
-* \brief   Complex number modulus computation function
-* \param[_c1] input complex number
-* \return the function returns input 32-bit complex number modulus:
-* \f[
-*       abs(_c1) = \sqrt{ real\left( _c1 \right)^2 + imag\left( _c1 \right)^2 }
-* \f]
-*/
+// complex numbers modulus computation function
 template<typename __type> inline __attribute__( (always_inline) )
 __type __cabs__(const __type _c1[2] )
 {
     return sqrt( _c1[REAL] * _c1[REAL] + _c1[IMAG] * _c1[IMAG] );
 }
 
-/*!
-* \brief   Complex number angle computation function
-* \param[_c1] input complex number
-* \return the function returns input 32-bit complex number angle:
-* \f[
-*       arg(_c1) = atan2\left( real\left( _c1 \right) , imag\left( _c1 \right) \right)
-* \f]
-*/
+// complex numbers angle computation function
 template<typename __type> inline __attribute__( (always_inline) )
 __type __carg__(const __type _c1[2] )
 {
     return atan2( _c1[IMAG] , _c1[REAL] );
 }
 
-/*!
-* \brief   Complex number greater function
-* \param[_c1] input complex number 1
-* \param[_c2] input complex number 2
-* \return the function returns input 32-bit complex number angle:
-* \f[
-*       true  = abs(_c1) > abs(_c2) \newline
-*       false = abs(_c1) > abs(_c2)
-* \f]
-*/
+// complex numbers greater function
 template<typename __type> inline __attribute__( (always_inline) )
 bool __cgt__(const __type _c1[2], const  __type _c2[2] )
 {
     return __cabs__(_c1) > __cabs__(_c2);
 }
 
-/*!
-* \brief   Complex number lower function
-* \param[_c1] input complex number 1
-* \param[_c2] input complex number 2
-* \return the function returns input 32-bit complex number angle:
-* \f[
-*       true  = abs(_c1) < abs(_c2) \newline
-*       false = abs(_c1) < abs(_c2)
-* \f]
-*/
+// complex numbers lower function
 template<typename __type> inline __attribute__( (always_inline) )
 bool __clt__(const __type _c1[2], const  __type _c2[2] )
 {
     return __cabs__(_c1) < __cabs__(_c2);
 }
 
-/*!
-* \brief   Complex number equal function
-* \param[_c1] input complex number 1
-* \param[_c2] input complex number 2
-* \return the function returns input 32-bit complex number angle:
-* \f[
-*       true  = abs(_c1) == abs(_c2) \newline
-*       false = abs(_c1) == abs(_c2)
-* \f]
-*/
+// complex numbers equality function
 template<typename __type> inline __attribute__( (always_inline) )
 bool __ceq__(const __type _c1[2], const  __type _c2[2] )
 {
     return __cabs__(_c1) >= __cabs__(_c2);
 }
 
-/*!
-* \brief   Complex number greater/equal function
-* \param[_c1] input complex number 1
-* \param[_c2] input complex number 2
-* \return the function returns input 32-bit complex number angle:
-* \f[
-*       true  = abs(_c1) >= abs(_c2) \newline
-*       false = abs(_c1) >= abs(_c2)
-* \f]
-*/
+// complex numbers greater/equal function
 template<typename __type> inline __attribute__( (always_inline) )
 bool __cge__(const __type _c1[2], const  __type _c2[2] )
 {
     return __cabs__(_c1) >= __cabs__(_c2);
 }
 
-/*!
-* \brief   Complex number lower/equal function
-* \param[_c1] input complex number 1
-* \param[_c2] input complex number 2
-* \return the function returns input 32-bit complex number angle:
-* \f[
-*       true  = abs(_c1) <= abs(_c2) \newline
-*       false = abs(_c1) <= abs(_c2)
-* \f]
-*/
+// complex numbers lower/equal function
 template<typename __type> inline __attribute__( (always_inline) )
 bool __cle__(const __type _c1[2], const  __type _c2[2] )
 {
     return __cabs__(_c1) <= __cabs__(_c2);
 }
 
+
+/*! \defgroup <COMPLEX_ARITHMETICS> ( Complex numbers functions )
+ *  \brief the module describes complex numbers functions
+    @{
+*/
 
 /*!
 * \class fcomplex

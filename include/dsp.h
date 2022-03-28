@@ -210,7 +210,8 @@ namespace DSP
      * \param[_cfnum] IIR filter numerator coefficients vector
      * \param[_cfden] IIR filter denominator coefficients vector
      * \param[_gain] IIR filter gain
-     * \param[_N] IIR filter filter order
+     * \param[_Nx] IIR filter numerator order
+     * \param[_Ny] IIR filter denominator order
      * \param[_Fs] sampling frequency, Hz
      * \param[_F] input signal frequency, Hz
      * \return The function computes IIR filter transfer function frequency response:
@@ -264,7 +265,7 @@ namespace DSP
     */
     template< typename __type > fr __freq_resp__
     (
-            __type *_cfbuff,
+            __type *_cfden,
             __ix32 _N,
             __fx64 _Fs,
             __fx64 _F
@@ -272,7 +273,7 @@ namespace DSP
     {
         __type           Ts = 1 / _Fs;
         fcomplex<__fx64> Wz(0,0);
-        for ( __ix32 i = 0; i < _N; i++) Wz += fcomplex<__fx64>(cos(-PI2 * i * _F * Ts), sin(-PI2 * i * _F * Ts))*_cfbuff[ i ];
+        for ( __ix32 i = 0; i < _N; i++) Wz += fcomplex<__fx64>(cos(-PI2 * i * _F * Ts), sin(-PI2 * i * _F * Ts))*_cfden[ i ];
         return { __cabsf__<__fx64>(Wz) , __cargf__<__fx64>(Wz) };
     }
 
@@ -545,27 +546,6 @@ namespace DSP
      *           \f]
      *
      *           All the data is stored within zp data structure and returned.
-     *           The computation is implemented according the followoing formulas:
-     *
-     *           Complex conjugate pairs:
-     *
-     *           \f[
-     *             p_i             = -\frac{1}{\beta*sin(\alpha)} + j*\frac{1}{\beta*cos(\alpha)} \newline
-     *             z_i             = 0                                                            \newline
-     *             g_i             = p_i * conj( p_i )                                            \newline
-     *             \beta           = \frac{1}{ \sqrt{ \epsilon_{stop}^{ \frac{1}{order} } } }     \newline
-     *             \alpha          = \frac{ ( 2*(i+1)-1 ) * \pi }{2*order}                        \newline
-     *             \epsilon_{stop} = \sqrt{ 10^{ \frac{ g_{stop} }{ 10 } } - 1 }                  \newline
-     *             i \in 0 \dots trunc\left( \frac{order}{2} \right)                              \newline
-     *           \f]
-     *
-     *           Real odd pole computation:
-     *
-     *           \f[
-     *             p_r        = -\frac{1}{\beta} \newline
-     *             g_r        = -p_r             \newline
-     *             g_{output} = 1
-     *           \f]
     */
     template< typename __type >
     zp< __type > __butt_zeros_poles_plain__
@@ -628,30 +608,6 @@ namespace DSP
      *           \f]
      *
      *           All the data is stored within zp data structure and returned.
-     *           The computation is done according the following formulas:
-     *           Complex conjugate pairs:
-     *
-     *           \f[
-     *             p_i             = -sin(\alpha)*sinh(\beta) + j*cos(\alpha)*cosh(\beta)              \newline
-     *             z_i             = 0                                                                 \newline
-     *             g_i             = p_i * conj( p_i )                                                 \newline
-     *             \beta           = \frac{ asinh\left(  \frac{1}{\epsilon_{stop} } \right) }{ order } \newline
-     *             \alpha          = \frac{ ( 2*(i+1)-1 ) * \pi }{2*order}                             \newline
-     *             \epsilon_{stop} = \sqrt{ 10^{ \frac{ g_{stop} }{ 10 } } - 1 }                       \newline
-     *             i \in 0 \dots trunc\left( \frac{order}{2} \right)                                   \newline
-     *           \f]
-     *
-     *           Real odd pole computation:
-     *
-     *           \f[
-     *             p_r        = -sinh( \beta )   \newline
-     *             g_r        = -p_r             \newline
-     *             g_{output} = \begin{cases}
-     *                          \sqrt{ \frac{1}{1+\epsilon_{stop}^2} }, \quad order-2*L = 0
-     *                          \\
-     *                          1
-     *                          \end{cases}
-     *           \f]
     */
     template< typename __type >
     zp< __type > __cheb1_zeros_poles_plain__
@@ -713,27 +669,7 @@ namespace DSP
      *              W(s) = \frac{1}{ ( s - p_r ) } * \sum_{i=0}^L \frac{ ( s - z_i ) * ( s - conj(z_i) ) }{ ( s - p_i ) * ( s - conj(p_i) ) }
      *           \f]
      *
-     *           All the data is stored within zp data structure and returned. The computation is done according the
-     *           following formulas:
-     *
-     *          Complex conjugate pairs:
-     *
-     *           \f[
-     *              z_i    = 0 + j*\frac{1}{cos(\alpha)}                                                                                                   \newline
-     *              p_i    = \frac{ sin(\alpha) * sinh(\beta) + j*cos(\alpha) * cosh(\beta) }{ cos(\alpha)^2*cosh(\beta^2) + sin(\alpha)^2*sinh(\beta^2) } \newline
-     *              g_i    = \frac{ p_i * conj(p_i) }{ z_i * conj(z_i) }                                                                                   \newline
-     *              \alpha = \frac{ ( 2*(i+1)-1 ) * \pi }{ 2 * order }                                                                                     \newline
-     *              \beta  = \frac{ asinh( \epsilon_{stop} ) }{ order }                                                                                    \newline
-     *              i \in 0 \dots trunc\left( \frac{order}{2} \right)                                                                                      \newline
-     *           \f]
-     *
-     *           Real odd pole:
-     *
-     *           \f[
-     *              p_r        = -\frac{1}{ sinh( \beta ) }
-     *              g_r        = -p_r
-     *              g_{output} = 1
-     *           \f]
+     *           All the data is stored within zp data structure and returned.
     */
     template< typename __type >
     zp< __type > __cheb2_zeros_poles_plain__
@@ -805,106 +741,14 @@ namespace DSP
      * \param[_g_stop] stopband attenuation , Db
      * \param[_g_pass] passband attenuation , Db
      * \param[_order]  filter order
-     * \return   The function computes Elliptic zeros/poles pairs of the Butterworth lowpass
-     *           analogue prototype. It also compute zero frequency gains. All the data is stored
-     *           within zp data structure and returned.
+     * \return   The function computes zeros/poles pairs of Elliptic lowpass
+     *           analogue prototype represented as:
      *
-     *           Attenuation normalizing:
      *           \f[
-     *              \epsilon_{ stop } = \sqrt{ 10^{ \frac{ g_{stop} } { 10 } } } \newline
-     *              \epsilon_{ pass } = \sqrt{ 10^{ \frac{ g_{stop} } { 10 } } } \newline
+     *              W(s) = \frac{1}{ ( s - p_r ) } * \sum_{i=0}^L \frac{ ( s - z_i ) * ( s - conj(z_i) ) }{ ( s - p_i ) * ( s - conj(p_i) ) }
      *           \f]
      *
-     *           Analyzling the zeros/poles pattern:
-     *
-     *           \f[
-     *              L = trunc( order / 2 ) \newline
-     *              R = order - 2 * L      \newline
-     *           \f]
-     *
-     *           Transient suppression factors computation - Kp, Kw:
-     *
-     *           \f[
-     *              K_e    = \frac{ \epsilon_{ pass } }{ \epsilon_{ stop } } \newline
-     *              m      = \sqrt{ 1 - K_e^2 }                              \newline
-     *              \alpha = \frac{ 2 *( i + 1 ) - 1 }{ order }              \newline
-     *              KE     = ellip_k( m )                                    \newline
-     *              K_p    = Kp * sn( \alpha * KE , m )^4                    \newline
-     *              i \in 0 \dots L                                          \newline
-     *              K_p = m^{order} * Kp                                     \newline
-     *              K_w = \sqrt{ 1 - k_p^2 }                                 \newline
-     *           \f]
-     *
-     *           Zeros computation:
-     *           \f[
-     *              KE     = ellip_k( K_w ) \newline
-     *
-     *              \alpha = \begin{cases}
-     *                       \frac{ 2 * i + 1 } { order } * KE, \quad mod(order,2) = 0
-     *                       \\
-     *                       \alpha = \frac{ 2 * i + 2 } { order } * KE
-     *                       \end{cases}
-     *                       \newline
-     *
-     *              z_i    = 0 + j*\frac{ 1 }{ K_w * sn( \alpha , K_w ) } \newline
-     *              i \in 0 \dots L
-     *           \f]
-     *
-     *           Complex conjugate poles pairs computaion:
-     *           \f[
-     *              V_0 = -\frac{ ellip_k( Kw ) * isc\left( \frac{ 1 }{ epsilon_{pass} } , \sqrt{ 1 - K_e * K_e} \right) } { ellip_k( K_e ) * _order } \newline
-     *              KE  = ellip_k( Kw )                                                                                                                \newline
-     *              \alpha = \begin{cases}
-     *                       \frac{ 2 * i + 1 } { order } * KE, \quad mod(order,2) = 0
-     *                       \\
-     *                       \alpha = \frac{ 2 * i + 2 } { order } * KE
-     *                       \end{cases}
-     *                       \newline
-     *
-     *              A  = cn( \alpha , K_w )             \newline
-     *              B  = dn( \alpha , K_w )             \newline
-     *              C  = sn( V0, \sqrt{ 1 - Kw^2 } )    \newline
-     *              D  = \sqrt{1 - C^2}                 \newline
-     *              E  = B^2                            \newline
-     *              F  = C^2                            \newline
-     *              RE = A * B * C * D / (1 - E * F)    \newline
-     *
-     *              A = sn( \alpha, K_w )               \newline
-     *              B = dn( V0 , \sqrt{1 - K_w^2 } )    \newline
-     *              C = dn( \alpha, K_w )               \newline
-     *              D = sn( V0, sqrt{ 1 - K_w } )       \newline
-     *              E = C^2                             \newline
-     *              F = D^2                             \newline
-     *              IM = A * B / (1 - E * F)            \newline
-     *              p_i = RE + j*IM                     \newline
-     *              i \in 0 \dots L                     \newline
-     *        \f]
-     *
-     *        Real odd pole computation:
-     *        \f[
-     *          A   = sn( V0 , sqrt( 1 - K_w^2 ) )
-     *          B   = cn( V0 , sqrt( 1 - K_w^2 ) )
-     *          C   = A^2
-     *          p_r = \frac{ A * B }{ 1 - C }
-     *        \f]
-     *
-     *        Gains computation:
-     *        \f[
-     *
-     *              g_i = \begin{cases}
-     *                    \frac{ p_i * conj(p_i) } {  z_i * conj(z_i) }
-     *                    \\
-     *                    \sqrt{ \frac{1} { 1 + \epsilon_{stop}^2 } }^{ \frac{1}{L} }
-     *                    \end{cases}
-     *                    \newline
-     *
-     *              g_r = \begin{cases}
-     *                    -p_r
-     *                    \\
-     *                    \sqrt{ \frac{1} { 1 + \epsilon_{stop}^2 } }^{ \frac{1}{L} }
-     *                    \end{cases}
-     *        \f]
-     *
+     *            All the data is stored within zp data structure and returned.
     */
     template< typename __type >
     zp< __type > __ellip_zeros_poles_plain__
@@ -2985,7 +2829,7 @@ namespace DSP
      *  \f]
      *
     */
-    template< typename __type > class recursive_fir_abstract : public  filter_abstract
+    template< typename __type > class recursive_fourier_abstract : public  filter_abstract
     {
     protected:
         /*! \brief recursive FIR filter gain */
@@ -3051,14 +2895,14 @@ namespace DSP
             allocate();
         }
 
-        recursive_fir_abstract() : filter_abstract() {}
+        recursive_fourier_abstract() : filter_abstract() {}
 
-        recursive_fir_abstract(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum )
+        recursive_fourier_abstract(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum )
         {
             init(_Fs, _Fn, _hnum);
         }
 
-        virtual ~recursive_fir_abstract()
+        virtual ~recursive_fourier_abstract()
         {
             deallocate();
         }
@@ -4367,14 +4211,14 @@ namespace DSP
     */
 
     /*! \brief Child recursive Fourier filter 32-bit realization */
-    template<> class recursive_fourier<__fx32> final : public recursive_fir_abstract<__fx32>
+    template<> class recursive_fourier<__fx32> final : public recursive_fourier_abstract<__fx32>
     {
         typedef __fx32 __type;
     public:
         // construction / destruction:
-        recursive_fourier() : recursive_fir_abstract(){}
+        recursive_fourier() : recursive_fourier_abstract(){}
         recursive_fourier(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum )
-            : recursive_fir_abstract(_Fs, _Fn, _hnum){}
+            : recursive_fourier_abstract(_Fs, _Fn, _hnum){}
         ~recursive_fourier(){}
 
         // filtering
@@ -4384,14 +4228,14 @@ namespace DSP
     };
 
     /*! \brief Child recursive Fourier filter 32-bit realization */
-    template<> class recursive_fourier<__fx64> final : public recursive_fir_abstract<__fx64>
+    template<> class recursive_fourier<__fx64> final : public recursive_fourier_abstract<__fx64>
     {
         typedef __fx64 __type;
     public:
         // construction / destruction:
-        recursive_fourier() : recursive_fir_abstract(){}
+        recursive_fourier() : recursive_fourier_abstract(){}
         recursive_fourier(__fx64 _Fs, __fx64 _Fn, __ix32 _hnum )
-            : recursive_fir_abstract(_Fs, _Fn, _hnum){}
+            : recursive_fourier_abstract(_Fs, _Fn, _hnum){}
         ~recursive_fourier(){}
 
         // filtering
