@@ -1,9 +1,9 @@
 /*!
- * \file
- * \brief   Buffers
- * \authors A.Tykvinskiy
- * \date    21.12.2021
- * \version 1.0
+ *
+ * brief   Buffers
+ * authors A.Tykvinskiy
+ * date    21.12.2021
+ * version 1.0
  *
  * The header declares buffer and delay template classes
 */
@@ -292,7 +292,7 @@ template< typename T > class delay;
 /*! \brief classic ring buffer template class */
 template< typename T > class buffer;
 
-/*! \brief mirror ring buffer class floating point 32-bit realization */
+/*! \brief delay class floating point 32-bit realization */
 template<> class delay< __fx32 > : public delay_abstract< __fx32 >
 {
     typedef __fx32 __type;
@@ -304,7 +304,7 @@ public:
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
-/*! \brief mirror ring buffer class floating point 64-bit realization */
+/*! \brief delay class floating point 64-bit realization */
 template<> class delay< __fx64 > : public delay_abstract< __fx64 >
 {
     typedef __fx64 __type;
@@ -315,7 +315,7 @@ public:
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
-/*! \brief mirror ring buffer class floating point extended 64-bit realization */
+/*! \brief delay class floating point extended 64-bit realization */
 template<> class delay< __fxx64 > : public delay_abstract< __fxx64 >
 {
     typedef __fxx64 __type;
@@ -325,7 +325,7 @@ public:
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
-/*! \brief mirror ring buffer class integer 32-bit realization */
+/*! \brief delay class integer 32-bit realization */
 template<> class delay< __ix32 > : public delay_abstract< __ix32 >
 {
     typedef __ix32 __type;
@@ -336,7 +336,7 @@ public:
      inline void operator () ( __ix64  *input ) { fill_buff< __ix64 >( input ); }
 };
 
-/*! \brief mirror ring buffer class integer 64-bit realization */
+/*! \brief delay class integer 64-bit realization */
 template<> class delay< __ix64 > : public delay_abstract< __ix64 >
 {
     typedef __ix64 __type;
@@ -348,7 +348,7 @@ public:
 
 
 #ifdef FCOMPLEX_H
-/*! \brief mirror ring buffer class complex floating point 32-bit realization */
+/*! \brief delay class complex floating point 32-bit realization */
 template<> class delay< fcomplex< __fx32 > > : public delay_abstract< fcomplex< __fx32 > >
 {
     typedef fcomplex< __fx32 > __type;
@@ -360,7 +360,7 @@ public:
      inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64  > >( input ); }
 };
 
-/*! \brief mirror ring buffer class complex floating point 64-bit realization */
+/*! \brief delay class complex floating point 64-bit realization */
 template<> class delay< fcomplex< __fx64 > > : public delay_abstract< fcomplex< __fx64 > >
 {
     typedef fcomplex< __fx64 > __type;
@@ -371,7 +371,7 @@ public:
      inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64  > >( input ); }
 };
 
-/*! \brief mirror ring buffer class complex floating point extended 64-bit realization */
+/*! \brief delay class complex floating point extended 64-bit realization */
 template<> class delay< fcomplex< __fxx64 > > : public delay_abstract< fcomplex< __fxx64 > >
 {
     typedef fcomplex< __fxx64 > __type;

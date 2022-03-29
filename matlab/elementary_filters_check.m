@@ -17,7 +17,12 @@ combeq_km = TEXTFILE_TO_MATFILE( "combeq_km.txt" , logs );
 diff_km   = TEXTFILE_TO_MATFILE( "diff_km.txt"   , logs );
 intg_km   = TEXTFILE_TO_MATFILE( "intg_km.txt"   , logs );
 lead_km   = TEXTFILE_TO_MATFILE( "lead_km.txt"   , logs );
-flt2_km   = TEXTFILE_TO_MATFILE( "flt2_km.txt"   , logs );
+lp2_km    = TEXTFILE_TO_MATFILE( "lp2_km.txt"    , logs );
+hp2_km    = TEXTFILE_TO_MATFILE( "hp2_km.txt"    , logs );
+bp2_km    = TEXTFILE_TO_MATFILE( "bp2_km.txt"    , logs );
+bs2_km    = TEXTFILE_TO_MATFILE( "bs2_km.txt"    , logs );
+
+
 aper_km   = TEXTFILE_TO_MATFILE( "aper_km.txt"   , logs );
 comb_ph   = TEXTFILE_TO_MATFILE( "comb_km.txt"   , logs );
 combeq_ph = TEXTFILE_TO_MATFILE( "combeq_km.txt" , logs );
@@ -39,12 +44,12 @@ ff        = TEXTFILE_TO_MATFILE( "ff.txt"        , logs );
 %plot( tt , lp2_yt,  tt, simout5(1:length(simout5)-1) );
 %plot( tt , hp2_yt,  tt, simout6(1:length(simout6)-1) );
 %plot( tt , bp2_yt,  tt, simout7(1:length(simout7)-1) );
-plot( tt , bs2_yt,  tt, simout8(1:length(simout8)-1) );
+%plot( tt , bs2_yt,  tt, simout8(1:length(simout8)-1) );
 
 %plot( ff , comb_km   );
 %plot( ff , combeq_km );
 %plot( ff , diff_km   );
 %plot( ff , intg_km   );
 %plot( ff , lead_km   );
-%plot( ff , flt2_km   );
+plot(  ff, lp2_km   );
 

@@ -1,9 +1,9 @@
 /*!
- * \file
- * \brief   Template forward / backward Clarke transform classes and Fortescue sequence filter template class
- * \authors A.Tykvinskiy
- * \date    21.12.2021
- * \version 1.0
+ * file
+ * brief   Template forward / backward Clarke transform classes and Fortescue sequence filter template class
+ * authors A.Tykvinskiy
+ * date    21.12.2021
+ * version 1.0
  *
  * The header declares template forward / backward Clarke transform classes and Fortescue sequence filter template class
 */

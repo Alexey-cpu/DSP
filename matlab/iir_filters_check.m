@@ -12,12 +12,16 @@ cheb1_ph = TEXTFILE_TO_MATFILE( "cheb1_ph.txt"  , logs );
 cheb2_ph = TEXTFILE_TO_MATFILE( "cheb2_ph.txt"  , logs );
 buttf_ph = TEXTFILE_TO_MATFILE( "buttf_ph.txt"  , logs );
 ellip_ph = TEXTFILE_TO_MATFILE( "ellip_ph.txt"  , logs );
-ff       = TEXTFILE_TO_MATFILE ( "ff.txt"        , logs );
-tt       = TEXTFILE_TO_MATFILE ( "tt.txt"        , logs );
+ff       = TEXTFILE_TO_MATFILE ( "ff.txt"       , logs );
+tt       = TEXTFILE_TO_MATFILE ( "tt.txt"       , logs );
 
 % group plotting:
-plot( ff , cheb1_km , ff , cheb2_km , ff , buttf_km , ff , ellip_km );
-%plot( tt , cheb1_yt , tt , cheb2_yt , tt , buttf_yt , tt , ellip_yt );
+%plot( ff , cheb1_km , ff , cheb2_km , ff , buttf_km , ff , ellip_km );
+%plot( tt , cheb1_y , tt , cheb2_y , tt , buttf_y , tt , ellip_y );
+
+plot( tt , cheb1_y , tt , buttf_y );
+
+%plot( ff , buttf_km )
 
 %plotting:
 %plot( tt , cheb1_y )

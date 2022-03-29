@@ -1,16 +1,10 @@
-#include "include/special_functions.h"
-
-// examples:
-#include "include/examples.h"
-
-
 #include "iostream"
 #include "include/dsp.h"
 using namespace DSP;
 int example()
 {
     // define filter and it's input signal data types:
-    typedef double  __type;
+    typedef float __type;
 
     // emulation parameters:
     double Fs                = 4000;
@@ -43,13 +37,14 @@ int example()
     sgen<__type> gen;
 
     // IIR filters:
-    DSP::chebyshev_1< __type > cheb1;
+    DSP::chebyshev_2< __type > ellip;
 
     // filters initialization:
     double Fc =  100;
     double Gp =  1;
     double NU = -1; // not used parameter
-    cheb1.init( Fs , 8 , DSP::filter_type::lowpass , { Fc , NU } , { Gp  , NU } );
+    ellip.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , NU } , { 80 , 1 } );
+	
 
     // emulation:
     for( int i = 0 ; i < cycles_num ; i++ )
@@ -59,7 +54,7 @@ int example()
             gen.sine( 1 , Fn , 0 , Fs );
 
             // filtering:
-            double y1 = cheb1 ( &gen.m_out );
+            __type y1 = ellip ( &gen.m_out );
 
             // generating output:
             yt      << gen.m_out  << "\n";
@@ -72,7 +67,7 @@ int example()
     // frequency response computation
     for( int f = 0 ; f < Fs / 2 ; f++ )
     {
-        fr fr1 = cheb1.frequency_response( f );
+        fr fr1 = ellip.frequency_response( f );
         iir_km << fr1.Km << "\n";
         iir_ph << fr1.pH << "\n";
         ff << (double)f << "\n";
@@ -85,13 +80,6 @@ int example()
     iir_km.close();
     iir_ph.close();
     ff    .close();
-
-    return 0;
-}
-
-int main()
-{
-    example2();
 
     return 0;
 }

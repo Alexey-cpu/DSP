@@ -1,9 +1,3 @@
-#include "include/special_functions.h"
-
-// examples:
-#include "include/examples.h"
-
-
 #include "iostream"
 #include "include/dsp.h"
 using namespace DSP;
@@ -85,13 +79,6 @@ int example()
     iir_km.close();
     iir_ph.close();
     ff    .close();
-
-    return 0;
-}
-
-int main()
-{
-    example2();
 
     return 0;
 }

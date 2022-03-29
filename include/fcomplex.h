@@ -1,9 +1,9 @@
 /*!
- * \file
- * \brief   Complex numbers template class and functions
- * \authors A.Tykvinskiy
- * \date    03.22.2022
- * \version 1.0.1
+ * file
+ * brief   Complex numbers template class and functions
+ * authors A.Tykvinskiy
+ * date    03.22.2022
+ * version 1.0.1
  *
  * The header declares template complex number class and functions
 */

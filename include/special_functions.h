@@ -1,9 +1,9 @@
 /*!
- * \file
- * \brief   Special mathematical function header
- * \authors A.Tykvinskiy
- * \date    28.12.2021
- * \version 1.0
+ * file
+ * brief   Special mathematical function header
+ * authors A.Tykvinskiy
+ * date    28.12.2021
+ * version 1.0
  *
  * The header declares specialized mathematical functions and classes that
  * utilized for digital signal processing (DSP).
@@ -201,12 +201,10 @@
 */
 
 /*!
-    Jacobi amplitude function
+    \brief Jacobi amplitude function
     \param[u] incomplete elliptic integral of the first kind
-    \param[k] elliptical modulus
-    \return  returns Jacobi amplitude function
-
-    The computes the Jacobi amplitude function using the method of the arithmetic-geometric mean.
+    \param[k] elliptic modulus
+    \return  returns Jacobi amplitude computed using the method of the arithmetic-geometric mean.
 */
 extern __fx64 __am__( __fx64 u , __fx64 k )
 {
@@ -232,10 +230,8 @@ extern __fx64 __am__( __fx64 u , __fx64 k )
     g[0] = sqrtl(1.0L - k * k);
     c[0] = k;
 
-    /*
-       Gauss arithmetic operations are continued untill the sequence converges to
-       the answer that satisfies machinery epsilon accuracy
-    */
+    // Gauss arithmetic operations are continued untill the sequence converges to
+    // the answer that satisfies machinery epsilon accuracy
 
     two_n = 1.0L;
 
@@ -253,105 +249,118 @@ extern __fx64 __am__( __fx64 u , __fx64 k )
     for (; n > 0; n--) phi = 0.5L * (phi + asinl(c[n] * sinl(phi) / a[n]));
     return ( __fx64 )phi;
 }
+/*! \example am_example.cpp */
 
 /*!
-    Elliptic Jacobi SN function
+    \brief Elliptic Jacobi SN function
     \param[u] incomplete elliptic integral of the first kind
-    \param[x] elliptical modulus
-    \return  returns Ellptic Jacobi SN( u , x ) = sin( am( u , x ) ) function
+    \param[x] elliptic modulus
+    \returs  returns Ellptic Jacobi SN( u , x ) = sin( am( u , x ) ) function
 */
 extern __fx64 __sn__( __fx64 u , __fx64 x ) { return sin( __am__( u , x ) ); }
+/*! \example sn_example.cpp */
 
 /*!
-    Elliptic Jacobi CN function
+    \brief Elliptic Jacobi CN function
     \param[u] incomplete elliptic integral of the first kind
-    \param[x] elliptical modulus
+    \param[x] elliptic modulus
     \return  returns Ellptic Jacobi CN( u , x ) = cos( am( u , x ) ) function
 */
 extern __fx64 __cn__( __fx64 u , __fx64 x ) { return cos( __am__( u , x ) ); }
+/*! \example cn_example.cpp */
 
 /*!
-    Elliptic Jacobi DN function
+    \brief Elliptic Jacobi DN function
     \param[u] incomplete elliptic integral of the first kind
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi DN( u , x ) = sqrt( 1 - x * x * SN( u , x ) * SN( u , x ) ) function
 */
 extern __fx64 __dn__( __fx64 u , __fx64 x ) { __fx64 SN = __sn__( u , x ); return sqrt(1.0 - x * x * SN * SN); }
+/*! \example dn_example.cpp */
 
 /*!
-    Elliptic Jacobi CD function
+    \brief Elliptic Jacobi CD function
     \param[u] incomplete elliptic integral of the first kind
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi CD( u , x ) = CN( u , x ) / DN( u , x ) function
 */
 extern __fx64 __cd__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __dn__( u , x ); }
+/*! \example cd_example.cpp */
 
 /*!
-    Elliptic Jacobi SD function
+    \brief Elliptic Jacobi SD function
     \param[u] incomplete elliptic integral of the first kind
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi SD( u , x ) = SN( u , x ) / DN( u , x ) function
 */
 extern __fx64 __sd__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __dn__( u , x ); }
+/*! \example sd_example.cpp */
 
 /*!
-    Elliptic Jacobi ND function
+    \brief Elliptic Jacobi ND function
     \param[u] incomplete elliptic integral of the first kind
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi ND( u , x ) = SN( u , x ) / DN( u , x ) function
 */
 extern __fx64 __nd__( __fx64 u , __fx64 x ) { return 1 / __dn__( u , x ); }
+/*! \example nd_example.cpp */
 
 /*!
-    Elliptic Jacobi DC function
+    \brief Elliptic Jacobi DC function
     \param[u] incomplete elliptic integral of the first kind
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi DC( u , x ) = 1 / ND( u , x ) function
 */
 extern __fx64 __dc__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __cn__( u , x ); }
+/*! \example dc_example.cpp */
 
 /*!
-    Elliptic Jacobi NC function
+    \brief Elliptic Jacobi NC function
     \param[u] incomplete elliptic integral of the first kind
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi NC( u , x ) = 1 / CN( u , x ) function
 */
 extern __fx64 __nc__( __fx64 u , __fx64 x ) { return 1 / __cn__(u, x); }
+/*! \example nc_example.cpp */
 
 /*!
-    Elliptic Jacobi SC function
+    \brief Elliptic Jacobi SC function
     \param[u] incomplete elliptic integral of the first kind
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi SC( u , x ) = SN( u , x ) / CN( u , x ) function
 */
 extern __fx64 __sc__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __cn__( u , x ); }
+/*! \example sc_example.cpp */
 
 /*!
-    Elliptic Jacobi NS function
+    \brief Elliptic Jacobi NS function
     \param[u] incomplete elliptic integral of the first kind
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi NS( u , x ) = 1 / SN( u , x ) function
 */
 extern __fx64 __ns__( __fx64 u , __fx64 x ) { return 1 / __sn__( u , x ); }
+/*! \example ns_example.cpp */
 
 /*!
-    Elliptic Jacobi DS function
+    \brief Elliptic Jacobi DS function
     \param[u] incomplete elliptic integral of the first kind
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi DS( u , x ) = DN( u , x ) / SN( u , x ) function
 */
 extern __fx64 __ds__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __sn__( u , x ); }
+/*! \example ds_example.cpp */
 
 /*!
- * Elliptic Jacobi CS function
+ * \brief Elliptic Jacobi CS function
  * \param[u] incomplete elliptic integral of the first kind
  * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi CS( u , x ) = CN( u , x ) / SN( u , x ) function
 */
 extern __fx64 __cs__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __sn__( u , x ); }
+/*! \example cs_example.cpp */
 
 /*!
- * Elliptic Jacobi inverse SN function
+ * \brief Elliptic Jacobi inverse SN function
  * \param[sn] Elliptic Jacobi SN function
  * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi inverse SN function
@@ -399,9 +408,10 @@ extern __fx64 __isn__( __fx64 sn , __fx64 x )
 
     return  ( sn < 0 ) ? ( -(phi + s[n - 1] * PI0) / two_n / a[n - 1] ) : ( +(phi + s[n - 1] * PI0) / two_n / a[n - 1] );
 }
+/*! \example isn_example.cpp */
 
 /*!
- * Elliptic Jacobi inverse CN function
+ * \brief Elliptic Jacobi inverse CN function
  * \param[cn] elliptic Jacobi CN function
  * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi inverse CN function
@@ -445,9 +455,10 @@ extern __fx64 __icn__( __fx64 cn , __fx64 x )
 
     return  +(phi + s[n-1] * PI0) / two_n / a[n-1];
 }
+/*! \example icn_example.cpp */
 
 /*!
- * Elliptic Jacobi inverse DN function\
+ * \brief Elliptic Jacobi inverse DN function\
  * \param[dn] Elliptic Jacobi DN function
  * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi inverse DN function
@@ -492,9 +503,10 @@ extern __fx64 __idn__( __fx64 dn , __fx64 x )
 
     return  +(phi + s[n - 1] * PI0) / two_n / a[n - 1];
 }
+/*! \example idn_example.cpp */
 
 /*!
- * Elliptic Jacobi inverse CD function\
+ * \brief Elliptic Jacobi inverse CD function\
  * \param[cd] Elliptic Jacobi CD function
  * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi inverse CD function
@@ -538,9 +550,10 @@ extern __fx64 __icd__( __fx64 cd , __fx64 x )
 
     return +(phi + s[n - 1] * PI0) / two_n / a[n - 1];
 }
+/*! \example icd_example.cpp */
 
 /*!
- * Elliptic Jacobi inverse SD function\
+ * \brief Elliptic Jacobi inverse SD function\
  * \param[sd] Elliptic Jacobi SD function
  * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi inverse SD function
@@ -584,17 +597,19 @@ extern __fx64 __isd__( __fx64 sd , __fx64 x )
 
     return  ( sd < 0 ) ? ( -(phi + s[n - 1] * PI0) / two_n / a[n - 1] ) : ( +(phi + s[n - 1] * PI0) / two_n / a[n - 1] ) ;
 }
+/*! \example special_functions_example.cpp */
 
 /*!
-* Elliptic Jacobi inverse ND function
+* \brief Elliptic Jacobi inverse ND function
 * \param[nd] Elliptic Jacobi ND function
 * \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse ND function
 */
 extern __fx64 __ind__( __fx64 nd , __fx64 x ) { return __idn__( 1 / nd , x ); }
+/*! \example isd_example.cpp */
 
 /*!
-* Elliptic Jacobi inverse DC function
+* \brief Elliptic Jacobi inverse DC function
 * \param[dc] Elliptic Jacobi DC function
 * \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse DC function
@@ -639,17 +654,19 @@ extern __fx64 __idc__( __fx64 dc , __fx64 x )
 
     return  +(phi + s[n - 1] * PI0) / two_n / a[n - 1];
 }
+/*! \example idc_example.cpp */
 
 /*!
-* Elliptic Jacobi inverse NC function
+* \brief Elliptic Jacobi inverse NC function
 * \param[nc] Elliptic Jacobi NC function
 * \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse NC function
 */
 extern __fx64 __inc__( __fx64 nc , __fx64 x ) { return  __icn__( 1 / nc , x ); }
+/*! \example inc_example.cpp */
 
 /*!
-* Elliptic Jacobi inverse SC function
+* \brief Elliptic Jacobi inverse SC function
 * \param[sc] Elliptic Jacobi SC function
 * \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse SC function
@@ -693,33 +710,37 @@ extern __fx64 __isc__( __fx64 sc , __fx64 x )
 
     return  ( sc < 0 ) ? ( -(phi + s[n - 1] * PI0) / two_n / a[n - 1] ) : ( +(phi + s[n - 1] * PI0) / two_n / a[n - 1] ) ;
 }
+/*! \example isc_example.cpp */
 
 /*!
-* Elliptic Jacobi inverse NS function
+* \brief Elliptic Jacobi inverse NS function
 * \param[ns] Elliptic Jacobi NS function
 * \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse NS function
 */
 extern __fx64 __ins__( __fx64 ns , __fx64 x ) { return  __isn__( 1 / ns , x ); }
+/*! \example ins_example.cpp */
 
 /*!
-* Elliptic Jacobi inverse DS function
+* \brief Elliptic Jacobi inverse DS function
 * \param[ds] Elliptic Jacobi DS function
 * \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse DS function
 */
 extern __fx64 __ids__( __fx64 ds , __fx64 x ) { return  __isd__( 1 / ds , x ); }
+/*! \example ids_example.cpp */
 
 /*!
-* Elliptic Jacobi inverse CS function
+* \brief Elliptic Jacobi inverse CS function
 * \param[cs] Elliptic Jacobi CS function
 * \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse CS function
 */
 extern __fx64 __ics__( __fx64 cs , __fx64 x ) { return  __isc__( 1 / cs , x ); }
+/*! \example ics_example.cpp */
 
 /*!
-* Elliptic integral of the first kind
+* \brief Elliptic integral of the first kind
 * \param[k] elliptical modulus
 * \return  returns Ellptic integral of the first kind
 */
@@ -755,9 +776,10 @@ extern __fx64 __ellip_k__( __fx64 k )
 
     return PI_2 / a[n];
 }
+/*! \example ellip_k_example.cpp */
 
 /*!
-* Elliptic integral of the second kind
+* \brief Elliptic integral of the second kind
 * \param[k] elliptical modulus
 * \return  returns Ellptic integral of the second kind
 */
@@ -795,6 +817,7 @@ extern __fx64 __ellip_e__( __fx64 k )
 
     return PI_2*(1 - (sum + 0.5 * c[0] * c[0]))/ a[n];
 }
+/*! \example ellip_e_example.cpp */
 
 /*! @} */
 
@@ -805,7 +828,7 @@ extern __fx64 __ellip_e__( __fx64 k )
 */
 
 /*!
-* Factorial computation function
+* \brief Factorial computation function
 * \param[n] input n
 * \return  returns n!
 */
@@ -817,16 +840,18 @@ extern __fxx64 __factorial__( __ix64 n )
     for( __ix64 i = 1 ; i <= n ; i++ ) out *= i;
     return out;
 }
+/*! \example factorial_example.cpp */
 
 /*!
-* Integer gamma function
+* \brief Integer gamma function
 * \param[n] input n
 * \return  returns ( n - 1 )!
 */
 extern __uix64 __gamma_integer__( __uix64 n ) { return __factorial__(n-1); }
+/*! \example gamma_integer_example.cpp */
 
 /*!
-* Zero order Bessel function
+* \brief Zero order Bessel function
 * \param[x] input x
 * \return  returns zero order Bessel function value
 */
@@ -842,6 +867,7 @@ extern __fxx64 __bessel_i0__( __fxx64 x )
 
     return sum;
 }
+/*! \example bessel_i0_example.cpp */
 
 /*!
 * First order Bessel function
@@ -860,6 +886,7 @@ extern __fxx64 __bessel_i1__( __fxx64 x )
     }
     return sum;
 }
+/*! \example bessel_i1_example.cpp */
 
 /*!
 * N-th order Bessel function
@@ -879,6 +906,7 @@ extern __fxx64 __bessel_in__( __fxx64 x  , __ix32 order )
     }
     return sum;
 }
+/*! \example bessel_in_example.cpp */
 
 /*!
 * N-th order modified Bessel function
@@ -898,6 +926,7 @@ extern __fxx64 __modified_bessel_in__( __fxx64 x  , __ix32 order )
     }
     return sum;
 }
+/*! \example modified_bessel_in_example.cpp */
 
 /*! @} */
 
@@ -931,6 +960,7 @@ __fx64 *Bartlett( __ix32 _order )
     for ( __ix32 n = 0; n < Ns ; n++) { buff[n] = ( n <= ( Ns-1 ) / 2 ) ? ( 2*n / (Ns-1) ) : ( 2 - 2 * n / (Ns-1) ); }
     return buff;
 }
+/*! \example Bartlett_example.cpp */
 
 /*!
  * \brief Barlett Hanning window function computation
@@ -952,6 +982,7 @@ __fx64 *BartlettHanning( __ix32 _order )
     // window is ready to use:
     return buff;
 }
+/*! \example BartlettHanning_example.cpp */
 
 
 /*!
@@ -974,6 +1005,7 @@ __fx64 *Blackman(__ix32 _order)
     // window is ready to use:
     return buff;
 }
+/*! \example Blackman_example.cpp */
 
 /*!
      * \brief Balckman-Harris window function computation
@@ -995,6 +1027,7 @@ __fx64 *BlackmanHarris(__ix32 _order)
     // window is ready to use:
     return buff;
 }
+/*! \example BlackmanHarris_example.cpp */
 
 
 /*!
@@ -1027,6 +1060,7 @@ __fx64 *Bohman(__ix32 _order)
     // window is ready to use:
     return buff;
 }
+/*! \example Bohman_example.cpp */
 
 /*!
      * \brief Auxiliary Chebhshev poly computation function
@@ -1049,6 +1083,7 @@ __fx64 cheby_poly(__ix32 n, __fx64 x)
     else              res = cosh(n*acosh(x));
     return res;
 }
+/*! \example window_functions_example.cpp */
 
 /*!
      * \brief Chebyshev window computation function
@@ -1083,6 +1118,7 @@ __fx64 *Chebyshev( __fx64 _atten , __ix32 _order )
     // window is ready to use:
     return buff;
 }
+/*! \example Chebyshev_example.cpp */
 
 
 /*!
@@ -1116,6 +1152,7 @@ __fx64 *FlatTop(__ix32 _order)
     // window is ready to use:
     return buff;
 }
+/*! \example FlatTop_example.cpp */
 
 
 /*!
@@ -1158,6 +1195,7 @@ __fx64 *Gaussian( __fx64 _alpha, __ix32 _order )
     // wind is ready to use:
     return buff;
 }
+/*! \example Gaussian_example.cpp */
 
 /*!
      * \brief Hamming window computation function
@@ -1181,7 +1219,7 @@ __fx64 *Hamming(__ix32 _order )
     // window is ready to use:
     return buff;
 }
-
+/*! \example Hamming_example.cpp */
 
 /*!
      * \brief Hann window computation function
@@ -1205,6 +1243,7 @@ __fx64 *Hann(__ix32 _order)
     // window is ready to use:
     return buff;
 }
+/*! \example Hann_example.cpp */
 
 
 /*!
@@ -1242,7 +1281,7 @@ __fx64 *Kaiser(__fx64 _betta, __ix32 _order )
     // window is ready to use:
     return buff;
 }
-
+/*! \example Kaiser_example.cpp */
 
 /*!
      * \brief Nutall window computation function
@@ -1275,6 +1314,7 @@ __fx64 *Nutall(__ix32 _order)
     // window is ready to use:
     return buff;
 }
+/*! \example Nutall_example.cpp */
 
 /*!
      * \brief Parzen window computation function
@@ -1322,6 +1362,7 @@ __fx64 *Parzen(__ix32 _order)
     // window is ready:
     return buff;
 }
+/*! \example Parzen_example.cpp */
 
 /*!
      * \brief Rectangular window computation function
@@ -1344,6 +1385,7 @@ __fx64 *Rectangular(__ix32 _order)
     // window is ready to use:
     return buff;
 }
+/*! \example Rectangular_example.cpp */
 
 /*!
      * \brief Triangular window computation function
@@ -1385,6 +1427,7 @@ __fx64 *Triangular(__ix32 _order)
     // window is ready to use:
     return buff;
 }
+/*! \example Triangular_example.cpp */
 
 /*!
      * \brief Tukey window computation function
@@ -1437,6 +1480,7 @@ __fx64 *Tukey(__fx64 _R, __ix32 _order )
     // window is ready to use:
     return buff;
 }
+/*! \example Tukey_example.cpp */
 
 /*!
      * \brief Linear convolution function
@@ -1469,9 +1513,7 @@ template< typename __type > void __convf__
     }
 }
 
-/*!
-*   \example convolution_example.cpp
-*/
+/*! \example convolution_example.cpp */
 
 /*! @} */
 

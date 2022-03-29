@@ -1,9 +1,9 @@
 /*!
- * \file
- * \brief   Examples
- * \authors A.Tykvinskiy
- * \date    28.01.2022
- * \version 1.0
+ * file
+ * brief   Examples
+ * authors A.Tykvinskiy
+ * date    28.01.2022
+ * version 1.0
  *
  * The examples of DSP template ToolBox utilization
 */
@@ -226,7 +226,7 @@ int example2()
     buttf_ph.open( directory + "\\buttf_ph.txt" );
     ellip_ph.open( directory + "\\ellip_ph.txt" );
     ff.open( directory + "\\ff.txt" );
-    tt     .open( directory + "\\tt.txt"      );
+    tt.open( directory + "\\tt.txt"      );
 
     // signal generator:
     sgen< __gen_type > gen;
@@ -545,7 +545,10 @@ int example4()
     std::ofstream diff_km;
     std::ofstream intg_km;
     std::ofstream lead_km;
-    std::ofstream flt2_km;
+    std::ofstream lp2_km;
+    std::ofstream hp2_km;
+    std::ofstream bp2_km;
+    std::ofstream bs2_km;
     std::ofstream aper_km;
 
     std::ofstream comb_ph;
@@ -576,7 +579,11 @@ int example4()
     diff_km  .open( directory + "\\diff_km.txt");
     intg_km  .open( directory + "\\intg_km.txt");
     lead_km  .open( directory + "\\lead_km.txt");
-    flt2_km  .open( directory + "\\flt2_km.txt");
+    lp2_km   .open( directory + "\\lp2_km.txt");
+    hp2_km   .open( directory + "\\hp2_km.txt");
+    bs2_km   .open( directory + "\\bs2_km.txt");
+    bp2_km   .open( directory + "\\bp2_km.txt");
+
     aper_km  .open( directory + "\\aper_km.txt");
 
     comb_ph  .open( directory + "\\comb_ph.txt");
@@ -664,7 +671,7 @@ int example4()
         DSP::fr fr1 = diff  .frequency_response(i);
         DSP::fr fr2 = intg  .frequency_response(i);
         DSP::fr fr3 = lead  .frequency_response(i);
-        //DSP::fr fr4 = sof   .frequency_response(i);
+        DSP::fr fr4 = lp   .frequency_response(i);
         DSP::fr fr5 = comb  .frequency_response(i);
         DSP::fr fr6 = combeq.frequency_response(i);
         DSP::fr fr7 = aper  .frequency_response(i);
@@ -673,7 +680,7 @@ int example4()
         diff_km   << fr1.Km << "\n";
         intg_km   << fr2.Km << "\n";
         lead_km   << fr3.Km << "\n";
-        //flt2_km   << fr4.Km << "\n";
+        lp2_km   << fr4.Km << "\n";
         comb_km   << fr5.Km << "\n";
         combeq_km << fr6.Km << "\n";
         aper_km   << fr7.Km << "\n";
@@ -707,7 +714,12 @@ int example4()
     diff_km  .close();
     intg_km  .close();
     lead_km  .close();
-    flt2_km  .close();
+    lp2_km  .close();
+    hp2_km  .close();
+    bp2_km  .close();
+    bs2_km  .close();
+
+
     aper_km  .close();
 
     comb_ph  .close();

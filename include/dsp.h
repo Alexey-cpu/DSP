@@ -156,13 +156,15 @@ namespace DSP
      * \param[_cfnum] IIR filter numerator quadratic sections coefficients matrix
      * \param[_cfden] IIR filter denominator quadratic sections coefficients matrix
      * \param[_gains] IIR filter quadratic sections gains vector
-     * \param[_N] IIR filter filter order
+     * \param[_Nx] IIR filter single section numerator order
+     * \param[_Ny] IIR filter single section denominator order
+     * \param[_N] IIR filter sections number
      * \param[_Fs] sampling frequency, Hz
      * \param[_F] input signal frequency, Hz
      * \return The function computes IIR filter transfer function frequency response:
      * \f[
-     *      W(j*2*\pi*f) = \prod_{i=0}^N \frac{ a_{0i} + a_{1i} * e^{-j*2*\pi*f*Ts} + a_{2i} * e^{-j*4*\pi*f*Ts} }
-     *                                        { b_{0i} + b_{1i} * e^{-j*2*\pi*f*Ts} + b_{2i} * e^{-j*4*\pi*f*Ts} }
+     *      W(j*2*\pi*f) = \prod_{i=0}^N \frac{ \sum_{k=0}^N_{x} a_{ki} * e^{-j*2*\pi*f*Ts*k} }
+     *                                        { \sum_{m=0}^N_{y} b_{mi} * e^{-j*2*\pi*f*Ts*m} }
      * \f]
     */
     template<typename __type> fr __freq_resp__
@@ -170,6 +172,8 @@ namespace DSP
             __type *_cfnum,
             __type *_cfden,
             __type *_gains,
+            __ix32 _Nx,
+            __ix32 _Ny,
             __ix32 _N,
             __fx64 _Fs,
             __fx64 _F
@@ -182,75 +186,25 @@ namespace DSP
         __fx64 Ts = 1 / _Fs;
 
         // transfer function initialization:
-        fcomplex< __fx64 > tsf = fcomplex< __fx64 >( 1, 0 );
+        fcomplex< __fx64 > tsf(1,0), num(0,0), den(0,0);
 
-        for( __ix32 i = 0 ; i < _N ; i++ )
+        for(__ix32 i = 0; i < _N; i++ )
         {
-            // fcomplex exponents:
-            fcomplex< __fx64 > z0 = fcomplex<__fx64>( cos( -PI2 * _F * Ts * 0 ) , sin( -PI2 * _F * Ts * 0 ) );
-            fcomplex< __fx64 > z1 = fcomplex<__fx64>( cos( -PI2 * _F * Ts * 1 ) , sin( -PI2 * _F * Ts * 1 ) );
-            fcomplex< __fx64 > z2 = fcomplex<__fx64>( cos( -PI2 * _F * Ts * 2 ) , sin( -PI2 * _F * Ts * 2 ) );
+            // zerowing numerator and denominator sections sums:
+            num(0,0);
+            den(0,0);
 
-            // transfer function:
-            fcomplex< __fx64 > num =  z0 * (__fx64)_cfnum[ 3 * i + 0 ] + z1 * (__fx64)_cfnum[ 3 * i + 1 ] + z2 * (__fx64)_cfnum[ 3 * i + 2 ];
-            fcomplex< __fx64 > den =  z0 * (__fx64)_cfden[ 3 * i + 0 ] + z1 * (__fx64)_cfden[ 3 * i + 1 ] + z2 * (__fx64)_cfden[ 3 * i + 2 ];
+            // numerator and denominator sums computation:
+            for(__ix32 j = 0; j < _Nx; j++) num += fcomplex<__fx64>( cos( -PI2 * _F * Ts * j ) , sin( -PI2 * _F * Ts * j ) ) * (__fx64)_cfnum[_Nx * i + j];
+            for(__ix32 j = 0; j < _Ny; j++) den += fcomplex<__fx64>( cos( -PI2 * _F * Ts * j ) , sin( -PI2 * _F * Ts * j ) ) * (__fx64)_cfden[_Ny * i + j];
             tsf *= num / den * (__fx64)_gains[i];
         }
 
         // multiply by an output gain:
-        tsf *= (__fx64)_gains[_N];
+        if( _N > 1) tsf *= (__fx64)_gains[_N];
 
         // output:
         return fr{ __cabsf__<__fx64>( tsf ) , __cargf__<__fx64>( tsf ) };
-    }
-
-
-    /*!
-     * \brief  Polynominal IIR filter frequency response computation function
-     * \param[_cfnum] IIR filter numerator coefficients vector
-     * \param[_cfden] IIR filter denominator coefficients vector
-     * \param[_gain] IIR filter gain
-     * \param[_Nx] IIR filter numerator order
-     * \param[_Ny] IIR filter denominator order
-     * \param[_Fs] sampling frequency, Hz
-     * \param[_F] input signal frequency, Hz
-     * \return The function computes IIR filter transfer function frequency response:
-     * \f[
-     *      W(j*2*\pi*f) = \frac{ \sum_{i=0}^N a_{i} * e^{-j*2*\pi*f*Ts } }
-     *                          { \sum_{k=0}^M b_{k} * e^{-j*2*\pi*f*Ts s} }
-     * \f]
-    */
-    template< typename __type > fr __freq_resp__
-    (
-            __type *_cfnum,
-            __type *_cfden,
-            __type  _gain,
-            __ix32 _Nx,
-            __ix32 _Ny,
-            __fx64 _Fs,
-            __fx64 _F
-    )
-    {
-        fcomplex<__fx64> num(0,0);
-        fcomplex<__fx64> den(0,0);
-        fcomplex<__fx64> Wz (0,0);
-
-        // numerator sum computation:
-        for (__ix32 i = 0; i <_Nx; i++)
-        {
-            num += fcomplex<__fx64>(cos(-PI2 * _F * (__fx64)i / _Fs) * _cfnum[i],
-                                    sin(-PI2 * _F * (__fx64)i / _Fs) * _cfnum[i]);
-        }
-
-        // denominator sum computation:
-        for (__ix32 i = 0; i <_Ny; i++)
-        {
-            den += fcomplex<__fx64>(cos(-PI2 * _F * (__fx64)i / _Fs) * _cfden[i],
-                                    sin(-PI2 * _F * (__fx64)i / _Fs) * _cfden[i]);
-        }
-
-        Wz = num / den * (__fx64)_gain;
-        return { __cabsf__<__fx64>( Wz ) , __cargf__<__fx64>( Wz ) };
     }
 
     /*!
@@ -271,33 +225,28 @@ namespace DSP
             __fx64 _F
     )
     {
-        __type           Ts = 1 / _Fs;
+        __type Ts = 1 / _Fs;
         fcomplex<__fx64> Wz(0,0);
         for ( __ix32 i = 0; i < _N; i++) Wz += fcomplex<__fx64>(cos(-PI2 * i * _F * Ts), sin(-PI2 * i * _F * Ts))*_cfden[ i ];
         return { __cabsf__<__fx64>(Wz) , __cargf__<__fx64>(Wz) };
     }
 
     /*!
-     * \brief Biquadratic IIR filter filtering function
+     * \brief IIR filter filtering function
      * \param[_input] pointer to the input signal samples buffer
      * \param[_cfnum] IIR filter numerator quadratic sections coefficients matrix
      * \param[_cfden] IIR filter denominator quadratic sections coefficients matrix
      * \param[_gains] IIR filter quadratic sections gains vector
-     * \param[_N] IIR filter filter order
+     * \param[_Nx] IIR filter single section numerator order
+     * \param[_Ny] IIR filter single section denominator order
+     * \param[_N] IIR filter sections number
      * \param[_buff_sx] IIR filter quadratic sections input  buffers vector
      * \param[_buff_sy] IIR filter quadratic sections output buffers vector
      * \returns   The function implements input signal filtering using
      *           IIR filter coefficients matrix, gains and I/O buffers vectors.
      *           The input signal is going trough the group of the second order filters cascade:
      *           \f[
-     *
-     *              y_{0}(k) = gain_{0} * [ a_{00} * x(k-1) + a_{10} * x(k-2) + a_{20} * x(k-3) ] -
-     *                      [ b_{10} * y_{0}(k-1)+ b_{20} * y_{0}(k-2) ] \newline
-     *              y_{1}(k) = gain_{1} * [ a_{0i} * y_{0}(k-1) + a_{11} * y_{0}(k-2) + a_{21} * y_{0}(k-3) ] -
-     *                      [ b_{11} * y_{1}(k-1) + b_{21} * y_{1}(k-2) ] \newline
-     *                      \dots \dots \dots \dots \dots \newline
-     *              y_{n}(k) = gain_{1} * [ a_{0i} * y_{n-1}(k-1) + a_{11} * y_{n-1}(k-2) + a_{21} * y_{n-1}(k-3) ] -
-     *                      [ b_{11} * y_{n}(k-1) + b_{21} * y_{n}(k-2) ]
+     *              y_{i}(k) = gain_{i} * \sum_{j=0}^{N_x} a_{ji} * x(k-j) - \sum_{j=0}^{N_y} b_{ji} * y(k-j)
      *           \f]
     */
     template< typename __type >
@@ -307,6 +256,8 @@ namespace DSP
             __type *_cfnum,
             __type *_cfden,
             __type *_gains,
+            __ix32 _Nx,
+            __ix32 _Ny,
             __ix32 _N,
             delay< __type > *_buff_sx,
             delay< __type > *_buff_sy
@@ -323,53 +274,12 @@ namespace DSP
         _buff_sx[0](_input );
         for ( __ix32 i = 0 ; i < _N ; i++)
         {
-            sum_num = _gains[i]*( _buff_sx[ i ][ 0 ] * _cfnum[ 3 * i + 0 ] + _buff_sx[ i ][ 1 ] * _cfnum[ 3 * i + 1 ] + _buff_sx[ i ][ 2 ] * _cfnum[ 3 * i + 2 ] );
-            sum_den = ( _buff_sy[ i ][ 0 ] * _cfden[ 3 * i + 1 ] + _buff_sy[ i ][ 1 ] * _cfden[ 3 * i + 2 ] );
-            _buff_sy[ i ]( &( out = sum_num - sum_den ) );
+            sum_num = sum_den = 0;
+            for (__ix32 j = 0 ; j < _Nx   ; j++) sum_num += _buff_sx[ i ][ j ] * _cfnum[_Nx * i + j ];
+            for (__ix32 j = 0 ; j < _Ny-1 ; j++) sum_den += _buff_sy[ i ][ j ] * _cfden[_Ny * i + j + 1 ];
+            _buff_sy[ i ]( &( out = sum_num * _gains[i] - sum_den ) );
             if( i < _N - 1 ) _buff_sx[ i + 1 ]( &out );
         }
-        return out;
-    }
-
-    /*!
-     * \brief Unrwapped IIR filter filtering function
-     * \param[_input] pointer to the input signal samples buffer
-     * \param[_cfnum] IIR filter numerator coefficients vector
-     * \param[_cfden] IIR filter denominator coefficients vector
-     * \param[_gain] IIR filter gain
-     * \param[_Nx] IIR filter numerator order
-     * \param[_Ny] IIR filter denominator order
-     * \param[_bx] IIR filter transfer function input buffer
-     * \param[_by] IIR filter transfer function output buffer
-     * \returns   The function implements input signal filtering using
-     *           IIR filter coefficients, gains and I/O buffers vectors
-     *
-     *           \f[
-     *              y(k) = \left( \sum_{i=0}^N gain_{i} * [ a_{0i} * x(k-1) + a_{1i} * x(k-2) + a_{1i} * x(k-3) ] \right) -
-     *                     \left( \sum_{i=0}^N b_{1i} * y(k-1) + b_{2i} * y(k-2) \right)
-     *           \f]
-    */
-    template< typename __type >
-    inline __type __filt__
-    (
-            __type *_input,
-            __type *_cfnum,
-            __type *_cfden,
-            __type _gain,
-            __ix32 _Nx,
-            __ix32 _Ny,
-            delay<__type> &_bx,
-            delay<__type> &_by
-    )
-    {
-        __type sum_num = 0 , sum_den = 0 , out = 0;
-        _bx( _input );
-        for ( __ix32 m = 0 ; m < _Nx ; m++)
-        {
-            sum_num += _gain * _bx[m] * _cfnum[m];
-            if ( m < _Ny-1 ) sum_den += _by[m] * _cfden[m + 1];
-        }
-        _by( &( out = sum_num - sum_den ) );
         return out;
     }
 
@@ -2605,7 +2515,19 @@ namespace DSP
         */
         fr frequency_response( __fx64 _F ) override
         {
-            return __freq_resp__( m_cfmatrix.cfnum , m_cfmatrix.cfden , m_cfmatrix.gains , m_cfmatrix.N , m_Fs , _F );
+            return __freq_resp__
+                    (
+                            m_cfmatrix.cfnum,
+                            m_cfmatrix.cfden,
+                            m_cfmatrix.gains,
+                            3,
+                            3,
+                            m_cfmatrix.N,
+                            m_Fs,
+                            _F
+                    );
+
+            //return __freq_resp__( m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N , m_Fs , _F );
         }
 
         /*!
@@ -3296,7 +3218,19 @@ namespace DSP
         */
         fr frequency_response(__fx64 _F ) override
         {
-            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, 2, m_Fs, _F );
+            return __freq_resp__
+            (
+                    m_cfnum,
+                    m_cfden,
+                    &m_Gain,
+                    2,
+                    2,
+                    1,
+                    m_Fs,
+                    _F
+            );
+
+            //return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, 2, m_Fs, _F );
         }
 
         /*! \brief default constructor */
@@ -3412,7 +3346,19 @@ namespace DSP
         */
         fr frequency_response(__fx64 _F ) override
         {
-            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, 2, m_Fs, _F );
+            return __freq_resp__
+            (
+                    m_cfnum,
+                    m_cfden,
+                    &m_Gain,
+                    2,
+                    2,
+                    1,
+                    m_Fs,
+                    _F
+            );
+
+            //return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, 2, m_Fs, _F );
         }
 
         /*! \brief default constructor */
@@ -3525,7 +3471,19 @@ namespace DSP
         */
         fr frequency_response(__fx64 _F ) override
         {
-            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, 2, m_Fs, _F );
+            return __freq_resp__
+            (
+                    m_cfnum,
+                    m_cfden,
+                    &m_Gain,
+                    2,
+                    2,
+                    1,
+                    m_Fs,
+                    _F
+            );
+
+            //return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, 2, m_Fs, _F );
         }
 
         /*! \brief default constructor */
@@ -3648,7 +3606,19 @@ namespace DSP
         */
         fr frequency_response(__fx64 _F ) override
         {
-            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, 2, m_Fs, _F );
+            return __freq_resp__
+            (
+                    m_cfnum,
+                    m_cfden,
+                    &m_Gain,
+                    2,
+                    2,
+                    1,
+                    m_Fs,
+                    _F
+            );
+
+            //return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 2, 2, m_Fs, _F );
         }
 
         /*! \brief default constructor */
@@ -3883,7 +3853,19 @@ namespace DSP
         */
         fr frequency_response(__fx64 _F ) override
         {
-            return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 3, 3, m_Fs, _F );
+            return __freq_resp__
+            (
+                    m_cfnum,
+                    m_cfden,
+                    &m_Gain,
+                    3,
+                    3,
+                    1,
+                    m_Fs,
+                    _F
+            );
+
+            //return __freq_resp__ (m_cfnum, m_cfden, m_Gain, 3, 3, m_Fs, _F );
         }
 
         // constructors and destructor:
@@ -3993,7 +3975,7 @@ namespace DSP
         // filtering operator override:
         inline __type operator()( __type* _input ) override
         {
-            return __filt__< __type >(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N,  m_buff_sx, m_buff_sy );
+            return __filt__(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, 3, 3, m_cfmatrix.N, m_buff_sx, m_buff_sy );
         }
     };
 
@@ -4016,7 +3998,7 @@ namespace DSP
         // filtering operator override:
         inline __type operator()( __type* _input ) override
         {
-            return __filt__< __type >(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N,  m_buff_sx, m_buff_sy );
+            return __filt__(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, 3, 3, m_cfmatrix.N, m_buff_sx, m_buff_sy );
         }
     };
 
@@ -4039,7 +4021,7 @@ namespace DSP
         // filtering operator override:
         inline __type operator()( __type *_input ) override
         {
-            return __filt__< __type >(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N,  m_buff_sx, m_buff_sy );
+            return __filt__(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, 3, 3, m_cfmatrix.N, m_buff_sx, m_buff_sy );
         }
     };
 
@@ -4062,7 +4044,7 @@ namespace DSP
         // filtering operator override:
         inline __type operator()( __type* _input ) override
         {
-            return __filt__< __type >(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N,  m_buff_sx, m_buff_sy );
+            return __filt__(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, 3, 3, m_cfmatrix.N, m_buff_sx, m_buff_sy );
         }
     };
 
@@ -4085,7 +4067,7 @@ namespace DSP
         // filtering operator override:
         inline __type operator()( __type* _input ) override
         {
-            return __filt__< __type >(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N,  m_buff_sx, m_buff_sy );
+            return __filt__(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, 3, 3, m_cfmatrix.N, m_buff_sx, m_buff_sy );
         }
     };
 
@@ -4108,7 +4090,7 @@ namespace DSP
         // filtering operator override:
         inline __type operator()( __type* _input ) override
         {
-            return __filt__< __type >(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N,  m_buff_sx, m_buff_sy );
+            return __filt__(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, 3, 3, m_cfmatrix.N, m_buff_sx, m_buff_sy );
         }
     };
 
@@ -4131,7 +4113,7 @@ namespace DSP
         // filtering operator override:
         inline __type operator()( __type* _input ) override
         {
-            return __filt__< __type >(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N,  m_buff_sx, m_buff_sy );
+            return __filt__(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, 3, 3, m_cfmatrix.N, m_buff_sx, m_buff_sy );
         }
     };
 
@@ -4154,7 +4136,7 @@ namespace DSP
         // filtering operator override:
         inline __type operator()( __type* _input ) override
         {
-            return __filt__< __type >(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, m_cfmatrix.N,  m_buff_sx, m_buff_sy );
+            return __filt__(_input, m_cfmatrix.cfnum, m_cfmatrix.cfden, m_cfmatrix.gains, 3, 3, m_cfmatrix.N, m_buff_sx, m_buff_sy );
         }
     };
 
@@ -4332,7 +4314,7 @@ namespace DSP
 
         inline __type operator ()( __type  *input ) override
         {
-            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 2, 2, m_bx, m_by );
+            return __filt__ ( input, m_cfnum, m_cfden, &m_Gain, 2, 2, 1, &m_bx, &m_by );
         }
     };
 
@@ -4348,7 +4330,7 @@ namespace DSP
 
         inline __type operator ()( __type *input ) override
         {
-            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 2, 2, m_bx, m_by );
+            return __filt__ ( input, m_cfnum, m_cfden, &m_Gain, 2, 2, 1, &m_bx, &m_by );
         }
     };
 
@@ -4364,7 +4346,7 @@ namespace DSP
 
         inline __type operator ()( __type *input ) override
         {
-            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 2, 2, m_bx, m_by );
+            return __filt__ ( input, m_cfnum, m_cfden, &m_Gain, 2, 2, 1, &m_bx, &m_by );
         }
     };
 
@@ -4380,7 +4362,7 @@ namespace DSP
 
         inline __type operator ()( __type *input ) override
         {
-            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 2, 2, m_bx, m_by );
+            return __filt__ ( input, m_cfnum, m_cfden, &m_Gain, 2, 2, 1, &m_bx, &m_by );
         }
     };
 
@@ -4395,7 +4377,7 @@ namespace DSP
 
         inline __type operator ()( __type  *input ) override
         {
-            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 2, 2, m_bx, m_by );
+            return __filt__( input, m_cfnum, m_cfden, &m_Gain, 2, 2, 1, &m_bx, &m_by );
         }
     };
 
@@ -4410,7 +4392,7 @@ namespace DSP
 
         inline __type operator ()( __type  *input ) override
         {
-            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 2, 2, m_bx, m_by );
+            return __filt__ ( input, m_cfnum, m_cfden, &m_Gain, 2, 2, 1, &m_bx, &m_by );
         }
     };
 
@@ -4425,7 +4407,7 @@ namespace DSP
 
         inline __type operator ()( __type  *input ) override
         {
-            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 2, 2, m_bx, m_by );
+            return __filt__ ( input, m_cfnum, m_cfden, &m_Gain, 2, 2, 1, &m_bx, &m_by );
         }
     };
 
@@ -4440,7 +4422,7 @@ namespace DSP
 
         inline __type operator ()( __type  *input ) override
         {
-            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 2, 2, m_bx, m_by );
+            return __filt__ ( input, m_cfnum, m_cfden, &m_Gain, 2, 2, 1, &m_bx, &m_by );
         }
     };
 
@@ -4456,7 +4438,7 @@ namespace DSP
 
         inline __type operator ()( __type  *input ) override
         {
-            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 3, 3, m_bx, m_by );
+            return __filt__ ( input, m_cfnum, m_cfden, &m_Gain, 3, 3, 1, &m_bx, &m_by );
         }
     };
 
@@ -4472,7 +4454,7 @@ namespace DSP
 
         inline __type operator ()( __type  *input ) override
         {
-            return __filt__<__type>(input, m_cfnum, m_cfden, m_Gain, 3, 3, m_bx, m_by );
+            return __filt__ ( input, m_cfnum, m_cfden, &m_Gain, 3, 3, 1, &m_bx, &m_by );
         }
     };
     /*! @} */
