@@ -1,14 +1,7 @@
-#include "include/special_functions.h"
-
-// examples:
-#include "include/examples.h"
-
-#include <list>
-
-
 #include "iostream"
 #include "include/dsp.h"
 using namespace DSP;
+
 int example()
 {
     // define filter and it's input signal data types:
@@ -51,7 +44,7 @@ int example()
     double Fc =  100;
     double Gp =  1;
     double NU = -1; // not used parameter
-    cheb1.init( Fs , 8 , DSP::filter_type::lowpass , { Fc , NU } , Gp );
+    cheb1.init( Fs , 8 , DSP::filter_type::highpass , { Fc , NU } , Gp );
 
     // emulation:
     for( int i = 0 ; i < cycles_num ; i++ )
@@ -65,7 +58,7 @@ int example()
 
             // generating output:
             yt      << gen.m_out  << "\n";
-            iir_y   << y1 << "\n";
+            iir_y   << y1         << "\n";
             tt      << time       << "\n";
             time += 1 / Fs;
         }
@@ -75,9 +68,9 @@ int example()
     for( int f = 0 ; f < Fs / 2 ; f++ )
     {
         fr fr1 = cheb1.frequency_response( f );
-        iir_km << fr1.Km << "\n";
-        iir_ph << fr1.pH << "\n";
-        ff << (double)f << "\n";
+        iir_km << fr1.Km    << "\n";
+        iir_ph << fr1.pH    << "\n";
+        ff     << (double)f << "\n";
     }
 
     // closing files:
@@ -87,71 +80,6 @@ int example()
     iir_km.close();
     iir_ph.close();
     ff    .close();
-
-    return 0;
-}
-
-void window_fcn_examples_generator()
-{
-    std::list< std::string > windows;
-
-    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
-
-    // window function names:
-    windows.push_back("Barlett");
-    windows.push_back("BartlettHanning");
-    windows.push_back("Blackman");
-    windows.push_back("BlackmanHarris");
-    windows.push_back("Bohman");
-    windows.push_back("Chebyshev");
-    windows.push_back("FlatTop");
-    windows.push_back("Gaussian");
-    windows.push_back("Hamming");
-    windows.push_back("Hann");
-    windows.push_back("Kaiser");
-    windows.push_back("Nutall");
-    windows.push_back("Parzen");
-    windows.push_back("Rectangular");
-    windows.push_back("Triangular");
-    windows.push_back("Tukey");
-
-    for( auto it = windows.begin() ; it != windows.end() ; it++ )
-    {
-        std::ofstream file;
-        std::string   name = *it;
-        file.open( directory + "\\" + name + "_example.cpp" );
-
-        if( *it != "Chebyshev" )
-        {
-            file << "int main()" << "\n";
-            file << "{" << "\n";
-            file << "\t" << "int order  = 10;" << "\n";
-            file << "\t" << "double " << "*" << name << " = " << name << "(order);" << "\n";
-            file << "\t" << "free(" << name << ")\n";
-            file << "\t" << "return 0;" << "\n";
-            file << "}" << "\n";
-        }
-
-        std::cout << *it << "\n";
-    }
-
-}
-
-int main()
-{
-
-    //window_fcn_examples_generator();
-
-    //example2();
-
-    /*
-    double a[] = {1,1,1};
-    double c[] = {0,0,0,0,0};
-
-    __convf__(a,a,c,3,3,5);
-
-    for(int i = 0 ; i < 5; i++) std::cout << c[i] << "\t";
-    */
 
     return 0;
 }

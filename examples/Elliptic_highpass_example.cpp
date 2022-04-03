@@ -45,7 +45,7 @@ int example()
     double Gp =  1;
 	double Gs =  80;
     double NU = -1; // not used parameter
-    ellip.init( Fs , 8 , DSP::filter_type::lowpass , { Fc , NU } , Gs, Gp );
+    ellip.init( Fs , 8 , DSP::filter_type::highpass , { Fc , NU } , Gs, Gp );
 	
 
     // emulation:

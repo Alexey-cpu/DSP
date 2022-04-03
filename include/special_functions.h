@@ -1491,7 +1491,8 @@ __fx64 *Tukey(__fx64 _R, __ix32 _order )
      * \param[_Nb] size of poly b array
      * \param[_Nc] size of poly c array
     */
-template< typename __type > void __convf__
+template< typename __type >
+void __convf__
 (
         __type *_a,
         __type *_b,

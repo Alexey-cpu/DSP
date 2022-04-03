@@ -17,9 +17,9 @@ tt       = TEXTFILE_TO_MATFILE ( "tt.txt"       , logs );
 
 % group plotting:
 %plot( ff , cheb1_km , ff , cheb2_km , ff , buttf_km , ff , ellip_km );
-%plot( tt , cheb1_y , tt , cheb2_y , tt , buttf_y , tt , ellip_y );
+plot( tt , cheb1_y , tt , cheb2_y , tt , buttf_y , tt , ellip_y );
 
-plot( tt , cheb1_y , tt , buttf_y );
+%plot( tt , cheb1_y , tt , buttf_y );
 
 %plot( ff , buttf_km )
 

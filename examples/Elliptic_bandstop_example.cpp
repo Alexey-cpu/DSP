@@ -42,10 +42,10 @@ int example()
 
     // filters initialization:
     double Fc =  100;
+	double BW =  500;
     double Gp =  1;
 	double Gs =  80;
-    double NU = -1; // not used parameter
-    ellip.init( Fs , 8 , DSP::filter_type::lowpass , { Fc , NU } , Gs, Gp );
+    ellip.init( Fs , 8 , DSP::filter_type::bandpass , { Fc , BW } , Gs, Gp );
 	
 
     // emulation:

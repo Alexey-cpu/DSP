@@ -1,6 +1,7 @@
 #include "iostream"
 #include "include/dsp.h"
 using namespace DSP;
+
 int example()
 {
     // define filter and it's input signal data types:
@@ -41,9 +42,9 @@ int example()
 
     // filters initialization:
     double Fc =  100;
-    double Gp =  1;
+    double Gs =  80;
     double NU = -1; // not used parameter
-    cheb2.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , 100 } , { 80 , 1 } );
+    cheb2.init( Fs , 8 , DSP::filter_type::highpass , { Fc , NU } , Gs );
 	
 
     // emulation:
@@ -58,7 +59,7 @@ int example()
 
             // generating output:
             yt      << gen.m_out  << "\n";
-            iir_y   << y1 << "\n";
+            iir_y   << y1         << "\n";
             tt      << time       << "\n";
             time += 1 / Fs;
         }
@@ -68,9 +69,9 @@ int example()
     for( int f = 0 ; f < Fs / 2 ; f++ )
     {
         fr fr1 = cheb2.frequency_response( f );
-        iir_km << fr1.Km << "\n";
-        iir_ph << fr1.pH << "\n";
-        ff << (double)f << "\n";
+        iir_km << fr1.Km    << "\n";
+        iir_ph << fr1.pH    << "\n";
+        ff     << (double)f << "\n";
     }
 
     // closing files:

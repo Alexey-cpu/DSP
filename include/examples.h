@@ -240,31 +240,31 @@ int example2()
     switch ( flt_type )
     {
         case 0: // lowpass
-            cheb1.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , 100 } , { 1  , 1 } );
-            cheb2.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , 100 } , { 80 , 1 } );
-            buttf.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , 100 } , { 1  , 1 } );
-            ellip.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , 100 } , { 80 , 1 } );
+            cheb1.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , 100 } , 1 );
+            cheb2.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , 100 } , 80 );
+            buttf.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , 100 } );
+            ellip.init( Fs , 8 , DSP::filter_type::lowpass , { 100 , 100 } , 80 , 1 );
         break;
 
         case 1: // highpass
-            cheb1.init( Fs , 8 , DSP::filter_type::highpass , { 100 , 100 } , { 1  , 1 } );
-            cheb2.init( Fs , 8 , DSP::filter_type::highpass , { 100 , 100 } , { 80 , 1 } );
-            buttf.init( Fs , 8 , DSP::filter_type::highpass , { 100 , 100 } , { 1  , 1 } );
-            ellip.init( Fs , 8 , DSP::filter_type::highpass , { 100 , 100 } , { 80 , 1 } );
+            cheb1.init( Fs , 8 , DSP::filter_type::highpass , { 100 , 100 } , 1 );
+            cheb2.init( Fs , 8 , DSP::filter_type::highpass , { 100 , 100 } , 80 );
+            buttf.init( Fs , 8 , DSP::filter_type::highpass , { 100 , 100 } );
+            ellip.init( Fs , 8 , DSP::filter_type::highpass , { 100 , 100 } , 80 , 1  );
         break;
 
         case 2: // bandpass
-            cheb1.init( Fs , 8 , DSP::filter_type::bandpass , { 100 , 100 } , { 1  , 1 } );
-            cheb2.init( Fs , 8 , DSP::filter_type::bandpass , { 100 , 100 } , { 80 , 1 } );
-            buttf.init( Fs , 8 , DSP::filter_type::bandpass , { 100 , 100 } , { 1  , 1 } );
-            ellip.init( Fs , 8 , DSP::filter_type::bandpass , { 100 , 100 } , { 80 , 1 } );
+            cheb1.init( Fs , 8 , DSP::filter_type::bandpass , { 100 , 100 } , 1 );
+            cheb2.init( Fs , 8 , DSP::filter_type::bandpass , { 100 , 100 } , 80 );
+            buttf.init( Fs , 8 , DSP::filter_type::bandpass , { 100 , 100 } );
+            ellip.init( Fs , 8 , DSP::filter_type::bandpass , { 100 , 100 } , 80 , 1  );
         break;
 
         case 3: // bandstop
-            cheb1.init( Fs , 8 , DSP::filter_type::bandstop , { 100 , 100 } , { 1  , 1 } );
-            cheb2.init( Fs , 8 , DSP::filter_type::bandstop , { 100 , 100 } , { 80 , 1 } );
-            buttf.init( Fs , 8 , DSP::filter_type::bandstop , { 100 , 100 } , { 1  , 1 } );
-            ellip.init( Fs , 8 , DSP::filter_type::bandstop , { 100 , 100 } , { 80 , 1 } );
+            cheb1.init( Fs , 8 , DSP::filter_type::bandstop , { 100 , 100 } , 1 );
+            cheb2.init( Fs , 8 , DSP::filter_type::bandstop , { 100 , 100 } , 80 );
+            buttf.init( Fs , 8 , DSP::filter_type::bandstop , { 100 , 100 } );
+            ellip.init( Fs , 8 , DSP::filter_type::bandstop , { 100 , 100 } , 80 , 1 );
         break;
 
     }
