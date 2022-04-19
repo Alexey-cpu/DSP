@@ -21,7 +21,6 @@ HEADERS += \
     include/examples.h \
     include/fcomplex.h \
     include/logical.h \
-    include/sblas.h \
     include/sgen.h \
     include/special_functions.h \
     include/transformations.h

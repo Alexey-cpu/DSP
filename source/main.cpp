@@ -9,6 +9,65 @@
 #include "iostream"
 #include "include/dsp.h"
 using namespace DSP;
+
+int example_function()
+{
+    // emulation parameters:
+    double Fs                = 4000;
+    double Fn                = 50;
+    double EmulationDuration = 0.08;
+    int    CycleWidth        = 5;
+    int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
+    int    frames_per_cycle  = CycleWidth * Fs / 1000;
+
+    // test filters
+    butterworth< double > buttf_lp;
+    butterworth< double > buttf_hp;
+    butterworth< double > buttf_bp;
+    butterworth< double > buttf_bs;
+
+    // test signal generator
+    sgen< double > gen;
+
+    // filters parameters
+    double Fc        = 100;
+    double BandWidth = 100;
+    int    order     = 8;
+
+    // filters initialization
+    buttf_lp.init( Fs , order , filter_type::lowpass  , { Fc , BandWidth } );
+    buttf_hp.init( Fs , order , filter_type::highpass , { Fc , BandWidth } );
+    buttf_bp.init( Fs , order , filter_type::bandpass , { Fc , BandWidth } );
+    buttf_bs.init( Fs , order , filter_type::bandstop , { Fc , BandWidth } );
+
+    // emulation:
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        {
+            // signal generation
+            gen.sine( 1 , Fn , 0 , Fs );
+
+            // filtering
+            double yt1 = buttf_lp( &gen.m_out );
+            double yt2 = buttf_hp( &gen.m_out );
+            double yt3 = buttf_bp( &gen.m_out );
+            double yt4 = buttf_bs( &gen.m_out );
+        }
+    }
+
+    // frequency response computation
+    for( int i = 0 ; i < Fs / 2 ; i++ )
+    {
+        fr fr1 = buttf_lp.frequency_response(i);
+        fr fr2 = buttf_hp.frequency_response(i);
+        fr fr3 = buttf_bp.frequency_response(i);
+        fr fr4 = buttf_bs.frequency_response(i);
+    }
+
+    return 0;
+}
+
 int example()
 {
     // define filter and it's input signal data types:
@@ -137,21 +196,14 @@ void window_fcn_examples_generator()
 
 }
 
+#include "iostream"
+#include "include/fcomplex.h"
+
 int main()
 {
-
-    //window_fcn_examples_generator();
-
-    //example2();
-
-    /*
-    double a[] = {1,1,1};
-    double c[] = {0,0,0,0,0};
-
-    __convf__(a,a,c,3,3,5);
-
-    for(int i = 0 ; i < 5; i++) std::cout << c[i] << "\t";
-    */
-
+    fcomplex<double> z(1,2);
+    fcomplex<double> f = __sinhf__(z);
+    std::cout << "real(f) = " << __realf__(f) << "\n";
+    std::cout << "imag(f) = " << __imagf__(f) << "\n";
     return 0;
 }
