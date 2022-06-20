@@ -22,7 +22,8 @@
 #include "include/buffer.h"
 #include "include/sgen.h"
 #include "include/logical.h"
-#include "dsp.h"
+
+/*
 
 // brief special functions utilization example and check
 int example0()
@@ -735,5 +736,6 @@ int example4()
 
     return 0;
 }
+*/
 
 #endif // EXAMPLES_H
