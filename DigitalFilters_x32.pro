@@ -19,11 +19,15 @@ HEADERS += \
     include/buffer.h \
     include/dsp.h \
     include/examples.h \
+    include/f_fir.h \
+    include/f_iir.h \
+    include/f_rff.h \
     include/fcomplex.h \
     include/logical.h \
     include/sgen.h \
     include/special_functions.h \
-    include/transformations.h
+    include/transformations.h \
+    include/utils.h
 
 DISTFILES += \
     .gitignore
