@@ -101,7 +101,7 @@ namespace DSP_KERNEL
 
         // memory manipulation functions
         // do not call these function in the constructor
-        // or destructor of the class that not marked as final !!!
+        // or destructor of the descendant class that is not marked as final !!!
         virtual __ix32 allocate()   = 0;
         virtual __ix32 deallocate() = 0;
 

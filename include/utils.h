@@ -2,6 +2,13 @@
 #define UTILS_H
 
 #ifndef __ALG_PLATFORM
+
+// include malloc file if it presents
+// ( basically, needed by Windows )
+#ifdef _MALLOC_H
+#include "malloc.h"
+#endif
+
 #include "QElapsedTimer"
 #include "iostream"
 #include "cmath"
@@ -379,8 +386,13 @@ template< typename __type > inline __type* __realloc__(__type *memory, __ix32 ne
 // memory free
 template< typename __type > inline __type* __mfree__(__type *memory)
 {
-    if(memory) free(memory);
-    return nullptr;
+    if(memory)
+    {
+        free(memory);
+        memory = nullptr;
+    }
+
+    return memory;
 }
 
 namespace STRING_EXTENSION

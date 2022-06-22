@@ -463,7 +463,6 @@ namespace
         inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
     };
 
-
 }
 
 #undef __fx32

@@ -16,9 +16,10 @@
 #ifndef __ALG_PLATFORM
 #include "cmath"
 #include <stdlib.h>
-//#include "malloc.h"
 #include "cstring"
 #endif
+
+#include "utils.h"
 
 /*! \brief converts radians to degrees */
 #ifndef __TO_DEGREES
@@ -1482,6 +1483,18 @@ __fx64 *Tukey(__fx64 _R, __ix32 _order )
 }
 /*! \example Tukey_example.cpp */
 
+__ix32 __conv_size__(__ix32 _Na,  __ix32 _Nb)
+{
+    return _Na + _Nb - 1;
+}
+
+__ix32 __conv_size__(__ix32 *_polymons_sizes, __ix32 _polynoms_number)
+{
+    __ix32 _Nc = _polymons_sizes[0];
+    for( __ix32 i = 1 ; i < _polynoms_number ; i++ ) _Nc += _polymons_sizes[i] - 1;
+    return _Nc;
+}
+
 /*!
      * \brief Linear convolution function
      * \param[*_a] pointer to the poly a array
@@ -1491,28 +1504,154 @@ __fx64 *Tukey(__fx64 _R, __ix32 _order )
      * \param[_Nb] size of poly b array
      * \param[_Nc] size of poly c array
     */
-template< typename __type >
-void __convf__
-(
-        __type *_a,
-        __type *_b,
-        __type *_c,
-        __ix32 _Na,
-        __ix32 _Nb,
-        __ix32 _Nc
-)
+template< typename __type > void
+__convf__( const __type *_a, const __type *_b, __type *_c, __ix32 _Na,  __ix32 _Nb, __ix32 _Nc )
 {
     if( ( _Nc >= _Na + _Nb - 1 ) && ( _a && _b && _c ) )
     {
-        for( int i = 0 ; i < ( _Na + _Nb ) ; i++ )
+        for( __ix32 i = 0 ; i < ( _Na + _Nb ) ; i++ )
         {
-            for( int j = ( i - _Na < 0 ) ? 0 : i-_Na+1 , k = ( i < _Na ) ? i : _Na-1 ; ( j < _Nb ) && ( k >= 0 ) ; j++ , k-- )
+            for( __ix32 j = ( i - _Na < 0 ) ? 0 : i-_Na+1 , k = ( i < _Na ) ? i : _Na-1 ; ( j < _Nb ) && ( k >= 0 ) ; j++ , k-- )
             {
                 _c[i] += _a[k] * _b[j];
             }
         }
     }
 }
+
+template< typename __type > void
+__convf__( const __type *_a, const __type *_b, __ix32 _Na,  __ix32 _Nb, __type **_c, __ix32 *_Nc )
+{
+    __convf__( _a, _b, ( *_c = __alloc__<__type>(_Nc) ) , _Na, _Nb, (*_Nc = _Na + _Nb - 1) );
+}
+
+template< typename __type > void
+__convf__( __type **_polynoms, __ix32 *_polynoms_sizes, __ix32 _polynoms_number, __type **_c, __ix32 *_Nc )
+{
+    // allocate memory and initialize
+    *_Nc = __conv_size__(_polynoms_sizes, _polynoms_number);
+     __type *_a  = __alloc__<__type>(*_Nc);
+    *_c  = __alloc__<__type>(*_Nc);
+    for( __ix32 j = 0 ; j < _polynoms_sizes[0] ; j++ ) (*_c)[j] = _polynoms[0][j];
+
+    // main operation
+    *_Nc = _polynoms_sizes[0];
+    for( __ix32 i = 1, _Na = _polynoms_sizes[0] ; i < _polynoms_number ; i++, _Na += _polynoms_sizes[i] - 1 )
+    {
+        for( __ix32 j = 0 ; j < *_Nc ; j++ )
+        {
+             _a[j] = (*_c)[j];
+            (*_c)[j] = 0;
+        }
+
+        *_Nc += _polynoms_sizes[i] - 1;
+        __convf__( _a, _polynoms[i], *_c, _Na,  _polynoms_sizes[i], *_Nc );
+    }
+
+    _a = __mfree__(_a);
+}
+
+// types
+template<typename __type>
+class array1D
+{
+    __type *m_data;
+    __ix32  m_size;
+    __ix32  m_bpos;
+public:
+
+    //
+    void copy( const array1D<__type>& vector )
+    {
+        // free data array if it exists
+        if( m_data )
+        {
+            m_data = __mfree__(m_data);
+            m_size = -1;
+        }
+
+        // allocate the new array and copy values there
+        m_size = vector.m_size;
+        m_data = __alloc__<__type>(m_size);
+        for( __ix32 i = 0 ; i < m_size ; i++ ) m_data[i] = vector.m_data[i];
+    }
+
+    // constructors
+    array1D()
+    {
+        m_data = nullptr;
+        m_bpos = 0;
+        m_size = -1;
+    }
+
+    array1D(__ix32 size)
+    {
+        m_size = size;
+        m_data = __alloc__<__type>(m_size);
+    }
+
+    array1D( const array1D<__type>& vector )
+    {        
+        copy(vector);
+    }
+
+    // destructor
+    ~array1D()
+    {
+        m_size = -1;
+        m_data = __mfree__(m_data);
+    }
+
+    // properties
+    __ix32 size()
+    {
+        return m_size;
+    }
+
+    // modifiers
+    void resize(__ix32 newsize)
+    {
+        m_size = newsize;
+        m_data = __realloc__<__type>(m_size);
+    }
+
+    void push_back(__type value)
+    {
+        if( m_bpos >= m_size ) resize( 2 * m_size );
+        m_data[m_bpos] = value;
+    }
+
+    // operators
+    inline __type& operator [] (__ix32 n)
+    {
+        return m_data[n];
+    }
+
+    inline void operator = (array1D<__type> &vector)
+    {
+        copy(vector);
+    }
+};
+
+// fraction
+template<typename __type> class fraction
+{
+    //        N(s)
+    // F(s) = -----
+    //        D(s)
+
+public:
+
+    array1D<__type> m_numerator;
+    array1D<__type> m_denominator;
+
+    // properties
+
+
+    // modifiers
+};
+
+
 
 /*! \example convolution_example.cpp */
 
