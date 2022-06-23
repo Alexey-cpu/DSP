@@ -1,11 +1,15 @@
-#ifndef F_IIR_H
-#define F_IIR_H
+#ifndef FILTERS_IIR_H
+#define FILTERS_IIR_H
 
 // custom includes
-#include "include/buffer.h"
-#include "include/fcomplex.h"
-#include "include/dsp.h"
+#include "buffer.h"
+#include "fcomplex.h"
+#include "kernel_iir.h"
 using namespace IIR_KERNEL;
+
+#ifndef __ALG_PLATFORM
+//#define IIR_DEBUG // debugging is not available if the algorithm is running on a device !!!
+#endif
 
 /*! \brief defines 32-bit floating point type */
 #ifndef __fx32
@@ -84,8 +88,10 @@ protected:
 
         if( m_FilterData.cfden != nullptr && m_FilterData.cfnum != nullptr  && m_FilterData.gains != nullptr )
         {
-            m_buff_sx = __alloc__< delay< __type > >( m_FilterData.N );
-            m_buff_sy = __alloc__< delay< __type > >( m_FilterData.N );
+
+            m_buff_sx = new delay< __type >[m_FilterData.N];
+            m_buff_sy = new delay< __type >[m_FilterData.N];
+
             for( __ix32 i = 0 ; i < m_FilterData.N ; i++ )
             {
                 m_buff_sx[i].allocate(m_FilterData.Nx+1);
@@ -100,18 +106,30 @@ protected:
     // memory deallocation
     __ix32 deallocate() override
     {
-        // clear filter data
-        __dsp_clear_filter__(m_FilterData);
-
-        // clear filter buffers
-        for( __ix32 i = 0 ; i < m_FilterData.N ; i++ )
+        if( m_buff_sx != nullptr )
         {
-            m_buff_sx[i].deallocate();
-            m_buff_sy[i].deallocate();
+            for( __ix32 i = 0 ; i < m_order ; i++ )
+            {
+                m_buff_sx[i].deallocate();
+            }
+
+            delete [] m_buff_sx;
+            m_buff_sx = nullptr;
         }
 
-        m_buff_sx = __mfree__( m_buff_sx );
-        m_buff_sy = __mfree__( m_buff_sy );
+        if( m_buff_sy != nullptr )
+        {
+            for( __ix32 i = 0 ; i < m_order ; i++ )
+            {
+                m_buff_sy[i].deallocate();
+            }
+
+            delete [] m_buff_sy;
+            m_buff_sy = nullptr;
+        }
+
+        // clear filter data
+        __dsp_clear_filter__(m_FilterData);
 
         return 1;
     }
@@ -472,4 +490,4 @@ namespace
 #undef PI0
 #undef PI2
 
-#endif // F_IIR_H
+#endif // FILTERS_IIR_H

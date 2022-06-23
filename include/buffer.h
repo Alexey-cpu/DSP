@@ -23,48 +23,40 @@
 */
 
 #include "fcomplex.h"
+#include "utils.h"
 
-/*! \brief defines 16-bit integer type */
 #ifndef __ix16
 #define __ix16 short
 #endif
 
-/*! \brief defines 32-bit integer type */
 #ifndef __ix32
 #define __ix32 int
 #endif
 
-/*! \brief defines 64-bit integer type */
 #ifndef __ix64
 #define __ix64 long long
 #endif
 
-/*! \brief defines unsigned 16-bit integer type */
 #ifndef __uix16
 #define __uix16 unsigned short
 #endif
 
-/*! \brief defines unsigned 32-bit integer type */
 #ifndef __uix32
 #define __uix32 unsigned int
 #endif
 
-/*! \brief defines unsigned 64-bit integer type */
 #ifndef __uix64
 #define __uix64 unsigned long long
 #endif
 
-/*! \brief defines 32-bit floating point type */
 #ifndef __fx32
 #define __fx32 float
 #endif
 
-/*! \brief defines 64-bit floating point type */
 #ifndef __fx64
 #define __fx64 double
 #endif
 
-/*! \brief defines extended 64-bit floating point type */
 #ifndef __fxx64
 #define __fxx64 long double
 #endif
@@ -75,24 +67,20 @@
     @{
 */
 
-/*! \brief mirror ring buffer template abstract class */
+// ABSTRACT MODELS
 template< typename T > class delay_abstract
 {
     typedef T __type;
 protected:
-    /*! \brief mirror ring buffer upper half pointer */
-    __type *m_upper;
-    /*! \brief mirror ring buffer lower half pointer */
-    __type *m_lower;
-    /*! \brief mirror ring buffer data pointer */
-    __type *m_data;
-     /*! \brief mirror ring buffer size */
-    __ix32  m_nelem;
-     /*! \brief mirror ring buffer position */
-    __ix32  m_buffpos;
+    __type *m_upper;   ///< delay buffer upper part pointer
+    __type *m_lower;   ///< delay buffer lower part pointer
+    __type *m_data;    ///< delay buffer data samples buffer
+    __ix32  m_nelem;   ///< delay buffer single ( upper/lower ) part size
+    __ix32  m_buffpos; ///< delay buffer current upper/lower part pointer position
 
-    /*! \brief mirror ring buffer template filling function
-     * \param[input] pointer to the input data
+    /*!
+     *  \brief The function fills delay buffer
+     *  \param[input] input sample pointer
     */
     template< typename F > inline void fill_buff( F *input )
     {
@@ -113,15 +101,18 @@ protected:
 
 public:
 
-    /*! \brief delay memory allocation function
-     *  \param[nelem] the mirror ring buffer size
+    /*!
+     *  \brief The function allocates delay buffer
+     *  \param[nelem] delay buffer upper/lower part size
+     *  \details The function is supposed to be called explicitly by the user
     */
     __ix32 allocate( __ix32 nelem )
     {
         if( ( nelem > 0 ) && !m_data )
         {
             m_nelem = nelem;
-            m_data = new __type[ 2 * m_nelem ];
+            m_data = __alloc__<__type>( 2 * m_nelem );
+
             if( m_data )
             {
                m_lower = &m_data[0];
@@ -133,73 +124,63 @@ public:
         else return 0;
     }
 
-    /*! \brief delay memory deallocation function */
+    /*! \brief The function frees delay resources */
     void deallocate()
     {
-        if( m_data != 0 )
-        {
-            delete [] m_data;
-            m_data = 0;
-        }
+        m_data = __mfree__(m_data);
     }
 
     /*! \brief default constructor */
     delay_abstract()
     {
-        m_upper   = 0;
-        m_lower   = 0;
-        m_data    = 0;
+        m_upper   = nullptr;
+        m_lower   = nullptr;
+        m_data    = nullptr;
         m_nelem   = 0;
         m_buffpos = 0;
     }
 
-    /*! \brief virtual destructor */
-    virtual ~delay_abstract(){ deallocate(); }
-
     /*!
-     *  \brief  mirror ring buffer position function
-     *  \return The function returns the buffer filling pointer position
+     *  \brief default constructor
+     *  \details The functions clears delay resources at the end of it's lifetime
     */
+    virtual ~delay_abstract()
+    {
+        deallocate();
+    }
+
+
+    /*! \brief the function returns current lower/upper part pointer position */
     inline __ix32 getBuffPos() { return m_buffpos; }
 
-    /*!
-     *  \brief  mirror ring buffer size function
-     *  \return The function returns the buffer size
-    */
+    /*! \brief the function returns lower/upper part delay buffer size */
     inline __ix32 getBuffSize(){ return m_nelem;   }
 
-    /*! \brief mirror ring buffer [] operator
-     * \param[n] sample number
-     * \return the operator call returns a sample that is on the left from the current
-     *         mirror ring buffer position
+
+    /*!
+     *  \brief the operator invokation results in return of an n-th sample from the past values
+     *  \param[n] sample number
     */
     inline __type operator [] ( __ix32 n ) { return *( m_upper - n - 1 ); }
 
-    /*! \brief mirror ring buffer () operator
-     * \param[input] pointer to the input data
-     * \return the operator call puts the data into the buffer by
-     *         means of calling fill_buff( __type *input ) function
-    */
+    /*! \brief The operator invokation supposes to result in delay buffer fill */
     virtual inline void operator () ( __type *input ) = 0;
 };
 
-/*! \brief ring buffer template abstract class */
 template< typename T > class buffer_abstract
 {
     typedef T __type;
 protected:
-    /*! \brief mirror ring buffer lower half pointer */
-    __type *m_lower;
-    /*! \brief mirror ring buffer data pointer */
-    __type *m_data;
-     /*! \brief mirror ring buffer size */
-    __ix32  m_nelem;
-     /*! \brief mirror ring buffer position */
-    __ix32  m_buffpos;
+
+    __type *m_lower;   ///< buffer pointer
+    __type *m_data;    ///< data samples buffer
+    __ix32  m_nelem;   ///< buffer size
+    __ix32  m_buffpos; ///< current buffer pointer position
+
 
     /*!
-     *  \brief mirror ring buffer template filling function
-     * \param[input] pointer to the input data
+     *  \brief The function fills buffer
+     *  \param[input] input sample pointer
     */
     template< typename F > inline void fill_buff( F *input )
     {
@@ -214,85 +195,74 @@ protected:
 
 public:
 
-    /*! \brief mirror ring buffer memory allocation function
-     *  \param[nelem] the mirror ring buffer size
+    /*!
+     *  \brief The function allocates buffer
+     *  \param[nelem] delay buffer upper/lower part size
+     *  \details The function is supposed to be called explicitly by the user
     */
     __ix32 allocate( __ix32 nelem )
     {
         if( ( nelem > 0 ) && !m_data )
         {
             m_nelem = nelem;
-            m_data  = ( __type* ) calloc( ( m_nelem ) , sizeof ( __type ) );
+            m_data  = __alloc__<__type>( m_nelem );
             m_lower = ( m_data ) ? &m_data[0] : 0;
             return ( m_data != 0 );
         }
         else return 0;
     }
 
-    /*! \brief mirror ring buffer memory deallocation function */
+    /*! \brief The function frees delay resources */
     void deallocate()
     {
-        if( m_data != 0 )
-        {
-            free( m_data );
-            m_data = 0;
-        }
+        m_data = __mfree__(m_data);
     }
 
-    /*! \brief mirror ring buffer default constructor */
+    /*! \brief default constructor */
     buffer_abstract()
     {
-        m_lower   = 0;
-        m_data    = 0;
+        m_lower   = nullptr;
+        m_data    = nullptr;
         m_nelem   = 0;
         m_buffpos = 0;
     }
 
-    /*! \brief mirror ring buffer destructor */
-    virtual ~buffer_abstract() { deallocate(); }
-
     /*!
-     *  \brief  mirror ring buffer position function
-     *  \return The function returns the buffer filling pointer position
+     *  \brief default destructor
+     *  \details The function clears buffer resources
     */
+    virtual ~buffer_abstract()
+    {
+        deallocate();
+    }
+
+    /*! \brief the function returns current lower/upper part pointer position */
     inline __ix32 getBuffPos() { return m_buffpos; }
 
-    /*!
-     *  \brief  mirror ring buffer size function
-     *  \return The function returns the buffer size
-    */
+    /*! \brief the function returns lower/upper part delay buffer size */
     inline __ix32 getBuffSize(){ return m_nelem;   }
 
-    /*! \brief mirror ring buffer [] operator
-     * \param[n] sample number
-     * \return the operator call returns a sample that is on the left from the current
-     *         mirror ring buffer position
+
+    /*!
+     *  \brief the operator invokation results in return of an n-th sample from the past values
+     *  \param[n] sample number
     */
     inline __type operator [] ( __ix32 n ) { return m_data[n]; }
 
-    /*! \brief mirror ring buffer () operator
-     * \param[input] pointer to the input data
-     * \return the operator call puts the data into the buffer by
-     *         means of calling fill_buff( __type *input ) function
-    */
+    /*! \brief The operator invokation supposes to result in delay buffer fill */
     virtual inline void operator () ( __type *input ) = 0;
 };
 
 /*! @} */
 
-/*! \defgroup <DelayAndBufferRealization> ( Delay and buffer realizations )
+/*! \defgroup <DelayImplementation> ( Delay abstract model implementation )
  *  \ingroup DelayAndBuffer
- *  \brief the module contains buffer and delay realizations for different data types
+ *  \brief the module contains delay abstract model implementation
     @{
 */
 
-/*! \brief mirror ring buffer template class */
 template< typename T > class delay;
 
-/*! \brief classic ring buffer template class */
-template< typename T > class buffer;
-
-/*! \brief delay class floating point 32-bit realization */
 template<> class delay< __fx32 > : public delay_abstract< __fx32 >
 {
     typedef __fx32 __type;
@@ -304,7 +274,6 @@ public:
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
-/*! \brief delay class floating point 64-bit realization */
 template<> class delay< __fx64 > : public delay_abstract< __fx64 >
 {
     typedef __fx64 __type;
@@ -315,7 +284,6 @@ public:
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
-/*! \brief delay class floating point extended 64-bit realization */
 template<> class delay< __fxx64 > : public delay_abstract< __fxx64 >
 {
     typedef __fxx64 __type;
@@ -325,7 +293,6 @@ public:
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
-/*! \brief delay class integer 32-bit realization */
 template<> class delay< __ix32 > : public delay_abstract< __ix32 >
 {
     typedef __ix32 __type;
@@ -336,7 +303,6 @@ public:
      inline void operator () ( __ix64  *input ) { fill_buff< __ix64 >( input ); }
 };
 
-/*! \brief delay class integer 64-bit realization */
 template<> class delay< __ix64 > : public delay_abstract< __ix64 >
 {
     typedef __ix64 __type;
@@ -346,9 +312,8 @@ public:
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
-
 #ifdef FCOMPLEX_H
-/*! \brief delay class complex floating point 32-bit realization */
+
 template<> class delay< fcomplex< __fx32 > > : public delay_abstract< fcomplex< __fx32 > >
 {
     typedef fcomplex< __fx32 > __type;
@@ -360,7 +325,6 @@ public:
      inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64  > >( input ); }
 };
 
-/*! \brief delay class complex floating point 64-bit realization */
 template<> class delay< fcomplex< __fx64 > > : public delay_abstract< fcomplex< __fx64 > >
 {
     typedef fcomplex< __fx64 > __type;
@@ -371,7 +335,6 @@ public:
      inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64  > >( input ); }
 };
 
-/*! \brief delay class complex floating point extended 64-bit realization */
 template<> class delay< fcomplex< __fxx64 > > : public delay_abstract< fcomplex< __fxx64 > >
 {
     typedef fcomplex< __fxx64 > __type;
@@ -383,7 +346,16 @@ public:
 
 #endif
 
-/*! \brief ring buffer class floating point 32-bit realization */
+/*! @} */
+
+/*! \defgroup <BufferImplementation> ( Buffer abstract model implementation )
+ *  \ingroup DelayAndBuffer
+ *  \brief The module contains buffer abstract model implementation
+    @{
+*/
+
+template< typename T > class buffer;
+
 template<> class buffer< __fx32 > : public buffer_abstract< __fx32 >
 {
     typedef __fx32 __type;
@@ -395,7 +367,6 @@ public:
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
-/*! \brief ring buffer class floating point 64-bit realization */
 template<> class buffer< __fx64 > : public buffer_abstract< __fx64 >
 {
     typedef __fx64 __type;
@@ -406,7 +377,6 @@ public:
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
-/*! \brief ring buffer class floating point extended 64-bit realization */
 template<> class buffer< __fxx64 > : public buffer_abstract< __fxx64 >
 {
     typedef __fxx64 __type;
@@ -416,7 +386,6 @@ public:
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
-/*! \brief ring buffer class complex integer 32-bit realization */
 template<> class buffer< __ix32 > : public buffer_abstract< __ix32 >
 {
     typedef __ix32 __type;
@@ -427,7 +396,6 @@ public:
      inline void operator () ( __ix64  *input ) { fill_buff< __ix64 >( input ); }
 };
 
-/*! \brief ring buffer class complex integer 64-bit realization */
 template<> class buffer< __ix64 > : public buffer_abstract< __ix64 >
 {
     typedef __ix64 __type;
@@ -439,7 +407,6 @@ public:
 
 #ifdef FCOMPLEX_H
 
-/*! \brief ring buffer class complex floating point 32-bit realization */
 template<> class buffer< fcomplex< __fx32 > > : public buffer_abstract< fcomplex< __fx32 > >
 {
     typedef fcomplex< __fx32 > __type;
@@ -451,7 +418,6 @@ public:
      inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64 > >( input ); }
 };
 
-/*! \brief ring buffer class complex floating point 64-bit realization */
 template<> class buffer< fcomplex< __fx64 > > : public buffer_abstract< fcomplex< __fx64 > >
 {
     typedef fcomplex< __fx64 > __type;
@@ -462,7 +428,6 @@ public:
      inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64 > >( input ); }
 };
 
-/*! \brief ring buffer class complex floating point extended 64-bit realization */
 template<> class buffer< fcomplex< __fxx64 > > : public buffer_abstract< fcomplex< __fxx64 > >
 {
     typedef fcomplex< __fxx64 > __type;
@@ -473,8 +438,6 @@ public:
 };
 
 #endif
-
-/*! @} */
 
 /*! @} */
 

@@ -21,6 +21,11 @@
 
 #include "utils.h"
 
+/*! \defgroup <SPECIAL_MATH_FUNCTIONS> ( Special functions )
+ *  \brief the module collaborates all special math functions
+    @{
+*/
+
 /*! \brief converts radians to degrees */
 #ifndef __TO_DEGREES
 #define __TO_DEGREES(x) ( (x) * 57.295779513082320876798154814105)
@@ -196,7 +201,8 @@
 #define PI_4 0.78539816339744830961566084581988
 #endif
 
-/*! \defgroup <Elliptic_fcn> ( Elliptic functons )
+/*! \defgroup <ELLIPTIC_FUNCTIONS> ( Elliptic functons )
+ *  \ingroup SPECIAL_MATH_FUNCTIONS
  *  \brief the module collaborates all the elliptic functions and integrals
     @{
 */
@@ -823,7 +829,8 @@ extern __fx64 __ellip_e__( __fx64 k )
 /*! @} */
 
 
-/*! \defgroup <Bessel_fcn> ( Bessel functions )
+/*! \defgroup <BESSEL_FUNCTIONS> ( Bessel functions )
+ *  \ingroup SPECIAL_MATH_FUNCTIONS
  *  \brief the module collaborates Bessel functions and factorial
     @{
 */
@@ -931,7 +938,8 @@ extern __fxx64 __modified_bessel_in__( __fxx64 x  , __ix32 order )
 
 /*! @} */
 
-/*! \defgroup <Window_fcn> ( Window functions )
+/*! \defgroup <WINDOW_FUNCTIONS> ( Window functions )
+ *  \ingroup SPECIAL_MATH_FUNCTIONS
  *  \brief the module describes windows functions class
     @{
 */
@@ -1483,11 +1491,22 @@ __fx64 *Tukey(__fx64 _R, __ix32 _order )
 }
 /*! \example Tukey_example.cpp */
 
+
+/*!
+     * \brief Linear convolution function
+     * \param[_Na] size of the first input polynom of a linear convolution function
+     * \param[_Nb] size of the second input polynom of a linear convolution function
+*/
 __ix32 __conv_size__(__ix32 _Na,  __ix32 _Nb)
 {
     return _Na + _Nb - 1;
 }
 
+/*!
+     * \brief Linear convolution function
+     * \param[_polymons_sizes] the sizes array of the polynoms to be convoluted
+     * \param[_polynoms_number] the number of the polynoms to be convoluted
+*/
 __ix32 __conv_size__(__ix32 *_polymons_sizes, __ix32 _polynoms_number)
 {
     __ix32 _Nc = _polymons_sizes[0];
@@ -1497,13 +1516,13 @@ __ix32 __conv_size__(__ix32 *_polymons_sizes, __ix32 _polynoms_number)
 
 /*!
      * \brief Linear convolution function
-     * \param[*_a] pointer to the poly a array
-     * \param[*_b] pointer to the poly b array
-     * \param[*_c] pointer to the poly c array
+     * \param[_a] pointer to the poly a array
+     * \param[_b] pointer to the poly b array
+     * \param[_c] pointer to the poly c array
      * \param[_Na] size of poly a array
      * \param[_Nb] size of poly b array
      * \param[_Nc] size of poly c array
-    */
+*/
 template< typename __type > void
 __convf__( const __type *_a, const __type *_b, __type *_c, __ix32 _Na,  __ix32 _Nb, __ix32 _Nc )
 {
@@ -1519,12 +1538,35 @@ __convf__( const __type *_a, const __type *_b, __type *_c, __ix32 _Na,  __ix32 _
     }
 }
 
+/*!
+     * \brief Linear convolution function
+     * \param[_a] pointer to the poly a array
+     * \param[_b] pointer to the poly b array
+     * \param[_Na] size of poly a array
+     * \param[_Nb] size of poly b array
+     * \param[_c] resulting polynom
+     * \param[_Nc] resulting polynom size
+     * \returns The function modifies variables _c and _Nc.
+     *          The mentioned modified variables will contain
+     *          convolution result polynom and the size of the resulting polynom
+*/
 template< typename __type > void
 __convf__( const __type *_a, const __type *_b, __ix32 _Na,  __ix32 _Nb, __type **_c, __ix32 *_Nc )
 {
     __convf__( _a, _b, ( *_c = __alloc__<__type>(_Nc) ) , _Na, _Nb, (*_Nc = _Na + _Nb - 1) );
 }
 
+/*!
+     * \brief Linear convolution function
+     * \param[_polynoms] array of the polynoms to be convoluted
+     * \param[_polynoms_sizes] array containing convoluted polynoms sizes
+     * \param[_polynoms_number] the number of the convoluted polynoms
+     * \param[_c] resulting polynom
+     * \param[_Nc] resulting polynom size
+     * \returns The function modifies variables _c and _Nc.
+     *          The mentioned modified variables will contain
+     *          convolution result polynom and the size of the resulting polynom
+*/
 template< typename __type > void
 __convf__( __type **_polynoms, __ix32 *_polynoms_sizes, __ix32 _polynoms_number, __type **_c, __ix32 *_Nc )
 {
@@ -1550,108 +1592,6 @@ __convf__( __type **_polynoms, __ix32 *_polynoms_sizes, __ix32 _polynoms_number,
 
     _a = __mfree__(_a);
 }
-
-// types
-template<typename __type>
-class array1D
-{
-    __type *m_data;
-    __ix32  m_size;
-    __ix32  m_bpos;
-public:
-
-    //
-    void copy( const array1D<__type>& vector )
-    {
-        // free data array if it exists
-        if( m_data )
-        {
-            m_data = __mfree__(m_data);
-            m_size = -1;
-        }
-
-        // allocate the new array and copy values there
-        m_size = vector.m_size;
-        m_data = __alloc__<__type>(m_size);
-        for( __ix32 i = 0 ; i < m_size ; i++ ) m_data[i] = vector.m_data[i];
-    }
-
-    // constructors
-    array1D()
-    {
-        m_data = nullptr;
-        m_bpos = 0;
-        m_size = -1;
-    }
-
-    array1D(__ix32 size)
-    {
-        m_size = size;
-        m_data = __alloc__<__type>(m_size);
-    }
-
-    array1D( const array1D<__type>& vector )
-    {        
-        copy(vector);
-    }
-
-    // destructor
-    ~array1D()
-    {
-        m_size = -1;
-        m_data = __mfree__(m_data);
-    }
-
-    // properties
-    __ix32 size()
-    {
-        return m_size;
-    }
-
-    // modifiers
-    void resize(__ix32 newsize)
-    {
-        m_size = newsize;
-        m_data = __realloc__<__type>(m_size);
-    }
-
-    void push_back(__type value)
-    {
-        if( m_bpos >= m_size ) resize( 2 * m_size );
-        m_data[m_bpos] = value;
-    }
-
-    // operators
-    inline __type& operator [] (__ix32 n)
-    {
-        return m_data[n];
-    }
-
-    inline void operator = (array1D<__type> &vector)
-    {
-        copy(vector);
-    }
-};
-
-// fraction
-template<typename __type> class fraction
-{
-    //        N(s)
-    // F(s) = -----
-    //        D(s)
-
-public:
-
-    array1D<__type> m_numerator;
-    array1D<__type> m_denominator;
-
-    // properties
-
-
-    // modifiers
-};
-
-
 
 /*! \example convolution_example.cpp */
 

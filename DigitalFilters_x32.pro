@@ -17,12 +17,15 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     include/buffer.h \
-    include/dsp.h \
     include/examples.h \
-    include/f_fir.h \
-    include/f_iir.h \
-    include/f_rff.h \
     include/fcomplex.h \
+    include/filters_fir.h \
+    include/filters_hmf.h \
+    include/filters_iir.h \
+    include/filters_rff.h \
+    include/kernel_dsp.h \
+    include/kernel_fir.h \
+    include/kernel_iir.h \
     include/logical.h \
     include/sgen.h \
     include/special_functions.h \

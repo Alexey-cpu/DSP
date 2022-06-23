@@ -18,6 +18,8 @@
 #include <limits>
 #endif
 
+#include "utils.h"
+
 /*! \brief converts radians to degrees */
 #ifndef __TO_DEGREES
 #define __TO_DEGREES(x) ( (x) * 57.295779513082320876798154814105)
@@ -119,17 +121,8 @@ void __cdiv__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
     __type scal =  _c2[REAL] * _c2[REAL] + _c2[IMAG] * _c2[IMAG];
     _c3[REAL]   =  _c1[REAL] * _c2[REAL] + _c1[IMAG] * _c2[IMAG];
     _c3[IMAG]   = -_c1[REAL] * _c2[IMAG] + _c1[IMAG] * _c2[REAL];
-
-    if( scal > std::numeric_limits<__type>::min() )
-    {
-        _c3[REAL] /= scal;
-        _c3[IMAG] /= scal;
-    }
-    else
-    {
-        _c3[REAL] = std::numeric_limits<__type>::max();
-        _c3[IMAG] = std::numeric_limits<__type>::max();
-    }
+    _c3[REAL]  /= scal;
+    _c3[IMAG]  /= scal;
 }
 
 // complex numbers modulus computation function
@@ -182,8 +175,14 @@ bool __cle__(const __type _c1[2], const  __type _c2[2] )
 }
 
 
-/*! \defgroup <COMPLEX_ARITHMETICS> ( Complex numbers functions )
+/*! \defgroup <COMPLEX_ARITHMETICS> ( Complex numbers )
  *  \brief the module describes complex numbers functions
+    @{
+*/
+
+/*! \defgroup <COMPLEX_NUMBER_REPRESENTATION> ( Complex numbers representation )
+ *  \ingroup COMPLEX_ARITHMETICS
+ *  \brief the module constins the complex number class
     @{
 */
 
@@ -503,6 +502,14 @@ public:
     template<typename T> friend T __cargf__ (fcomplex<T> _complex );
 };
 
+/*! @} */
+
+/*! \defgroup <COMPLEX_NUMBER_FUNCTIONS> ( Complex numbers utility functions )
+ *  \ingroup COMPLEX_ARITHMETICS
+ *  \brief Rhe module contains functions to operate with the complex numbers
+    @{
+*/
+
 /*!
  *  \brief complex number angle computation function
  *  \param[_complex] input complex number
@@ -684,6 +691,8 @@ __tanhf__( fcomplex<__type> _complex ) { return __sinhf__(_complex) / __coshf__(
 template<typename __type> fcomplex<__type>
 __ctnhf__( fcomplex<__type> _complex ) { return __coshf__(_complex) / __sinhf__(_complex); }
 /*! \example complex_ctnhf_example.cpp */
+
+/*! @} */
 
 /*! @} */
 

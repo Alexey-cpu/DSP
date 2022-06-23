@@ -16,47 +16,45 @@
     @{
 */
 
-/*! \brief defines 32-bit floating point type */
 #ifndef __fx32
 #define __fx32 float
 #endif
 
-/*! \brief defines 64-bit floating point type */
 #ifndef __fx64
 #define __fx64 double
 #endif
 
-/*! \brief defines 16-bit integer type */
 #ifndef __ix16
 #define __ix16 short
 #endif
 
-/*! \brief defines 32-bit integer type */
 #ifndef __ix32
 #define __ix32 int
 #endif
 
-/*! \brief timers class */
+/*! \defgroup <DSP_TIMERS> ( Timers )
+ *  \ingroup DSP_LOGICAL
+ *  \brief the module contains timers class
+    @{
+*/
+
+/*!
+ *  \class timers
+ *  \brief timers class
+*/
 class timers
 {
     typedef bool __bool ;
     typedef void __void ;
 
 private:
-    /*! \brief current time */
-    __fx64 m_Time;
-    /*! \brief sampling frequency , Hz */
-    __fx64 m_Fs;
-    /*! \brief sampling period , s */
-    __fx64 m_Ts;
-    /*! \brief number of frames per IDE cycle */
-    __ix32 m_FramesPerCycle;
 
-    /*! \brief timer logical output */
+    __fx64 m_Time;
+    __fx64 m_Fs;
+    __fx64 m_Ts;
+    __ix32 m_FramesPerCycle;
     __bool m_Q;
-    /*! \brief auxiliary variable */
     __bool m_CC;
-    /*! \brief auxiliary variable */
     __bool m_QQ;
 
 public:
@@ -207,22 +205,25 @@ public:
 
 /*! @} */
 
+/*! @} */
+
 /*! \defgroup <DSP_TRIGGERS> ( Triggers )
+ *  \ingroup DSP_LOGICAL
  *  \brief the module contains triggers class
     @{
 */
 
-/*! \brief triggers class */
+/*!
+ *  \class triggers
+ *  \brief triggers class */
 class triggers
 {
     typedef bool __bool ;
 
 private:
-    /*! \brief trigger logical output */
+
     __bool m_CC;
-    /*! \brief auxiliary variable */
     __bool m_QQ;
-    /*! \brief auxiliary variable */
     __bool m_Q;
 
 public:

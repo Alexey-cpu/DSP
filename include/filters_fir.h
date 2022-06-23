@@ -1,7 +1,7 @@
-#ifndef F_FIR_H
-#define F_FIR_H
+#ifndef FILTERS_FIR_H
+#define FILTERS_FIR_H
 
-#include "include/dsp.h"
+#include "kernel_fir.h"
 using namespace FIR_KERNEL;
 
 /*! \brief defines 32-bit floating point type */
@@ -145,75 +145,6 @@ public:
     #endif
 };
 
-template < typename T > class fcomb_abstract : public  filter_abstract
-{
-    typedef T __type ;
-protected:
-    __ix32 m_odd;
-    __fx64 m_out;
-     delay< __type > m_bx;
-
-     __ix32 allocate() override
-     {
-         return m_bx.allocate( m_order + 1 );
-     }
-
-     template< typename F > inline __type filt( F *input)
-     {
-         m_bx( input );
-         return ( m_out = (m_odd)? (__fx64)*input + (__fx64)m_bx[ m_order ] : (__fx64)*input - (__fx64)m_bx[ m_order ] );
-     }
-
-public:
-
-    void init( __fx64 _Fs , __fx64 _Fn, __ix32 _odd )
-    {
-        m_Fs      = _Fs;
-        m_Fn      = _Fn;
-        m_Ts      = (__fx64)1 / m_Fs;
-        m_odd     = _odd;
-        m_order   = m_Fs / m_Fn / 2;
-        m_out     = 0;
-
-        // memory allocation:
-        allocate();
-    }
-
-    __ix32 deallocate() override
-    {
-        m_bx.deallocate();
-        return 0;
-    }
-
-    fcomb_abstract(){}
-
-    fcomb_abstract( __fx64 _Fs , __fx64 _Fn, __ix32 _odd )
-    {
-        init( _Fs , _Fn, _odd );
-    }
-
-    virtual ~fcomb_abstract()
-    {
-        deallocate();
-    }
-
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
-    {
-        fcomplex<__fx64> Wz;
-        if(!m_odd)
-        {
-            Wz(1 - cos(-PI2  * (__fx64)m_order * F * m_Ts), -sin(-PI2  * (__fx64)m_order * F * m_Ts) );
-        }
-        else
-        {
-            Wz(1 + cos(-PI2  * (__fx64)m_order * F * m_Ts), +sin(-PI2  * (__fx64)m_order * F * m_Ts) );
-        }
-
-        return Wz;
-    }
-
-    virtual inline __type operator ()( __type *input ) = 0;
-};
 
 #undef __fx32
 #undef __fx64
@@ -222,4 +153,4 @@ public:
 #undef PI0
 #undef PI2
 
-#endif // F_FIR_H
+#endif // FILTERS_FIR_H
