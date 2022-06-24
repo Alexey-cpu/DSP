@@ -24,7 +24,10 @@
 #include "include/logical.h"
 #include "include/filters_rff.h"
 #include "include/filters_hmf.h"
+#include "include/filters_iir.h"
 
+
+// Recursive Fourier filter
 int example0()
 {
     typedef double __type;
@@ -106,6 +109,7 @@ int example0()
     return 0;
 }
 
+// Recursive Fourier filter based harmonic filter
 int example1()
 {
     typedef double __type;
@@ -190,6 +194,80 @@ int example1()
     dt .close();
 
     return 0;
+
+    return 0;
+}
+
+// butterworth filter
+int filters_butt_example()
+{
+    typedef float __type;
+
+    // emulation parameters:
+    double Fs                = 4000;
+    double Fn                = 50;
+    double time              = 0;
+    double EmulationDuration = 0.08;
+    int    CycleWidth        = 5;
+    int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
+    int    frames_per_cycle  = CycleWidth * Fs / 1000;
+
+    // logs directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // log files
+    std::ofstream xt;
+    std::ofstream yt;
+    std::ofstream pH;
+    std::ofstream Km;
+    std::ofstream dt;
+
+    // open files
+    yt .open(directory + "\\yt.txt");
+    xt .open(directory + "\\xt.txt");
+    pH .open(directory + "\\pH.txt");
+    Km .open(directory + "\\Km.txt");
+    dt .open(directory + "\\dt.txt");
+
+    // generator initialization
+    sgen<__type> gen;
+
+    // filter initialization
+    butterworth<__type> butt;
+    butt.init(Fs, 11, filter_type::bandstop, {100 , 400} );
+    butt.allocate();
+    butt.show();
+
+    // emulation
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        for( int j = 0 ; j < frames_per_cycle ; j++, time += 1 / Fs )
+        {
+            __type signal = gen.sine( 1, Fn, 0, Fs );
+            __type output = butt(&signal);
+
+            xt << signal << "\n";
+            yt << output << "\n";
+            dt << time   << "\n";
+        }
+    }
+
+    for( int i = 0 ; i < Fs / 2 ; i++ )
+    {
+        fcomplex<__type> output = butt.frequency_response( (double)i );
+        pH << __cargf__(output) << "\n";
+        Km << __cabsf__(output) << "\n";
+    }
+
+    // close files
+    xt.close();
+    yt.close();
+    Km.close();
+    pH.close();
+    dt.close();
+
+    // memory deallocation
+    butt.deallocate();
 
     return 0;
 }

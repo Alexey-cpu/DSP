@@ -157,7 +157,7 @@ namespace DSP_KERNEL
         __type *gains             = nullptr; ///< IIR filter quadratic sections gains vector
         __ix32 L                  = -1;      ///< IIR filter complex conjugate poles/zeros pairs number
         __ix32 R                  = -1;      ///< IIR filter real odd pole existance flag
-        __ix32 N                  = -1;      ///< IIR filter order
+        __ix32 N                  = -1;      ///< IIR filter quadratic sections number
         __ix32 Nx                 = -1;      ///< IIR single section numerator order
         __ix32 Ny                 = -1;      ///< IIR single section denominator order
     };
