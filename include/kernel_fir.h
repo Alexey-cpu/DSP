@@ -28,8 +28,18 @@ using namespace DSP_KERNEL;
 #define PI2 6.283185307179586476925286766559
 #endif
 
+/*!  \namespace FIR_KERNEL */
 namespace FIR_KERNEL
 {
+
+    /*! \defgroup <DSP_CLASSIC_FIR_FILTERS_KERNEL> ( Classic FIR low level kernel )
+     *  \ingroup KERNELS
+     *  \brief   The module contains classic FIR filters low level kernel
+     *  \details The module contains low level FIR filters computational utilities that compute
+     *          floating point type coefficients.
+        @{
+    */
+
     /*!
      * \brief FIR filter filtering function
      * \param[_input] pointer to the input signal samples buffer
@@ -401,6 +411,8 @@ namespace FIR_KERNEL
         }
 
     #endif
+
+   /*! @} */
 
 }
 

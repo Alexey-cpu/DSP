@@ -1837,7 +1837,6 @@ namespace IIR_KERNEL
     #endif
 
     /*! @} */
-
 }
 
 #undef __fx32
