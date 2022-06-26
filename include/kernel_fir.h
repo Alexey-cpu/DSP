@@ -64,8 +64,7 @@ namespace FIR_KERNEL
     */
     template< typename __type >
     inline  __type __filt__
-    ( __type *_coeffs,  delay< __type > &_buff_sx, __ix32 _N
-    )
+    ( __type *_coeffs,  delay< __type > &_buff_sx, __ix32 _N )
     {
         __type out = 0;
         for ( __ix32 n = _N-1 ; n >= 0; n--) out += _buff_sx[ n ] * _coeffs[n];
@@ -367,7 +366,7 @@ namespace FIR_KERNEL
     #ifndef __ALG_PLATFORM
 
         template<typename __type>
-        void __show__ ( filter_data<__type> _data )
+        void __show_fir__ ( filter_data<__type> _data )
         {
             if( _data.cfnum )
             {

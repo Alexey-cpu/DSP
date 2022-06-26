@@ -10,17 +10,11 @@
 
 int main()
 {
-
-    //filter_data<float> data = __butt_cheb1_digital_hp__<float>( 4000, 100, 11, 0, 1 );
-    //__show__(data, data.type);
-    //__dsp_clear_filter__(data);
-
-    //example0();
-    //example1();
-    filters_butt_example();
+    //filters_butt_example();
     //filters_cheb1_example();
     //filters_cheb2_example();
     //filters_ellip_example();
+    filters_fir_example();
 
     return 0;
 }

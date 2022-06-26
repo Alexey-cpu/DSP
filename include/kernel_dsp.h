@@ -206,6 +206,7 @@ namespace DSP_KERNEL
          *  \param[order] filter order
          *  \param[Fs] filter sampling frequency
         */
+
         void init(__ix32 order, __fx64 Fs)
         {
             m_order = order;

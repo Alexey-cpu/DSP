@@ -5,6 +5,10 @@
 #include "special_functions.h"
 using namespace FIR_KERNEL;
 
+#ifndef __ALG_PLATFORM
+#define FIR_FILTERS_DEBUG // debugging is not available if the algorithm is running on a device !!!
+#endif
+
 /*! \brief defines 32-bit floating point type */
 #ifndef __fx32
 #define __fx32 float
@@ -35,16 +39,40 @@ using namespace FIR_KERNEL;
 #define PI2 6.283185307179586476925286766559
 #endif
 
-/*! \class window_function */
+/*! \defgroup <CLASSIC_FIR_FILTERS> ( classic FIR filters)
+ *  \ingroup FILTERS
+ *  \brief The module contains abstract model and implementation of the classic FIR filter
+    @{
+*/
+
+/*! @} */
+
+/*! \defgroup <WINDOW_FUNCTIONS_HIGH_LEVEL_SHELL> ( Window functions high level shell )
+ *  \ingroup CLASSIC_FIR_FILTERS
+ *  \brief the module contains the high level shell for the sindow functions
+    @{
+*/
+
+/*!
+ *  \class window_function
+ *  \brief Defines window functions high level shell
+*/
 class window_function
 {
-    __ix32  m_order;
-    __fx64 *m_window;
+    __ix32  m_order  = 80;
+    __fx64 *m_window = nullptr;
 public:
 
+    /*! \brief returns window function coefficients vector */
     __fx64 *WindowFunction()
     {
         return m_window;
+    }
+
+     /*! \brief returns window order */
+    __ix32 Order()
+    {
+        return m_order;
     }
 
     /*!
@@ -53,6 +81,10 @@ public:
     */
     void Bartlett( __ix32 order )
     {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("window_function","Bartlett()", "Bartlett window function generation");
+        #endif
+
         m_order  = order;
         m_window = __mfree__(m_window);
         m_window = __Bartlett__(order);
@@ -64,6 +96,10 @@ public:
     */
     void BartlettHanning( __ix32 order )
     {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("window_function","BartlettHanning()", "Bartlett-Hanning window function generation");
+        #endif
+
         m_order  = order;
         m_window = __mfree__(m_window);
         m_window = __BartlettHanning__(order);
@@ -75,6 +111,10 @@ public:
     */
     void Blackman(__ix32 order)
     {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("window_function","Blackman()", "Blackman window function generation");
+        #endif
+
         m_order  = order;
         m_window = __mfree__(m_window);
         m_window = __Blackman__(order);
@@ -86,6 +126,10 @@ public:
     */
     void BlackmanHarris(__ix32 order)
     {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("window_function","BlackmanHarris()", "Blackman-Harris window function generation");
+        #endif
+
         m_order  = order;
         m_window = __mfree__(m_window);
         m_window = __BlackmanHarris__(order);
@@ -97,6 +141,10 @@ public:
     */
     void Bohman(__ix32 order)
     {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("window_function","Bohman()", "Bohman window function generation");
+        #endif
+
         m_order  = order;
         m_window = __mfree__(m_window);
         m_window = __Bohman__(order);
@@ -108,6 +156,10 @@ public:
     */
     void FlatTop(__ix32 order)
     {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("window_function","FlatTop()", "FlatTop window function generation");
+        #endif
+
         m_order  = order;
         m_window = __mfree__(m_window);
         m_window = __FlatTop__(order);
@@ -119,6 +171,10 @@ public:
     */
     void Hamming(__ix32 order )
     {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("window_function","Hamming()", "Hamming window function generation");
+        #endif
+
         m_order  = order;
         m_window = __mfree__(m_window);
         m_window = __Hamming__(order);
@@ -130,6 +186,10 @@ public:
     */
     void Hann(__ix32 order)
     {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("window_function","Hann()", "Hann window function generation");
+        #endif
+
         m_order  = order;
         m_window = __mfree__(m_window);
         m_window = __Hann__(order);
@@ -141,6 +201,10 @@ public:
     */
     void Nutall(__ix32 order)
     {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("window_function","Nutall()", "Nutall window function generation");
+        #endif
+
         m_order  = order;
         m_window = __mfree__(m_window);
         m_window = __Nutall__(order);
@@ -152,6 +216,10 @@ public:
     */
     void Parzen(__ix32 order)
     {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("window_function","Parzen()", "Parzen window function generation");
+        #endif
+
         m_order  = order;
         m_window = __mfree__(m_window);
         m_window = __Parzen__(order);
@@ -163,6 +231,10 @@ public:
     */
     void Rectangular(__ix32 order)
     {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("window_function","Rectangular()", "Rectangular window function generation");
+        #endif
+
         m_order  = order;
         m_window = __mfree__(m_window);
         m_window = __Rectangular__(order);
@@ -174,6 +246,10 @@ public:
     */
     void Triangular(__ix32 order)
     {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("window_function","Triangular()", "Triangular window function generation");
+        #endif
+
         m_order  = order;
         m_window = __mfree__(m_window);
         m_window = __Triangular__(order);
@@ -186,6 +262,10 @@ public:
     */
     void Chebyshev( __fx64 atten , __ix32 order )
     {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("window_function","Chebyshev()", "Chebyshev window function generation");
+        #endif
+
         m_order  = order;
         m_window = __mfree__(m_window);
         m_window = __Chebyshev__(atten, order);
@@ -198,6 +278,10 @@ public:
     */
     void Gaussian( __fx64 alpha, __ix32 order )
     {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("window_function","Gaussian()", "Gaussian window function generation");
+        #endif
+
         m_order  = order;
         m_window = __mfree__(m_window);
         m_window = __Gaussian__(alpha, order);
@@ -210,6 +294,10 @@ public:
     */
     void Kaiser(__fx64 betta, __ix32 order )
     {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("window_function","Kaiser()", "Kaiser window function generation");
+        #endif
+
         m_order  = order;
         m_window = __mfree__(m_window);
         m_window = __Kaiser__(betta, order);
@@ -222,23 +310,61 @@ public:
     */
     void Tukey(__fx64 R, __ix32 order )
     {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("window_function","Tukey()", "Tukey window function generation");
+        #endif
+
         m_order  = order;
         m_window = __mfree__(m_window);
         m_window = __Tukey__(R, order);
     }
 
+    void copy(const window_function& window)
+    {
+        m_order  = window.m_order;
+        m_window = __mfree__(m_window);
+        m_window = __alloc__<__fx64>(m_order);
+        for(__ix32 i = 0 ; i < m_order; i++)
+        {
+            m_window[i] = window.m_window[i];
+        }
+    }
+
     /*! \brief default constructor */
     window_function(){}
+
+    /*!
+     *  \brief copy constructor
+     *  \param[window] input window function
+    */
+    window_function(const window_function& window)
+    {
+        copy(window);
+    }
 
     /*! \brief default destructor */
     ~window_function()
     {
         m_window = __mfree__(m_window);
     }
+
+    inline void operator = ( window_function& window)
+    {
+        copy(window);
+    }
 };
 
+/*! @} */
+
+/*! \defgroup <CLASSIC_FIR_FILTER_ABSTRACT_MODEL> ( Classic FIR filter abstract model )
+ *  \ingroup CLASSIC_FIR_FILTERS
+ *  \brief the module contains the abstract model of the classic FIR filter
+    @{
+*/
+
+/*!  \brief defines the base of the FIR filters */
 template< typename __type >
-class classic_fir_abstract : public  model_base
+class classic_fir_base : public  model_base, classic_filter_interface
 {
 protected:
 
@@ -248,107 +374,178 @@ protected:
     bandwidth           m_Bandwidth;
     __ix32              m_Scale;
     delay<__type>       m_buff_sx;
-    __type             *m_Coeffs;
 
+public:
+
+    /*!
+     *   \brief initializes the classic FIR filter
+     *   \param[Fs] filter sampling frequency, Hz
+     *   \param[FilterType] filter type
+     *   \param[Bandwidth] filter stopband/passband width
+     *   \param[WindowFunction] filter window function
+     *   \param[Scale] scale ot not to scale the filter coefficients
+     *   \details The function is supposed to be called explicitly by the user before the filter resources are allocated
+    */
+    void init( __fx64 Fs, filter_type FilterType, bandwidth Bandwidth, window_function& WindowFunction, __ix32 Scale )
+    {
+        m_FilterType     = FilterType;
+        m_Bandwidth      = Bandwidth;
+        m_Scale          = Scale;
+        m_WindowFunction = WindowFunction;
+        model_base::init(WindowFunction.Order(), Fs);
+    }
+
+    /*!
+     *   \brief allocates the filter resources
+     *   \details The function is supposed to be called explicitly by the user.
+    */
     __ix32 allocate() override
     {
-        switch ( m_FilterType )
-        {
-            case filter_type::lowpass:
-            m_FilterData = __fir_wind_digital_lp__<__type>( m_Fs , m_Bandwidth.Fc , m_order , m_Scale , m_WindowFunction.WindowFunction() );
-            break;
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("classic_fir_base","allocate()", "fir filter memory allocation");
+        #endif
 
-            case filter_type::highpass:
-            m_FilterData = __fir_wind_digital_hp__<__type>( m_Fs , m_Bandwidth.Fc , m_order , m_Scale , m_WindowFunction.WindowFunction() );
-            break;
-
-            case filter_type::bandpass:
-            m_FilterData = __fir_wind_digital_bp__<__type>( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , m_Scale , m_WindowFunction.WindowFunction() );
-            break;
-
-            case filter_type::bandstop:
-            m_FilterData = __fir_wind_digital_bs__<__type>( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , m_Scale , m_WindowFunction.WindowFunction() );
-            break;
-
-            default:
-            m_FilterData = __fir_wind_digital_lp__<__type>( m_Fs , m_Bandwidth.Fc , m_order , m_Scale , m_WindowFunction.WindowFunction() );
-            break;
-        }
+        m_FilterData = round_coefficients<__type>(m_FilterType);
 
         if( m_FilterData.cfnum != nullptr )
         {
-            m_order  = m_FilterData.N;
-            m_Coeffs = m_FilterData.cfnum;
             return m_buff_sx.allocate( m_FilterData.N + 1 );
         }
 
         return 0;
     }
 
-public:
-
-    virtual inline void operator <<  ( __type *input ) = 0;
-    virtual inline __type operator() ( __type *input ) = 0;
-    virtual inline __type operator() () = 0;
-
-    virtual ~classic_fir_abstract()
-    {
-        deallocate();
-    }
-
+    /*!
+     *   \brief frees the filter resources
+     *   \details The function is supposed to be called explicitly by at the end of the filter's life time.
+    */
     __ix32 deallocate() override
     {
-        // filter data memory deallocation:
-        m_buff_sx.deallocate();
-        m_FilterData = __cf_free__( m_FilterData );
-
-        #ifdef DEBUG
-            std::cout << "memory deallocation invocation" << "\n";
-            std::cout << "m_cfmatrix.cfnum cleand = " << !m_FilterData.cfnum << "\n";
-            std::cout << "m_cfmatrix.cfden cleand = " << !m_FilterData.cfden << "\n";
-            std::cout << "m_cfmatrix.gains cleand = " << !m_FilterData.gains << "\n";
-            std::cout << "\n";
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("classic_fir_base","deallocate()", "fir filter memory deallocation");
         #endif
 
+        m_buff_sx.deallocate();
+        m_FilterData = __dsp_clear_filter__(m_FilterData);
         return ( !m_FilterData.cfnum && !m_FilterData.cfden );
     }
 
+    /*! \brief default destructor */
+    virtual ~classic_fir_base(){}
+
+    /*! \brief default constructor */
+    classic_fir_base() : model_base()
+    {
+        m_FilterType   = filter_type::lowpass;
+        m_Bandwidth    = { 100 , 500 };
+    }
+
+    /*!
+     *  \brief frequency responce computation function
+     *  \param[F] input frequency, Hz
+     *  \details The function computes the filter complex transfer function value for the given frequency
+    */
     fcomplex<__fx64> frequency_response( __fx64 F ) override
     {
         return __freq_resp__<__type> ( m_FilterData.cfnum , m_order, m_Fs , F  );
     }
 
-    void init( __fx64 _Fs , __ix32 _order , filter_type _type , bandwidth _bandwidth , __fx64* _window , bool _scale )
-    {
-        m_Fs          = _Fs;
-        m_FilterType  = _type;
-        m_order       = _order;
-        m_Bandwidth   = _bandwidth;
-        m_Scale       = _scale;
+    /*!
+     *  \brief FIR filter buffer fill operator
+     *  \param[input] input samples pointer
+     *  \details The operator is supposed to be used to fill the FIR filter buffer
+    */
+    virtual inline void operator <<  ( __type *input ) = 0;
 
-        // memory allocation function call:
-        allocate(_window);
-    }
+    /*!
+     *  \brief FIR filter filtering operator
+     *  \param[input] input samples pointer
+     *  \details The operator is supposed to be used to filt the input signal
+    */
+    virtual inline __type operator() ( __type *input ) = 0;
 
-    classic_fir_abstract() : model_base()
-    {
-        m_FilterType = filter_type::lowpass;
-        m_Bandwidth   = { 100 , 500 };
-    }
+    /*!
+     *  \brief FIR filter filtering operator
+     *  \details The operator is supposed to be used to filt the input signal right after the FIR filter buffer is filled.
+    */
+    virtual inline __type operator() () = 0;
 
-    classic_fir_abstract( __fx64 _Fs , __ix32 _order , filter_type _type , bandwidth _bandwidth , __fx64* _window , bool _scale )
-    {
-        init(_Fs, _order,  _type , _bandwidth , _window , _scale );
-    }
 
     #ifndef __ALG_PLATFORM
-    void show()
-    {
-        __show__( m_Coeffs, m_order, m_FilterType );
-    }
+        void show()
+        {
+            __show_fir__( m_FilterData );
+        }
     #endif
 };
 
+/*! @} */
+
+/*! \defgroup <CLASSIC_FIR_FILTER_IMPLEMENTATION> ( Classic FIR filter model implementation )
+ *  \ingroup CLASSIC_FIR_FILTERS
+ *  \brief the module contains the FIR filter model implementation
+    @{
+*/
+
+template<typename __type> class fir;
+
+template<> class fir< __fx32 > final : public classic_fir_base< __fx32 >
+{
+    typedef __fx32 __type;
+
+    filter_data< __fx64 > compute_lowpass () override { return __fir_wind_digital_lp__<__fx64>( m_Fs , m_Bandwidth.Fc , m_order , m_Scale , m_WindowFunction.WindowFunction() ); }
+    filter_data< __fx64 > compute_highpass() override { return __fir_wind_digital_hp__<__fx64>( m_Fs , m_Bandwidth.Fc , m_order , m_Scale , m_WindowFunction.WindowFunction() ); }
+    filter_data< __fx64 > compute_bandpass() override { return __fir_wind_digital_bp__<__fx64>( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , m_Scale , m_WindowFunction.WindowFunction() ); }
+    filter_data< __fx64 > compute_bandstop() override { return __fir_wind_digital_bs__<__fx64>( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , m_Scale , m_WindowFunction.WindowFunction() ); }
+
+public:
+
+    // default constructor
+    fir() : classic_fir_base< __type >(){}
+
+    // default destructor
+    ~fir(){}
+
+    // fir filtering operator
+    inline __type operator()( __type*  _input ) override { return __filt__< __type , __type >( _input, m_FilterData.cfnum, m_buff_sx, m_FilterData.N ); }
+    inline __type operator()( __fx64*  _input ) { return __filt__< __fx64  , __type >( _input, m_FilterData.cfnum, m_buff_sx, m_FilterData.N ); }
+    inline __type operator()( __fxx64* _input ) { return __filt__< __fxx64 , __type >( _input, m_FilterData.cfnum, m_buff_sx, m_FilterData.N ); }
+    inline __type operator()() override { return __filt__ < __type > ( m_FilterData.cfnum , m_buff_sx , m_FilterData.N ); }
+
+    // fir buffer filling operator
+    inline void operator << ( __type*  _input ) override { m_buff_sx(_input ); }
+    inline void operator << ( __fx64*  _input ) { m_buff_sx(_input ); }
+    inline void operator << ( __fxx64* _input ) { m_buff_sx(_input ); }
+};
+
+template<> class fir< __fx64 > final : public classic_fir_base< __fx64 >
+{
+    typedef __fx64 __type;
+
+    filter_data< __fx64 > compute_lowpass () override { return __fir_wind_digital_lp__<__fx64>( m_Fs , m_Bandwidth.Fc , m_order , m_Scale , m_WindowFunction.WindowFunction() ); }
+    filter_data< __fx64 > compute_highpass() override { return __fir_wind_digital_hp__<__fx64>( m_Fs , m_Bandwidth.Fc , m_order , m_Scale , m_WindowFunction.WindowFunction() ); }
+    filter_data< __fx64 > compute_bandpass() override { return __fir_wind_digital_bp__<__fx64>( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , m_Scale , m_WindowFunction.WindowFunction() ); }
+    filter_data< __fx64 > compute_bandstop() override { return __fir_wind_digital_bs__<__fx64>( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , m_Scale , m_WindowFunction.WindowFunction() ); }
+
+public:
+
+    // default constructor
+    fir() : classic_fir_base< __type >(){}
+
+    // default destructor
+    ~fir(){}
+
+    // fir filtering operator
+    inline __type operator()( __type*  _input ) override { return __filt__< __type , __type >( _input, m_FilterData.cfnum, m_buff_sx, m_FilterData.N ); }
+    inline __type operator()( __fxx64* _input ) { return __filt__< __fxx64 , __type >( _input, m_FilterData.cfnum, m_buff_sx, m_FilterData.N ); }
+    inline __type operator()() override { return __filt__ < __type > ( m_FilterData.cfnum , m_buff_sx , m_FilterData.N ); }
+
+    // fir buffer filling operator
+    inline void operator << ( __type*  _input ) override { m_buff_sx(_input ); }
+    inline void operator << ( __fxx64* _input ) { m_buff_sx(_input ); }
+};
+
+/*! @} */
 
 #undef __fx32
 #undef __fx64
