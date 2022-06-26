@@ -54,7 +54,7 @@ using namespace DSP_KERNEL;
  *  \f]
 */
 template< typename __type >
-class recursive_fourier_abstract : public filter_abstract
+class recursive_fourier_abstract : public model_base
 {
 protected:
 
@@ -115,7 +115,7 @@ protected:
    }
 
     /*!  \brief default constructor */
-    recursive_fourier_abstract() : filter_abstract()
+    recursive_fourier_abstract() : model_base()
     {
         #ifdef RFF_DEBUG
         Debugger::Log("recursive_fourier_abstract() call \n");

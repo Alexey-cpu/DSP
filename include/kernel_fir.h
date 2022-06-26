@@ -155,8 +155,8 @@ namespace FIR_KERNEL
         data.L     = -1;
         data.R     = -1;
         data.N     = _N;
-        data.Nx    = -1;
-        data.Ny    = -1;
+        data.Nx    = +1;
+        data.Ny    = +1;
 
         return data;
     }
@@ -217,17 +217,17 @@ namespace FIR_KERNEL
 
         // returning the result
         filter_data<__type> data;
-        data.poles   = nullptr;
-        data.zeros   = nullptr;
-        data.gains   = nullptr;
+        data.poles = nullptr;
+        data.zeros = nullptr;
+        data.gains = nullptr;
         data.cfnum = cfbuff;
         data.cfden = nullptr;
         data.gains = nullptr;
         data.L     = -1;
         data.R     = -1;
         data.N     = _N;
-        data.Nx    = -1;
-        data.Ny    = -1;
+        data.Nx    = +1;
+        data.Ny    = +1;
 
         return data;
     }
@@ -290,17 +290,17 @@ namespace FIR_KERNEL
 
         // returning the result
         filter_data<__type> data;
-        data.poles   = nullptr;
-        data.zeros   = nullptr;
-        data.gains   = nullptr;
+        data.poles = nullptr;
+        data.zeros = nullptr;
+        data.gains = nullptr;
         data.cfnum = cfbuff;
         data.cfden = nullptr;
         data.gains = nullptr;
         data.L     = -1;
         data.R     = -1;
         data.N     = _N;
-        data.Nx    = -1;
-        data.Ny    = -1;
+        data.Nx    = +1;
+        data.Ny    = +1;
 
         return data;
     }
@@ -349,17 +349,17 @@ namespace FIR_KERNEL
 
         // returning the result
         filter_data<__type> data;
-        data.poles   = nullptr;
-        data.zeros   = nullptr;
-        data.gains   = nullptr;
+        data.poles = nullptr;
+        data.zeros = nullptr;
+        data.gains = nullptr;
         data.cfnum = cfbuff;
         data.cfden = nullptr;
         data.gains = nullptr;
         data.L     = -1;
         data.R     = -1;
         data.N     = _N;
-        data.Nx    = -1;
-        data.Ny    = -1;
+        data.Nx    = +1;
+        data.Ny    = +1;
 
         return data;
     }

@@ -18,6 +18,9 @@ int main()
     //example0();
     //example1();
     filters_butt_example();
+    //filters_cheb1_example();
+    //filters_cheb2_example();
+    //filters_ellip_example();
 
     return 0;
 }

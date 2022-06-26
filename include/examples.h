@@ -28,7 +28,7 @@
 
 
 // Recursive Fourier filter
-int example0()
+int filters_rff_example()
 {
     typedef double __type;
 
@@ -106,11 +106,14 @@ int example0()
     Km .close();
     dt .close();
 
+    // explicit memory clean
+    rff.deallocate();
+
     return 0;
 }
 
 // Recursive Fourier filter based harmonic filter
-int example1()
+int filtes_hmf_example()
 {
     typedef double __type;
 
@@ -193,12 +196,13 @@ int example1()
     Km .close();
     dt .close();
 
-    return 0;
+    // explicit memory clean
+    hmf.deallocate();
 
     return 0;
 }
 
-// butterworth filter
+// Butterworth filter
 int filters_butt_example()
 {
     typedef float __type;
@@ -233,10 +237,10 @@ int filters_butt_example()
     sgen<__type> gen;
 
     // filter initialization
-    butterworth<__type> butt;
-    butt.init(Fs, 11, filter_type::bandstop, {100 , 400} );
-    butt.allocate();
-    butt.show();
+    butterworth<__type> filter;
+    filter.init(Fs, 11, filter_type::bandstop, {100 , 400} );
+    filter.allocate();
+    filter.show();
 
     // emulation
     for( int i = 0 ; i < cycles_num ; i++ )
@@ -244,7 +248,7 @@ int filters_butt_example()
         for( int j = 0 ; j < frames_per_cycle ; j++, time += 1 / Fs )
         {
             __type signal = gen.sine( 1, Fn, 0, Fs );
-            __type output = butt(&signal);
+            __type output = filter(&signal);
 
             xt << signal << "\n";
             yt << output << "\n";
@@ -254,7 +258,7 @@ int filters_butt_example()
 
     for( int i = 0 ; i < Fs / 2 ; i++ )
     {
-        fcomplex<__type> output = butt.frequency_response( (double)i );
+        fcomplex<__type> output = filter.frequency_response( (double)i );
         pH << __cargf__(output) << "\n";
         Km << __cabsf__(output) << "\n";
     }
@@ -266,11 +270,275 @@ int filters_butt_example()
     pH.close();
     dt.close();
 
-    // memory deallocation
-    butt.deallocate();
+    // explicit memory clean
+    filter.deallocate();
 
     return 0;
 }
+
+// Checbyshev type I filter
+int filters_cheb1_example()
+{
+    typedef float __type;
+
+    // emulation parameters:
+    double Fs                = 4000;
+    double Fn                = 50;
+    double time              = 0;
+    double EmulationDuration = 0.08;
+    int    CycleWidth        = 5;
+    int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
+    int    frames_per_cycle  = CycleWidth * Fs / 1000;
+
+    // logs directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // log files
+    std::ofstream xt;
+    std::ofstream yt;
+    std::ofstream pH;
+    std::ofstream Km;
+    std::ofstream dt;
+
+    // open files
+    yt .open(directory + "\\yt.txt");
+    xt .open(directory + "\\xt.txt");
+    pH .open(directory + "\\pH.txt");
+    Km .open(directory + "\\Km.txt");
+    dt .open(directory + "\\dt.txt");
+
+    // generator initialization
+    sgen<__type> gen;
+
+    // filter initialization
+    chebyshev_1<__type> filter;
+    filter.init(Fs, 12, filter_type::bandpass, {100 , 400}, 1 );
+    filter.allocate();
+    filter.show();
+
+    // emulation
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        for( int j = 0 ; j < frames_per_cycle ; j++, time += 1 / Fs )
+        {
+            __type signal = gen.sine( 1, Fn, 0, Fs );
+            __type output = filter(&signal);
+
+            xt << signal << "\n";
+            yt << output << "\n";
+            dt << time   << "\n";
+        }
+    }
+
+    for( int i = 0 ; i < Fs / 2 ; i++ )
+    {
+        fcomplex<__type> output = filter.frequency_response( (double)i );
+        pH << __cargf__(output) << "\n";
+        Km << __cabsf__(output) << "\n";
+    }
+
+    // close files
+    xt.close();
+    yt.close();
+    Km.close();
+    pH.close();
+    dt.close();
+
+    // explicit memory clean
+    filter.deallocate();
+
+    return 0;
+}
+
+// Checbyshev type II filter
+int filters_cheb2_example()
+{
+    typedef float __type;
+
+    // emulation parameters:
+    double Fs                = 4000;
+    double Fn                = 50;
+    double time              = 0;
+    double EmulationDuration = 0.08;
+    int    CycleWidth        = 5;
+    int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
+    int    frames_per_cycle  = CycleWidth * Fs / 1000;
+
+    // logs directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // log files
+    std::ofstream xt;
+    std::ofstream yt;
+    std::ofstream pH;
+    std::ofstream Km;
+    std::ofstream dt;
+
+    // open files
+    yt .open(directory + "\\yt.txt");
+    xt .open(directory + "\\xt.txt");
+    pH .open(directory + "\\pH.txt");
+    Km .open(directory + "\\Km.txt");
+    dt .open(directory + "\\dt.txt");
+
+    // generator initialization
+    sgen<__type> gen;
+
+    // filter initialization
+    chebyshev_2<__type> filter;
+    filter.init(Fs, 11, filter_type::lowpass, {100 , 400}, 80 );
+    filter.allocate();
+    filter.show();
+
+    // emulation
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        for( int j = 0 ; j < frames_per_cycle ; j++, time += 1 / Fs )
+        {
+            __type signal = gen.sine( 1, Fn, 0, Fs );
+            __type output = filter(&signal);
+
+            xt << signal << "\n";
+            yt << output << "\n";
+            dt << time   << "\n";
+        }
+    }
+
+    for( int i = 0 ; i < Fs / 2 ; i++ )
+    {
+        fcomplex<__type> output = filter.frequency_response( (double)i );
+        pH << __cargf__(output) << "\n";
+        Km << __cabsf__(output) << "\n";
+    }
+
+    // close files
+    xt.close();
+    yt.close();
+    Km.close();
+    pH.close();
+    dt.close();
+
+    // explicit memory clean
+    filter.deallocate();
+
+    return 0;
+}
+
+// Checbyshev type II filter
+int filters_ellip_example()
+{
+    typedef float __type;
+
+    // emulation parameters:
+    double Fs                = 4000;
+    double Fn                = 50;
+    double time              = 0;
+    double EmulationDuration = 0.08;
+    int    CycleWidth        = 5;
+    int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
+    int    frames_per_cycle  = CycleWidth * Fs / 1000;
+
+    // logs directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
+
+    // log files
+    std::ofstream xt;
+    std::ofstream yt;
+    std::ofstream pH;
+    std::ofstream Km;
+    std::ofstream dt;
+
+    // open files
+    yt .open(directory + "\\yt.txt");
+    xt .open(directory + "\\xt.txt");
+    pH .open(directory + "\\pH.txt");
+    Km .open(directory + "\\Km.txt");
+    dt .open(directory + "\\dt.txt");
+
+    // generator initialization
+    sgen<__type> gen;
+
+    // filter initialization
+    elliptic<__type> filter;
+    filter.init(Fs, 11, filter_type::bandstop, {100 , 400}, 80, 1 );
+    filter.allocate();
+    filter.show();
+
+    // emulation
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        for( int j = 0 ; j < frames_per_cycle ; j++, time += 1 / Fs )
+        {
+            __type signal = gen.sine( 1, Fn, 0, Fs );
+            __type output = filter(&signal);
+
+            xt << signal << "\n";
+            yt << output << "\n";
+            dt << time   << "\n";
+        }
+    }
+
+    for( int i = 0 ; i < Fs / 2 ; i++ )
+    {
+        fcomplex<__type> output = filter.frequency_response( (double)i );
+        pH << __cargf__(output) << "\n";
+        Km << __cabsf__(output) << "\n";
+    }
+
+    // close files
+    xt.close();
+    yt.close();
+    Km.close();
+    pH.close();
+    dt.close();
+
+    // explicit memory clean
+    filter.deallocate();
+
+    return 0;
+}
+
+// complex numbers example
+int complex_numbers_example()
+{
+    printf( " ...complex arithmetics utilization example and test... \n " );
+    fcomplex<double> z0( 1.0 , 2.0 ) , z1( 2.0 , 0.5 ) , z2( 3.5 , 4.5 );
+    printf( "complex math functions check: \n" );
+    printf( "z0 = %.4f \t %.4f \n" , __realf__(z0) , __imagf__(z0) );
+    printf( "z1 = %.4f \t %.4f \n" , __realf__(z1) , __imagf__(z1) );
+    printf( "z2 = %.4f \t %.4f \n" , __realf__(z2) , __imagf__(z2) );
+    printf( "\n\n");
+
+    printf( "arithmetics: \n" );
+
+    printf( "z0 * z1          = %.4f \t %.4f \n" , __realf__( z0 * z1 ) , __imagf__( z0 * z1 ));
+    printf( "z0 / z1          = %.4f \t %.4f \n" , __realf__( z0 / z1 ) , __imagf__( z0 / z1 ));
+    printf( "sqrt( z0 )       = %.4f \t %.4f \n" , __realf__( __csqrtf__(z0)), __imagf__( __csqrtf__(z0)));
+    printf( "z0 + z1 + z2     = %.4f \t %.4f \n" , __realf__( z0 + z1 + z2 ), __imagf__( z0 + z1 + z2  ));
+    printf( "z0 - z1 - z2     = %.4f \t %.4f \n" , __realf__( z0 - z1 - z2 ), __imagf__( z0 - z1 - z2  ));
+    printf( "z0 * z1 / z2     = %.4f \t %.4f \n" , __realf__( z0 * z1 / z2 ), __imagf__( z0 * z1 / z2  ));
+    printf( "(z1-z2)/(z1+z2)  = %.4f \t %.4f \n" , __realf__( ( z1 - z2 ) / ( z1 + z2 ) ) , __imagf__( ( z1 - z2 ) / ( z1 + z2 ) ));
+    z0 += z2; printf( "( z0 = z0 + z2 ) = %.4f \t %.4f \n" , __realf__(z0), __imagf__(z0));
+    z1 *= z2; printf( "( z1 = z1 * z2 ) = %.4f \t %.4f \n" , __realf__(z1), __imagf__(z1));
+    z2 /= z1; printf( "( z2 = z2 / z1 ) = %.4f \t %.4f \n" , __realf__(z2), __imagf__(z2));
+    printf( "\n\n");
+
+    printf( " complex functions : \n" );
+    printf( " sinh( z0 )       = %.4f \t %.4f \n" , __realf__( __sinhf__(z0) ) , __imagf__( __sinhf__(z0) ) );
+    printf( " cosh( z0 )       = %.4f \t %.4f \n" , __realf__( __coshf__(z0) ) , __imagf__( __coshf__(z0) ) );
+    printf( " tanh( z0 )       = %.4f \t %.4f \n" , __realf__( __tanhf__(z0) ) , __imagf__( __tanhf__(z0) ) );
+    printf( " ctnh( z0 )       = %.4f \t %.4f \n" , __realf__( __ctnhf__(z0) ) , __imagf__( __ctnhf__(z0) ) );
+    printf( " conj( z0 )       = %.4f \t %.4f \n" , __realf__( __conjf__(z0) ) , __imagf__( __conjf__(z0) ) );
+    printf( " norm( z0 )       = %.4f \t %.4f \n" , __realf__( __cnormf__(z0) ) , __imagf__( __cnormf__(z0) ) );
+    z0 *=__crotf__<double>( 60.0 , 1); printf( " z0*rot( 60 , 1 ) = %.4f \t %.4f \n" , __realf__( z0 ) , __imagf__( z0 ) );
+    printf( "\n\n");
+
+    printf( " scalar functions : \n" );
+    printf( " abs( z0 )  = %.4f \n" , __cabsf__<double>(z0) );
+    printf( " arg( z0 )  = %.4f \n" , __cargf__<double>(z0) * 180.0 / 3.1415926535897932384626433832795);
+    return 0;
+}
+
 
 /*
 

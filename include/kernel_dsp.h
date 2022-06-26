@@ -50,14 +50,34 @@
 #endif
 
 /*! \defgroup <FILTERS> ( Filters )
- *  \brief the module contains different filters implementations description
+ *  \brief The module contains different filters implementations description
     @{
 */
 
 /*! @} */
 
+
+/*! \defgroup <KERNELS> ( Kernels )
+ *  \brief The module contains low level DSP kernels
+    @{
+*/
+
+/*! @} */
+
+/*!  \namespace DSP_KERNEL */
 namespace DSP_KERNEL
 {
+
+    /*! \defgroup <DSP_MAIN_KERNEL> ( Main kernel )
+     *  \ingroup KERNELS
+     *  \brief   The module contains the main DSP low level kernel utilized to generate other DSP kernels and models
+     *  \details The module contains the main DSP low level kernel utilized to generate other DSP kernels and models.
+     *           The main kernel defines DSP components models main data structure and base class.
+     *           It alse contains the range of auxiliary data structures and enumerations.
+     *           All the models implemented using this kernel must derive from the filter_abstract base class.
+        @{
+    */
+
     /*!
      *  \struct bandwidth
      *  \brief  filter passband/stopband frequency and bandwidth
@@ -92,58 +112,11 @@ namespace DSP_KERNEL
     };
 
     /*!
-     *  \brief base filter class
-     *  \details Defines the building base for the filtres creation.
-     *           Use inheritance mechnism to create the deriving filter class
-    */
-    class filter_abstract
-    {
-    protected:
-
-        // system variables
-        __ix32 m_order;
-        __fx64 m_Fs;
-        __fx64 m_Ts;
-
-        // default constructor
-        filter_abstract(){}
-
-        // virtual destructor
-        virtual ~filter_abstract(){};
-
-    public:
-
-        /*!
-         *  \brief memory allocation function
-         *  \details the functions must allocate the filter resources.
-         *           Do not call this function from the derived classes
-         *           constructors. The functions is
-         *           supposed to be called explicitly by user.
-        */
-        virtual __ix32 allocate()   = 0;
-
-        /*!
-         *  \brief memory deallocation function
-         *  \details the functions must clear the filter resources.
-         *           Do not call this function from the derived classes
-         *           destructors. The function is
-         *           supposed to be called explicitly by user.
-        */
-        virtual __ix32 deallocate() = 0;
-
-        /*!
-         *  \brief filter frequency responce computation function
-         *  \details The function must compute filter frequency responce
-         *           and return the complex transfer function value
-         *           for the given frequency F
-        */
-        virtual fcomplex<__fx64> frequency_response( __fx64 F ) = 0;
-    };
-
-    /*!
      *  \brief filter data structure
-     *  \details contains all the filter information
-     *           used for the analysis and modelling
+     *  \details Contains all the filter information used for the analysis and modelling.
+     *           The filter data structure supposes that the filter is modeled by the
+     *           number of quadratic sections that have the same numerator and
+     *           denominator order
     */
     template<typename __type>
     struct filter_data
@@ -152,14 +125,15 @@ namespace DSP_KERNEL
         fcomplex< __fx64 > *poles = nullptr; ///< lowpass normalized analogue prototype complex conjugate poles pairs
         fcomplex< __fx64 > *zeros = nullptr; ///< lowpass normalized analogue prototype complex conjugate zeros pairs
         fcomplex< __fx64 > *ratio = nullptr; ///< lowpass normalized analogue prototype zero frequency gains vector
-        __type *cfnum             = nullptr; ///< IIR filter numerator quadratic sections coefficients matrix
-        __type *cfden             = nullptr; ///< IIR filter denominator quadratic sections coefficients matrix
-        __type *gains             = nullptr; ///< IIR filter quadratic sections gains vector
-        __ix32 L                  = -1;      ///< IIR filter complex conjugate poles/zeros pairs number
-        __ix32 R                  = -1;      ///< IIR filter real odd pole existance flag
-        __ix32 N                  = -1;      ///< IIR filter quadratic sections number
-        __ix32 Nx                 = -1;      ///< IIR single section numerator order
-        __ix32 Ny                 = -1;      ///< IIR single section denominator order
+        __type *cfnum             = nullptr; ///< filter numerator quadratic sections coefficients matrix
+        __type *cfden             = nullptr; ///< filter denominator quadratic sections coefficients matrix
+        __type *gains             = nullptr; ///< filter quadratic sections gains vector
+        __ix32 L                  = -1;      ///< filter complex conjugate poles/zeros pairs number
+        __ix32 R                  = -1;      ///< filter real odd pole existance flag
+        __ix32 N                  = -1;      ///< filter quadratic sections number
+        __ix32 Nx                 = -1;      ///< single section numerator order
+        __ix32 Ny                 = -1;      ///< single section denominator order
+        __ix32 order              = -1;      ///< filter order
     };
 
     /*!
@@ -182,6 +156,7 @@ namespace DSP_KERNEL
         output.N     = -1;
         output.Nx    = -1;
         output.Ny    = -1;
+        output.order = -1;
         return output;
     }
 
@@ -205,11 +180,229 @@ namespace DSP_KERNEL
         data.N     = -1;
         data.Nx    = -1;
         data.Ny    = -1;
+        data.order = -1;
         return data;
     }
-}
 
-/*! @} */
+    /*!
+     *  \brief base DSP model class
+     *  \details Defines the building base for the DSP components creation.
+     *           Use inheritance mechnism to create the deriving filter class
+    */
+    class model_base
+    {
+    protected:
+
+        // system variables
+        __ix32 m_order; ///< filter order
+        __fx64 m_Fs;    ///< filter sampling frequency
+        __fx64 m_Ts;    ///< filter sampling period
+
+        /*! \brief default constructor */
+        model_base(){}
+
+        /*!
+         *  \brief initialazing constructor
+         *  \param[order] filter order
+         *  \param[Fs] filter sampling frequency
+        */
+        void init(__ix32 order, __fx64 Fs)
+        {
+            m_order = order;
+            m_Fs    = Fs;
+            m_Ts    = (__fx64)1 / m_Fs;
+        }
+
+        /*! \brief default virtual destructor */
+        virtual ~model_base(){};
+
+    public:
+
+        /*!
+         *  \brief memory allocation function
+         *  \details The functions must allocate a model resources.
+         *           Do not call this function from the derived classes
+         *           constructors. The functions is
+         *           supposed to be called explicitly by user.
+        */
+        virtual __ix32 allocate()   = 0;
+
+        /*!
+         *  \brief memory deallocation function
+         *  \details The functions must clear the model resources.
+         *           Do not call this function from the derived classes
+         *           destructors. The function is
+         *           supposed to be called explicitly by user.
+        */
+        virtual __ix32 deallocate() = 0;
+
+        /*!
+         *  \brief filter frequency responce computation function
+         *  \details The function must compute filter frequency responce
+         *           and return the complex transfer function value
+         *           for the given frequency F
+        */
+        virtual fcomplex<__fx64> frequency_response( __fx64 F ) = 0;
+    };
+
+    /*!
+     *  \brief classic filter interface
+     *  \details Defines the IIR/FIR classic filter interface
+    */
+    class classic_filter_interface
+    {
+    public:
+
+        /*!  \brief lowpass filter computation function */
+        virtual filter_data<__fx64> compute_lowpass()  = 0;
+
+        /*!  \brief highpass filter computation function */
+        virtual filter_data<__fx64> compute_highpass() = 0;
+
+        /*!  \brief bandpass filter computation function */
+        virtual filter_data<__fx64> compute_bandpass() = 0;
+
+        /*!  \brief bandstop filter computation function */
+        virtual filter_data<__fx64> compute_bandstop() = 0;
+
+        /*!
+         *   \brief coefficients computation function
+         *   \param[type] filter type
+        */
+        filter_data<__fx64> compute_filter_data(filter_type type)
+        {
+            switch (type)
+            {
+                case filter_type::lowpass :
+                    return compute_lowpass();
+                break;
+
+                case filter_type::highpass :
+                    return compute_highpass();
+                break;
+
+                case filter_type::bandpass :
+                    return compute_bandpass();
+                break;
+
+                case filter_type::bandstop :
+                    return compute_bandstop();
+                break;
+
+                case filter_type::other :
+                    return compute_lowpass();
+                break;
+            }
+
+             return compute_lowpass();
+        }
+
+        /*!
+         *   \brief coefficients round function
+         *   \param[type] filter type
+         *   \details the function rounds transforms filter coefficietns from double precision to any other type exept integer.
+        */
+        template< typename __type > filter_data< __type > round_coefficients(filter_type type)
+        {
+            // compute filter data
+            filter_data<__fx64> data = compute_filter_data(type);
+
+            // generate rouned filter data version
+            filter_data<__type> matrix;
+
+            // round numerator coefficients
+            if(data.cfnum)
+            {
+                matrix.cfnum = __alloc__<__type>( data.Nx * data.N );
+
+                for( __ix32 j = 0 ; j < data.N ; j++ )
+                {
+                    for( __ix32 i = 0 ; i < data.Nx ; i++ )
+                    {
+                        matrix.cfnum[ j * data.Nx + i ] = data.cfnum[ j * data.Nx + i ];
+                    }
+                }
+            }
+
+            // round denominator coefficients
+            if(data.cfden)
+            {
+                matrix.cfden = __alloc__<__type>( data.Ny * data.N );
+
+                for( __ix32 j = 0 ; j < data.N ; j++ )
+                {
+                    for( __ix32 i = 0 ; i < data.Ny ; i++ )
+                    {
+                        matrix.cfden[ j * data.Ny + i ] = data.cfden[ j * data.Ny + i ];
+                    }
+                }
+            }
+
+            // round gains
+            if(data.gains)
+            {
+                matrix.gains = __alloc__<__type>( data.N + 1 );
+
+                for( __ix32 j = 0 ; j < data.N ; j++ )
+                {
+                    matrix.gains[j] = data.gains[j];
+                }
+
+                matrix.gains[data.N] = data.gains[data.N];
+            }
+
+            // overwrite zeros
+            if( data.zeros )
+            {
+                matrix.zeros = __alloc__< fcomplex<__fx64> >( data.N );
+
+                for( __ix32 j = 0 ; j < data.N ; j++ )
+                {
+                    matrix.zeros[j] = data.zeros[j];
+                }
+            }
+
+            // overwrite poles
+            if( data.zeros )
+            {
+                matrix.poles = __alloc__< fcomplex<__fx64> >( data.N );
+
+                for( __ix32 j = 0 ; j < data.N ; j++ )
+                {
+                    matrix.poles[j] = data.poles[j];
+                }
+            }
+
+            // overwrite ratios
+            if( data.ratio )
+            {
+                matrix.ratio = __alloc__< fcomplex<__fx64> >( data.N );
+
+                for( __ix32 j = 0 ; j < data.N ; j++ )
+                {
+                    matrix.ratio[j] = data.ratio[j];
+                }
+
+                matrix.ratio[data.N] = data.ratio[data.N];
+            }
+
+            // assign other fields
+            matrix.L  = data.L;
+            matrix.R  = data.R;
+            matrix.Nx = data.Nx;
+            matrix.Ny = data.Ny;
+            matrix.N  = data.N;
+
+            // clear filter data
+            __dsp_clear_filter__(data);
+
+            return matrix;
+        }
+    };
+
+    /*! @} */
+
+}
 
 #undef __fx32
 #undef __fx64

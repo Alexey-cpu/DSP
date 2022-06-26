@@ -32,8 +32,20 @@ using namespace DSP_KERNEL;
 #define PI2 6.283185307179586476925286766559
 #endif
 
+/*!  \namespace IIR_KERNEL */
 namespace IIR_KERNEL
 {
+
+    /*! \defgroup <DSP_CLASSIC_IIR_FILTERS_KERNEL> ( Classic IIR low level kernel )
+     *  \ingroup KERNELS
+     *  \brief   The module contains classic IIR filters low level kernel
+     *  \details The module contains the Butterworth, Chebyshev type I, Chebyshev type II and Elliptic
+     *           filters low level computational utilities. All the mentioned above filters are modelled
+     *           by quadratic sections model ty avoid the rounding errors. All the functions compute
+     *          floating point type coefficients.
+        @{
+    */
+
     using namespace DSP_KERNEL;
 
     /*!
@@ -797,6 +809,8 @@ namespace IIR_KERNEL
     template<typename __type>
     filter_data<__type> __butt_cheb1_digital_bp__ ( __fx64 _Fs, __fx64 _Fp, __fx64 _BandWidth, __ix32 _order, __ix32 _type   = 0, __fx64 _g_stop = 1 ) // refactored
     {
+        // INITIALIZATION
+        if( _order % 2 > 0 ) _order++;
         _order /= 2;
 
         // frequency deformation coefficient:
@@ -973,8 +987,8 @@ namespace IIR_KERNEL
     template<typename __type>
     filter_data<__type> __butt_cheb1_digital_bs__( __fx64 _Fs, __fx64 _Fc, __fx64 _BandWidth, __ix32 _order, __fx32 _type   = 0, __fx64 _g_stop = 1 ) // refactored
     {
-
        // INITIALIZATION:
+       if( _order % 2 > 0 ) _order++;
        _order /= 2;
 
        // frequency deformation coefficient:
@@ -1394,6 +1408,8 @@ namespace IIR_KERNEL
     template<typename __type>
     filter_data<__type> __cheb2_ellip_digital_bp__ ( __fx64 _Fs, __fx64 _Fp, __fx64 _BandWidth, __ix32 _order, __ix32 _type   = 0, __fx64 _g_pass = 1, __fx64 _g_stop = 80 ) // refactored
     {
+        // INITIALIZATION
+        if( _order % 2 > 0 ) _order++;
         _order /= 2;
 
         // frequency deformation coefficient:
@@ -1587,6 +1603,8 @@ namespace IIR_KERNEL
     template<typename __type>
     filter_data<__type> __cheb2_ellip_digital_bs__( __fx64 _Fs, __fx64 _Fc, __fx64 _BandWidth, __ix32 _order, __ix32 _type   = 0, __fx64 _g_pass = 1, __fx64 _g_stop = 80 ) // refactored
     {
+        // INITIALIZATION
+        if( _order % 2 > 0 ) _order++;
         _order /= 2;
 
         // frequency deformation coefficient:
@@ -1766,11 +1784,11 @@ namespace IIR_KERNEL
     #ifndef __ALG_PLATFORM
 
     template<typename __type>
-    void __show__( filter_data<__type> _data, filter_type _type )
+    void __show__( filter_data<__type> _data )
     {
         if( _data.cfnum && _data.cfden && _data.gains )
         {
-            switch ( _type )
+            switch ( _data.type )
             {
                 case filter_type::lowpass:
                 printf("Lowapass coefficients vector:\n");
@@ -1817,6 +1835,8 @@ namespace IIR_KERNEL
     }
 
     #endif
+
+    /*! @} */
 
 }
 

@@ -960,7 +960,7 @@ extern __fxx64 __modified_bessel_in__( __fxx64 x  , __ix32 order )
  *      \end{equation}
  *  \f]
 */
-__fx64 *Bartlett( __ix32 _order )
+__fx64 *__Bartlett__( __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -981,7 +981,7 @@ __fx64 *Bartlett( __ix32 _order )
  *      y( n ) = 0.62 - 0.48 * \left|  \frac{ n }{ Ns - 1 } - 0.5 \right| + 0.38 * cos \left[ \ 2 * \pi * \left( \frac{ n }{ Ns - 1 } - 0.5 \right) \right]
  *  \f]
 */
-__fx64 *BartlettHanning( __ix32 _order )
+__fx64 *__BartlettHanning__( __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1003,8 +1003,8 @@ __fx64 *BartlettHanning( __ix32 _order )
      *      n  = 0 \dots Ns \newline
      *      y( n ) = 0.42 - 0.50 * cos \left( 2 * \pi * \frac { n } { Ns - 1 } \right ) + 0.08 * cos \left( 4 * \pi * \frac{ n } { Ns - 1 } \right )
      *  \f]
-    */
-__fx64 *Blackman(__ix32 _order)
+*/
+__fx64 *__Blackman__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1026,7 +1026,7 @@ __fx64 *Blackman(__ix32 _order)
      *      y( n ) = 0.35875 - 0.48829 * cos \left( 2 * \pi * \frac{ n } { Ns - 1 } \right ) + 0.14128 * cos\left( 4 * \pi * \frac{ n } { Ns - 1 } \right ) - 0.01168 * cos \left( 6 * \pi * \frac{ n } { Ns - 1 } \right )
      *  \f]
     */
-__fx64 *BlackmanHarris(__ix32 _order)
+__fx64 *__BlackmanHarris__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1053,7 +1053,7 @@ __fx64 *BlackmanHarris(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 *Bohman(__ix32 _order)
+__fx64 *__Bohman__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1085,7 +1085,7 @@ __fx64 *Bohman(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 cheby_poly(__ix32 n, __fx64 x)
+__fx64 __cheby_poly__(__ix32 n, __fx64 x)
 {
     __fx64 res;
     if (fabs(x) <= 1) res = cos(n*acos(x));
@@ -1100,7 +1100,7 @@ __fx64 cheby_poly(__ix32 n, __fx64 x)
      * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Chebyshev window coefficients
     */
-__fx64 *Chebyshev( __fx64 _atten , __ix32 _order )
+__fx64 *__Chebyshev__( __fx64 _atten , __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1117,7 +1117,7 @@ __fx64 *Chebyshev( __fx64 _atten , __ix32 _order )
     {
         n = nn - M;
         sum = 0;
-        for (kk = 1; kk <= M; kk++)  { sum += cheby_poly(Ns - 1, x0*cos(PI0*kk / Ns))*cos(2.0*n*PI0*kk / Ns); }
+        for (kk = 1; kk <= M; kk++)  { sum += __cheby_poly__(Ns - 1, x0*cos(PI0*kk / Ns))*cos(2.0*n*PI0*kk / Ns); }
         buff[nn] = tg + 2 * sum;
         buff[(__ix32)Ns - nn - 1] = buff[nn];
         if (buff[nn] > max)max = buff[nn];
@@ -1143,7 +1143,7 @@ __fx64 *Chebyshev( __fx64 _atten , __ix32 _order )
      *      + 0.006947368 * cos \left( 8 * \pi * \frac{ n } { Ns - 1 } \right)
      *  \f]
     */
-__fx64 *FlatTop(__ix32 _order)
+__fx64 *__FlatTop__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1183,7 +1183,7 @@ __fx64 *FlatTop(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 *Gaussian( __fx64 _alpha, __ix32 _order )
+__fx64 *__Gaussian__( __fx64 _alpha, __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1216,7 +1216,7 @@ __fx64 *Gaussian( __fx64 _alpha, __ix32 _order )
      *      y( n ) = 0.54 - 0.46 * cos \left( 2 * \pi * \frac{ n } { Ns-1 } \right)
      *  \f]
     */
-__fx64 *Hamming(__ix32 _order )
+__fx64 *__Hamming__(__ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1240,7 +1240,7 @@ __fx64 *Hamming(__ix32 _order )
      *      y( n ) = 0.5 - 0.5 * cos \left( 2 * \pi * \frac{ n } { Ns-1 } \right)
      *  \f]
     */
-__fx64 *Hann(__ix32 _order)
+__fx64 *__Hann__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1269,7 +1269,7 @@ __fx64 *Hann(__ix32 _order)
      *      y(n) = \frac{ ModifiedBessel( B , 0 ) }{ ModifiedBessel( C , 0 ) }
      *  \f]
     */
-__fx64 *Kaiser(__fx64 _betta, __ix32 _order )
+__fx64 *__Kaiser__(__fx64 _betta, __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1305,7 +1305,7 @@ __fx64 *Kaiser(__fx64 _betta, __ix32 _order )
      *      - 0.0106411 * cos \left( 6 * \pi * \frac{ n }{ Ns - 1 } \right)
      *  \f]
     */
-__fx64 *Nutall(__ix32 _order)
+__fx64 *__Nutall__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1344,7 +1344,7 @@ __fx64 *Nutall(__ix32 _order)
      *
      *  \f]
     */
-__fx64 *Parzen(__ix32 _order)
+__fx64 *__Parzen__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1383,7 +1383,7 @@ __fx64 *Parzen(__ix32 _order)
      *      y(n) = 1
      *  \f]
     */
-__fx64 *Rectangular(__ix32 _order)
+__fx64 *__Rectangular__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1411,7 +1411,7 @@ __fx64 *Rectangular(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 *Triangular(__ix32 _order)
+__fx64 *__Triangular__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1461,7 +1461,7 @@ __fx64 *Triangular(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 *Tukey(__fx64 _R, __ix32 _order )
+__fx64 *__Tukey__(__fx64 _R, __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
