@@ -192,7 +192,7 @@ namespace DSP_KERNEL
         model_base(){}
 
         /*!
-         *  \brief initialazing constructor
+         *  \brief initialazation function
          *  \param[order] filter order
          *  \param[Fs] filter sampling frequency
         */
