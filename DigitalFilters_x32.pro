@@ -16,6 +16,15 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    examples/example_butt.h \
+    examples/example_cheb1.h \
+    examples/example_cheb2.h \
+    examples/example_complex_numbers.h \
+    examples/example_ellip.h \
+    examples/example_fir.h \
+    examples/example_hmf.h \
+    examples/example_rff.h \
+    examples/example_special_functions.h \
     examples/examples.h \
     include/buffer.h \
     include/fcomplex.h \

@@ -14,6 +14,7 @@
 #endif
 
 #include "QElapsedTimer"
+#include <fstream>
 #include "iostream"
 #include "cmath"
 #include "vector"
