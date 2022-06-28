@@ -1,13 +1,3 @@
-/*!
- *
- * brief   Buffers
- * authors A.Tykvinskiy
- * date    21.12.2021
- * version 1.0
- *
- * The header declares buffer and delay template classes
-*/
-
 #ifndef BUFFER_H
 #define BUFFER_H
 

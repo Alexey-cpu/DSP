@@ -58,16 +58,7 @@ using namespace IIR_KERNEL;
 
 template<typename __type> class iir_base : public model_base, public classic_filter_interface
 {
-protected:
-
-    filter_data<__type> m_FilterData;
-    filter_type         m_FilterType;
-    bandwidth           m_Bandwidth;
-    attenuation         m_Attenuation;
-    delay<__type>      *m_buff_sx;
-    delay<__type>      *m_buff_sy;
-
-    __ix32 m_SectionsNumber;
+private:
 
     // buffers array deallocation function
     delay<__type>* buffers_array_free(delay<__type> *buffers, __ix32 buffersNumber)
@@ -96,19 +87,8 @@ protected:
         return buffers;
     }
 
-    template<typename T> T filt(T *_input)
-    {
-        return __filt__(_input, m_FilterData.cfnum, m_FilterData.cfden, m_FilterData.gains, m_FilterData.Nx, m_FilterData.Ny, m_FilterData.N, m_buff_sx, m_buff_sy );
-    }
-
-public:
-
-    /*!
-     *  \brief memory allcation function
-     *  \details Allocates filter resources and computes coefficiecnts depending on the filter type.
-     *           The function is supposed to be called explicitly by the user after the filter is initialized.
-    */
-    __ix32 allocate() override
+    // memory allocation function
+    __ix32 allocate()
     {
         m_FilterData     = round_coefficients<__type>(m_FilterType);
         m_SectionsNumber = m_FilterData.N;
@@ -129,12 +109,8 @@ public:
         return ( m_buff_sx && m_buff_sy );
     }
 
-    /*!
-     *  \brief memory free function
-     *  \details Frees the filter resources. The function is supposed to be called explicitly by the user
-     *           at the end of the filter life.
-    */
-    __ix32 deallocate() override
+    // memory free function
+    __ix32 deallocate()
     {
         #ifdef IIR_FILTERS_DEBUG
         Debugger::Log("iir_abstract","deallocate()", "memory deallocation");
@@ -144,6 +120,45 @@ public:
         m_buff_sy = buffers_array_free(m_buff_sy, m_SectionsNumber);
         __dsp_clear_filter__(m_FilterData);
         return 1;
+    }
+
+protected:
+
+    filter_data<__type> m_FilterData;
+    filter_type         m_FilterType;
+    bandwidth           m_Bandwidth;
+    attenuation         m_Attenuation;
+    delay<__type>      *m_buff_sx;
+    delay<__type>      *m_buff_sy;
+    __ix32              m_SectionsNumber;
+
+    template<typename T> T filt(T *_input)
+    {
+        return __filt__(_input, m_FilterData.cfnum, m_FilterData.cfden, m_FilterData.gains, m_FilterData.Nx, m_FilterData.Ny, m_FilterData.N, m_buff_sx, m_buff_sy );
+    }
+
+public:
+
+    /*!
+     *  \brief memory free function
+     *  \param[Fs] filter sampling function
+     *  \param[Order] filter order
+     *  \param[FilterType] filter type
+     *  \param[Bandwidth] filter frequency bandwidth
+     *  \param[Attenuation] filter pass and stop band attenuation
+     *  \details The function initializes the filter and is supposed to be called explicitly by the user
+     *           before the filter resources are allocated.
+    */
+    void init( __fx64 Fs , __ix32 Order , filter_type FilterType , bandwidth Bandwidth, attenuation Attenuation )
+    {
+        m_Bandwidth   = Bandwidth;
+        m_Attenuation = Attenuation;
+        m_FilterType  = FilterType;
+        model_base::init(Order, Fs);
+
+        // allocation
+        allocate();
+
     }
 
     /*! \brief default constructor */
@@ -166,25 +181,9 @@ public:
         #ifdef IIR_FILTERS_DEBUG
         Debugger::Log("iir_base","~iir_abstract()", "destructor call");
         #endif
-    }
 
-    /*!
-     *  \brief memory free function
-     *  \param[Fs] filter sampling function
-     *  \param[Order] filter order
-     *  \param[FilterType] filter type
-     *  \param[Bandwidth] filter frequency bandwidth
-     *  \param[Attenuation] filter pass and stop band attenuation
-     *  \details The function initializes the filter and is supposed to be called explicitly by the user
-     *           before the filter resources are allocated.
-    */
-    void init( __fx64 Fs , __ix32 Order , filter_type FilterType , bandwidth Bandwidth, attenuation Attenuation )
-    {
-        m_Fs          = Fs;
-        m_Bandwidth   = Bandwidth;
-        m_Attenuation = Attenuation;
-        m_FilterType  = FilterType;
-        m_order       = Order;
+        // memory deallocation
+        deallocate();
     }
 
     /*!

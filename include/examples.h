@@ -1,13 +1,3 @@
-/*!
- * file
- * brief   Examples
- * authors A.Tykvinskiy
- * date    28.01.2022
- * version 1.0
- *
- * The examples of DSP template ToolBox utilization
-*/
-
 #ifndef EXAMPLES_H
 #define EXAMPLES_H
 
@@ -67,8 +57,7 @@ int filters_rff_example()
     Debugger::Log("filter initialization \n");
     sgen<__type> gen;
     recursive_fourier<__type> rff;
-    rff.init(Fs, Fn, 0);
-    rff.allocate();
+    rff.init(Fs, Fn, 2);
 
     Debugger::Log("emulation \n");
     for( int i = 0 ; i < cycles_num ; i++ )
@@ -96,7 +85,6 @@ int filters_rff_example()
     }
 
     Debugger::Log("memory clean \n");
-    rff.deallocate();
 
     // close files
     yt .close();
@@ -106,9 +94,6 @@ int filters_rff_example()
     pH .close();
     Km .close();
     dt .close();
-
-    // explicit memory clean
-    rff.deallocate();
 
     return 0;
 }
@@ -153,8 +138,7 @@ int filtes_hmf_example()
     sgen<__type> gen;
 
     harmonic_filter<__type> hmf;
-    hmf.init(Fs, Fn, frames_per_cycle, 40);
-    hmf.allocate();
+    hmf.init(Fs, Fn, frames_per_cycle, 2);
 
     // buffer
     __type *buffer = __alloc__<__type>(frames_per_cycle);
@@ -184,7 +168,6 @@ int filtes_hmf_example()
     }
 
     Debugger::Log("memory clean \n");
-    hmf.deallocate();
 
     buffer = __mfree__(buffer);
 
@@ -196,9 +179,6 @@ int filtes_hmf_example()
     pH .close();
     Km .close();
     dt .close();
-
-    // explicit memory clean
-    hmf.deallocate();
 
     return 0;
 }
@@ -240,7 +220,6 @@ int filters_butt_example()
     // filter initialization
     butterworth<__type> filter;
     filter.init(Fs, 11, filter_type::bandstop, {100 , 400} );
-    filter.allocate();
     filter.show();
 
     // emulation
@@ -270,9 +249,6 @@ int filters_butt_example()
     Km.close();
     pH.close();
     dt.close();
-
-    // explicit memory clean
-    filter.deallocate();
 
     return 0;
 }
@@ -314,7 +290,6 @@ int filters_cheb1_example()
     // filter initialization
     chebyshev_1<__type> filter;
     filter.init(Fs, 12, filter_type::bandpass, {100 , 400}, 1 );
-    filter.allocate();
     filter.show();
 
     // emulation
@@ -344,9 +319,6 @@ int filters_cheb1_example()
     Km.close();
     pH.close();
     dt.close();
-
-    // explicit memory clean
-    filter.deallocate();
 
     return 0;
 }
@@ -388,7 +360,6 @@ int filters_cheb2_example()
     // filter initialization
     chebyshev_2<__type> filter;
     filter.init(Fs, 11, filter_type::lowpass, {100 , 400}, 80 );
-    filter.allocate();
     filter.show();
 
     // emulation
@@ -418,9 +389,6 @@ int filters_cheb2_example()
     Km.close();
     pH.close();
     dt.close();
-
-    // explicit memory clean
-    filter.deallocate();
 
     return 0;
 }
@@ -462,7 +430,6 @@ int filters_ellip_example()
     // filter initialization
     elliptic<__type> filter;
     filter.init(Fs, 11, filter_type::bandstop, {100 , 400}, 80, 1 );
-    filter.allocate();
     filter.show();
 
     // emulation
@@ -492,9 +459,6 @@ int filters_ellip_example()
     Km.close();
     pH.close();
     dt.close();
-
-    // explicit memory clean
-    filter.deallocate();
 
     return 0;
 }
@@ -539,7 +503,6 @@ int filters_fir_example()
     //
     fir<__type> filter;
     filter.init(Fs, filter_type::bandstop, {100, 500}, window, 1);
-    filter.allocate();
     filter.show();
 
     // emulation
@@ -569,9 +532,6 @@ int filters_fir_example()
     Km.close();
     pH.close();
     dt.close();
-
-    // explicit memory clean
-    filter.deallocate();
 
     return 0;
 }

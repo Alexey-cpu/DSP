@@ -1,13 +1,3 @@
-/*!
- *
- * brief   harmonic filter
- * authors A.Tykvinskiy
- * date    21.12.2021
- * version 1.0
- *
- * The header Recursive Fourier based harmonic filter
-*/
-
 #ifndef FILTERS_HMF_H
 #define FILTERS_HMF_H
 
@@ -15,7 +5,7 @@
 #include "filters_rff.h"
 
 #ifndef __ALG_PLATFORM
-//#define HMF_DEBUG // debugging is not available if the algorithm is running on a device !!!
+#define HMF_DEBUG // debugging is not available if the algorithm is running on a device !!!
 #endif
 
 #ifndef __fx32
@@ -63,6 +53,9 @@
 
 template<typename __type> class harmonic_filter
 {
+
+private:
+
     /*! \brief filte epsilon value ( the filte lowest operation value ) */
     __type m_epsilon = 1e-4;
     __type m_max_value = +sqrt( 3.4028235E+38 / 2 );
@@ -86,6 +79,54 @@ template<typename __type> class harmonic_filter
     // debugging output
     __type *m_re; ///< recursive Fourier output vector real part
     __type *m_im; ///< recursive Fourier output vector imaginary part
+
+
+    /*! \brief allocates filter resources */
+    __ix32 allocate()
+    {
+        #ifdef HMF_DEBUG
+        Debugger::Log("harmonic_filter::allocate call");
+        #endif
+
+        // allocate debugging output
+        m_re = __alloc__<__type>(m_HBuffSize);
+        m_im = __alloc__<__type>(m_HBuffSize);
+
+        // initialize and allocate recursive Fourier filter
+        m_rdft = new recursive_fourier<__type>[m_SpectrumWidth];
+        for( __ix32 i = 0 ; i < m_SpectrumWidth ; i++ )
+        {
+            m_rdft[i].init( m_Fs, m_Fn, i );
+        }
+
+        // initialize and allocate recursive mean filters
+        m_rmean_re.init( m_Fs, m_Fn, 0);
+        m_rmean_im.init( m_Fs, m_Fn, 0);
+
+        return 1;
+    }
+
+    /*! \brief allocates filter resources */
+    __ix32 deallocate()
+    {
+
+        #ifdef HMF_DEBUG
+        Debugger::Log("harmonic_filter::deallocate call");
+        #endif
+
+        // free debugging outputs
+        m_re = __mfree__(m_re);
+        m_im = __mfree__(m_im);
+
+        // clear recursive Fourier filter
+        if( m_rdft != nullptr )
+        {
+            delete [] m_rdft;
+            m_rdft = nullptr;
+        }
+
+        return 1;
+    }
 
 public:
 
@@ -116,69 +157,6 @@ public:
     }
 
     /*!
-     *  \brief allocates filter resources
-     *  \details The function is supposed to be called explicitly by the user
-     *           after filter initialization
-    */
-    __ix32 allocate()
-    {
-        #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter::allocate call");
-        #endif
-
-        // allocate debugging output
-        m_re = __alloc__<__type>(m_HBuffSize);
-        m_im = __alloc__<__type>(m_HBuffSize);
-
-        // initialize and allocate recursive Fourier filter
-        m_rdft = new recursive_fourier<__type>[m_SpectrumWidth];
-        for( __ix32 i = 0 ; i < m_SpectrumWidth ; i++ )
-        {
-            m_rdft[i].init( m_Fs, m_Fn, i );
-            m_rdft[i].allocate();
-        }
-
-        // initialize and allocate recursive mean filters
-        m_rmean_re.init( m_Fs, m_Fn, 0);
-        m_rmean_im.init( m_Fs, m_Fn, 0);
-        m_rmean_re.allocate();
-        m_rmean_im.allocate();
-
-        return 1;
-    }
-
-    /*!
-     *  \brief allocates filter resources
-     *  \details The function is supposed to be called explicitly by the user
-     *           at the end of the filter life-cycle
-    */
-    __ix32 deallocate()
-    {
-
-        #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter::deallocate call");
-        #endif
-
-        // free debugging outputs
-        m_re = __mfree__(m_re);
-        m_im = __mfree__(m_im);
-
-        // clear recursive Fourier filter
-        if( m_rdft != nullptr )
-        {
-            for( __ix32 i = 0 ; i < m_SpectrumWidth ; i++ ) m_rdft[i].deallocate();
-            delete [] m_rdft;
-            m_rdft = nullptr;
-        }
-
-        // clrear recursive mean filters
-        m_rmean_re.allocate();
-        m_rmean_im.allocate();
-
-        return 1;
-    }
-
-    /*!
      *  \brief initializes the harmonic filter
      *  \param[Fs] filter sampling frequency, Hz
      *  \param[Fn] filter reference signal frequency, Hz
@@ -193,8 +171,8 @@ public:
         m_Fn               = Fn;
         m_HBuffSize        = HBuffSize;
         m_SpectrumWidth    = SpectrumWidth + 1;
-        m_SamplesPerPeriod = Fs / Fn;
-        m_CycleWidth	   = HBuffSize / Fs * 1000;
+        m_SamplesPerPeriod = m_Fs / m_Fn;
+        m_CycleWidth	   = m_HBuffSize / m_Fs * 1000;
         m_rdft             = nullptr;
         m_re               = nullptr;
         m_im               = nullptr;
@@ -209,6 +187,9 @@ public:
         Debugger::Log("CycleWidth       = " + to_string(m_CycleWidth));
         #endif
 
+        //
+        allocate();
+
     }
 
     /*!
@@ -220,7 +201,15 @@ public:
         Debugger::Log("harmonic_filter() call");
         #endif
 
-        init(4000, 50, 20, 40);
+        m_Fs               = 4000;
+        m_Fn               = 50;
+        m_HBuffSize        = 20;
+        m_SpectrumWidth    = 41;
+        m_SamplesPerPeriod = m_Fs / m_Fn;
+        m_CycleWidth	   = m_HBuffSize / m_Fs * 1000;
+        m_rdft             = nullptr;
+        m_re               = nullptr;
+        m_im               = nullptr;
     }
 
     /*!
@@ -231,6 +220,8 @@ public:
         #ifdef HMF_DEBUG
         Debugger::Log("~harmonic_filter() call");
         #endif
+
+        deallocate();
     }
 
     /*!

@@ -1,13 +1,3 @@
-/*!
- *
- * brief   DSP Kernel
- * authors A.Tykvinskiy
- * date    21.12.2021
- * version 1.0
- *
- * The header declares DSP kernel classes, data structures and functions
-*/
-
 #ifndef KERNEL_DSP_H
 #define KERNEL_DSP_H
 
@@ -215,27 +205,9 @@ namespace DSP_KERNEL
         }
 
         /*! \brief default virtual destructor */
-        virtual ~model_base(){};
+        virtual ~model_base(){}
 
     public:
-
-        /*!
-         *  \brief memory allocation function
-         *  \details The functions must allocate a model resources.
-         *           Do not call this function from the derived classes
-         *           constructors. The functions is
-         *           supposed to be called explicitly by user.
-        */
-        virtual __ix32 allocate()   = 0;
-
-        /*!
-         *  \brief memory deallocation function
-         *  \details The functions must clear the model resources.
-         *           Do not call this function from the derived classes
-         *           destructors. The function is
-         *           supposed to be called explicitly by user.
-        */
-        virtual __ix32 deallocate() = 0;
 
         /*!
          *  \brief filter frequency responce computation function

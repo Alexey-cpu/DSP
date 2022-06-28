@@ -1,13 +1,3 @@
-/*!
- *
- * brief   Utility
- * authors A.Tykvinskiy
- * date    21.12.2021
- * version 1.0
- *
- * The header declares utility functions and classes
-*/
-
 #ifndef UTILS_H
 #define UTILS_H
 

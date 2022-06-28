@@ -10,11 +10,13 @@
 
 int main()
 {
+    //filters_rff_example();
+    filtes_hmf_example();
     //filters_butt_example();
     //filters_cheb1_example();
     //filters_cheb2_example();
     //filters_ellip_example();
-    filters_fir_example();
+    //filters_fir_example();
 
     return 0;
 }

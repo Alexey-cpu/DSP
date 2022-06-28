@@ -6,7 +6,7 @@
 using namespace FIR_KERNEL;
 
 #ifndef __ALG_PLATFORM
-#define FIR_FILTERS_DEBUG // debugging is not available if the algorithm is running on a device !!!
+//#define FIR_FILTERS_DEBUG // debugging is not available if the algorithm is running on a device !!!
 #endif
 
 /*! \brief defines 32-bit floating point type */
@@ -366,6 +366,42 @@ public:
 template< typename __type >
 class classic_fir_base : public  model_base, classic_filter_interface
 {
+private:
+    /*!
+     *   \brief allocates the filter resources
+     *   \details The function is supposed to be called explicitly by the user.
+    */
+    __ix32 allocate()
+    {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("classic_fir_base","allocate()", "fir filter memory allocation");
+        #endif
+
+        m_FilterData = round_coefficients<__type>(m_FilterType);
+
+        if( m_FilterData.cfnum != nullptr )
+        {
+            return m_buff_sx.allocate( m_FilterData.N + 1 );
+        }
+
+        return 0;
+    }
+
+    /*!
+     *   \brief frees the filter resources
+     *   \details The function is supposed to be called explicitly by at the end of the filter's life time.
+    */
+    __ix32 deallocate()
+    {
+        #ifdef FIR_FILTERS_DEBUG
+        Debugger::Log("classic_fir_base","deallocate()", "fir filter memory deallocation");
+        #endif
+
+        m_buff_sx.deallocate();
+        m_FilterData = __dsp_clear_filter__(m_FilterData);
+        return ( !m_FilterData.cfnum && !m_FilterData.cfden );
+    }
+
 protected:
 
     filter_type         m_FilterType;
@@ -393,45 +429,16 @@ public:
         m_Scale          = Scale;
         m_WindowFunction = WindowFunction;
         model_base::init(WindowFunction.Order(), Fs);
-    }
 
-    /*!
-     *   \brief allocates the filter resources
-     *   \details The function is supposed to be called explicitly by the user.
-    */
-    __ix32 allocate() override
-    {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("classic_fir_base","allocate()", "fir filter memory allocation");
-        #endif
-
-        m_FilterData = round_coefficients<__type>(m_FilterType);
-
-        if( m_FilterData.cfnum != nullptr )
-        {
-            return m_buff_sx.allocate( m_FilterData.N + 1 );
-        }
-
-        return 0;
-    }
-
-    /*!
-     *   \brief frees the filter resources
-     *   \details The function is supposed to be called explicitly by at the end of the filter's life time.
-    */
-    __ix32 deallocate() override
-    {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("classic_fir_base","deallocate()", "fir filter memory deallocation");
-        #endif
-
-        m_buff_sx.deallocate();
-        m_FilterData = __dsp_clear_filter__(m_FilterData);
-        return ( !m_FilterData.cfnum && !m_FilterData.cfden );
+        // allocation
+        allocate();
     }
 
     /*! \brief default destructor */
-    virtual ~classic_fir_base(){}
+    virtual ~classic_fir_base()
+    {
+        deallocate();
+    }
 
     /*! \brief default constructor */
     classic_fir_base() : model_base()

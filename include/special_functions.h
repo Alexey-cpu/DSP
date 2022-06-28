@@ -1,14 +1,3 @@
-/*!
- * file
- * brief   Special mathematical function header
- * authors A.Tykvinskiy
- * date    28.12.2021
- * version 1.0
- *
- * The header declares specialized mathematical functions and classes that
- * utilized for digital signal processing (DSP).
-*/
-
 #ifndef SPECIAL_FUNCTIONS_H
 #define SPECIAL_FUNCTIONS_H
 

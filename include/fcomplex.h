@@ -1,16 +1,5 @@
-/*!
- * file
- * brief   Complex numbers template class and functions
- * authors A.Tykvinskiy
- * date    03.22.2022
- * version 1.0.1
- *
- * The header declares template complex number class and functions
-*/
-
 #ifndef FCOMPLEX_H
 #define FCOMPLEX_H
-
 
 #ifndef __ALG_PLATFORM
 #include "math.h"

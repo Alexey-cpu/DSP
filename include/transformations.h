@@ -1,18 +1,3 @@
-/*!
- * file
- * brief   Template forward / backward Clarke transform classes and Fortescue sequence filter template class
- * authors A.Tykvinskiy
- * date    21.12.2021
- * version 1.0
- *
- * The header declares template forward / backward Clarke transform classes and Fortescue sequence filter template class
-*/
-
-/*! \defgroup <THREE_PHASE_TRANSFORMATIONS> ( Three phase ortohonal transformations )
- *  \brief the module describes complex numbers functions
-    @{
-*/
-
 #ifndef TRANSFORMATIONS_H
 #define TRANSFORMATIONS_H
 
@@ -21,50 +6,46 @@
 #include "math.h"
 #endif
 
-/*! \brief defines 16-bit integer type */
 #ifndef __ix16
 #define __ix16 short
 #endif
 
-/*! \brief defines 32-bit integer type */
 #ifndef __ix32
 #define __ix32 int
 #endif
 
-/*! \brief defines 64-bit integer type */
 #ifndef __ix64
 #define __ix64 long long
 #endif
 
-/*! \brief defines 32-bit floating point type */
 #ifndef __fx32
 #define __fx32 float
 #endif
 
-/*! \brief defines 64-bit floating point type */
 #ifndef __fx64
 #define __fx64 double
 #endif
 
-/*! \brief defines pi */
 #ifndef PI0
 #define PI0 3.1415926535897932384626433832795
 #endif
 
-/*! \brief defines 2*pi */
 #ifndef PI2
 #define PI2 6.283185307179586476925286766559
 #endif
 
-/*! \brief defines pi / 2 */
 #ifndef PI_2
 #define PI_2 1.5707963267948966192313216916398
 #endif
 
-/*! \brief defines pi / 4 */
 #ifndef PI_4
 #define PI_4 0.78539816339744830961566084581988
 #endif
+
+/*! \defgroup <THREE_PHASE_TRANSFORMATIONS> ( Three phase ortohonal transformations )
+ *  \brief the module describes complex numbers functions
+    @{
+*/
 
 /*! \brief Clarke's forward / backward template filter */
 template< typename __type > class Clarke_filter

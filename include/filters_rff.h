@@ -6,7 +6,7 @@
 using namespace DSP_KERNEL;
 
 #ifndef __ALG_PLATFORM
-//#define RFF_DEBUG // debugging is not available if the algorithm is running on a device !!!
+#define RFF_DEBUG // debugging is not available if the algorithm is running on a device !!!
 #endif
 
 #ifndef __fx32
@@ -56,6 +56,29 @@ using namespace DSP_KERNEL;
 template< typename __type >
 class recursive_fourier_abstract : public model_base
 {
+private:
+
+    // memory allocation function
+   __ix32  allocate()
+   {
+       #ifdef RFF_DEBUG
+       Debugger::Log("recursive_fourier_abstract::allocate() call \n");
+       #endif
+
+       return ( m_buffer_sx.allocate( m_order + 2 ) );
+   }
+
+   // memory free function
+   __ix32 deallocate()
+   {
+       #ifdef RFF_DEBUG
+       Debugger::Log("recursive_fourier_abstract::deallocate() call \n");
+       #endif
+
+       m_buffer_sx.deallocate();
+       return 0;
+   }
+
 protected:
 
     // system fields
@@ -85,35 +108,6 @@ protected:
         return m_out;
     }
 
-    /*!
-     *  \brief Allocates filter resources
-     *  \details The function is supposed to be called explicitly by the user.
-     *           Do not call this function in the constructors of the derived classes !!!
-    */
-   __ix32  allocate() override
-   {
-       #ifdef RFF_DEBUG
-       Debugger::Log("recursive_fourier_abstract::allocate() call \n");
-       #endif
-
-       return ( m_buffer_sx.allocate( m_order + 2 ) );
-   }
-
-   /*!
-    *  \brief Frees filter resources
-    *  \details The function is supposed to be called explicitly by the user.
-    *           Do not call this function in the destructors of the derived classes !!!
-   */
-   __ix32 deallocate() override
-   {
-       #ifdef RFF_DEBUG
-       Debugger::Log("recursive_fourier_abstract::deallocate() call \n");
-       #endif
-
-       m_buffer_sx.deallocate();
-       return 0;
-   }
-
     /*!  \brief default constructor */
     recursive_fourier_abstract() : model_base()
     {
@@ -128,6 +122,8 @@ protected:
         #ifdef RFF_DEBUG
         Debugger::Log("~recursive_fourier_abstract() call \n");
         #endif
+
+        deallocate();
     }
 
     /*!
@@ -157,6 +153,9 @@ protected:
         Debugger::Log("Gain  = " + to_string(m_Gain));
         Debugger::Log("hnum  = " + to_string(m_hnum) + "\n");
         #endif
+
+        //
+        allocate();
 
      }
 
