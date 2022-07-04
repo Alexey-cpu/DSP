@@ -1,6 +1,7 @@
 #ifndef KERNEL_IIR_H
 #define KERNEL_IIR_H
 
+#include "special_functions.h"
 #include "kernel_dsp.h"
 using namespace DSP_KERNEL;
 

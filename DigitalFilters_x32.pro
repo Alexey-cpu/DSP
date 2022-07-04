@@ -16,15 +16,20 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    examples/example_butt.h \
-    examples/example_cheb1.h \
-    examples/example_cheb2.h \
+    examples/example_classic_fir.h \
+    examples/example_classic_iir_butt.h \
+    examples/example_classic_iir_cheb1.h \
+    examples/example_classic_iir_cheb2.h \
+    examples/example_classic_iir_ellip.h \
     examples/example_complex_numbers.h \
-    examples/example_ellip.h \
-    examples/example_fir.h \
     examples/example_hmf.h \
     examples/example_rff.h \
     examples/example_special_functions.h \
+    examples/example_transfer_functions_aperiodic.h \
+    examples/example_transfer_functions_differentiator.h \
+    examples/example_transfer_functions_filter_2nd_order.h \
+    examples/example_transfer_functions_integrator.h \
+    examples/example_transfer_functions_leadlag.h \
     examples/examples.h \
     include/buffer.h \
     include/fcomplex.h \
@@ -32,6 +37,7 @@ HEADERS += \
     include/filters_hmf.h \
     include/filters_iir.h \
     include/filters_rff.h \
+    include/filters_tsf.h \
     include/kernel_dsp.h \
     include/kernel_fir.h \
     include/kernel_iir.h \

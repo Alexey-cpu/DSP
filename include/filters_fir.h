@@ -9,32 +9,26 @@ using namespace FIR_KERNEL;
 //#define FIR_FILTERS_DEBUG // debugging is not available if the algorithm is running on a device !!!
 #endif
 
-/*! \brief defines 32-bit floating point type */
 #ifndef __fx32
 #define __fx32 float
 #endif
 
-/*! \brief defines 64-bit floating point type */
 #ifndef __fx64
 #define __fx64 double
 #endif
 
-/*! \brief defines extended 64-bit floating point type */
 #ifndef __fxx64
 #define __fxx64 long double
 #endif
 
-/*! \brief defines 32-bit integer type */
 #ifndef __ix32
 #define __ix32 int
 #endif
 
-/*! \brief defines pi */
 #ifndef PI0
 #define PI0 3.1415926535897932384626433832795
 #endif
 
-/*! \brief defines 2*pi */
 #ifndef PI2
 #define PI2 6.283185307179586476925286766559
 #endif

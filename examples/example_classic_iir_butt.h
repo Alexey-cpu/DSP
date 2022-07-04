@@ -1,5 +1,5 @@
-#ifndef EXAMPLE_FIR_H
-#define EXAMPLE_FIR_H
+#ifndef EXAMPLE_CLASSIC_IIR_BUTT_H
+#define EXAMPLE_CLASSIC_IIR_BUTT_H
 
 #ifndef WRITE_LOGS
 //#define WRITE_LOGS
@@ -7,10 +7,10 @@
 
 #include "include/utils.h"
 #include "include/sgen.h"
-#include "include/filters_fir.h"
+#include "include/filters_iir.h"
 
-// classic FIR filter example
-int filters_fir_example()
+// Butterworth filter
+int filters_butt_example()
 {
     typedef float __type;
 
@@ -48,12 +48,8 @@ int filters_fir_example()
     sgen<__type> gen;
 
     // filter initialization
-    window_function window;
-    window.Chebyshev(60, 80);
-
-    //
-    fir<__type> filter;
-    filter.init(Fs, filter_type::bandstop, {100, 500}, window, 1);
+    butterworth<__type> filter;
+    filter.init(Fs, 11, filter_type::bandstop, {100 , 400} );
     filter.show();
 
     // emulation
@@ -96,4 +92,4 @@ int filters_fir_example()
 }
 
 
-#endif // EXAMPLE_FIR_H
+#endif // EXAMPLE_CLASSIC_IIR_BUTT_H

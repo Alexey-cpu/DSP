@@ -11,7 +11,6 @@
 #include "utils.h"
 #include "buffer.h"
 #include "fcomplex.h"
-#include "special_functions.h"
 
 #define DEBUG
 

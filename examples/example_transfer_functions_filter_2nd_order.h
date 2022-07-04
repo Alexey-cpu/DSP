@@ -1,16 +1,16 @@
-#ifndef EXAMPLE_CHEB1_H
-#define EXAMPLE_CHEB1_H
+#ifndef EXAMPLE_TRANSFER_FUNCTIONS_FILTER_2ND_ORDER_H
+#define EXAMPLE_TRANSFER_FUNCTIONS_FILTER_2ND_ORDER_H
 
 #ifndef WRITE_LOGS
-//#define WRITE_LOGS
+#define WRITE_LOGS
 #endif
 
 #include "include/utils.h"
 #include "include/sgen.h"
-#include "include/filters_iir.h"
+#include "include/filters_tsf.h"
 
-// Checbyshev type I filter
-int filters_cheb1_example()
+// Butterworth filter
+int filters_filter_2nd_order_example()
 {
     typedef float __type;
 
@@ -48,8 +48,8 @@ int filters_cheb1_example()
     sgen<__type> gen;
 
     // filter initialization
-    chebyshev_1<__type> filter;
-    filter.init(Fs, 12, filter_type::bandpass, {100 , 400}, 1 );
+    filter_2nd_order<__type> filter;
+    filter.init(Fs, 120, 0.7, filter_type::bandstop);
     filter.show();
 
     // emulation
@@ -91,5 +91,4 @@ int filters_cheb1_example()
     return 0;
 }
 
-
-#endif // EXAMPLE_CHEB1_H
+#endif // EXAMPLE_TRANSFER_FUNCTIONS_FILTER_2ND_ORDER_H

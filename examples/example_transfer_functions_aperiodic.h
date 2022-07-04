@@ -1,16 +1,16 @@
-#ifndef EXAMPLE_BUTT_H
-#define EXAMPLE_BUTT_H
+#ifndef EXAMPLE_TRANSFER_FUNCTIONS_APERIODIC_H
+#define EXAMPLE_TRANSFER_FUNCTIONS_APERIODIC_H
 
 #ifndef WRITE_LOGS
-//#define WRITE_LOGS
+#define WRITE_LOGS
 #endif
 
 #include "include/utils.h"
 #include "include/sgen.h"
-#include "include/filters_iir.h"
+#include "include/filters_tsf.h"
 
 // Butterworth filter
-int filters_butt_example()
+int filters_aperiodic_example()
 {
     typedef float __type;
 
@@ -48,9 +48,8 @@ int filters_butt_example()
     sgen<__type> gen;
 
     // filter initialization
-    butterworth<__type> filter;
-    filter.init(Fs, 11, filter_type::bandstop, {100 , 400} );
-    filter.show();
+    aperiodic<__type> filter;
+    filter.init(Fs, 0.01);
 
     // emulation
     for( int i = 0 ; i < cycles_num ; i++ )
@@ -91,5 +90,4 @@ int filters_butt_example()
     return 0;
 }
 
-
-#endif // EXAMPLE_BUTT_H
+#endif // EXAMPLE_TRANSFER_FUNCTIONS_APERIODIC_H

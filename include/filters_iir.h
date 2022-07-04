@@ -206,11 +206,10 @@ public:
 
     #endif
 
-        /*!
-         *  \brief filtering operator
-         *  \param[_input] input pointer
-         *  \details The function computes the filter complex transfer function value for the given frequency
-        */
+    /*!
+     *  \brief filtering operator
+     *  \param[_input] input pointer
+    */
     virtual inline __type operator()( __type* _input ) = 0;
 
 };

@@ -616,7 +616,8 @@ template< typename __type > inline __type* __alloc__( __ix32 size, void (*initia
  *  \details The function reallocates memory and returns the pointer pointing to the reallocated memory segment.
  *           The function returbs nullptr if the new size is lower or equal to zero or the memory reallocation has failed.
 */
-template< typename __type > inline __type* __realloc__(__type *memory, __ix32 newsize)
+template< typename __type > inline __type*
+__realloc__(__type *memory, __ix32 newsize)
 {
     if(newsize <= 0 && memory)
     {
@@ -633,7 +634,8 @@ template< typename __type > inline __type* __realloc__(__type *memory, __ix32 ne
  *  \param[memory] the input memory segment
  *  \details The function frees memory and returns nullptr
 */
-template< typename __type > inline __type* __mfree__(__type *memory)
+template< typename __type > inline __type*
+__mfree__(__type *memory)
 {
     if(memory)
     {
@@ -642,6 +644,35 @@ template< typename __type > inline __type* __mfree__(__type *memory)
     }
 
     return memory;
+}
+
+template< typename __type > inline tuple_x2< __type*, __ix32 >
+__mfree__( tuple_x2< __type*, __ix32 > tuple)
+{
+    tuple.item0 = __mfree__(tuple.item0);
+    return tuple;
+}
+
+inline tuple_x2< void**, __ix32 >
+__mfree__( tuple_x2< void**, __ix32 > tuple)
+{
+    for(__ix32 i = 0 ; i < tuple.item1 ; i++)
+    {
+        tuple.item0[i] = __mfree__( tuple.item0[i] );
+    }
+
+    return tuple;
+}
+
+inline tuple_x3< void**, __ix32, __ix32 >
+__mfree__( tuple_x3< void**, __ix32, __ix32 > tuple)
+{
+    for(__ix32 i = 0 ; i < tuple.item1 ; i++)
+    {
+        tuple.item0[i] = __mfree__( tuple.item0[i] );
+    }
+
+    return tuple;
 }
 
 #ifdef _STRINGFWD_H

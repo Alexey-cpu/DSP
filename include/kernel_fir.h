@@ -2,6 +2,7 @@
 #define KERNEL_FIR_H
 
 #include "kernel_dsp.h"
+#include "special_functions.h"
 using namespace DSP_KERNEL;
 
 #ifndef __fx32

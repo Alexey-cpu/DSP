@@ -1,16 +1,16 @@
-#ifndef EXAMPLE_CHEB2_H
-#define EXAMPLE_CHEB2_H
+#ifndef EXAMPLE_TRANSFER_FUNCTIONS_LEADLAG_H
+#define EXAMPLE_TRANSFER_FUNCTIONS_LEADLAG_H
 
 #ifndef WRITE_LOGS
-//#define WRITE_LOGS
+#define WRITE_LOGS
 #endif
 
 #include "include/utils.h"
 #include "include/sgen.h"
-#include "include/filters_iir.h"
+#include "include/filters_tsf.h"
 
-// Checbyshev type II filter
-int filters_cheb2_example()
+// Butterworth filter
+int filters_leadlag_example()
 {
     typedef float __type;
 
@@ -48,9 +48,8 @@ int filters_cheb2_example()
     sgen<__type> gen;
 
     // filter initialization
-    chebyshev_2<__type> filter;
-    filter.init(Fs, 11, filter_type::lowpass, {100 , 400}, 80 );
-    filter.show();
+    leadlag<__type> filter;
+    filter.init(Fs, 0.01, 0.02);
 
     // emulation
     for( int i = 0 ; i < cycles_num ; i++ )
@@ -91,5 +90,4 @@ int filters_cheb2_example()
     return 0;
 }
 
-
-#endif // EXAMPLE_CHEB2_H
+#endif // EXAMPLE_TRANSFER_FUNCTIONS_LEADLAG_H

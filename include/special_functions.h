@@ -1442,18 +1442,6 @@ __ix32 __conv_size__(__ix32 _Na,  __ix32 _Nb)
 
 /*!
      * \brief Linear convolution function
-     * \param[_polymons_sizes] the sizes array of the polynoms to be convoluted
-     * \param[_polynoms_number] the number of the polynoms to be convoluted
-*/
-__ix32 __conv_size__(__ix32 *_polymons_sizes, __ix32 _polynoms_number)
-{
-    __ix32 _Nc = _polymons_sizes[0];
-    for( __ix32 i = 1 ; i < _polynoms_number ; i++ ) _Nc += _polymons_sizes[i] - 1;
-    return _Nc;
-}
-
-/*!
-     * \brief Linear convolution function
      * \param[_a] pointer to the poly a array
      * \param[_b] pointer to the poly b array
      * \param[_c] pointer to the poly c array
@@ -1482,53 +1470,82 @@ __convf__( const __type *_a, const __type *_b, __type *_c, __ix32 _Na,  __ix32 _
      * \param[_b] pointer to the poly b array
      * \param[_Na] size of poly a array
      * \param[_Nb] size of poly b array
-     * \param[_c] resulting polynom
-     * \param[_Nc] resulting polynom size
-     * \returns The function modifies variables _c and _Nc.
-     *          The mentioned modified variables will contain
-     *          convolution result polynom and the size of the resulting polynom
+     * \returns The function returns the tuple_x2
+     *          containing resulting convulution vector and it's size
 */
-template< typename __type > void
-__convf__( const __type *_a, const __type *_b, __ix32 _Na,  __ix32 _Nb, __type **_c, __ix32 *_Nc )
+template< typename __type > tuple_x2<__type*, __ix32>
+__convf__( const __type *_a, const __type *_b, __ix32 _Na,  __ix32 _Nb )
 {
-    __convf__( _a, _b, ( *_c = __alloc__<__type>(_Nc) ) , _Na, _Nb, (*_Nc = _Na + _Nb - 1) );
+    __ix32 _Nc = _Na + _Nb - 1;
+    __type *_c = __alloc__<__type>(_Nc);
+    __convf__( _a, _b, _c , _Na, _Nb, _Nc );
+
+    return { _c, _Nc };
 }
 
-/*!
-     * \brief Linear convolution function
-     * \param[_polynoms] array of the polynoms to be convoluted
-     * \param[_polynoms_sizes] array containing convoluted polynoms sizes
-     * \param[_polynoms_number] the number of the convoluted polynoms
-     * \param[_c] resulting polynom
-     * \param[_Nc] resulting polynom size
-     * \returns The function modifies variables _c and _Nc.
-     *          The mentioned modified variables will contain
-     *          convolution result polynom and the size of the resulting polynom
-*/
-template< typename __type > void
-__convf__( __type **_polynoms, __ix32 *_polynoms_sizes, __ix32 _polynoms_number, __type **_c, __ix32 *_Nc )
+// sustitutes poly A into poly B
+template<typename __type> tuple_x3<void**, __ix32, __ix32>
+__fraction_numeric_substitution__(__type *AN, __type *AD, __type *BN, __type *BD, __ix32 N, __ix32 P)
 {
-    // allocate memory and initialize
-    *_Nc = __conv_size__(_polynoms_sizes, _polynoms_number);
-     __type *_a  = __alloc__<__type>(*_Nc);
-    *_c  = __alloc__<__type>(*_Nc);
-    for( __ix32 j = 0 ; j < _polynoms_sizes[0] ; j++ ) (*_c)[j] = _polynoms[0][j];
+    // decrement orders to omit zero power elements
+    N--;
+    P--;
 
-    // main operation
-    *_Nc = _polynoms_sizes[0];
-    for( __ix32 i = 1, _Na = _polynoms_sizes[0] ; i < _polynoms_number ; i++, _Na += _polynoms_sizes[i] - 1 )
+    // identify martix dimensions
+    __ix32 nrows = N+1;
+    __ix32 ncols = N*P+1;
+
+    // allocate memory
+    __ix32 *Ap = __alloc__<__ix32>( ncols );
+    __ix32 *Bp = __alloc__<__ix32>( ncols );
+    __type *Ax = __alloc__<__type>( nrows * ncols );
+    __type *Bx = __alloc__<__type>( nrows * ncols );
+    __type *Cx = __alloc__<__type>( nrows * ncols );
+    __type *Nx = __alloc__<__type>( ncols );
+    __type *Dx = __alloc__<__type>( ncols );
+
+    // Compute numerator/denominator powers matrixes
+    Ax[0] = 1;
+    Bx[0] = 1;
+    Ap[0] = 1;
+    Bp[0] = 1;
+    for(__ix32 i = 1, Na = 1, Nb = (P+1), Nc = ncols ; i < nrows ; i++ )
     {
-        for( __ix32 j = 0 ; j < *_Nc ; j++ )
-        {
-             _a[j] = (*_c)[j];
-            (*_c)[j] = 0;
-        }
-
-        *_Nc += _polynoms_sizes[i] - 1;
-        __convf__( _a, _polynoms[i], *_c, _Na,  _polynoms_sizes[i], *_Nc );
+        __convf__( &Ax[(i-1)*ncols], BN, &Ax[i*ncols], Na, Nb, Nc );
+        __convf__( &Bx[(i-1)*ncols], BD, &Bx[i*ncols], Na, Nb, Nc );
+        Na = __conv_size__(Na, Nb);
+        Ap[i] = Na;
+        Bp[i] = Na;
     }
 
-    _a = __mfree__(_a);
+    // convolve
+    for(__ix32 i = 0; i < nrows ; i++)
+    {
+        __convf__( &Bx[(N-i)*ncols], &Ax[i*ncols], &Cx[i*ncols], Ap[N-i], Bp[i], ncols );
+    }
+
+    // compute the resulting poly coefficients
+    for( __ix32 j = 0 ; j < ncols ; j++ )
+    {
+        for( __ix32 i = 0 ; i < nrows ; i++ )
+        {
+            Nx[j] += Cx[i*ncols+j] * AN[i];
+            Dx[j] += Cx[i*ncols+j] * AD[i];
+        }
+    }
+
+    // free memory
+    __mfree__(Ap);
+    __mfree__(Bp);
+    __mfree__(Ax);
+    __mfree__(Bx);
+    __mfree__(Cx);
+
+    // generate the output
+    void** output = __alloc__<void*>(2);
+    output[0] = Nx;
+    output[1] = Dx;
+    return { output, 2, ncols };
 }
 
 /*! @} */
