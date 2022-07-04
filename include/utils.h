@@ -661,6 +661,8 @@ __mfree__( tuple_x2< void**, __ix32 > tuple)
         tuple.item0[i] = __mfree__( tuple.item0[i] );
     }
 
+    tuple.item0 = __mfree__( tuple.item0 );
+
     return tuple;
 }
 
@@ -671,6 +673,8 @@ __mfree__( tuple_x3< void**, __ix32, __ix32 > tuple)
     {
         tuple.item0[i] = __mfree__( tuple.item0[i] );
     }
+
+    tuple.item0 = __mfree__( tuple.item0 );
 
     return tuple;
 }
