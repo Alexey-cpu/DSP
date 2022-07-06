@@ -8,7 +8,7 @@
 using namespace IIR_KERNEL;
 
 #ifndef __ALG_PLATFORM
-//#define IIR_DEBUG // debugging is not available if the algorithm is running on a device !!!
+#define IIR_FILTERS_DEBUG // debugging is not available if the algorithm is running on a device !!!
 #endif
 
 /*! \brief defines 32-bit floating point type */
@@ -41,113 +41,96 @@ using namespace IIR_KERNEL;
 #define PI2 6.283185307179586476925286766559
 #endif
 
+/*! \defgroup <CLASSIC_IIR_FILTERS> ( classic IIR filters)
+ *  \ingroup FILTERS
+ *  \brief The module contains abstract model and implementation of the classic IIR filters
+    @{
+*/
 
-template<typename __type> class iir_abstract : public filter_abstract
+/*! @} */
+
+/*!
+ *  \defgroup <CLASSIC_IIR_FILTERS_ABSTRACT_MODEL> ( classic IIR filters abstract model )
+ *  \ingroup CLASSIC_IIR_FILTERS
+ *  \brief The module contains abstract model of the classic IIR filters
+    @{
+*/
+
+template<typename __type> class iir_base : public model_base, public classic_filter_interface
 {
+private:
+
+    // buffers array deallocation function
+    delay<__type>* buffers_array_free(delay<__type> *buffers, __ix32 buffersNumber)
+    {
+        if( buffers != nullptr )
+        {
+            for( __ix32 i = 0 ; i < buffersNumber ; i++ ) buffers[i].deallocate();
+
+            delete [] buffers;
+            buffers = nullptr;
+        }
+
+        return buffers;
+    }
+
+    // buffers array allocatinon function
+    delay<__type>* buffers_array_alloc(__ix32 buffersNumber, __ix32 singleBufferSize)
+    {
+        delay<__type>* buffers = new delay<__type>[buffersNumber];
+
+        for( __ix32 i = 0 ; i < buffersNumber ; i++)
+        {
+            buffers[i].allocate(singleBufferSize);
+        }
+
+        return buffers;
+    }
+
+    // memory allocation function
+    __ix32 allocate()
+    {
+        m_FilterData     = round_coefficients<__type>(m_FilterType);
+        m_SectionsNumber = m_FilterData.N;
+
+        if( m_FilterData.cfden && m_FilterData.cfnum  && m_FilterData.gains )
+        {
+            m_buff_sx = buffers_array_alloc(m_FilterData.N, m_FilterData.Nx+1);
+            m_buff_sy = buffers_array_alloc(m_FilterData.N, m_FilterData.Ny+1);
+        }
+
+        if( !m_buff_sx || !m_buff_sy )
+        {
+            #ifdef IIR_FILTERS_DEBUG
+            Debugger::Log("iir_abstract","allocate()", "memory allocation failed");
+            #endif
+        }
+
+        return ( m_buff_sx && m_buff_sy );
+    }
+
+    // memory free function
+    __ix32 deallocate()
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("iir_abstract","deallocate()", "memory deallocation");
+        #endif
+
+        m_buff_sx = buffers_array_free(m_buff_sx, m_SectionsNumber);
+        m_buff_sy = buffers_array_free(m_buff_sy, m_SectionsNumber);
+        __dsp_clear_filter__(m_FilterData);
+        return 1;
+    }
+
 protected:
 
-    // system variables
-    delay<__type>       *m_buff_sx;
-    delay<__type>       *m_buff_sy;
     filter_data<__type> m_FilterData;
     filter_type         m_FilterType;
     bandwidth           m_Bandwidth;
     attenuation         m_Attenuation;
-
-    // coefficients computation functions
-    virtual filter_data<__type> compute_lowpass()  = 0;
-    virtual filter_data<__type> compute_highpass() = 0;
-    virtual filter_data<__type> compute_bandpass() = 0;
-    virtual filter_data<__type> compute_bandstop() = 0;
-
-    // memory allocation
-    __ix32 allocate() override
-    {
-        switch (m_FilterType)
-        {
-            case filter_type::lowpass :
-                m_FilterData = compute_lowpass();
-            break;
-
-            case filter_type::highpass :
-                m_FilterData = compute_highpass();
-            break;
-
-            case filter_type::bandpass :
-                m_FilterData = compute_bandpass();
-            break;
-
-            case filter_type::bandstop :
-                m_FilterData = compute_bandstop();
-            break;
-
-            case filter_type::other :
-                m_FilterData = compute_lowpass();
-            break;
-        }
-
-        if( m_FilterData.cfden != nullptr && m_FilterData.cfnum != nullptr  && m_FilterData.gains != nullptr )
-        {
-
-            m_buff_sx = new delay< __type >[m_FilterData.N];
-            m_buff_sy = new delay< __type >[m_FilterData.N];
-
-            for( __ix32 i = 0 ; i < m_FilterData.N ; i++ )
-            {
-                m_buff_sx[i].allocate(m_FilterData.Nx+1);
-                m_buff_sy[i].allocate(m_FilterData.Ny);
-            }
-        }
-
-        return ( m_buff_sx != nullptr && m_buff_sy != nullptr );
-
-    }
-
-    // memory deallocation
-    __ix32 deallocate() override
-    {
-        if( m_buff_sx != nullptr )
-        {
-            for( __ix32 i = 0 ; i < m_order ; i++ )
-            {
-                m_buff_sx[i].deallocate();
-            }
-
-            delete [] m_buff_sx;
-            m_buff_sx = nullptr;
-        }
-
-        if( m_buff_sy != nullptr )
-        {
-            for( __ix32 i = 0 ; i < m_order ; i++ )
-            {
-                m_buff_sy[i].deallocate();
-            }
-
-            delete [] m_buff_sy;
-            m_buff_sy = nullptr;
-        }
-
-        // clear filter data
-        __dsp_clear_filter__(m_FilterData);
-
-        return 1;
-    }
-
-    void init( __fx64 Fs , __ix32 Order , filter_type FilterType , bandwidth Bandwidth, attenuation Attenuation )
-    {
-        m_Fs          = Fs;
-        m_Bandwidth   = Bandwidth;
-        m_Attenuation = Attenuation;
-        m_FilterType  = FilterType;
-        m_order       = Order;
-    }
-
-    // frequency response computation function
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
-    {
-        return __freq_resp__(m_FilterData.cfnum, m_FilterData.cfden, m_FilterData.gains, m_FilterData.Nx, m_FilterData.Ny, m_FilterData.N, m_Fs, F );
-    }
+    delay<__type>      *m_buff_sx;
+    delay<__type>      *m_buff_sy;
+    __ix32              m_SectionsNumber;
 
     template<typename T> T filt(T *_input)
     {
@@ -156,9 +139,35 @@ protected:
 
 public:
 
-    // constructors
-    iir_abstract()
+    /*!
+     *  \brief memory free function
+     *  \param[Fs] filter sampling function
+     *  \param[Order] filter order
+     *  \param[FilterType] filter type
+     *  \param[Bandwidth] filter frequency bandwidth
+     *  \param[Attenuation] filter pass and stop band attenuation
+     *  \details The function initializes the filter and is supposed to be called explicitly by the user
+     *           before the filter resources are allocated.
+    */
+    void init( __fx64 Fs , __ix32 Order , filter_type FilterType , bandwidth Bandwidth, attenuation Attenuation )
     {
+        m_Bandwidth   = Bandwidth;
+        m_Attenuation = Attenuation;
+        m_FilterType  = FilterType;
+        model_base::init(Order, Fs);
+
+        // allocation
+        allocate();
+
+    }
+
+    /*! \brief default constructor */
+    iir_base() : model_base()
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("iir_base","iir_abstract()", "constructor call");
+        #endif
+
         m_buff_sx     = nullptr;
         m_buff_sy     = nullptr;
         m_FilterType  = filter_type::lowpass;
@@ -166,322 +175,477 @@ public:
         m_Attenuation = { 80  , 1   };
     }
 
-    iir_abstract(__fx64 Fs, __ix32 Order, filter_type FilterType, bandwidth Bandwidth, attenuation Attenuation)
+    /*! \brief virtual destructor */
+    virtual ~iir_base()
     {
-        init(Fs, Order, FilterType, Bandwidth, Attenuation);
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("iir_base","~iir_abstract()", "destructor call");
+        #endif
+
+        // memory deallocation
+        deallocate();
+    }
+
+    /*!
+     *  \brief frequency responce computation function
+     *  \param[F] input frequency, Hz
+     *  \details The function computes the filter complex transfer function value for the given frequency
+    */
+    fcomplex<__fx64> frequency_response( __fx64 F ) override
+    {
+        return __freq_resp__(m_FilterData.cfnum, m_FilterData.cfden, m_FilterData.gains, m_FilterData.Nx, m_FilterData.Ny, m_FilterData.N, m_Fs, F );
+    }
+
+
+    #ifndef __ALG_PLATFORM
+
+        void show()
+        {
+            __show__<__type>(m_FilterData);
+        }
+
+    #endif
+
+    /*!
+     *  \brief filtering operator
+     *  \param[_input] input pointer
+    */
+    virtual inline __type operator()( __type* _input ) = 0;
+
+};
+
+/*! @} */
+
+/*! \defgroup <BUTTERWORTH_FILTER_IMPLEMENTATION> ( Butterworth filter )
+ *  \ingroup CLASSIC_IIR_FILTERS
+ *  \brief The module contains implementation of the Butterworth filter
+    @{
+*/
+
+// butterworth filter realization
+template< typename __type > class butterworth;
+
+template<> class butterworth< __fx32 > final : public iir_base< __fx32 >
+{
+    typedef __fx32 __type;
+
+    filter_data< __fx64 > compute_lowpass () override { return __butt_cheb1_digital_lp__< __fx64 >( m_Fs, m_Bandwidth.Fc, m_order, 0 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_highpass() override { return __butt_cheb1_digital_hp__< __fx64 >( m_Fs, m_Bandwidth.Fc, m_order, 0 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_bandpass() override { return __butt_cheb1_digital_bp__< __fx64 >( m_Fs, m_Bandwidth.Fc, m_Bandwidth.BW , m_order , 0 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_bandstop() override { return __butt_cheb1_digital_bs__< __fx64 >( m_Fs, m_Bandwidth.Fc, m_Bandwidth.BW , m_order , 0 , m_Attenuation.G1 ); }
+
+    public:
+
+    // initialization function
+    void init( __fx64 _Fs , __ix32 _order , filter_type _type , bandwidth _bandwidth )
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("butterworth","init()", "filter initialization");
+        Debugger::Log("Fs           = " + to_string(_Fs));
+        Debugger::Log("order        = " + to_string(_order));
+        Debugger::Log("type         = " + to_string(_type));
+        Debugger::Log("bandwidth.Fc = " + to_string(_bandwidth.Fc));
+        Debugger::Log("bandwidth.BW = " + to_string(_bandwidth.BW));
+        #endif
+
+        iir_base< __type >::init(_Fs, _order,  _type, _bandwidth, {1, -1} );
+    }
+
+     // constructors
+     butterworth< __type >() : iir_base< __type >()
+     {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("butterworth","butterworth()", "constructor call");
+        #endif
+     }
+
+     butterworth< __type >( __fx64 _Fs , __ix32 _order , filter_type _type , bandwidth _bandwidth )
+     {
+         init(_Fs, _order,  _type, _bandwidth );
+     }
+
+     // destructor
+     ~butterworth< __type >()
+     {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("butterworth","~butterworth()", "destructor call");
+        #endif
+     }
+
+    inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
+};
+
+template<> class butterworth< __fx64 > final : public iir_base< __fx64 >
+{
+    typedef __fx64 __type;
+
+    filter_data< __fx64 > compute_lowpass () override { return __butt_cheb1_digital_lp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_order , 0 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_highpass() override { return __butt_cheb1_digital_hp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_order , 0 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_bandpass() override { return __butt_cheb1_digital_bp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 0 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_bandstop() override { return __butt_cheb1_digital_bs__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 0 , m_Attenuation.G1 ); }
+
+    public:
+
+    // initialization function
+    void init( __fx64 _Fs , __ix32 _order , filter_type _type , bandwidth _bandwidth )
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("butterworth","init()", "filter initialization");
+        Debugger::Log("Fs           = " + to_string(_Fs));
+        Debugger::Log("order        = " + to_string(_order));
+        Debugger::Log("type         = " + to_string(_type));
+        Debugger::Log("bandwidth.Fc = " + to_string(_bandwidth.Fc));
+        Debugger::Log("bandwidth.BW = " + to_string(_bandwidth.BW));
+        #endif
+
+        iir_base< __type >::init(_Fs, _order,  _type, _bandwidth, {1, -1} );
+    }
+
+     // constructors
+     butterworth< __type >() : iir_base< __type >()
+     {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("butterworth","butterworth()", "constructor call");
+        #endif
+     }
+
+     butterworth< __type >( __fx64 _Fs , __ix32 _order , filter_type _type , bandwidth _bandwidth )
+     {
+         init(_Fs, _order,  _type, _bandwidth );
+     }
+
+     // destructor
+     ~butterworth< __type >()
+     {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("butterworth","~butterworth()", "destructor call");
+        #endif
+     }
+
+    inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
+};
+
+/*! @} */
+
+/*!
+ *  \defgroup <CHEBYSHEV_TYPE_I_FILTER_IMPLEMENTATION> ( Chebyshev type I filter )
+ *  \ingroup CLASSIC_IIR_FILTERS
+ *  \brief The module contains implementation of the Chebyshev type I filter
+    @{
+*/
+
+// checbyshev 1 filter realization
+template< typename __type > class chebyshev_1;
+
+template<> class chebyshev_1< __fx32 > final : public iir_base< __fx32 >
+{
+    typedef __fx32 __type;
+
+    filter_data< __fx64 > compute_lowpass () override { return __butt_cheb1_digital_lp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_order , 1 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_highpass() override { return __butt_cheb1_digital_hp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_order , 1 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_bandpass() override { return __butt_cheb1_digital_bp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 1 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_bandstop() override { return __butt_cheb1_digital_bs__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 1 , m_Attenuation.G1 ); }
+
+    public:
+
+    // initialization function
+    void init( __fx64 _Fs , __ix32 _order , filter_type _type, bandwidth _bandwidth , __fx64 _Gs )
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("chebyshev_1","init()", "filter initialization");
+        Debugger::Log("Fs           = " + to_string(_Fs));
+        Debugger::Log("order        = " + to_string(_order));
+        Debugger::Log("type         = " + to_string(_type));
+        Debugger::Log("bandwidth.Fc = " + to_string(_bandwidth.Fc));
+        Debugger::Log("bandwidth.BW = " + to_string(_bandwidth.BW));
+        Debugger::Log("Gs           = " + to_string(_Gs));
+        #endif
+
+        iir_base< __type > :: init(_Fs, _order,  _type, _bandwidth, { _Gs, -1 } );
+    }
+
+    // constructors
+     chebyshev_1< __type >() : iir_base< __type >()
+     {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("chebyshev_1","chebyshev_1()", "constructor call");
+        #endif
+     }
+
+     // destructor
+    ~chebyshev_1< __type >()
+     {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("chebyshev_1","~chebyshev_1()", "destructor call");
+        #endif
+     }
+
+    inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
+};
+
+template<> class chebyshev_1< __fx64 > final : public iir_base< __fx64 >
+{
+    typedef __fx64 __type;
+
+    filter_data< __fx64 > compute_lowpass () override { return __butt_cheb1_digital_lp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_order , 1 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_highpass() override { return __butt_cheb1_digital_hp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_order , 1 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_bandpass() override { return __butt_cheb1_digital_bp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 1 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_bandstop() override { return __butt_cheb1_digital_bs__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 1 , m_Attenuation.G1 ); }
+
+    public:
+
+    // initialization function
+    void init( __fx64 _Fs , __ix32 _order , filter_type _type, bandwidth _bandwidth , __fx64 _Gs )
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("chebyshev_1","init()", "filter initialization");
+        Debugger::Log("Fs           = " + to_string(_Fs));
+        Debugger::Log("order        = " + to_string(_order));
+        Debugger::Log("type         = " + to_string(_type));
+        Debugger::Log("bandwidth.Fc = " + to_string(_bandwidth.Fc));
+        Debugger::Log("bandwidth.BW = " + to_string(_bandwidth.BW));
+        Debugger::Log("Gs           = " + to_string(_Gs));
+        #endif
+
+        iir_base< __type > :: init(_Fs, _order,  _type, _bandwidth, { _Gs, -1 } );
+    }
+
+    // constructors
+     chebyshev_1< __type >() : iir_base< __type >()
+     {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("chebyshev_1","chebyshev_1()", "constructor call");
+        #endif
+     }
+
+     // destructor
+    ~chebyshev_1< __type >()
+     {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("chebyshev_1","~chebyshev_1()", "destructor call");
+        #endif
+     }
+
+    inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
+};
+
+/*! @} */
+
+/*!
+ *  \defgroup <CHEBYSHEV_TYPE_II_FILTER_IMPLEMENTATION> ( Chebyshev type II filter )
+ *  \ingroup CLASSIC_IIR_FILTERS
+ *  \brief The module contains implementation of the Chebyshev type II filter
+    @{
+*/
+
+// chebyshev 2 filter realization
+template< typename __type > class chebyshev_2;
+
+template<> class chebyshev_2< __fx32 > final : public iir_base< __fx32 >
+{
+    typedef __fx32 __type;
+
+    filter_data< __fx64 > compute_lowpass () override { return __cheb2_ellip_digital_lp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_order , 0 , m_Attenuation.G2 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_highpass() override { return __cheb2_ellip_digital_hp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_order , 0 , m_Attenuation.G2 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_bandpass() override { return __cheb2_ellip_digital_bp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 0 , m_Attenuation.G2 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_bandstop() override { return __cheb2_ellip_digital_bs__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 0 , m_Attenuation.G2 , m_Attenuation.G1 ); }
+
+    public:
+
+    // initializing function
+    void init( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, __fx64 _Gp )
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("chebyshev_2","init()", "filter initialization");
+        Debugger::Log("Fs           = " + to_string(_Fs));
+        Debugger::Log("order        = " + to_string(_order));
+        Debugger::Log("type         = " + to_string(_type));
+        Debugger::Log("bandwidth.Fc = " + to_string(_bandwidth.Fc));
+        Debugger::Log("bandwidth.BW = " + to_string(_bandwidth.BW));
+        Debugger::Log("Gp           = " + to_string(_Gp));
+        #endif
+
+        iir_base< __type >::init(_Fs, _order,  _type, _bandwidth, { _Gp, -1 } );
+    }
+
+    // constructors
+    chebyshev_2< __type >() : iir_base< __type >()
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("chebyshev_2","chebyshev_2()", "constructor call");
+        #endif
     }
 
     // destructor
-    virtual ~iir_abstract(){}
+    ~chebyshev_2< __type >()
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("chebyshev_2","chebyshev_2()", "destructor call");
+        #endif
+    }
 
-    virtual inline __type operator()( __type* _input ) = 0;
+    // operayors
+    inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
 };
 
-// butterworth filter realization
-namespace
+template<> class chebyshev_2< __fx64 > final : public iir_base< __fx64 >
 {
-    template< typename __type > class butterworth ;
-
-    template<> class butterworth< __fx32 > final : public iir_abstract< __fx32 >
-    {
-        typedef __fx32 __type;
-
-        filter_data< __type > compute_lowpass () override { return __butt_cheb1_digital_lp__< __type >( m_Fs , m_Bandwidth.Fc , m_order , 0 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_highpass() override { return __butt_cheb1_digital_hp__< __type >( m_Fs , m_Bandwidth.Fc , m_order , 0 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_bandpass() override { return __butt_cheb1_digital_bp__< __type >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 0 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_bandstop() override { return __butt_cheb1_digital_bs__< __type >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 0 , m_Attenuation.G1 ); }
-
-        public:
-
-        // initialization function
-        void init( __fx64 _Fs , __ix32 _order , filter_type _type , bandwidth _bandwidth )
-        {
-            iir_abstract< __type >::init(_Fs, _order,  _type, _bandwidth, {1, -1} );
-            allocate();
-        }
-
-         // constructors
-         butterworth< __type >() : iir_abstract< __type >(){}
-
-         butterworth< __type >( __fx64 _Fs , __ix32 _order , filter_type _type , bandwidth _bandwidth )
-         {
-             init(_Fs, _order,  _type, _bandwidth );
-         }
-
-         // destructor
-         ~butterworth< __type >()
-         {
-             deallocate();
-         }
-
-        inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
-    };
-
-    template<> class butterworth< __fx64 > final : public iir_abstract< __fx64 >
-    {
-        typedef __fx64 __type;
-
-        filter_data< __type > compute_lowpass () override { return __butt_cheb1_digital_lp__< __type >( m_Fs , m_Bandwidth.Fc , m_order , 0 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_highpass() override { return __butt_cheb1_digital_hp__< __type >( m_Fs , m_Bandwidth.Fc , m_order , 0 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_bandpass() override { return __butt_cheb1_digital_bp__< __type >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 0 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_bandstop() override { return __butt_cheb1_digital_bs__< __type >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 0 , m_Attenuation.G1 ); }
-
-        public:
-
-        // initialization function
-        void init( __fx64 _Fs , __ix32 _order , filter_type _type , bandwidth _bandwidth )
-        {
-            iir_abstract< __type >::init(_Fs, _order,  _type, _bandwidth, {1, -1} );
-            allocate();
-        }
-
-         // constructors
-         butterworth< __type >() : iir_abstract< __type >(){}
-         butterworth< __type >( __fx64 _Fs , __ix32 _order , filter_type _type , bandwidth _bandwidth )
-         {
-             init(_Fs, _order,  _type, _bandwidth );
-         }
-
-         // destructor
-         ~butterworth< __type >()
-         {
-             deallocate();
-         };
-
-        inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
-    };
-
-}
-
-// checbyshev 1 filter realization
-namespace
-{
-    template< typename __type > class chebyshev_1;
-
-    template<> class chebyshev_1< __fx32 > final : public iir_abstract< __fx32 >
-    {
-        typedef __fx32 __type;
-
-        filter_data< __type > compute_lowpass () override { return __butt_cheb1_digital_lp__< __type >( m_Fs , m_Bandwidth.Fc , m_order , 1 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_highpass() override { return __butt_cheb1_digital_hp__< __type >( m_Fs , m_Bandwidth.Fc , m_order , 1 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_bandpass() override { return __butt_cheb1_digital_bp__< __type >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 1 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_bandstop() override { return __butt_cheb1_digital_bs__< __type >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 1 , m_Attenuation.G1 ); }
-
-        public:
-
-        // initialization function
-        void init( __fx64 _Fs , __ix32 _order , filter_type _type, bandwidth _bandwidth , __fx64 _Gs )
-        {
-            iir_abstract< __type > :: init(_Fs, _order,  _type, _bandwidth, { _Gs, -1 } );
-            allocate();
-        }
-
-        // constructors
-         chebyshev_1< __type >() : iir_abstract< __type >(){}
-         chebyshev_1< __type >( __fx64 _Fs , __ix32 _order , filter_type _type, bandwidth _bandwidth , __fx64 _Gs ) : iir_abstract(_Fs, _order,  _type, _bandwidth, { _Gs, -1 } )
-         {
-             init(_Fs, _order,  _type, _bandwidth, _Gs );
-         }
-
-         // destructor
-        ~chebyshev_1< __type >()
-         {
-             deallocate();
-         }
-
-        inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
-    };
-
-    template<> class chebyshev_1< __fx64 > final : public iir_abstract< __fx64 >
-    {
-        typedef __fx64 __type;
-
-        filter_data< __type > compute_lowpass () override { return __butt_cheb1_digital_lp__< __type >( m_Fs , m_Bandwidth.Fc , m_order , 1 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_highpass() override { return __butt_cheb1_digital_hp__< __type >( m_Fs , m_Bandwidth.Fc , m_order , 1 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_bandpass() override { return __butt_cheb1_digital_bp__< __type >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 1 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_bandstop() override { return __butt_cheb1_digital_bs__< __type >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 1 , m_Attenuation.G1 ); }
-
-        public:
-
-        // initializing function
-        void init( __fx64 _Fs , __ix32 _order , filter_type _type, bandwidth _bandwidth , __fx64 _Gs )
-        {
-            iir_abstract< __type > :: init(_Fs, _order,  _type, _bandwidth, { _Gs, -1 } );
-            allocate();
-        }
-
-        // constructor
-         chebyshev_1< __type >() : iir_abstract< __type >(){}
-         chebyshev_1< __type >( __fx64 _Fs , __ix32 _order , filter_type _type, bandwidth _bandwidth , __fx64 _Gs ) : iir_abstract(_Fs, _order,  _type, _bandwidth, { _Gs, -1 } )
-         {
-             init(_Fs, _order,  _type, _bandwidth, _Gs );
-         }
-
-         // destructor
-        ~chebyshev_1< __type >()
-         {
-             deallocate();
-         }
-
-        inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
-    };
-}
-
-// chebyshev 2 filter realization
-namespace
-{
-    template< typename __type > class chebyshev_2;
-
-    template<> class chebyshev_2< __fx32 > final : public iir_abstract< __fx32 >
-    {
-        typedef __fx32 __type;
-
-        filter_data< __type > compute_lowpass () override { return __cheb2_ellip_digital_lp__< __type >( m_Fs , m_Bandwidth.Fc , m_order , 0 , m_Attenuation.G2 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_highpass() override { return __cheb2_ellip_digital_hp__< __type >( m_Fs , m_Bandwidth.Fc , m_order , 0 , m_Attenuation.G2 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_bandpass() override { return __cheb2_ellip_digital_bp__< __type >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 0 , m_Attenuation.G2 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_bandstop() override { return __cheb2_ellip_digital_bs__< __type >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 0 , m_Attenuation.G2 , m_Attenuation.G1 ); }
-
-        public:
-
-        // initializing function
-        void init( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, __fx64 _Gp )
-        {
-            iir_abstract< __type >::init(_Fs, _order,  _type, _bandwidth, { _Gp, -1 } );
-            allocate();
-        }
-
-        // constructors
-        chebyshev_2< __type >() : iir_abstract< __type >(){}
-        chebyshev_2< __type >( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, __fx64 _Gp )
-        {
-            init(_Fs, _order,  _type, _bandwidth, _Gp );
-        }
-
-        // destructor
-        ~chebyshev_2< __type >()
-         {
-             deallocate();
-         }
-
-        // operayors
-        inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
-    };
-
-    template<> class chebyshev_2< __fx64 > final : public iir_abstract< __fx64 >
-    {
-        typedef __fx64 __type;
-
-        filter_data< __type > compute_lowpass () override { return __cheb2_ellip_digital_lp__< __type >( m_Fs , m_Bandwidth.Fc , m_order , 0 , m_Attenuation.G2 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_highpass() override { return __cheb2_ellip_digital_hp__< __type >( m_Fs , m_Bandwidth.Fc , m_order , 0 , m_Attenuation.G2 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_bandpass() override { return __cheb2_ellip_digital_bp__< __type >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 0 , m_Attenuation.G2 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_bandstop() override { return __cheb2_ellip_digital_bs__< __type >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 0 , m_Attenuation.G2 , m_Attenuation.G1 ); }
-
-        public:
-
-        // initialization function
-        void init( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, __fx64 _Gp )
-        {
-            iir_abstract< __type >::init(_Fs, _order,  _type, _bandwidth, { _Gp, -1 } );
-            allocate();
-        }
-
-        // constructors
-        chebyshev_2< __type >() : iir_abstract< __type >(){}
-        chebyshev_2< __type >( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, __fx64 _Gp )
-        {
-            init(_Fs, _order,  _type, _bandwidth, _Gp );
-        }
-
-         // desturctor
-        ~chebyshev_2< __type >()
-         {
-             deallocate();
-         }
-
-         // operators
-        inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
-    };
-
-
-}
-
-// elliptic filter realization
-namespace
-{
-    template< typename __type > class elliptic;
-
-    template<> class elliptic< __fx32 > final : public iir_abstract< __fx32 >
-    {
-    typedef __fx32 __type;
-
-        filter_data< __type > compute_lowpass () override { return __cheb2_ellip_digital_lp__< __type >( m_Fs , m_Bandwidth.Fc , m_order , 1 , m_Attenuation.G2 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_highpass() override { return __cheb2_ellip_digital_hp__< __type >( m_Fs , m_Bandwidth.Fc , m_order , 1 , m_Attenuation.G2 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_bandpass() override { return __cheb2_ellip_digital_bp__< __type >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 1 , m_Attenuation.G2 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_bandstop() override { return __cheb2_ellip_digital_bs__< __type >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 1 , m_Attenuation.G2 , m_Attenuation.G1 ); }
-
-        public:
-
-        // initialization
-        void init( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, __fx64 _Gs, __fx64 _Gp )
-        {
-            iir_abstract< __type >::init(_Fs, _order,  _type, _bandwidth, { _Gs, _Gp } );
-            allocate();
-        }
-
-        // constructors
-        elliptic< __type >() : iir_abstract< __type >(){}
-        elliptic< __type >( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, __fx64 _Gs, __fx64 _Gp )
-        {
-            init(_Fs, _order,  _type, _bandwidth, _Gs, _Gp );
-        }
-
-
-        // destructor
-        ~elliptic< __type >()
-        {
-            deallocate();
-        };
-
-        // opeartors
-        inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
-    };
-
-    template<> class elliptic< __fx64 > final : public iir_abstract< __fx64 >
-    {
     typedef __fx64 __type;
 
-        filter_data< __type > compute_lowpass () override { return __cheb2_ellip_digital_lp__< __type >( m_Fs , m_Bandwidth.Fc , m_order , 1 , m_Attenuation.G2 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_highpass() override { return __cheb2_ellip_digital_hp__< __type >( m_Fs , m_Bandwidth.Fc , m_order , 1 , m_Attenuation.G2 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_bandpass() override { return __cheb2_ellip_digital_bp__< __type >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 1 , m_Attenuation.G2 , m_Attenuation.G1 ); }
-        filter_data< __type > compute_bandstop() override { return __cheb2_ellip_digital_bs__< __type >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 1 , m_Attenuation.G2 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_lowpass () override { return __cheb2_ellip_digital_lp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_order , 0 , m_Attenuation.G2 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_highpass() override { return __cheb2_ellip_digital_hp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_order , 0 , m_Attenuation.G2 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_bandpass() override { return __cheb2_ellip_digital_bp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 0 , m_Attenuation.G2 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_bandstop() override { return __cheb2_ellip_digital_bs__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 0 , m_Attenuation.G2 , m_Attenuation.G1 ); }
 
-        public:
+    public:
 
-        // initializaton function
-        void init( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, __fx64 _Gs, __fx64 _Gp )
-        {
-            iir_abstract< __type >::init(_Fs, _order,  _type, _bandwidth, { _Gs, _Gp } );
-            allocate();
-        }
+    // initializing function
+    void init( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, __fx64 _Gp )
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("chebyshev_2","init()", "filter initialization");
+        Debugger::Log("Fs           = " + to_string(_Fs));
+        Debugger::Log("order        = " + to_string(_order));
+        Debugger::Log("type         = " + to_string(_type));
+        Debugger::Log("bandwidth.Fc = " + to_string(_bandwidth.Fc));
+        Debugger::Log("bandwidth.BW = " + to_string(_bandwidth.BW));
+        Debugger::Log("Gp           = " + to_string(_Gp));
+        #endif
 
-        // constructors
-        elliptic< __type >() : iir_abstract< __type >(){}
-        elliptic< __type >( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, __fx64 _Gs, __fx64 _Gp )
-        {
-            init(_Fs, _order,  _type, _bandwidth, _Gs, _Gp );
-        }
+        iir_base< __type >::init(_Fs, _order,  _type, _bandwidth, { _Gp, -1 } );
+    }
 
-        // destructor
-        ~elliptic< __type >()
-        {
-            deallocate();
-        }
+    // constructors
+    chebyshev_2< __type >() : iir_base< __type >()
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("chebyshev_2","chebyshev_2()", "constructor call");
+        #endif
+    }
 
-        // operators
-        inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
-    };
+    // destructor
+    ~chebyshev_2< __type >()
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("chebyshev_2","chebyshev_2()", "destructor call");
+        #endif
+    }
 
-}
+    // operayors
+    inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
+};
+
+/*! @} */
+
+/*!
+ *  \defgroup <ELLIPTIC_FILTER_IMPLEMENTATION> ( Elliptic filter )
+ *  \ingroup CLASSIC_IIR_FILTERS
+ *  \brief The module contains implementation of the Elliptic filter
+    @{
+*/
+
+// elliptic filter realization
+template< typename __type > class elliptic;
+
+template<> class elliptic< __fx32 > final : public iir_base< __fx32 >
+{
+typedef __fx32 __type;
+
+    filter_data< __fx64 > compute_lowpass () override { return __cheb2_ellip_digital_lp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_order , 1 , m_Attenuation.G2 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_highpass() override { return __cheb2_ellip_digital_hp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_order , 1 , m_Attenuation.G2 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_bandpass() override { return __cheb2_ellip_digital_bp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 1 , m_Attenuation.G2 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_bandstop() override { return __cheb2_ellip_digital_bs__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 1 , m_Attenuation.G2 , m_Attenuation.G1 ); }
+
+    public:
+
+    // initialization
+    void init( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, __fx64 _Gs, __fx64 _Gp )
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("elliptic","init()", "filter initialization");
+        Debugger::Log("Fs           = " + to_string(_Fs));
+        Debugger::Log("order        = " + to_string(_order));
+        Debugger::Log("type         = " + to_string(_type));
+        Debugger::Log("bandwidth.Fc = " + to_string(_bandwidth.Fc));
+        Debugger::Log("bandwidth.BW = " + to_string(_bandwidth.BW));
+        Debugger::Log("Gs           = " + to_string(_Gs));
+        Debugger::Log("Gp           = " + to_string(_Gp));
+        #endif
+
+        iir_base< __type >::init(_Fs, _order,  _type, _bandwidth, { _Gs, _Gp } );
+    }
+
+    // constructors
+    elliptic< __type >() : iir_base< __type >()
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("elliptic","elliptic()", "constructor call");
+        #endif
+    }
+
+
+    // destructor
+    ~elliptic< __type >()
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("elliptic","~elliptic()", "destructor call");
+        #endif
+    }
+
+    // opeartors
+    inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
+};
+
+template<> class elliptic< __fx64 > final : public iir_base< __fx64 >
+{
+typedef __fx64 __type;
+
+    filter_data< __fx64 > compute_lowpass () override { return __cheb2_ellip_digital_lp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_order , 1 , m_Attenuation.G2 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_highpass() override { return __cheb2_ellip_digital_hp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_order , 1 , m_Attenuation.G2 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_bandpass() override { return __cheb2_ellip_digital_bp__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 1 , m_Attenuation.G2 , m_Attenuation.G1 ); }
+    filter_data< __fx64 > compute_bandstop() override { return __cheb2_ellip_digital_bs__< __fx64 >( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , 1 , m_Attenuation.G2 , m_Attenuation.G1 ); }
+
+    public:
+
+    // initialization
+    void init( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, __fx64 _Gs, __fx64 _Gp )
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("elliptic","init()", "filter initialization");
+        Debugger::Log("Fs           = " + to_string(_Fs));
+        Debugger::Log("order        = " + to_string(_order));
+        Debugger::Log("type         = " + to_string(_type));
+        Debugger::Log("bandwidth.Fc = " + to_string(_bandwidth.Fc));
+        Debugger::Log("bandwidth.BW = " + to_string(_bandwidth.BW));
+        Debugger::Log("Gs           = " + to_string(_Gs));
+        Debugger::Log("Gp           = " + to_string(_Gp));
+        #endif
+
+        iir_base< __type >::init(_Fs, _order,  _type, _bandwidth, { _Gs, _Gp } );
+    }
+
+    // constructors
+    elliptic< __type >() : iir_base< __type >()
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("elliptic","elliptic()", "constructor call");
+        #endif
+    }
+
+
+    // destructor
+    ~elliptic< __type >()
+    {
+        #ifdef IIR_FILTERS_DEBUG
+        Debugger::Log("elliptic","~elliptic()", "destructor call");
+        #endif
+    }
+
+    // opeartors
+    inline __type operator()( __type* _input ) override { return filt<__type>(_input); }
+};
+
+/*! @} */
 
 #undef __fx32
 #undef __fx64

@@ -6,7 +6,7 @@
 using namespace DSP_KERNEL;
 
 #ifndef __ALG_PLATFORM
-//#define RFF_DEBUG // debugging is not available if the algorithm is running on a device !!!
+#define RFF_DEBUG // debugging is not available if the algorithm is running on a device !!!
 #endif
 
 #ifndef __fx32
@@ -54,8 +54,31 @@ using namespace DSP_KERNEL;
  *  \f]
 */
 template< typename __type >
-class recursive_fourier_abstract : public filter_abstract
+class recursive_fourier_abstract : public model_base
 {
+private:
+
+    // memory allocation function
+   __ix32  allocate()
+   {
+       #ifdef RFF_DEBUG
+       Debugger::Log("recursive_fourier_abstract","allocate()","Filter memory allocation");
+       #endif
+
+       return ( m_buffer_sx.allocate( m_order + 2 ) );
+   }
+
+   // memory free function
+   __ix32 deallocate()
+   {
+       #ifdef RFF_DEBUG
+       Debugger::Log("recursive_fourier_abstract","allocate()","Filter memory free");
+       #endif
+
+       m_buffer_sx.deallocate();
+       return 0;
+   }
+
 protected:
 
     // system fields
@@ -85,40 +108,11 @@ protected:
         return m_out;
     }
 
-    /*!
-     *  \brief Allocates filter resources
-     *  \details The function is supposed to be called explicitly by the user.
-     *           Do not call this function in the constructors of the derived classes !!!
-    */
-   __ix32  allocate() override
-   {
-       #ifdef RFF_DEBUG
-       Debugger::Log("recursive_fourier_abstract::allocate() call \n");
-       #endif
-
-       return ( m_buffer_sx.allocate( m_order + 2 ) );
-   }
-
-   /*!
-    *  \brief Frees filter resources
-    *  \details The function is supposed to be called explicitly by the user.
-    *           Do not call this function in the destructors of the derived classes !!!
-   */
-   __ix32 deallocate() override
-   {
-       #ifdef RFF_DEBUG
-       Debugger::Log("recursive_fourier_abstract::deallocate() call \n");
-       #endif
-
-       m_buffer_sx.deallocate();
-       return 0;
-   }
-
     /*!  \brief default constructor */
-    recursive_fourier_abstract() : filter_abstract()
+    recursive_fourier_abstract() : model_base()
     {
         #ifdef RFF_DEBUG
-        Debugger::Log("recursive_fourier_abstract() call \n");
+        Debugger::Log("recursive_fourier_abstract","recursive_fourier_abstract()","Filter constructor call");
         #endif
     }
 
@@ -126,8 +120,10 @@ protected:
     virtual ~recursive_fourier_abstract()
     {
         #ifdef RFF_DEBUG
-        Debugger::Log("~recursive_fourier_abstract() call \n");
+        Debugger::Log("recursive_fourier_abstract","~recursive_fourier_abstract()","Filter destructor call");
         #endif
+
+        deallocate();
     }
 
     /*!
@@ -149,7 +145,8 @@ protected:
          m_rot(cos( PI2 * (__fx64)m_hnum / (__fx64)m_order ), sin( PI2 * (__fx64)m_hnum / (__fx64)m_order ) );
 
         #ifdef RFF_DEBUG
-        Debugger::Log("recursive_fourier_abstract() init call: ");
+
+        Debugger::Log("recursive_fourier_abstract","init()","Filter initialization");
         Debugger::Log("Fn    = " + to_string(m_Fn) );
         Debugger::Log("Fs    = " + to_string(m_Fs) );
         Debugger::Log("Ts    = " + to_string(m_Ts) );
@@ -157,6 +154,9 @@ protected:
         Debugger::Log("Gain  = " + to_string(m_Gain));
         Debugger::Log("hnum  = " + to_string(m_hnum) + "\n");
         #endif
+
+        //
+        allocate();
 
      }
 
@@ -205,7 +205,7 @@ public:
     recursive_fourier() : recursive_fourier_abstract()
     {
         #ifdef RFF_DEBUG
-        Debugger::Log("recursive_fourier() call \n");
+        Debugger::Log("recursive_fourier","recursive_fourier()","Filter construction");
         #endif
     }
 
@@ -213,7 +213,7 @@ public:
     ~recursive_fourier()
     {
         #ifdef RFF_DEBUG
-        Debugger::Log("~recursive_fourier() call \n");
+        Debugger::Log("recursive_fourier","~recursive_fourier()","Filter destruction");
         #endif
     }
 
@@ -238,7 +238,7 @@ public:
     recursive_fourier() : recursive_fourier_abstract()
     {
         #ifdef RFF_DEBUG
-        Debugger::Log("recursive_fourier() call \n");
+        Debugger::Log("recursive_fourier","recursive_fourier()","Filter construction");
         #endif
     }
 
@@ -246,7 +246,7 @@ public:
     ~recursive_fourier()
     {
         #ifdef RFF_DEBUG
-        Debugger::Log("~recursive_fourier() call \n");
+        Debugger::Log("recursive_fourier","~recursive_fourier()","Filter destruction");
         #endif
     }
 

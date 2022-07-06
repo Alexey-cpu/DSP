@@ -1,13 +1,3 @@
-/*!
- *
- * brief   Utility
- * authors A.Tykvinskiy
- * date    21.12.2021
- * version 1.0
- *
- * The header declares utility functions and classes
-*/
-
 #ifndef UTILS_H
 #define UTILS_H
 
@@ -24,6 +14,7 @@
 #endif
 
 #include "QElapsedTimer"
+#include <fstream>
 #include "iostream"
 #include "cmath"
 #include "vector"
@@ -573,27 +564,29 @@ void __gbit__(__uix32 &bits, __uix32 bit )
 }
 
 /*!
- *  \brief get bit function
+ *  \brief memory allocation function
  *  \param[size] the output array size
  *  \details The function allocates memory and returns the pointer pointing to the allocated memory segment.
  *           The function doesn't call the input type constructor. So don't use it to allocate customized
  *           object. Use new operator instead.
 */
-template< typename __type > inline __type* __alloc__(__ix32 size)
+template< typename __type > inline __type*
+__alloc__(__ix32 size)
 {
     if(size <= 0) return nullptr;
     return (__type*)calloc( size, sizeof(__type) );
 }
 
 /*!
- *  \brief get bit function
+ *  \brief memory allocation function
  *  \param[size] the output array size
  *  \param[value] the value that initializes the output memory segment
  *  \details The function allocates memory and returns the pointer pointing to the allocated memory segment initialized by the given value.
  *           The function doesn't call the input type constructor. So don't use it to allocate customized
  *           object. Use new operator instead.
 */
-template< typename __type > inline __type* __alloc__(__ix32 size, __type value)
+template< typename __type > inline __type*
+__alloc__(__ix32 size, __type value)
 {
     if(size <= 0) return nullptr;
     __type *memory = (__type*)calloc( size, sizeof(__type) );
@@ -602,14 +595,15 @@ template< typename __type > inline __type* __alloc__(__ix32 size, __type value)
 }
 
 /*!
- *  \brief get bit function
+ *  \brief memory allocation function
  *  \param[size] the output array size
  *  \param[initializer] pointer to the function that initializes the output memory segment
  *  \details The function allocates memory and returns the pointer pointing to the allocated memory segment initialized by initializer function.
  *           The function doesn't call the input type constructor. So don't use it to allocate customized
  *           object. Use new operator instead.
 */
-template< typename __type > inline __type* __alloc__( __ix32 size, void (*initializer)(__type *memory, __ix32 size) )
+template< typename __type > inline __type*
+__alloc__( __ix32 size, void (*initializer)(__type *memory, __ix32 size) )
 {
     if(size <= 0) return nullptr;
     __type *memory = (__type*)calloc( size, sizeof(__type) );
@@ -619,13 +613,14 @@ template< typename __type > inline __type* __alloc__( __ix32 size, void (*initia
 }
 
 /*!
- *  \brief get bit function
+ *  \brief memory reallocation function
  *  \param[memory] the input memory segment
  *  \param[newsize] the new size of the input memory segment
  *  \details The function reallocates memory and returns the pointer pointing to the reallocated memory segment.
  *           The function returbs nullptr if the new size is lower or equal to zero or the memory reallocation has failed.
 */
-template< typename __type > inline __type* __realloc__(__type *memory, __ix32 newsize)
+template< typename __type > inline __type*
+__realloc__(__type *memory, __ix32 newsize)
 {
     if(newsize <= 0 && memory)
     {
@@ -638,11 +633,12 @@ template< typename __type > inline __type* __realloc__(__type *memory, __ix32 ne
 }
 
 /*!
- *  \brief get bit function
+ *  \brief memory clean function
  *  \param[memory] the input memory segment
  *  \details The function frees memory and returns nullptr
 */
-template< typename __type > inline __type* __mfree__(__type *memory)
+template< typename __type > inline __type*
+__mfree__(__type *memory)
 {
     if(memory)
     {
@@ -651,6 +647,57 @@ template< typename __type > inline __type* __mfree__(__type *memory)
     }
 
     return memory;
+}
+
+/*!
+ *  \brief memory clean function
+ *  \param[tuple] two element tuple tuple.item0
+ *  \details The function frees memory of *tuple.item0
+*/
+template< typename __type > inline tuple_x2< __type*, __ix32 >
+__mfree__( tuple_x2< __type*, __ix32 > tuple)
+{
+    tuple.item0 = __mfree__(tuple.item0);
+    tuple.item1 = -1;
+    return tuple;
+}
+
+/*!
+ *  \brief memory clean function
+ *  \param[tuple] two element tuple
+ *  \details The function frees memory of **tuple.item0
+*/
+inline tuple_x2< void**, __ix32 >
+__mfree__( tuple_x2< void**, __ix32 > tuple)
+{
+    for(__ix32 i = 0 ; i < tuple.item1 ; i++)
+    {
+        tuple.item0[i] = __mfree__( tuple.item0[i] );
+    }
+
+    tuple.item0 = __mfree__( tuple.item0 );
+    tuple.item1 = -1;
+
+    return tuple;
+}
+
+/*!
+ *  \brief memory clean function
+ *  \param[tuple] three element tuple
+ *  \details The function frees memory of **tuple.item0
+*/
+inline tuple_x3< void**, __ix32, __ix32 >
+__mfree__( tuple_x3< void**, __ix32, __ix32 > tuple)
+{
+    for(__ix32 i = 0 ; i < tuple.item1 ; i++)
+    {
+        tuple.item0[i] = __mfree__( tuple.item0[i] );
+    }
+
+    tuple.item0 = __mfree__( tuple.item0 );
+    tuple.item1 = -1;
+    tuple.item2 = -1;
+    return tuple;
 }
 
 #ifdef _STRINGFWD_H

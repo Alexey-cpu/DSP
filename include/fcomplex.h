@@ -1,16 +1,5 @@
-/*!
- * file
- * brief   Complex numbers template class and functions
- * authors A.Tykvinskiy
- * date    03.22.2022
- * version 1.0.1
- *
- * The header declares template complex number class and functions
-*/
-
 #ifndef FCOMPLEX_H
 #define FCOMPLEX_H
-
 
 #ifndef __ALG_PLATFORM
 #include "math.h"
@@ -477,6 +466,15 @@ public:
         return __ceq__( this->m_data , _c2.m_data );
     }
 
+    #ifdef _STRINGFWD_H
+
+        string to_string()
+        {
+            return std::to_string( m_data[REAL] ) + "\t" + std::to_string( m_data[IMAG] );
+        }
+
+    #endif
+
     /*!
      *  \brief friend real part extraction function
      *  \param[_complex] input complex number
@@ -520,7 +518,6 @@ __realf__(fcomplex<__type> _complex )
 {
     return _complex.m_data[REAL];
 }
-/*! \example complex_realf_example.cpp */
 
 /*!
  *  \brief complex number angle computation function
@@ -532,7 +529,6 @@ __imagf__(fcomplex<__type> _complex )
 {
     return _complex.m_data[IMAG];
 }
-/*! \example complex_imagf_example.cpp */
 
 /*!
 * \brief complex number modulus computation function
@@ -547,7 +543,6 @@ __type __cabsf__(fcomplex<__type> _complex )
 {
     return __cabs__<__type>(_complex.m_data );
 }
-/*! \example complex_cabsf_example.cpp */
 
 /*!
 * \brief complex number angle computation function
@@ -562,7 +557,6 @@ __type __cargf__( fcomplex<__type> _complex )
 {
     return __carg__<__type>(_complex.m_data );
 }
-/*! \example complex_cargf_example.cpp */
 
 /*!
 * \brief complex number square root computation function
@@ -579,7 +573,6 @@ __csqrtf__(fcomplex<__type> _complex )
     __type arg = __cargf__(_complex );
     return fcomplex<__type>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
 }
-/*! \example complex_csqrtf_example.cpp */
 
 /*!
 * \brief complex number conjugation functon
@@ -595,7 +588,6 @@ __conjf__( fcomplex<__type> _complex )
     _complex( __realf__(_complex) , -__imagf__(_complex) );
     return _complex;
 }
-/*! \example complex_conjf_example.cpp */
 
 /*!
 * \brief complex number normalization function
@@ -610,7 +602,6 @@ __cnormf__( fcomplex<__type> _complex )
 {
     return fcomplex<__type>( _complex / __cabsf__( _complex ) );
 }
-/*! \example complex_cnormf_example.cpp */
 
 /*!
 * \brief rotation vector form function
@@ -632,7 +623,6 @@ __crotf__(__fx64 _arg, bool _mode )
     if(_mode ) { _arg = __TO_RADIANS( _arg ); }
     return fcomplex<__type>( cos(_arg) , sin(_arg) );
 }
-/*! \example complex_crotf_example.cpp */
 
 /*!
 * \brief complex hyperbollic sinus function
@@ -649,7 +639,6 @@ __sinhf__( fcomplex<__type> _complex )
     __type im = ( exp( __realf__(_complex) ) * sin( __imagf__(_complex) ) - exp( -__realf__(_complex) ) * sin( -__imagf__(_complex) ) ) * (__type)0.5;
     return fcomplex<__type>( re , im );
 }
-/*! \example complex_sinhf_example.cpp */
 
 /*!
 * \brief complex hyperbollic cos function
@@ -666,7 +655,6 @@ __coshf__( fcomplex<__type> _complex )
     __fx32 im = ( exp( __realf__(_complex) ) * sin( __imagf__(_complex) ) + exp( -__realf__(_complex) ) * sin( -__imagf__(_complex) ) ) * (__type)0.5;
     return fcomplex<__type>( re , im );
 }
-/*! \example complex_coshf_example.cpp */
 
 /*!
 * \brief complex hyperbollic tan function
@@ -678,7 +666,6 @@ __coshf__( fcomplex<__type> _complex )
 */
 template<typename __type> fcomplex<__type>
 __tanhf__( fcomplex<__type> _complex ) { return __sinhf__(_complex) / __coshf__(_complex); }
-/*! \example complex_tanhf_example.cpp */
 
 /*!
 * \brief complex hyperbollic catan function
@@ -690,7 +677,6 @@ __tanhf__( fcomplex<__type> _complex ) { return __sinhf__(_complex) / __coshf__(
 */
 template<typename __type> fcomplex<__type>
 __ctnhf__( fcomplex<__type> _complex ) { return __coshf__(_complex) / __sinhf__(_complex); }
-/*! \example complex_ctnhf_example.cpp */
 
 /*! @} */
 

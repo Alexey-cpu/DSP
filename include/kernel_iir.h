@@ -1,8 +1,13 @@
 #ifndef KERNEL_IIR_H
 #define KERNEL_IIR_H
 
+#include "special_functions.h"
 #include "kernel_dsp.h"
 using namespace DSP_KERNEL;
+
+#ifndef __ALG_PLATFORM
+//#define IIR_KERNEL_DEBUG // debugging is not available if the algorithm is running on a device !!!
+#endif
 
 #ifndef __fx32
 #define __fx32 float
@@ -28,8 +33,20 @@ using namespace DSP_KERNEL;
 #define PI2 6.283185307179586476925286766559
 #endif
 
+/*!  \namespace IIR_KERNEL */
 namespace IIR_KERNEL
 {
+
+    /*! \defgroup <DSP_CLASSIC_IIR_FILTERS_KERNEL> ( Classic IIR low level kernel )
+     *  \ingroup KERNELS
+     *  \brief   The module contains classic IIR filters low level kernel
+     *  \details The module contains the Butterworth, Chebyshev type I, Chebyshev type II and Elliptic
+     *           filters low level computational utilities. All the mentioned above filters are modelled
+     *           by quadratic sections model ty avoid the rounding errors. All the functions compute
+     *          floating point type coefficients.
+        @{
+    */
+
     using namespace DSP_KERNEL;
 
     /*!
@@ -93,7 +110,15 @@ namespace IIR_KERNEL
     template<typename __type> fcomplex<__fx64> __freq_resp__ (__type *_cfnum, __type *_cfden,  __type *_gains, __ix32 _Nx, __ix32 _Ny, __ix32 _N,  __fx64 _Fs,  __fx64 _F )
     {
         // check the input:
-        if( !_cfnum || !_cfden || !_gains ) return { -1 , -1 };
+        if( !_cfnum || !_cfden || !_gains )
+        {
+
+            #ifdef IIR_KERNEL_DEBUG
+            Debugger::Log("kernel_iir.h", "__freq_resp__", "filter coefficients { cfnum, cfden, gains } are null !!!");
+            #endif
+
+            return { -1 , -1 };
+        }
 
         // sampling period:
         __fx64 Ts = 1 / _Fs;
@@ -132,29 +157,36 @@ namespace IIR_KERNEL
      *           All the data is stored within zp data structure and returned.
     */
     template<typename __type>
-    filter_data<__type> __butt_zeros_poles_plain__( __ix32 _order, __fx64 _g_stop )
+    filter_data<__type> __butt_zeros_poles_plain__( __ix32 _order, __fx64 _g_stop ) // refactored !!!
     {
         // number of zeros, poles, coeffs:
-        __ix32 L = trunc( _order / 2 ) , R = _order - 2 * L , N = L + R;
+        __ix32 L = trunc( _order / 2 );
+        __ix32 R = _order - 2 * L;
+        __ix32 N = L+R;
 
         // stopband attenuation:
         __fx64 epsilon_stop = sqrt(pow(10, _g_stop / 10) - 1);
 
-        // memory allocation for the lowpass analogue prototype poles, zeros and gains:
-        fcomplex<__fx64> *plp = ( fcomplex<__fx64>* ) calloc( N+0 , sizeof ( fcomplex<__fx64> ) );
-        fcomplex<__fx64> *zlp = ( fcomplex<__fx64>* ) calloc( N+0 , sizeof ( fcomplex<__fx64> ) );
-        fcomplex<__fx64> *glp = ( fcomplex<__fx64>* ) calloc( N+1 , sizeof ( fcomplex<__fx64> ) );
+        // memory allocation for the lowpass analogue prototype poles, zeros and gains
+        fcomplex<__fx64> *plp = __alloc__< fcomplex<__fx64> >(N+0);
+        fcomplex<__fx64> *zlp = __alloc__< fcomplex<__fx64> >(N+0);
+        fcomplex<__fx64> *glp = __alloc__< fcomplex<__fx64> >(N+1);
 
         if( !plp || !zlp || !glp )
         {
-            free( plp );
-            free( zlp );
-            free( glp );
+            #ifdef IIR_KERNEL_DEBUG
+            Debugger::Log("kernel_iir.h", "__butt_zeros_poles_plain__", "memory allocation has failed !!!");
+            #endif
+
+            plp = __mfree__(plp);
+            zlp = __mfree__(zlp);
+            glp = __mfree__(glp);
             return __dsp_gen_empty_filter__<__type>();
         }
 
         // fcomplex-conjugate pairs:
-        __fx64 alpha = 0 , beta = 1 / sqrt( pow( epsilon_stop , 1 / _order ) );
+        __fx64 alpha = 0;
+        __fx64 beta  = 1 / sqrt( pow( epsilon_stop , 1 / _order ) );
 
         for( __ix32 i = 0 ; i < L ; i++ )
         {
@@ -178,9 +210,9 @@ namespace IIR_KERNEL
         data.poles = plp;
         data.zeros = zlp;
         data.ratio = glp;
-        data.L   = L;
-        data.R   = R;
-        data.N   = N;
+        data.L     = L;
+        data.R     = R;
+        data.N     = N;
 
         return data;
     }
@@ -199,40 +231,47 @@ namespace IIR_KERNEL
      *           All the data is stored within zp data structure and returned.
     */
     template<typename __type>
-    filter_data<__type> __cheb1_zeros_poles_plain__ ( __ix32 _order,  __fx64 _g_stop )
+    filter_data<__type> __cheb1_zeros_poles_plain__ ( __ix32 _order,  __fx64 _g_stop ) // refactored
     {
         // number of zeros, poles, coeffs:
-        __ix32 L = trunc( _order / 2 ) , R = _order - 2 * L , N = L + R;
+        __ix32 L = trunc( _order / 2 );
+        __ix32 R = _order - 2 * L;
+        __ix32 N = L + R;
 
         // stopband attenuation:
         __fx64 epsilon_stop = sqrt(pow(10, _g_stop / 10) - 1);
 
         // memory allocation for the lowpass analogue prototype poles, zeros and gains:
-        fcomplex< __fx64 >  *plp = ( fcomplex<__fx64>* ) calloc( N   , sizeof ( fcomplex< __fx64 > ) );
-        fcomplex< __fx64 >  *zlp = ( fcomplex<__fx64>* ) calloc( N   , sizeof ( fcomplex< __fx64 > ) );
-        fcomplex< __fx64 >  *glp = ( fcomplex<__fx64>* ) calloc( N+1 , sizeof ( fcomplex< __fx64 > ) );
+        fcomplex< __fx64 >  *plp = __alloc__< fcomplex<__fx64> >(N+0);
+        fcomplex< __fx64 >  *zlp = __alloc__< fcomplex<__fx64> >(N+0);
+        fcomplex< __fx64 >  *glp = __alloc__< fcomplex<__fx64> >(N+1);
 
-        if( plp == 0 || zlp == 0 || glp == 0 )
+        if( !plp || !zlp || !glp )
         {
-            free( plp );
-            free( zlp );
-            free( glp );
+            #ifdef IIR_KERNEL_DEBUG
+            Debugger::Log("kernel_iir.h", "__cheb1_zeros_poles_plain__", "memory allocation has failed !!!");
+            #endif
+
+            plp = __mfree__(plp);
+            zlp = __mfree__(zlp);
+            glp = __mfree__(glp);
             return __dsp_gen_empty_filter__<__type>();
         }
 
         // fcomplex conjugate pairs:
-        __fx64 alpha = 0 , betta = asinh( 1 / epsilon_stop ) / _order;
+        __fx64 alpha = 0;
+        __fx64 beta  = asinh( 1 / epsilon_stop ) / _order;
         for ( __ix32 i = 0; i < L; i++)
         {
             alpha = (2 * (i + 1) - 1) * PI0 / (2 * _order);
-            plp[i] = fcomplex< __fx64 >( -sin( alpha ) * sinh( betta ) , +cos( alpha ) * cosh( betta ) );
+            plp[i] = fcomplex< __fx64 >( -sin( alpha ) * sinh( beta ) , +cos( alpha ) * cosh( beta ) );
             glp[i] = plp[i] * __conjf__( plp[i] );
         }
 
         // real odd pole:
         if ( R == 1 )
         {
-            plp[ N - 1 ] = fcomplex< __fx64 >( -sinh( betta ) , 0 );
+            plp[ N - 1 ] = fcomplex< __fx64 >( -sinh( beta ) , 0 );
             glp[ N - 1 ] = -__realf__<__fx64>( plp[ N - 1 ] );
         }
 
@@ -244,9 +283,9 @@ namespace IIR_KERNEL
         data.poles = plp;
         data.zeros = zlp;
         data.ratio = glp;
-        data.L   = L;
-        data.R   = R;
-        data.N   = N;
+        data.L     = L;
+        data.R     = R;
+        data.N     = N;
 
         // end the computation and return the filter data
         return data;
@@ -266,24 +305,30 @@ namespace IIR_KERNEL
      *           All the data is stored within zp data structure and returned.
     */
     template<typename __type>
-    filter_data<__type> __cheb2_zeros_poles_plain__( __ix32 _order, __fx64 _g_stop )
+    filter_data<__type> __cheb2_zeros_poles_plain__( __ix32 _order, __fx64 _g_stop ) // refactored
     {
         // stopband attenuation:
         __fx64 epsilon_stop = sqrt(pow(10, _g_stop / 10) - 1);
 
         // identify the number of zeros and poles:
-        __ix32 L = trunc( _order / 2 ) , R = _order - 2 * L , N = L + R;
+        __ix32 L = trunc( _order / 2 );
+        __ix32 R = _order - 2 * L;
+        __ix32 N = L + R;
 
         // allocate zeros and poles arrays:
-        fcomplex< __fx64 > *plp = ( fcomplex< __fx64 >* ) calloc( N+0 , sizeof ( fcomplex< __fx64 > ) );
-        fcomplex< __fx64 > *zlp = ( fcomplex< __fx64 >* ) calloc( N+0 , sizeof ( fcomplex< __fx64 > ) );
-        fcomplex< __fx64 > *glp = ( fcomplex< __fx64 >* ) calloc( N+1 , sizeof ( fcomplex< __fx64 > ) );
+        fcomplex< __fx64 > *plp = __alloc__< fcomplex< __fx64 > >(N+0);
+        fcomplex< __fx64 > *zlp = __alloc__< fcomplex< __fx64 > >(N+0);
+        fcomplex< __fx64 > *glp = __alloc__< fcomplex< __fx64 > >(N+1);
 
         if( !plp || !zlp || !glp )
         {
-            free( plp );
-            free( zlp );
-            free( glp );
+            #ifdef IIR_KERNEL_DEBUG
+            Debugger::Log("kernel_iir.h", "__cheb2_zeros_poles_plain__", "memory allocation has failed !!!");
+            #endif
+
+            plp = __mfree__(plp);
+            plp = __mfree__(zlp);
+            plp = __mfree__(glp);
             return __dsp_gen_empty_filter__<__type>();
         }
 
@@ -292,7 +337,10 @@ namespace IIR_KERNEL
         // fcomplex conjugate pairs:
 
         // auxiliary variables:
-        __fx64 alpha , betta = asinh( epsilon_stop ) / _order , re , im;
+        __fx64 alpha = 0;
+        __fx64 beta  = asinh( epsilon_stop ) / _order;
+        __fx64 re    = 0;
+        __fx64 im    = 0;
 
         // zeros , poles, gains computation:
         for ( __ix32 i = 0 ; i < L ; i++ )
@@ -303,8 +351,8 @@ namespace IIR_KERNEL
             zlp[i] = fcomplex< __fx64 >( 0 , 1 / cos( alpha ) );
 
             // poles:
-            re = -( sin( alpha ) * sinh( betta ) ) / ( cos( alpha ) * cos( alpha ) * cosh( betta ) * cosh( betta ) + sin( alpha ) * sin( alpha ) * sinh( betta ) * sinh( betta ) );
-            im = +( cos( alpha ) * cosh( betta ) ) / ( cos( alpha ) * cos( alpha ) * cosh( betta ) * cosh( betta ) + sin( alpha ) * sin( alpha ) * sinh( betta ) * sinh( betta ) );
+            re = -( sin( alpha ) * sinh( beta ) ) / ( cos( alpha ) * cos( alpha ) * cosh( beta ) * cosh( beta ) + sin( alpha ) * sin( alpha ) * sinh( beta ) * sinh( beta ) );
+            im = +( cos( alpha ) * cosh( beta ) ) / ( cos( alpha ) * cos( alpha ) * cosh( beta ) * cosh( beta ) + sin( alpha ) * sin( alpha ) * sinh( beta ) * sinh( beta ) );
             plp[i] = fcomplex< __fx64 >( re , im );
 
             // gains:
@@ -315,7 +363,7 @@ namespace IIR_KERNEL
         // real odd pole:
         if( R >= 1 )
         {
-            plp[ N - 1 ] = fcomplex< __fx64 >( -1 / sinh( betta ) , 0 );
+            plp[ N - 1 ] = fcomplex< __fx64 >( -1 / sinh( beta ) , 0 );
             glp[ N - 1 ] = -__realf__<__fx64>( plp[ N - 1 ] );
         }
 
@@ -327,10 +375,9 @@ namespace IIR_KERNEL
         data.poles = plp;
         data.zeros = zlp;
         data.ratio = glp;
-        data.L   = L;
-        data.R   = R;
-        data.N   = N;
-
+        data.L     = L;
+        data.R     = R;
+        data.N     = N;
         return data;
     }
 
@@ -350,7 +397,7 @@ namespace IIR_KERNEL
      *            All the data is stored within zp data structure and returned.
     */
     template<typename __type>
-    filter_data<__type> __ellip_zeros_poles_plain__( __ix32 _order, __fx64 _g_pass, __fx64 _g_stop )
+    filter_data<__type> __ellip_zeros_poles_plain__( __ix32 _order, __fx64 _g_pass, __fx64 _g_stop ) // refactored
     {
         // INITIALIZATION:
 
@@ -359,27 +406,37 @@ namespace IIR_KERNEL
         __fx64 epsilon_pass = sqrt(pow(10, _g_pass / 10) - 1);
 
         // identify the number of zeros and poles:
-        __ix32 L = trunc( _order / 2 ) , R = _order - 2 * L , N = L + R;
+        __ix32 L = trunc( _order / 2 );
+        __ix32 R = _order - 2 * L;
+        __ix32 N = L + R;
 
         // allocate zeros and poles arrays:
-        fcomplex< __fx64 > *plp = ( fcomplex< __fx64 >* ) calloc( N   , sizeof ( fcomplex< __fx64 > ) );
-        fcomplex< __fx64 > *zlp = ( fcomplex< __fx64 >* ) calloc( N   , sizeof ( fcomplex< __fx64 > ) );
-        fcomplex< __fx64 > *glp = ( fcomplex< __fx64 >* ) calloc( N+1 , sizeof ( fcomplex< __fx64 > ) );
+        fcomplex< __fx64 > *plp = __alloc__< fcomplex< __fx64 > >(N+0);
+        fcomplex< __fx64 > *zlp = __alloc__< fcomplex< __fx64 > >(N+0);
+        fcomplex< __fx64 > *glp = __alloc__< fcomplex< __fx64 > >(N+1);
 
         if( !plp || !zlp || !glp )
         {
-            free( plp );
-            free( zlp );
-            free( glp );
+            #ifdef IIR_KERNEL_DEBUG
+            Debugger::Log("kernel_iir.h", "__ellip_zeros_poles_plain__", "memory allocation has failed !!!");
+            #endif
+
+            plp = __mfree__(plp);
+            plp = __mfree__(zlp);
+            plp = __mfree__(glp);
             return __dsp_gen_empty_filter__<__type>();
         }
 
         // TRANSIENT SUPPRESSION FACTORS COMPUTATION:
 
         // auxiliary variables:
-        __fx64 SN , KE;
-        __fx64 Ke = epsilon_pass / epsilon_stop , Kp = 1;
-        __fx64 m = sqrt( 1 - Ke * Ke ) , alpha , Kw;
+        __fx64 SN    = 0;
+        __fx64 KE    = 0;
+        __fx64 Ke    = epsilon_pass / epsilon_stop;
+        __fx64 Kp    = 1;
+        __fx64 m     = sqrt( 1 - Ke * Ke );
+        __fx64 alpha = 0;
+        __fx64 Kw    = 0;
 
         // transient suppression factors computation:
         for ( __ix32 i = 0; i < L; i++ )
@@ -414,9 +471,15 @@ namespace IIR_KERNEL
         }
 
         // POLES COMPUTATION:
-        __fx64 V0 = 0 , A = 0 , B = 0 , C = 0 , D = 0 , E = 0 , F = 0;
-        V0        = -__ellip_k__( Kw ) * __isc__(1 / epsilon_pass, sqrt(1 - Ke * Ke)) / ( __ellip_k__( Ke ) * ( ( __fx64 )_order ) );
-        KE        =  __ellip_k__( Kw );
+        __fx64 V0 = 0;
+        __fx64 A  = 0;
+        __fx64 B  = 0;
+        __fx64 C  = 0;
+        __fx64 D  = 0;
+        __fx64 E  = 0;
+        __fx64 F  = 0;
+        V0 = -__ellip_k__( Kw ) * __isc__(1 / epsilon_pass, sqrt(1 - Ke * Ke)) / ( __ellip_k__( Ke ) * ( ( __fx64 )_order ) );
+        KE =  __ellip_k__( Kw );
 
         // fcomplex conjugate pairs:
         for ( __ix32 i = 0; i < L; i++)
@@ -507,7 +570,7 @@ namespace IIR_KERNEL
      *           and returned.
     */
     template<typename __type>
-    filter_data<__type> __butt_cheb1_digital_lp__ ( __fx64 _Fs, __fx64 _Fc, __ix32 _order, __ix32 _type   = 0, __fx64 _g_stop = 1 )
+    filter_data<__type> __butt_cheb1_digital_lp__( __fx64 _Fs, __fx64 _Fc, __ix32 _order, __ix32 _type   = 0, __fx64 _g_stop = 1 ) // refactored
     {
         // COMPUTE LOWPASS ANALOGUE PROTOTYPE ZEROS, POLES AND GAINS:
         filter_data<__type> data = ( !_type ) ? __butt_zeros_poles_plain__<__type>( _order , _g_stop ) : __cheb1_zeros_poles_plain__<__type>( _order , _g_stop );
@@ -516,24 +579,30 @@ namespace IIR_KERNEL
         fcomplex< __fx64 > *plp = data.poles;
         fcomplex< __fx64 > *zlp = data.zeros;
         fcomplex< __fx64 > *glp = data.ratio;
-        __ix32 L = data.L , R = data.R , N = L + R;
+        __ix32 L = data.L;
+        __ix32 R = data.R;
+        __ix32 N = data.N;
 
         // frequency deformation coefficient:
         __fx64 K = tan( PI2 * _Fc / 2 / _Fs );
 
         // coefficients matrix computation:
-        __type *cfnum = ( __type* )calloc( 3 * N , sizeof ( __type ) );
-        __type *cfden = ( __type* )calloc( 3 * N , sizeof ( __type ) );
-        __type *gains = ( __type* )calloc( N + 1 , sizeof ( __type ) );
+        __type *cfnum = __alloc__<__type>(3*N);
+        __type *cfden = __alloc__<__type>(3*N);
+        __type *gains = __alloc__<__type>(N+1);
 
-        if( cfnum == 0 || cfden == 0 || gains == 0 || plp == 0 || zlp == 0 || glp == 0 )
+        if( !cfnum || !cfden || !gains || !plp || !zlp || !glp )
         {
-            free( cfnum );
-            free( cfden );
-            free( gains );
-            free( plp );
-            free( zlp );
-            free( glp );
+            #ifdef IIR_KERNEL_DEBUG
+            Debugger::Log("kernel_iir.h", "__butt_cheb1_digital_lp__", "memory allocation has failed !!!");
+            #endif
+
+            cfnum = __mfree__(cfnum);
+            cfden = __mfree__(cfden);
+            gains = __mfree__(gains);
+            plp   = __mfree__(plp);
+            zlp   = __mfree__(zlp);
+            glp   = __mfree__(glp);
             return __dsp_gen_empty_filter__<__type>();
         }
 
@@ -593,9 +662,9 @@ namespace IIR_KERNEL
         gains[N] = __realf__( glp[N] );
 
         // generate output
-        data.poles   = plp;
-        data.zeros   = zlp;
-        data.ratio   = glp;
+        data.poles = plp;
+        data.zeros = zlp;
+        data.ratio = glp;
         data.cfnum = cfnum;
         data.cfden = cfden;
         data.gains = gains;
@@ -620,7 +689,7 @@ namespace IIR_KERNEL
      *           and returned.
     */
     template<typename __type>
-    filter_data<__type> __butt_cheb1_digital_hp__ ( __fx64 _Fs, __fx64 _Fp, __ix32 _order, __ix32 _type   = 0, __fx64 _g_stop = 1 )
+    filter_data<__type> __butt_cheb1_digital_hp__( __fx64 _Fs, __fx64 _Fp, __ix32 _order, __ix32 _type   = 0, __fx64 _g_stop = 1 ) // refactored
     {
         // INITIALIZATION:
         filter_data<__type> data = ( !_type ) ? __butt_zeros_poles_plain__<__type>( _order , _g_stop ) : __cheb1_zeros_poles_plain__<__type>( _order , _g_stop );
@@ -628,24 +697,30 @@ namespace IIR_KERNEL
         fcomplex< __fx64 > *plp = data.poles;
         fcomplex< __fx64 > *zlp = data.zeros;
         fcomplex< __fx64 > *glp = data.ratio;
-        __ix32 L = data.L , R = data.R , N = L + R;
+        __ix32 L = data.L;
+        __ix32 R = data.R;
+        __ix32 N = L + R;
 
         // frequency deformation coefficient:
         __fx64 w = tan( PI2 * _Fp / 2 / _Fs );
 
         // coefficients matrix computation:
-        __type *cfnum = ( __type* )calloc( 3 * N , sizeof ( __type ) );
-        __type *cfden = ( __type* )calloc( 3 * N , sizeof ( __type ) );
-        __type *gains = ( __type* )calloc( N + 1 , sizeof ( __type ) );
+        __type *cfnum = __alloc__<__type>(3*N);
+        __type *cfden = __alloc__<__type>(3*N);
+        __type *gains = __alloc__<__type>(N+1);
 
-        if( cfnum == 0 || cfden == 0 || gains == 0 || plp == 0 || zlp == 0 || glp == 0 )
+        if( !cfnum || !cfden || !gains || !plp || !zlp || !glp )
         {
-            free( cfnum );
-            free( cfden );
-            free( gains );
-            free( plp )  ;
-            free( zlp )  ;
-            free( glp );
+            #ifdef IIR_KERNEL_DEBUG
+            Debugger::Log("kernel_iir.h", "__butt_cheb1_digital_hp__", "memory allocation has failed !!!");
+            #endif
+
+            cfnum = __mfree__(cfnum);
+            cfden = __mfree__(cfden);
+            gains = __mfree__(gains);
+            plp   = __mfree__(plp);
+            zlp   = __mfree__(zlp);
+            glp   = __mfree__(glp);
             return __dsp_gen_empty_filter__<__type>();
         }
 
@@ -692,8 +767,8 @@ namespace IIR_KERNEL
 
             // numerator:
             cfnum[3*(N-1)+0] = +1;
-            cfnum[3*(N-1)+1] = -2;
-            cfnum[3*(N-1)+2] = +1;
+            cfnum[3*(N-1)+1] = -1;
+            cfnum[3*(N-1)+2] = +0;
 
             // denominator:
             cfden[3*(N-1)+0] = 1;
@@ -705,9 +780,9 @@ namespace IIR_KERNEL
         gains[N] = __realf__(glp[N]);
 
         // generate output
-        data.poles   = plp;
-        data.zeros   = zlp;
-        data.ratio   = glp;
+        data.poles = plp;
+        data.zeros = zlp;
+        data.ratio = glp;
         data.cfnum = cfnum;
         data.cfden = cfden;
         data.gains = gains;
@@ -733,18 +808,20 @@ namespace IIR_KERNEL
      *           and returned.
     */
     template<typename __type>
-    filter_data<__type> __butt_cheb1_digital_bp__ ( __fx64 _Fs, __fx64 _Fp, __fx64 _BandWidth, __ix32 _order, __ix32 _type   = 0, __fx64 _g_stop = 1 )
+    filter_data<__type> __butt_cheb1_digital_bp__ ( __fx64 _Fs, __fx64 _Fp, __fx64 _BandWidth, __ix32 _order, __ix32 _type   = 0, __fx64 _g_stop = 1 ) // refactored
     {
+        // INITIALIZATION
+        if( _order % 2 > 0 ) _order++;
         _order /= 2;
 
         // frequency deformation coefficient:
-        __fx64 w1 = tan( PI2 * _Fp / 2 / _Fs ) , w2 = tan( PI2 * ( _Fp + _BandWidth ) / 2 / _Fs );
+        __fx64 w1 = tan( PI2 * _Fp / 2 / _Fs );
+        __fx64 w2 = tan( PI2 * ( _Fp + _BandWidth ) / 2 / _Fs );
 
         // allocate zeros and poles arrays:
 
         // lowpass analogue prototype poles, zeros and gains:
         filter_data<__type> data = ( !_type ) ? __butt_zeros_poles_plain__<__type>( _order, _g_stop ) : __cheb1_zeros_poles_plain__<__type>( _order, _g_stop );
-
         fcomplex< __fx64 > *plp = data.poles;
         fcomplex< __fx64 > *glp = data.ratio;
         fcomplex< __fx64 > *zlp = data.zeros;
@@ -753,28 +830,31 @@ namespace IIR_KERNEL
         __ix32 N = L + R;
 
         // bandpass digital prototype poles, zeros and gains:
-        fcomplex< __fx64 > *pbp = ( fcomplex< __fx64 >* ) calloc( 2*N , sizeof ( fcomplex< __fx64 > ) );
-        fcomplex< __fx64 > *zbp = ( fcomplex< __fx64 >* ) calloc( 2*N , sizeof ( fcomplex< __fx64 > ) );
-        fcomplex< __fx64 > *gbp = ( fcomplex< __fx64 >* ) calloc( 2*N , sizeof ( fcomplex< __fx64 > ) );
+        fcomplex< __fx64 > *pbp = __alloc__< fcomplex< __fx64 > >(2*N);
+        fcomplex< __fx64 > *zbp = __alloc__< fcomplex< __fx64 > >(2*N);
+        fcomplex< __fx64 > *gbp = __alloc__< fcomplex< __fx64 > >(2*N);
 
         // coefficients matrix computation:
-        __type *cfnum = ( __type* )calloc( 3 * (2*L+R) , sizeof ( __type ) );
-        __type *cfden = ( __type* )calloc( 3 * (2*L+R) , sizeof ( __type ) );
-        __type *gains = ( __type* )calloc( (2*L+R + 1) , sizeof ( __type ) );
+        __type *cfnum = __alloc__< __type >(3*(2*L+R));
+        __type *cfden = __alloc__< __type >(3*(2*L+R));
+        __type *gains = __alloc__< __type >((2*L+R+1));
 
-        if( cfnum == 0 || cfden == 0 || gains == 0 ||
-            plp == 0 || zlp == 0 || glp == 0 ||
-            pbp == 0 || zbp == 0 || gbp == 0)
+        if( !cfnum || !cfden || !gains || !plp || !zlp || !glp || !pbp || !zbp || !gbp )
         {
-            free( cfnum );
-            free( cfden );
-            free( gains );
-            free( plp )  ;
-            free( zlp )  ;
-            free( glp );
-            free( pbp )  ;
-            free( zbp )  ;
-            free( gbp );
+            #ifdef IIR_KERNEL_DEBUG
+            Debugger::Log("kernel_iir.h", "__butt_cheb1_digital_bp__", "memory allocation has failed !!!");
+            #endif
+
+            cfnum = __mfree__(cfnum);
+            cfden = __mfree__(cfden);
+            gains = __mfree__(gains);
+            plp   = __mfree__(plp);
+            zlp   = __mfree__(zlp);
+            glp   = __mfree__(glp);
+            pbp   = __mfree__(pbp);
+            zbp   = __mfree__(zbp);
+            gbp   = __mfree__(gbp);
+
             return __dsp_gen_empty_filter__<__type>();
         }
 
@@ -873,14 +953,14 @@ namespace IIR_KERNEL
         gains[ 2*L+R ] = __realf__(glp[N]);
 
         // memory free
-        free( plp );
-        free( zlp );
-        free( glp );
+        plp = __mfree__( plp );
+        zlp = __mfree__( zlp );
+        glp = __mfree__( glp );
 
         // generate output
-        data.poles   = pbp;
-        data.zeros   = zbp;
-        data.ratio   = gbp;
+        data.poles = pbp;
+        data.zeros = zbp;
+        data.ratio = gbp;
         data.cfnum = cfnum;
         data.cfden = cfden;
         data.gains = gains;
@@ -906,20 +986,20 @@ namespace IIR_KERNEL
      *           and returned.
     */
     template<typename __type>
-    filter_data<__type> __butt_cheb1_digital_bs__( __fx64 _Fs, __fx64 _Fc, __fx64 _BandWidth, __ix32 _order, __fx32 _type   = 0, __fx64 _g_stop = 1 )
+    filter_data<__type> __butt_cheb1_digital_bs__( __fx64 _Fs, __fx64 _Fc, __fx64 _BandWidth, __ix32 _order, __fx32 _type   = 0, __fx64 _g_stop = 1 ) // refactored
     {
-
        // INITIALIZATION:
+       if( _order % 2 > 0 ) _order++;
        _order /= 2;
 
        // frequency deformation coefficient:
-       __fx64 w1 = tan( PI2 * _Fc / 2 / _Fs ) , w2 = tan( PI2 * ( _Fc + _BandWidth ) / 2 / _Fs );
+       __fx64 w1 = tan( PI2 * _Fc / 2 / _Fs );
+       __fx64 w2 = tan( PI2 * ( _Fc + _BandWidth ) / 2 / _Fs );
 
        // allocate zeros and poles arrays:
 
        // lowpass analogue prototype poles, zeros and gains:
        filter_data<__type> data = ( !_type ) ? __butt_zeros_poles_plain__<__type>( _order, _g_stop ) : __cheb1_zeros_poles_plain__<__type>( _order, _g_stop );
-
        fcomplex< __fx64 > *plp = data.poles;
        fcomplex< __fx64 > *glp = data.ratio;
        fcomplex< __fx64 > *zlp = data.zeros;
@@ -928,26 +1008,31 @@ namespace IIR_KERNEL
        __ix32 N = L + R;
 
         // bandpass digital prototype poles, zeros and gains:
-        fcomplex< __fx64 > *pbs = ( fcomplex< __fx64 >* ) calloc( 2*N , sizeof ( fcomplex< __fx64 > ) );
-        fcomplex< __fx64 > *zbs = ( fcomplex< __fx64 >* ) calloc( 2*N , sizeof ( fcomplex< __fx64 > ) );
-        fcomplex< __fx64 > *gbs = ( fcomplex< __fx64 >* ) calloc( 2*N , sizeof ( fcomplex< __fx64 > ) );
+        fcomplex< __fx64 > *pbs = __alloc__<fcomplex< __fx64 >>(2*N);
+        fcomplex< __fx64 > *zbs = __alloc__<fcomplex< __fx64 >>(2*N);
+        fcomplex< __fx64 > *gbs = __alloc__<fcomplex< __fx64 >>(2*N);
 
         // coefficients matrix computation:
-        __type *cfnum = (__type* )calloc( 3 * (2*L+R) , sizeof ( __type ) );
-        __type *cfden = (__type* )calloc( 3 * (2*L+R) , sizeof ( __type ) );
-        __type *gains = (__type* )calloc( (2*L+R+1)   , sizeof ( __type ) );
+        __type *cfnum = __alloc__< __type >(3*(2*L+R));
+        __type *cfden = __alloc__< __type >(3*(2*L+R));
+        __type *gains = __alloc__< __type >((2*L+R+1));
 
         if( !cfnum || !cfden || !gains || !plp || !zlp || !glp || !pbs || !zbs || !gbs)
         {
-            free( cfnum );
-            free( cfden );
-            free( gains );
-            free( plp );
-            free( zlp );
-            free( glp );
-            free( pbs );
-            free( zbs );
-            free( gbs );
+            #ifdef IIR_KERNEL_DEBUG
+            Debugger::Log("kernel_iir.h", "__butt_cheb1_digital_bs__", "memory allocation has failed !!!");
+            #endif
+
+            cfnum = __mfree__(cfnum);
+            cfden = __mfree__(cfden);
+            gains = __mfree__(gains);
+            plp   = __mfree__(plp);
+            zlp   = __mfree__(zlp);
+            glp   = __mfree__(glp);
+            pbs   = __mfree__(pbs);
+            pbs   = __mfree__(zbs);
+            gbs   = __mfree__(gbs);
+
             return __dsp_gen_empty_filter__<__type>();
         }
 
@@ -1047,14 +1132,14 @@ namespace IIR_KERNEL
         gains[ 2 * L + R ] = __realf__(glp[ N ]);
 
         // memory free
-        free( plp );
-        free( zlp );
-        free( glp );
+        plp   = __mfree__(plp);
+        zlp   = __mfree__(zlp);
+        glp   = __mfree__(glp);
 
         // generate output
-        data.poles   = pbs;
-        data.zeros   = zbs;
-        data.ratio   = gbs;
+        data.poles = pbs;
+        data.zeros = zbs;
+        data.ratio = gbs;
         data.cfnum = cfnum;
         data.cfden = cfden;
         data.gains = gains;
@@ -1081,7 +1166,7 @@ namespace IIR_KERNEL
      *           and returned.
     */
     template<typename __type>
-    filter_data<__type> __cheb2_ellip_digital_lp__ ( __fx64 _Fs,  __fx64 _Fc, __ix32 _order, __ix32 _type   = 0, __fx64 _g_pass = 1, __fx64 _g_stop = 80 )
+    filter_data<__type> __cheb2_ellip_digital_lp__( __fx64 _Fs,  __fx64 _Fc, __ix32 _order, __ix32 _type   = 0, __fx64 _g_pass = 1, __fx64 _g_stop = 80 ) // refactored
     {
         __fx64 w = tan( PI2 * _Fc / 2 / _Fs );
 
@@ -1099,18 +1184,23 @@ namespace IIR_KERNEL
         __ix32 N = data.N;
 
         // coefficients matrix computation:
-         __type *cfnum = ( __type* )calloc( 3 * N , sizeof ( __type ) );
-         __type *cfden = ( __type* )calloc( 3 * N , sizeof ( __type ) );
-         __type *gains = ( __type* )calloc( N + 1 , sizeof ( __type ) );
+         __type *cfnum = __alloc__<__type>(3*N);
+         __type *cfden = __alloc__<__type>(3*N);
+         __type *gains = __alloc__<__type>(N+1);
 
         if( !cfnum || !cfden || !gains || !plp || !zlp || !glp )
         {
-            free( cfnum );
-            free( cfden );
-            free( gains );
-            free( plp );
-            free( zlp );
-            free( glp );
+            #ifdef IIR_KERNEL_DEBUG
+            Debugger::Log("kernel_iir.h", "__cheb2_ellip_digital_lp__", "memory allocation has failed !!!");
+            #endif
+
+            cfnum = __mfree__(cfnum);
+            cfden = __mfree__(cfden);
+            gains = __mfree__(gains);
+            plp   = __mfree__(plp);
+            zlp   = __mfree__(zlp);
+            glp   = __mfree__(glp);
+
             return __dsp_gen_empty_filter__<__type>();
         }
 
@@ -1195,12 +1285,12 @@ namespace IIR_KERNEL
      *           and returned.
     */
     template<typename __type>
-    filter_data<__type> __cheb2_ellip_digital_hp__ ( __fx64 _Fs, __fx64 _Fc, __ix32 _order, __ix32 _type   = 0, __fx64 _g_pass = 1, __fx64 _g_stop = 80 )
+    filter_data<__type> __cheb2_ellip_digital_hp__( __fx64 _Fs, __fx64 _Fc, __ix32 _order, __ix32 _type   = 0, __fx64 _g_pass = 1, __fx64 _g_stop = 80 ) // refactored
     {
          __fx64  w = tan( PI2 * _Fc / 2 / _Fs );
 
         // digital lowpass coefficients computation:
-        filter_data<__type> data = ( !_type ) ?__cheb2_zeros_poles_plain__<__type>(_order, _g_stop ) :__ellip_zeros_poles_plain__<__type>(_order, _g_pass, _g_stop );
+        filter_data<__type> data = ( !_type ) ?__cheb2_zeros_poles_plain__<__type>(_order, _g_stop ) : __ellip_zeros_poles_plain__<__type>(_order, _g_pass, _g_stop );
 
         // zeros/poles and coefficients number:
         __ix32 L = data.L;
@@ -1213,18 +1303,23 @@ namespace IIR_KERNEL
         fcomplex< __fx64 > *glp = data.ratio;
 
         // coefficients matrix memory allocation:
-         __type *cfnum = (__type* )calloc( 3 * N , sizeof ( __type ) );
-         __type *cfden = (__type* )calloc( 3 * N , sizeof ( __type ) );
-         __type *gains = (__type* )calloc( N + 1 , sizeof ( __type ) );
+         __type *cfnum = __alloc__<__type>(3*N);
+         __type *cfden = __alloc__<__type>(3*N);
+         __type *gains = __alloc__<__type>(N+1);
 
          if( !cfnum || !cfden || !gains || !plp || !zlp || !glp )
          {
-             free( cfnum );
-             free( cfden );
-             free( gains );
-             free( plp )  ;
-             free( zlp )  ;
-             free( glp );
+            #ifdef IIR_KERNEL_DEBUG
+            Debugger::Log("kernel_iir.h", "__cheb2_ellip_digital_hp__", "memory allocation has failed !!!");
+            #endif
+
+            cfnum = __mfree__(cfnum);
+            cfden = __mfree__(cfden);
+            gains = __mfree__(gains);
+            plp   = __mfree__(plp);
+            zlp   = __mfree__(zlp);
+            glp   = __mfree__(glp);
+
              return __dsp_gen_empty_filter__<__type>();
          }
 
@@ -1312,8 +1407,10 @@ namespace IIR_KERNEL
      *           and returned.
     */
     template<typename __type>
-    filter_data<__type> __cheb2_ellip_digital_bp__ ( __fx64 _Fs, __fx64 _Fp, __fx64 _BandWidth, __ix32 _order, __ix32 _type   = 0, __fx64 _g_pass = 1, __fx64 _g_stop = 80 )
+    filter_data<__type> __cheb2_ellip_digital_bp__ ( __fx64 _Fs, __fx64 _Fp, __fx64 _BandWidth, __ix32 _order, __ix32 _type   = 0, __fx64 _g_pass = 1, __fx64 _g_stop = 80 ) // refactored
     {
+        // INITIALIZATION
+        if( _order % 2 > 0 ) _order++;
         _order /= 2;
 
         // frequency deformation coefficient:
@@ -1323,33 +1420,39 @@ namespace IIR_KERNEL
 
         // lowpass analogue prototype poles, zeros and gains:
         filter_data<__type> data = ( !_type ) ?__cheb2_zeros_poles_plain__<__type>(_order, _g_stop ) :__ellip_zeros_poles_plain__<__type>(_order, _g_pass, _g_stop );
-
         fcomplex< __fx64 > *plp = data.poles;
         fcomplex< __fx64 > *glp = data.ratio;
         fcomplex< __fx64 > *zlp = data.zeros;
-        __ix32 L = data.L , R = data.R , N = L + R;
+        __ix32 L = data.L;
+        __ix32 R = data.R;
+        __ix32 N = L + R;
 
         // bandpass digital prototype poles, zeros and gains:
-        fcomplex< __fx64 > *pbp = ( fcomplex< __fx64 >* ) calloc( 2*N , sizeof ( fcomplex< __fx64 > ) );
-        fcomplex< __fx64 > *zbp = ( fcomplex< __fx64 >* ) calloc( 2*N , sizeof ( fcomplex< __fx64 > ) );
-        fcomplex< __fx64 > *gbp = ( fcomplex< __fx64 >* ) calloc( 2*N , sizeof ( fcomplex< __fx64 > ) );
+        fcomplex< __fx64 > *pbp = __alloc__< fcomplex< __fx64 > >(2*N);
+        fcomplex< __fx64 > *zbp = __alloc__< fcomplex< __fx64 > >(2*N);
+        fcomplex< __fx64 > *gbp = __alloc__< fcomplex< __fx64 > >(2*N);
 
         // coefficients matrix computation:
-         __type *cfnum = ( __type* )calloc( 3 * (2*L+R) , sizeof (__type ) );
-         __type *cfden = ( __type* )calloc( 3 * (2*L+R) , sizeof (__type ) );
-         __type *gains = ( __type* )calloc( (2*L+R + 1) , sizeof (__type ) );
+        __type *cfnum = __alloc__<__type>( 3*(2*L+R) );
+        __type *cfden = __alloc__<__type>( 3*(2*L+R) );
+        __type *gains = __alloc__<__type>( (2*L+R+1) );
 
         if( !cfnum || !cfden || !gains || !plp || !zlp || !glp || !pbp || !zbp || !gbp)
         {
-            free( cfnum );
-            free( cfden );
-            free( gains );
-            free( plp );
-            free( zlp );
-            free( glp );
-            free( pbp );
-            free( zbp );
-            free( gbp );
+            #ifdef IIR_KERNEL_DEBUG
+            Debugger::Log("kernel_iir.h", "__cheb2_ellip_digital_bp__", "memory allocation has failed !!!");
+            #endif
+
+            cfnum = __mfree__(cfnum);
+            cfden = __mfree__(cfden);
+            gains = __mfree__(gains);
+            plp   = __mfree__(plp);
+            zlp   = __mfree__(zlp);
+            glp   = __mfree__(glp);
+            pbp   = __mfree__(pbp);
+            zbp   = __mfree__(zbp);
+            gbp   = __mfree__(gbp);
+
             return __dsp_gen_empty_filter__<__type>();
         }
 
@@ -1465,9 +1568,9 @@ namespace IIR_KERNEL
         gains[ 2*L+R ] = __realf__(glp[N]);
 
         // memory free:
-        free( plp );
-        free( zlp );
-        free( glp );
+        plp = __mfree__(plp);
+        zlp = __mfree__(zlp);
+        glp = __mfree__(glp);
 
         // generate output
         data.poles   = pbp;
@@ -1499,8 +1602,10 @@ namespace IIR_KERNEL
      *           and returned.
     */
     template<typename __type>
-    filter_data<__type> __cheb2_ellip_digital_bs__ ( __fx64 _Fs, __fx64 _Fc, __fx64 _BandWidth, __ix32 _order, __ix32 _type   = 0, __fx64 _g_pass = 1, __fx64 _g_stop = 80 )
+    filter_data<__type> __cheb2_ellip_digital_bs__( __fx64 _Fs, __fx64 _Fc, __fx64 _BandWidth, __ix32 _order, __ix32 _type   = 0, __fx64 _g_pass = 1, __fx64 _g_stop = 80 ) // refactored
     {
+        // INITIALIZATION
+        if( _order % 2 > 0 ) _order++;
         _order /= 2;
 
         // frequency deformation coefficient:
@@ -1517,26 +1622,31 @@ namespace IIR_KERNEL
         __ix32 L = data.L , R = data.R , N = L + R;
 
         // bandpass digital prototype poles, zeros and gains:
-        fcomplex< __fx64 > *pbs = ( fcomplex< __fx64 >* ) calloc( 2*N , sizeof ( fcomplex< __fx64 > ) );
-        fcomplex< __fx64 > *zbs = ( fcomplex< __fx64 >* ) calloc( 2*N , sizeof ( fcomplex< __fx64 > ) );
-        fcomplex< __fx64 > *gbs = ( fcomplex< __fx64 >* ) calloc( 2*N , sizeof ( fcomplex< __fx64 > ) );
+        fcomplex< __fx64 > *pbs = __alloc__< fcomplex< __fx64 > >(2*N);
+        fcomplex< __fx64 > *zbs = __alloc__< fcomplex< __fx64 > >(2*N);
+        fcomplex< __fx64 > *gbs = __alloc__< fcomplex< __fx64 > >(2*N);
 
         // coefficients matrix computation:
-         __type *cfnum = ( __type* )calloc( 3 * (2*L+R) , sizeof ( __type ) );
-         __type *cfden = ( __type* )calloc( 3 * (2*L+R) , sizeof ( __type ) );
-         __type *gains = ( __type* )calloc( (2*L+R + 1) , sizeof ( __type ) );
+         __type *cfnum = __alloc__< __type >(3*(2*L+R));
+         __type *cfden = __alloc__< __type >(3*(2*L+R));
+         __type *gains = __alloc__< __type >((2*L+R+1));
 
          if( !cfnum || !cfden || !gains || !plp || !zlp || !glp || !pbs || !zbs || !gbs)
          {
-             free( cfnum );
-             free( cfden );
-             free( gains );
-             free( plp )  ;
-             free( zlp )  ;
-             free( glp );
-             free( pbs )  ;
-             free( zbs )  ;
-             free( gbs );
+            #ifdef IIR_KERNEL_DEBUG
+            Debugger::Log("kernel_iir.h", "__cheb2_ellip_digital_bs__", "memory allocation has failed !!!");
+            #endif
+
+             cfnum = __mfree__(cfnum);
+             cfden = __mfree__(cfden);
+             gains = __mfree__(gains);
+             plp   = __mfree__(plp);
+             zlp   = __mfree__(zlp);
+             glp   = __mfree__(glp);
+             pbs   = __mfree__(pbs);
+             zbs   = __mfree__(zbs);
+             gbs   = __mfree__(gbs);
+
              return __dsp_gen_empty_filter__<__type>();
          }
 
@@ -1651,14 +1761,14 @@ namespace IIR_KERNEL
         gains[ 2*L+R ] = __realf__(glp[N]);
 
         // memory free:
-        free( plp );
-        free( zlp );
-        free( glp );
+        plp = __mfree__(plp);
+        zlp = __mfree__(zlp);
+        glp = __mfree__(glp);
 
         // generate output
-        data.poles   = pbs;
-        data.zeros   = pbs;
-        data.ratio   = gbs;
+        data.poles = pbs;
+        data.zeros = pbs;
+        data.ratio = gbs;
         data.cfnum = cfnum;
         data.cfden = cfden;
         data.gains = gains;
@@ -1675,11 +1785,11 @@ namespace IIR_KERNEL
     #ifndef __ALG_PLATFORM
 
     template<typename __type>
-    void __show__( filter_data<__type> _data, filter_type _type )
+    void __show__( filter_data<__type> _data )
     {
         if( _data.cfnum && _data.cfden && _data.gains )
         {
-            switch ( _type )
+            switch ( _data.type )
             {
                 case filter_type::lowpass:
                 printf("Lowapass coefficients vector:\n");
@@ -1701,13 +1811,11 @@ namespace IIR_KERNEL
                 break;
             }
 
-            __ix32  L     = _data.L;
-            __ix32  R     = _data.R;
-            __ix32  N     = L + R;
-            __fx64 *cfnum = _data.cfnum;
-            __fx64 *cfden = _data.cfden;
-            __fx64 *gains = _data.gains;
-            __fx64  fgain = 1;
+            __ix32  N     = _data.N;
+            __type *cfnum = _data.cfnum;
+            __type *cfden = _data.cfden;
+            __type *gains = _data.gains;
+            __type  fgain = 1;
 
             for( __ix32 i = 0 ; i < N ; i++ )
             {
@@ -1723,12 +1831,13 @@ namespace IIR_KERNEL
         }
         else
         {
-             printf("The filter has been destryed or it's coeffcients have not been computed yet...\n");
+            Debugger::Log("The filter has been destryed or it's coeffcients have not been computed yet...\n");
         }
     }
 
     #endif
 
+    /*! @} */
 }
 
 #undef __fx32

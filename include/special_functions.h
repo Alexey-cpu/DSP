@@ -1,14 +1,3 @@
-/*!
- * file
- * brief   Special mathematical function header
- * authors A.Tykvinskiy
- * date    28.12.2021
- * version 1.0
- *
- * The header declares specialized mathematical functions and classes that
- * utilized for digital signal processing (DSP).
-*/
-
 #ifndef SPECIAL_FUNCTIONS_H
 #define SPECIAL_FUNCTIONS_H
 
@@ -19,6 +8,7 @@
 #include "cstring"
 #endif
 
+#include "fcomplex.h"
 #include "utils.h"
 
 /*! \defgroup <SPECIAL_MATH_FUNCTIONS> ( Special functions )
@@ -256,7 +246,6 @@ extern __fx64 __am__( __fx64 u , __fx64 k )
     for (; n > 0; n--) phi = 0.5L * (phi + asinl(c[n] * sinl(phi) / a[n]));
     return ( __fx64 )phi;
 }
-/*! \example am_example.cpp */
 
 /*!
     \brief Elliptic Jacobi SN function
@@ -265,7 +254,6 @@ extern __fx64 __am__( __fx64 u , __fx64 k )
     \returs  returns Ellptic Jacobi SN( u , x ) = sin( am( u , x ) ) function
 */
 extern __fx64 __sn__( __fx64 u , __fx64 x ) { return sin( __am__( u , x ) ); }
-/*! \example sn_example.cpp */
 
 /*!
     \brief Elliptic Jacobi CN function
@@ -274,7 +262,6 @@ extern __fx64 __sn__( __fx64 u , __fx64 x ) { return sin( __am__( u , x ) ); }
     \return  returns Ellptic Jacobi CN( u , x ) = cos( am( u , x ) ) function
 */
 extern __fx64 __cn__( __fx64 u , __fx64 x ) { return cos( __am__( u , x ) ); }
-/*! \example cn_example.cpp */
 
 /*!
     \brief Elliptic Jacobi DN function
@@ -283,7 +270,6 @@ extern __fx64 __cn__( __fx64 u , __fx64 x ) { return cos( __am__( u , x ) ); }
     \return  returns Ellptic Jacobi DN( u , x ) = sqrt( 1 - x * x * SN( u , x ) * SN( u , x ) ) function
 */
 extern __fx64 __dn__( __fx64 u , __fx64 x ) { __fx64 SN = __sn__( u , x ); return sqrt(1.0 - x * x * SN * SN); }
-/*! \example dn_example.cpp */
 
 /*!
     \brief Elliptic Jacobi CD function
@@ -292,7 +278,6 @@ extern __fx64 __dn__( __fx64 u , __fx64 x ) { __fx64 SN = __sn__( u , x ); retur
     \return  returns Ellptic Jacobi CD( u , x ) = CN( u , x ) / DN( u , x ) function
 */
 extern __fx64 __cd__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __dn__( u , x ); }
-/*! \example cd_example.cpp */
 
 /*!
     \brief Elliptic Jacobi SD function
@@ -301,7 +286,6 @@ extern __fx64 __cd__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __dn__( u
     \return  returns Ellptic Jacobi SD( u , x ) = SN( u , x ) / DN( u , x ) function
 */
 extern __fx64 __sd__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __dn__( u , x ); }
-/*! \example sd_example.cpp */
 
 /*!
     \brief Elliptic Jacobi ND function
@@ -310,7 +294,6 @@ extern __fx64 __sd__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __dn__( u
     \return  returns Ellptic Jacobi ND( u , x ) = SN( u , x ) / DN( u , x ) function
 */
 extern __fx64 __nd__( __fx64 u , __fx64 x ) { return 1 / __dn__( u , x ); }
-/*! \example nd_example.cpp */
 
 /*!
     \brief Elliptic Jacobi DC function
@@ -319,7 +302,6 @@ extern __fx64 __nd__( __fx64 u , __fx64 x ) { return 1 / __dn__( u , x ); }
     \return  returns Ellptic Jacobi DC( u , x ) = 1 / ND( u , x ) function
 */
 extern __fx64 __dc__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __cn__( u , x ); }
-/*! \example dc_example.cpp */
 
 /*!
     \brief Elliptic Jacobi NC function
@@ -328,7 +310,6 @@ extern __fx64 __dc__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __cn__( u
     \return  returns Ellptic Jacobi NC( u , x ) = 1 / CN( u , x ) function
 */
 extern __fx64 __nc__( __fx64 u , __fx64 x ) { return 1 / __cn__(u, x); }
-/*! \example nc_example.cpp */
 
 /*!
     \brief Elliptic Jacobi SC function
@@ -337,7 +318,6 @@ extern __fx64 __nc__( __fx64 u , __fx64 x ) { return 1 / __cn__(u, x); }
     \return  returns Ellptic Jacobi SC( u , x ) = SN( u , x ) / CN( u , x ) function
 */
 extern __fx64 __sc__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __cn__( u , x ); }
-/*! \example sc_example.cpp */
 
 /*!
     \brief Elliptic Jacobi NS function
@@ -346,7 +326,6 @@ extern __fx64 __sc__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __cn__( u
     \return  returns Ellptic Jacobi NS( u , x ) = 1 / SN( u , x ) function
 */
 extern __fx64 __ns__( __fx64 u , __fx64 x ) { return 1 / __sn__( u , x ); }
-/*! \example ns_example.cpp */
 
 /*!
     \brief Elliptic Jacobi DS function
@@ -355,8 +334,6 @@ extern __fx64 __ns__( __fx64 u , __fx64 x ) { return 1 / __sn__( u , x ); }
     \return  returns Ellptic Jacobi DS( u , x ) = DN( u , x ) / SN( u , x ) function
 */
 extern __fx64 __ds__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __sn__( u , x ); }
-/*! \example ds_example.cpp */
-
 /*!
  * \brief Elliptic Jacobi CS function
  * \param[u] incomplete elliptic integral of the first kind
@@ -364,7 +341,6 @@ extern __fx64 __ds__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __sn__( u
  * \return  returns Ellptic Jacobi CS( u , x ) = CN( u , x ) / SN( u , x ) function
 */
 extern __fx64 __cs__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __sn__( u , x ); }
-/*! \example cs_example.cpp */
 
 /*!
  * \brief Elliptic Jacobi inverse SN function
@@ -415,7 +391,6 @@ extern __fx64 __isn__( __fx64 sn , __fx64 x )
 
     return  ( sn < 0 ) ? ( -(phi + s[n - 1] * PI0) / two_n / a[n - 1] ) : ( +(phi + s[n - 1] * PI0) / two_n / a[n - 1] );
 }
-/*! \example isn_example.cpp */
 
 /*!
  * \brief Elliptic Jacobi inverse CN function
@@ -462,7 +437,6 @@ extern __fx64 __icn__( __fx64 cn , __fx64 x )
 
     return  +(phi + s[n-1] * PI0) / two_n / a[n-1];
 }
-/*! \example icn_example.cpp */
 
 /*!
  * \brief Elliptic Jacobi inverse DN function\
@@ -510,7 +484,6 @@ extern __fx64 __idn__( __fx64 dn , __fx64 x )
 
     return  +(phi + s[n - 1] * PI0) / two_n / a[n - 1];
 }
-/*! \example idn_example.cpp */
 
 /*!
  * \brief Elliptic Jacobi inverse CD function\
@@ -557,7 +530,6 @@ extern __fx64 __icd__( __fx64 cd , __fx64 x )
 
     return +(phi + s[n - 1] * PI0) / two_n / a[n - 1];
 }
-/*! \example icd_example.cpp */
 
 /*!
  * \brief Elliptic Jacobi inverse SD function\
@@ -604,7 +576,6 @@ extern __fx64 __isd__( __fx64 sd , __fx64 x )
 
     return  ( sd < 0 ) ? ( -(phi + s[n - 1] * PI0) / two_n / a[n - 1] ) : ( +(phi + s[n - 1] * PI0) / two_n / a[n - 1] ) ;
 }
-/*! \example special_functions_example.cpp */
 
 /*!
 * \brief Elliptic Jacobi inverse ND function
@@ -613,7 +584,6 @@ extern __fx64 __isd__( __fx64 sd , __fx64 x )
 * \return  returns Ellptic Jacobi inverse ND function
 */
 extern __fx64 __ind__( __fx64 nd , __fx64 x ) { return __idn__( 1 / nd , x ); }
-/*! \example isd_example.cpp */
 
 /*!
 * \brief Elliptic Jacobi inverse DC function
@@ -661,7 +631,6 @@ extern __fx64 __idc__( __fx64 dc , __fx64 x )
 
     return  +(phi + s[n - 1] * PI0) / two_n / a[n - 1];
 }
-/*! \example idc_example.cpp */
 
 /*!
 * \brief Elliptic Jacobi inverse NC function
@@ -670,7 +639,6 @@ extern __fx64 __idc__( __fx64 dc , __fx64 x )
 * \return  returns Ellptic Jacobi inverse NC function
 */
 extern __fx64 __inc__( __fx64 nc , __fx64 x ) { return  __icn__( 1 / nc , x ); }
-/*! \example inc_example.cpp */
 
 /*!
 * \brief Elliptic Jacobi inverse SC function
@@ -717,7 +685,6 @@ extern __fx64 __isc__( __fx64 sc , __fx64 x )
 
     return  ( sc < 0 ) ? ( -(phi + s[n - 1] * PI0) / two_n / a[n - 1] ) : ( +(phi + s[n - 1] * PI0) / two_n / a[n - 1] ) ;
 }
-/*! \example isc_example.cpp */
 
 /*!
 * \brief Elliptic Jacobi inverse NS function
@@ -726,7 +693,6 @@ extern __fx64 __isc__( __fx64 sc , __fx64 x )
 * \return  returns Ellptic Jacobi inverse NS function
 */
 extern __fx64 __ins__( __fx64 ns , __fx64 x ) { return  __isn__( 1 / ns , x ); }
-/*! \example ins_example.cpp */
 
 /*!
 * \brief Elliptic Jacobi inverse DS function
@@ -735,7 +701,6 @@ extern __fx64 __ins__( __fx64 ns , __fx64 x ) { return  __isn__( 1 / ns , x ); }
 * \return  returns Ellptic Jacobi inverse DS function
 */
 extern __fx64 __ids__( __fx64 ds , __fx64 x ) { return  __isd__( 1 / ds , x ); }
-/*! \example ids_example.cpp */
 
 /*!
 * \brief Elliptic Jacobi inverse CS function
@@ -744,7 +709,6 @@ extern __fx64 __ids__( __fx64 ds , __fx64 x ) { return  __isd__( 1 / ds , x ); }
 * \return  returns Ellptic Jacobi inverse CS function
 */
 extern __fx64 __ics__( __fx64 cs , __fx64 x ) { return  __isc__( 1 / cs , x ); }
-/*! \example ics_example.cpp */
 
 /*!
 * \brief Elliptic integral of the first kind
@@ -783,7 +747,6 @@ extern __fx64 __ellip_k__( __fx64 k )
 
     return PI_2 / a[n];
 }
-/*! \example ellip_k_example.cpp */
 
 /*!
 * \brief Elliptic integral of the second kind
@@ -824,7 +787,6 @@ extern __fx64 __ellip_e__( __fx64 k )
 
     return PI_2*(1 - (sum + 0.5 * c[0] * c[0]))/ a[n];
 }
-/*! \example ellip_e_example.cpp */
 
 /*! @} */
 
@@ -848,7 +810,6 @@ extern __fxx64 __factorial__( __ix64 n )
     for( __ix64 i = 1 ; i <= n ; i++ ) out *= i;
     return out;
 }
-/*! \example factorial_example.cpp */
 
 /*!
 * \brief Integer gamma function
@@ -856,7 +817,6 @@ extern __fxx64 __factorial__( __ix64 n )
 * \return  returns ( n - 1 )!
 */
 extern __uix64 __gamma_integer__( __uix64 n ) { return __factorial__(n-1); }
-/*! \example gamma_integer_example.cpp */
 
 /*!
 * \brief Zero order Bessel function
@@ -875,7 +835,6 @@ extern __fxx64 __bessel_i0__( __fxx64 x )
 
     return sum;
 }
-/*! \example bessel_i0_example.cpp */
 
 /*!
 * First order Bessel function
@@ -894,7 +853,6 @@ extern __fxx64 __bessel_i1__( __fxx64 x )
     }
     return sum;
 }
-/*! \example bessel_i1_example.cpp */
 
 /*!
 * N-th order Bessel function
@@ -914,7 +872,6 @@ extern __fxx64 __bessel_in__( __fxx64 x  , __ix32 order )
     }
     return sum;
 }
-/*! \example bessel_in_example.cpp */
 
 /*!
 * N-th order modified Bessel function
@@ -934,7 +891,6 @@ extern __fxx64 __modified_bessel_in__( __fxx64 x  , __ix32 order )
     }
     return sum;
 }
-/*! \example modified_bessel_in_example.cpp */
 
 /*! @} */
 
@@ -960,7 +916,7 @@ extern __fxx64 __modified_bessel_in__( __fxx64 x  , __ix32 order )
  *      \end{equation}
  *  \f]
 */
-__fx64 *Bartlett( __ix32 _order )
+__fx64 *__Bartlett__( __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -969,7 +925,6 @@ __fx64 *Bartlett( __ix32 _order )
     for ( __ix32 n = 0; n < Ns ; n++) { buff[n] = ( n <= ( Ns-1 ) / 2 ) ? ( 2*n / (Ns-1) ) : ( 2 - 2 * n / (Ns-1) ); }
     return buff;
 }
-/*! \example Bartlett_example.cpp */
 
 /*!
  * \brief Barlett Hanning window function computation
@@ -981,7 +936,7 @@ __fx64 *Bartlett( __ix32 _order )
  *      y( n ) = 0.62 - 0.48 * \left|  \frac{ n }{ Ns - 1 } - 0.5 \right| + 0.38 * cos \left[ \ 2 * \pi * \left( \frac{ n }{ Ns - 1 } - 0.5 \right) \right]
  *  \f]
 */
-__fx64 *BartlettHanning( __ix32 _order )
+__fx64 *__BartlettHanning__( __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -991,7 +946,6 @@ __fx64 *BartlettHanning( __ix32 _order )
     // window is ready to use:
     return buff;
 }
-/*! \example BartlettHanning_example.cpp */
 
 
 /*!
@@ -1003,8 +957,8 @@ __fx64 *BartlettHanning( __ix32 _order )
      *      n  = 0 \dots Ns \newline
      *      y( n ) = 0.42 - 0.50 * cos \left( 2 * \pi * \frac { n } { Ns - 1 } \right ) + 0.08 * cos \left( 4 * \pi * \frac{ n } { Ns - 1 } \right )
      *  \f]
-    */
-__fx64 *Blackman(__ix32 _order)
+*/
+__fx64 *__Blackman__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1014,7 +968,6 @@ __fx64 *Blackman(__ix32 _order)
     // window is ready to use:
     return buff;
 }
-/*! \example Blackman_example.cpp */
 
 /*!
      * \brief Balckman-Harris window function computation
@@ -1026,7 +979,7 @@ __fx64 *Blackman(__ix32 _order)
      *      y( n ) = 0.35875 - 0.48829 * cos \left( 2 * \pi * \frac{ n } { Ns - 1 } \right ) + 0.14128 * cos\left( 4 * \pi * \frac{ n } { Ns - 1 } \right ) - 0.01168 * cos \left( 6 * \pi * \frac{ n } { Ns - 1 } \right )
      *  \f]
     */
-__fx64 *BlackmanHarris(__ix32 _order)
+__fx64 *__BlackmanHarris__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1036,7 +989,6 @@ __fx64 *BlackmanHarris(__ix32 _order)
     // window is ready to use:
     return buff;
 }
-/*! \example BlackmanHarris_example.cpp */
 
 
 /*!
@@ -1053,7 +1005,7 @@ __fx64 *BlackmanHarris(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 *Bohman(__ix32 _order)
+__fx64 *__Bohman__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1069,7 +1021,6 @@ __fx64 *Bohman(__ix32 _order)
     // window is ready to use:
     return buff;
 }
-/*! \example Bohman_example.cpp */
 
 /*!
      * \brief Auxiliary Chebhshev poly computation function
@@ -1085,14 +1036,13 @@ __fx64 *Bohman(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 cheby_poly(__ix32 n, __fx64 x)
+__fx64 __cheby_poly__(__ix32 n, __fx64 x)
 {
     __fx64 res;
     if (fabs(x) <= 1) res = cos(n*acos(x));
     else              res = cosh(n*acosh(x));
     return res;
 }
-/*! \example window_functions_example.cpp */
 
 /*!
      * \brief Chebyshev window computation function
@@ -1100,7 +1050,7 @@ __fx64 cheby_poly(__ix32 n, __fx64 x)
      * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Chebyshev window coefficients
     */
-__fx64 *Chebyshev( __fx64 _atten , __ix32 _order )
+__fx64 *__Chebyshev__( __fx64 _atten , __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1117,7 +1067,7 @@ __fx64 *Chebyshev( __fx64 _atten , __ix32 _order )
     {
         n = nn - M;
         sum = 0;
-        for (kk = 1; kk <= M; kk++)  { sum += cheby_poly(Ns - 1, x0*cos(PI0*kk / Ns))*cos(2.0*n*PI0*kk / Ns); }
+        for (kk = 1; kk <= M; kk++)  { sum += __cheby_poly__(Ns - 1, x0*cos(PI0*kk / Ns))*cos(2.0*n*PI0*kk / Ns); }
         buff[nn] = tg + 2 * sum;
         buff[(__ix32)Ns - nn - 1] = buff[nn];
         if (buff[nn] > max)max = buff[nn];
@@ -1127,7 +1077,6 @@ __fx64 *Chebyshev( __fx64 _atten , __ix32 _order )
     // window is ready to use:
     return buff;
 }
-/*! \example Chebyshev_example.cpp */
 
 
 /*!
@@ -1143,7 +1092,7 @@ __fx64 *Chebyshev( __fx64 _atten , __ix32 _order )
      *      + 0.006947368 * cos \left( 8 * \pi * \frac{ n } { Ns - 1 } \right)
      *  \f]
     */
-__fx64 *FlatTop(__ix32 _order)
+__fx64 *__FlatTop__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1161,7 +1110,6 @@ __fx64 *FlatTop(__ix32 _order)
     // window is ready to use:
     return buff;
 }
-/*! \example FlatTop_example.cpp */
 
 
 /*!
@@ -1183,7 +1131,7 @@ __fx64 *FlatTop(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 *Gaussian( __fx64 _alpha, __ix32 _order )
+__fx64 *__Gaussian__( __fx64 _alpha, __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1204,7 +1152,6 @@ __fx64 *Gaussian( __fx64 _alpha, __ix32 _order )
     // wind is ready to use:
     return buff;
 }
-/*! \example Gaussian_example.cpp */
 
 /*!
      * \brief Hamming window computation function
@@ -1216,7 +1163,7 @@ __fx64 *Gaussian( __fx64 _alpha, __ix32 _order )
      *      y( n ) = 0.54 - 0.46 * cos \left( 2 * \pi * \frac{ n } { Ns-1 } \right)
      *  \f]
     */
-__fx64 *Hamming(__ix32 _order )
+__fx64 *__Hamming__(__ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1228,7 +1175,6 @@ __fx64 *Hamming(__ix32 _order )
     // window is ready to use:
     return buff;
 }
-/*! \example Hamming_example.cpp */
 
 /*!
      * \brief Hann window computation function
@@ -1240,7 +1186,7 @@ __fx64 *Hamming(__ix32 _order )
      *      y( n ) = 0.5 - 0.5 * cos \left( 2 * \pi * \frac{ n } { Ns-1 } \right)
      *  \f]
     */
-__fx64 *Hann(__ix32 _order)
+__fx64 *__Hann__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1252,7 +1198,6 @@ __fx64 *Hann(__ix32 _order)
     // window is ready to use:
     return buff;
 }
-/*! \example Hann_example.cpp */
 
 
 /*!
@@ -1269,7 +1214,7 @@ __fx64 *Hann(__ix32 _order)
      *      y(n) = \frac{ ModifiedBessel( B , 0 ) }{ ModifiedBessel( C , 0 ) }
      *  \f]
     */
-__fx64 *Kaiser(__fx64 _betta, __ix32 _order )
+__fx64 *__Kaiser__(__fx64 _betta, __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1290,7 +1235,6 @@ __fx64 *Kaiser(__fx64 _betta, __ix32 _order )
     // window is ready to use:
     return buff;
 }
-/*! \example Kaiser_example.cpp */
 
 /*!
      * \brief Nutall window computation function
@@ -1305,7 +1249,7 @@ __fx64 *Kaiser(__fx64 _betta, __ix32 _order )
      *      - 0.0106411 * cos \left( 6 * \pi * \frac{ n }{ Ns - 1 } \right)
      *  \f]
     */
-__fx64 *Nutall(__ix32 _order)
+__fx64 *__Nutall__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1323,7 +1267,6 @@ __fx64 *Nutall(__ix32 _order)
     // window is ready to use:
     return buff;
 }
-/*! \example Nutall_example.cpp */
 
 /*!
      * \brief Parzen window computation function
@@ -1344,7 +1287,7 @@ __fx64 *Nutall(__ix32 _order)
      *
      *  \f]
     */
-__fx64 *Parzen(__ix32 _order)
+__fx64 *__Parzen__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1371,7 +1314,6 @@ __fx64 *Parzen(__ix32 _order)
     // window is ready:
     return buff;
 }
-/*! \example Parzen_example.cpp */
 
 /*!
      * \brief Rectangular window computation function
@@ -1383,7 +1325,7 @@ __fx64 *Parzen(__ix32 _order)
      *      y(n) = 1
      *  \f]
     */
-__fx64 *Rectangular(__ix32 _order)
+__fx64 *__Rectangular__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1394,7 +1336,6 @@ __fx64 *Rectangular(__ix32 _order)
     // window is ready to use:
     return buff;
 }
-/*! \example Rectangular_example.cpp */
 
 /*!
      * \brief Triangular window computation function
@@ -1411,7 +1352,7 @@ __fx64 *Rectangular(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 *Triangular(__ix32 _order)
+__fx64 *__Triangular__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1436,7 +1377,6 @@ __fx64 *Triangular(__ix32 _order)
     // window is ready to use:
     return buff;
 }
-/*! \example Triangular_example.cpp */
 
 /*!
      * \brief Tukey window computation function
@@ -1461,7 +1401,7 @@ __fx64 *Triangular(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 *Tukey(__fx64 _R, __ix32 _order )
+__fx64 *__Tukey__(__fx64 _R, __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1489,7 +1429,6 @@ __fx64 *Tukey(__fx64 _R, __ix32 _order )
     // window is ready to use:
     return buff;
 }
-/*! \example Tukey_example.cpp */
 
 
 /*!
@@ -1500,18 +1439,6 @@ __fx64 *Tukey(__fx64 _R, __ix32 _order )
 __ix32 __conv_size__(__ix32 _Na,  __ix32 _Nb)
 {
     return _Na + _Nb - 1;
-}
-
-/*!
-     * \brief Linear convolution function
-     * \param[_polymons_sizes] the sizes array of the polynoms to be convoluted
-     * \param[_polynoms_number] the number of the polynoms to be convoluted
-*/
-__ix32 __conv_size__(__ix32 *_polymons_sizes, __ix32 _polynoms_number)
-{
-    __ix32 _Nc = _polymons_sizes[0];
-    for( __ix32 i = 1 ; i < _polynoms_number ; i++ ) _Nc += _polymons_sizes[i] - 1;
-    return _Nc;
 }
 
 /*!
@@ -1544,56 +1471,291 @@ __convf__( const __type *_a, const __type *_b, __type *_c, __ix32 _Na,  __ix32 _
      * \param[_b] pointer to the poly b array
      * \param[_Na] size of poly a array
      * \param[_Nb] size of poly b array
-     * \param[_c] resulting polynom
-     * \param[_Nc] resulting polynom size
-     * \returns The function modifies variables _c and _Nc.
-     *          The mentioned modified variables will contain
-     *          convolution result polynom and the size of the resulting polynom
+     * \returns The function returns the tuple_x2
+     *          containing resulting convulution vector and it's size
 */
-template< typename __type > void
-__convf__( const __type *_a, const __type *_b, __ix32 _Na,  __ix32 _Nb, __type **_c, __ix32 *_Nc )
+template< typename __type > tuple_x2<__type*, __ix32>
+__convf__( const __type *_a, const __type *_b, __ix32 _Na,  __ix32 _Nb )
 {
-    __convf__( _a, _b, ( *_c = __alloc__<__type>(_Nc) ) , _Na, _Nb, (*_Nc = _Na + _Nb - 1) );
+    __ix32 _Nc = _Na + _Nb - 1;
+    __type *_c = __alloc__<__type>(_Nc);
+    __convf__( _a, _b, _c , _Na, _Nb, _Nc );
+
+    return { _c, _Nc };
 }
 
 /*!
-     * \brief Linear convolution function
-     * \param[_polynoms] array of the polynoms to be convoluted
-     * \param[_polynoms_sizes] array containing convoluted polynoms sizes
-     * \param[_polynoms_number] the number of the convoluted polynoms
-     * \param[_c] resulting polynom
-     * \param[_Nc] resulting polynom size
-     * \returns The function modifies variables _c and _Nc.
-     *          The mentioned modified variables will contain
-     *          convolution result polynom and the size of the resulting polynom
+     * \brief Numeric fraction/fraction substitution function
+     * \param[AN] numerator of the first fraction
+     * \param[AD] denominator of the first fraction
+     * \param[BN] numerator of the fraction to substitute into the first fraction
+     * \param[BD] denominator of the fraction to substitute into the first fraction
+     * \param[N] the numerator/denominator size of the first fraction
+     * \param[P] the numerator/denominator size of the fraction to substitute into the first fraction
+     * \returns The function returns the tuple_x3
+     *          containing resulting fraction array and it's first and second dimention sizes
 */
-template< typename __type > void
-__convf__( __type **_polynoms, __ix32 *_polynoms_sizes, __ix32 _polynoms_number, __type **_c, __ix32 *_Nc )
+template<typename __type> tuple_x3<void**, __ix32, __ix32>
+__fraction_numeric_substitution__(__type *AN, __type *AD, __type *BN, __type *BD, __ix32 N, __ix32 P)
 {
-    // allocate memory and initialize
-    *_Nc = __conv_size__(_polynoms_sizes, _polynoms_number);
-     __type *_a  = __alloc__<__type>(*_Nc);
-    *_c  = __alloc__<__type>(*_Nc);
-    for( __ix32 j = 0 ; j < _polynoms_sizes[0] ; j++ ) (*_c)[j] = _polynoms[0][j];
+    // decrement orders to omit zero power elements
+    N--;
+    P--;
 
-    // main operation
-    *_Nc = _polynoms_sizes[0];
-    for( __ix32 i = 1, _Na = _polynoms_sizes[0] ; i < _polynoms_number ; i++, _Na += _polynoms_sizes[i] - 1 )
+    // identify martix dimensions
+    __ix32 nrows = N+1;
+    __ix32 ncols = N*P+1;
+
+    // allocate memory
+    __ix32 *Ap = __alloc__<__ix32>( ncols );
+    __ix32 *Bp = __alloc__<__ix32>( ncols );
+    __type *Ax = __alloc__<__type>( nrows * ncols );
+    __type *Bx = __alloc__<__type>( nrows * ncols );
+    __type *Cx = __alloc__<__type>( nrows * ncols );
+    __type *Nx = __alloc__<__type>( ncols );
+    __type *Dx = __alloc__<__type>( ncols );
+
+    // Compute numerator/denominator powers matrixes
+    Ax[0] = 1;
+    Bx[0] = 1;
+    Ap[0] = 1;
+    Bp[0] = 1;
+    for(__ix32 i = 1, Na = 1, Nb = (P+1), Nc = ncols ; i < nrows ; i++ )
     {
-        for( __ix32 j = 0 ; j < *_Nc ; j++ )
-        {
-             _a[j] = (*_c)[j];
-            (*_c)[j] = 0;
-        }
-
-        *_Nc += _polynoms_sizes[i] - 1;
-        __convf__( _a, _polynoms[i], *_c, _Na,  _polynoms_sizes[i], *_Nc );
+        __convf__( &Ax[(i-1)*ncols], BN, &Ax[i*ncols], Na, Nb, Nc );
+        __convf__( &Bx[(i-1)*ncols], BD, &Bx[i*ncols], Na, Nb, Nc );
+        Na = __conv_size__(Na, Nb);
+        Ap[i] = Na;
+        Bp[i] = Na;
     }
 
-    _a = __mfree__(_a);
+    // convolve
+    for(__ix32 i = 0; i < nrows ; i++)
+    {
+        __convf__( &Bx[(N-i)*ncols], &Ax[i*ncols], &Cx[i*ncols], Ap[N-i], Bp[i], ncols );
+    }
+
+    // compute the resulting poly coefficients
+    for( __ix32 j = 0 ; j < ncols ; j++ )
+    {
+        for( __ix32 i = 0 ; i < nrows ; i++ )
+        {
+            Nx[j] += Cx[i*ncols+j] * AN[i];
+            Dx[j] += Cx[i*ncols+j] * AD[i];
+        }
+    }
+
+    // free memory
+    __mfree__(Ap);
+    __mfree__(Bp);
+    __mfree__(Ax);
+    __mfree__(Bx);
+    __mfree__(Cx);
+
+    // generate the output
+    void** output = __alloc__<void*>(2);
+    output[0] = Nx;
+    output[1] = Dx;
+    return { output, 2, ncols };
 }
 
-/*! \example convolution_example.cpp */
+/*!
+     * \brief Numeric fraction/fraction substitution function
+     * \param[input] input samples array
+     * \param[output] output samples array
+     * \param[Gain] output gain
+     * \param[M] input array size
+     * \param[N] output array size
+     * \param[order] interpolation order
+     * \details The function generates interpolated output of input signal multiplied by gain.
+     *          The function supports linear, quad and cubic interpolation.
+*/
+template<typename __InputType, typename __OutputType> void
+interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32 M, __ix32 N, __ix32 order)
+{
+    // time step
+    __fx64 dN = (__fx64)M / (__fx64)N;
+
+    if( order == 1 ) // linear interpolation
+    {
+        for( __ix32 i = 0 ; i < N ; i++ )
+        {
+            // time stamps
+            __fx64 t  = (i+0)*dN;
+            __fx64 t0 = t;
+            __fx64 t1 = (i+1)*dN;
+
+            // indexes
+            __ix32 idx0 = (__ix32)t0;
+            __ix32 idx1 = (__ix32)ceil(t1);
+
+            // samples
+            __InputType y0 = input[ idx0 ];
+            __InputType y1 = input[ idx1 ];
+
+            // result
+            output[i] = y0 + ( y1 - y0 ) * ( t - t0 ) / ( t1 - t0 );
+            output[i] *= Gain;
+        }
+    }
+    else if( order == 2 ) // quadratic interpolation
+    {
+        for( __ix32 i = 0 ; i < N ; i++ )
+        {
+            // time stamps
+            __fx64 t  = (i+0)*dN;
+            __fx64 t0 = t;
+            __fx64 t1 = (i+1)*dN;
+            __fx64 t2 = (i+2)*dN;
+
+            // indexes
+            __ix32 idx0 = (__ix32)t0;
+            __ix32 idx1 = (__ix32)ceil(t1);
+            __ix32 idx2 = (__ix32)ceil(t2);
+
+            // samples
+            __InputType y0 = input[ idx0 ];
+            __InputType y1 = input[ idx1 ];
+            __InputType y2 = input[ idx2 ];
+
+            // interpolation coefficients
+            /*
+                __fx64 k0 = ( t - t1 ) * ( t - t2 ) / ( t0 - t1 ) / ( t0 - t2 );
+                __fx64 k1 = ( t - t0 ) * ( t - t2 ) / ( t1 - t0 ) / ( t1 - t2 );
+                __fx64 k2 = ( t - t0 ) * ( t - t1 ) / ( t2 - t0 ) / ( t2 - t1 );
+            */
+
+            __fx64 a = ( t - t2 );
+            __fx64 b = ( t - t0 );
+            __fx64 c = ( t - t1 );
+
+            __fx64 k0 = c * a / ( t0 - t1 ) / ( t0 - t2 );
+            __fx64 k1 = b * a / ( t1 - t0 ) / ( t1 - t2 );
+            __fx64 k2 = b * c / ( t2 - t0 ) / ( t2 - t1 );
+
+            // result
+            output[i] = y0 * k0 + y1 * k1 + y2 * k2;
+            output[i] *= Gain;
+        }
+    }
+    else if( order == 3 ) // cubic interpolation
+    {
+        for( __ix32 i = 0 ; i < N ; i++ )
+        {
+            // time stamps
+            __fx64 t  = (i)*dN;
+            __fx64 t0 = t;
+            __fx64 t1 = (i+1)*dN;
+            __fx64 t2 = (i+2)*dN;
+            __fx64 t3 = (i+3)*dN;
+
+            // indexes
+            __ix32 idx0 = (__ix32)t0;
+            __ix32 idx1 = (__ix32)ceil(t1);
+            __ix32 idx2 = (__ix32)ceil(t2);
+            __ix32 idx3 = (__ix32)ceil(t3);
+
+            // samples
+            __InputType y0 = input[ idx0 ];
+            __InputType y1 = input[ idx1 ];
+            __InputType y2 = input[ idx2 ];
+            __InputType y3 = input[ idx3 ];
+
+            // interpolation coefficients
+            /*
+            __fx64 k0 = ( t - t1 ) * ( t - t2 ) * ( t - t3 ) / ( t0 - t1 ) / ( t0 - t2 ) / ( t0 - t3 );
+            __fx64 k1 = ( t - t0 ) * ( t - t2 ) * ( t - t3 ) / ( t1 - t0 ) / ( t1 - t2 ) / ( t1 - t3 );
+            __fx64 k2 = ( t - t0 ) * ( t - t1 ) * ( t - t3 ) / ( t2 - t0 ) / ( t2 - t1 ) / ( t2 - t3 );
+            __fx64 k3 = ( t - t0 ) * ( t - t1 ) * ( t - t2 ) / ( t3 - t0 ) / ( t3 - t1 ) / ( t3 - t2 );
+            */
+
+            __fx64 a = ( t - t0 );
+            __fx64 b = ( t - t1 );
+            __fx64 c = ( t - t2 );
+            __fx64 d = ( t - t3 );
+
+            __fx64 k0 = b * c * d / ( t0 - t1 ) / ( t0 - t2 ) / ( t0 - t3 );
+            __fx64 k1 = a * c * d / ( t1 - t0 ) / ( t1 - t2 ) / ( t1 - t3 );
+            __fx64 k2 = a * b * d / ( t2 - t0 ) / ( t2 - t1 ) / ( t2 - t3 );
+            __fx64 k3 = a * b * c / ( t3 - t0 ) / ( t3 - t1 ) / ( t3 - t2 );
+
+            // result
+            output[i] = y0 * k0 + y1 * k1 + y2 * k2 + y3 * k3;
+            output[i] *= Gain;
+        }
+    }
+}
+
+/*!
+     * \brief Numeric fraction/fraction substitution function
+     * \param[input] input samples array
+     * \param[spectrum] output samples array
+     * \param[M] input signal array size
+     * \param[N] output spectrum array size
+     * \details The function computes input signal spectrum.
+     *          The spectrum array size should be of a power of two
+*/
+template<typename __type> void
+fft( __type *input, fcomplex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 interpolationOrder = 1 )
+{
+    // initialization
+    __ix32 L = N;
+    __fx64 G = 2.0 / N;
+
+    // interpolate the input if it's size is not of a power of two
+    if( M != N )
+    {
+        interpolation<__type, fcomplex<__type> >( input, spectrum, G, M, N, interpolationOrder );
+    }
+    else
+    {
+        for( __ix32 i = 0 ; i < N ; i++ )
+        {
+            spectrum[i] = input[i] * G;
+        }
+    }
+
+    // compute FFT
+    while ( L >= 2 )
+    {
+        fcomplex<__type> Wn( cos(-PI2/L), sin(-PI2/L) );
+        for( __ix32 i = 0; i < N; i += L )
+        {
+            fcomplex<__type> *pointer = &spectrum[i];
+            fcomplex<__type> W1(1,0);
+            for( __ix32 j = 0, k = L / 2 ; j < L / 2 ; j++, k++ )
+            {
+                fcomplex<__type> S0 = pointer[j] + pointer[k];
+                fcomplex<__type> S1 = pointer[j] - pointer[k];
+                pointer[j] = S0;
+                pointer[k] = S1 * W1;
+                W1 *= Wn;
+            }
+        }
+        L /= 2;
+    }
+
+    // spectrum reordering
+    for (__ix32 i = 1, j = 0 ; i < N ; i++)
+    {
+        __ix32 bit = N >> 1;
+
+        for ( ; j >= bit; bit >>= 1 )
+        {
+            j -= bit;
+        }
+
+        j += bit;
+
+        if ( i < j )
+        {
+            swap ( spectrum[i], spectrum[j] );
+        }
+    }
+
+    // scale zero component
+    spectrum[0] /= 2.0;
+}
 
 /*! @} */
 

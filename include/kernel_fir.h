@@ -2,6 +2,7 @@
 #define KERNEL_FIR_H
 
 #include "kernel_dsp.h"
+#include "special_functions.h"
 using namespace DSP_KERNEL;
 
 #ifndef __fx32
@@ -28,8 +29,18 @@ using namespace DSP_KERNEL;
 #define PI2 6.283185307179586476925286766559
 #endif
 
+/*!  \namespace FIR_KERNEL */
 namespace FIR_KERNEL
 {
+
+    /*! \defgroup <DSP_CLASSIC_FIR_FILTERS_KERNEL> ( Classic FIR low level kernel )
+     *  \ingroup KERNELS
+     *  \brief   The module contains classic FIR filters low level kernel
+     *  \details The module contains low level FIR filters computational utilities that compute
+     *          floating point type coefficients.
+        @{
+    */
+
     /*!
      * \brief FIR filter filtering function
      * \param[_input] pointer to the input signal samples buffer
@@ -64,8 +75,7 @@ namespace FIR_KERNEL
     */
     template< typename __type >
     inline  __type __filt__
-    ( __type *_coeffs,  delay< __type > &_buff_sx, __ix32 _N
-    )
+    ( __type *_coeffs,  delay< __type > &_buff_sx, __ix32 _N )
     {
         __type out = 0;
         for ( __ix32 n = _N-1 ; n >= 0; n--) out += _buff_sx[ n ] * _coeffs[n];
@@ -155,8 +165,8 @@ namespace FIR_KERNEL
         data.L     = -1;
         data.R     = -1;
         data.N     = _N;
-        data.Nx    = -1;
-        data.Ny    = -1;
+        data.Nx    = +1;
+        data.Ny    = +1;
 
         return data;
     }
@@ -217,17 +227,17 @@ namespace FIR_KERNEL
 
         // returning the result
         filter_data<__type> data;
-        data.poles   = nullptr;
-        data.zeros   = nullptr;
-        data.gains   = nullptr;
+        data.poles = nullptr;
+        data.zeros = nullptr;
+        data.gains = nullptr;
         data.cfnum = cfbuff;
         data.cfden = nullptr;
         data.gains = nullptr;
         data.L     = -1;
         data.R     = -1;
         data.N     = _N;
-        data.Nx    = -1;
-        data.Ny    = -1;
+        data.Nx    = +1;
+        data.Ny    = +1;
 
         return data;
     }
@@ -290,17 +300,17 @@ namespace FIR_KERNEL
 
         // returning the result
         filter_data<__type> data;
-        data.poles   = nullptr;
-        data.zeros   = nullptr;
-        data.gains   = nullptr;
+        data.poles = nullptr;
+        data.zeros = nullptr;
+        data.gains = nullptr;
         data.cfnum = cfbuff;
         data.cfden = nullptr;
         data.gains = nullptr;
         data.L     = -1;
         data.R     = -1;
         data.N     = _N;
-        data.Nx    = -1;
-        data.Ny    = -1;
+        data.Nx    = +1;
+        data.Ny    = +1;
 
         return data;
     }
@@ -349,17 +359,17 @@ namespace FIR_KERNEL
 
         // returning the result
         filter_data<__type> data;
-        data.poles   = nullptr;
-        data.zeros   = nullptr;
-        data.gains   = nullptr;
+        data.poles = nullptr;
+        data.zeros = nullptr;
+        data.gains = nullptr;
         data.cfnum = cfbuff;
         data.cfden = nullptr;
         data.gains = nullptr;
         data.L     = -1;
         data.R     = -1;
         data.N     = _N;
-        data.Nx    = -1;
-        data.Ny    = -1;
+        data.Nx    = +1;
+        data.Ny    = +1;
 
         return data;
     }
@@ -367,7 +377,7 @@ namespace FIR_KERNEL
     #ifndef __ALG_PLATFORM
 
         template<typename __type>
-        void __show__ ( filter_data<__type> _data )
+        void __show_fir__ ( filter_data<__type> _data )
         {
             if( _data.cfnum )
             {
@@ -402,6 +412,8 @@ namespace FIR_KERNEL
         }
 
     #endif
+
+   /*! @} */
 
 }
 

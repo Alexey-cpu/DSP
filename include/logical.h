@@ -1,13 +1,3 @@
-/*!
- * file
- * brief   Logical components
- * authors A.Tykvinskiy
- * date    21.01.2022
- * version 1.0
- *
- * The header declares DSP logical compenents
-*/
-
 #ifndef LOGICAL_H
 #define LOGICAL_H
 

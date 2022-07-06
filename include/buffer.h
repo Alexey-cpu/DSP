@@ -1,13 +1,3 @@
-/*!
- *
- * brief   Buffers
- * authors A.Tykvinskiy
- * date    21.12.2021
- * version 1.0
- *
- * The header declares buffer and delay template classes
-*/
-
 #ifndef BUFFER_H
 #define BUFFER_H
 
@@ -68,7 +58,7 @@
 */
 
 // ABSTRACT MODELS
-template< typename T > class delay_abstract
+template< typename T > class delay_base
 {
     typedef T __type;
 protected:
@@ -131,7 +121,7 @@ public:
     }
 
     /*! \brief default constructor */
-    delay_abstract()
+    delay_base()
     {
         m_upper   = nullptr;
         m_lower   = nullptr;
@@ -144,7 +134,7 @@ public:
      *  \brief default constructor
      *  \details The functions clears delay resources at the end of it's lifetime
     */
-    virtual ~delay_abstract()
+    virtual ~delay_base()
     {
         deallocate();
     }
@@ -167,7 +157,7 @@ public:
     virtual inline void operator () ( __type *input ) = 0;
 };
 
-template< typename T > class buffer_abstract
+template< typename T > class buffer_base
 {
     typedef T __type;
 protected:
@@ -219,7 +209,7 @@ public:
     }
 
     /*! \brief default constructor */
-    buffer_abstract()
+    buffer_base()
     {
         m_lower   = nullptr;
         m_data    = nullptr;
@@ -231,7 +221,7 @@ public:
      *  \brief default destructor
      *  \details The function clears buffer resources
     */
-    virtual ~buffer_abstract()
+    virtual ~buffer_base()
     {
         deallocate();
     }
@@ -263,83 +253,83 @@ public:
 
 template< typename T > class delay;
 
-template<> class delay< __fx32 > : public delay_abstract< __fx32 >
+template<> class delay< __fx32 > : public delay_base< __fx32 >
 {
     typedef __fx32 __type;
 public:
-      delay() : delay_abstract(){}
+      delay() : delay_base(){}
      ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( __fx64  *input ) { fill_buff< __fx64 >( input ); }
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
-template<> class delay< __fx64 > : public delay_abstract< __fx64 >
+template<> class delay< __fx64 > : public delay_base< __fx64 >
 {
     typedef __fx64 __type;
 public:
-     delay() : delay_abstract(){}
+     delay() : delay_base(){}
     ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
-template<> class delay< __fxx64 > : public delay_abstract< __fxx64 >
+template<> class delay< __fxx64 > : public delay_base< __fxx64 >
 {
     typedef __fxx64 __type;
 public:
-     delay() : delay_abstract(){}
+     delay() : delay_base(){}
     ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
-template<> class delay< __ix32 > : public delay_abstract< __ix32 >
+template<> class delay< __ix32 > : public delay_base< __ix32 >
 {
     typedef __ix32 __type;
 public:
-      delay() : delay_abstract(){}
+      delay() : delay_base(){}
      ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( __ix64  *input ) { fill_buff< __ix64 >( input ); }
 };
 
-template<> class delay< __ix64 > : public delay_abstract< __ix64 >
+template<> class delay< __ix64 > : public delay_base< __ix64 >
 {
     typedef __ix64 __type;
 public:
-      delay() : delay_abstract(){}
+      delay() : delay_base(){}
      ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
 #ifdef FCOMPLEX_H
 
-template<> class delay< fcomplex< __fx32 > > : public delay_abstract< fcomplex< __fx32 > >
+template<> class delay< fcomplex< __fx32 > > : public delay_base< fcomplex< __fx32 > >
 {
     typedef fcomplex< __fx32 > __type;
 public:
-      delay() : delay_abstract(){}
+      delay() : delay_base(){}
      ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( fcomplex< __fx64  > *input ) { fill_buff< fcomplex< __fx64  > >( input ); }
      inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64  > >( input ); }
 };
 
-template<> class delay< fcomplex< __fx64 > > : public delay_abstract< fcomplex< __fx64 > >
+template<> class delay< fcomplex< __fx64 > > : public delay_base< fcomplex< __fx64 > >
 {
     typedef fcomplex< __fx64 > __type;
 public:
-      delay() : delay_abstract(){}
+      delay() : delay_base(){}
      ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64  > >( input ); }
 };
 
-template<> class delay< fcomplex< __fxx64 > > : public delay_abstract< fcomplex< __fxx64 > >
+template<> class delay< fcomplex< __fxx64 > > : public delay_base< fcomplex< __fxx64 > >
 {
     typedef fcomplex< __fxx64 > __type;
 public:
-      delay() : delay_abstract(){}
+      delay() : delay_base(){}
      ~delay(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
@@ -356,83 +346,83 @@ public:
 
 template< typename T > class buffer;
 
-template<> class buffer< __fx32 > : public buffer_abstract< __fx32 >
+template<> class buffer< __fx32 > : public buffer_base< __fx32 >
 {
     typedef __fx32 __type;
 public:
-      buffer() : buffer_abstract(){}
+      buffer() : buffer_base(){}
      ~buffer(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( __fx64  *input ) { fill_buff< __fx64 >( input ); }
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
-template<> class buffer< __fx64 > : public buffer_abstract< __fx64 >
+template<> class buffer< __fx64 > : public buffer_base< __fx64 >
 {
     typedef __fx64 __type;
 public:
-      buffer() : buffer_abstract(){}
+      buffer() : buffer_base(){}
      ~buffer(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
-template<> class buffer< __fxx64 > : public buffer_abstract< __fxx64 >
+template<> class buffer< __fxx64 > : public buffer_base< __fxx64 >
 {
     typedef __fxx64 __type;
 public:
-      buffer() : buffer_abstract(){}
+      buffer() : buffer_base(){}
      ~buffer(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
-template<> class buffer< __ix32 > : public buffer_abstract< __ix32 >
+template<> class buffer< __ix32 > : public buffer_base< __ix32 >
 {
     typedef __ix32 __type;
 public:
-      buffer() : buffer_abstract(){}
+      buffer() : buffer_base(){}
      ~buffer(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( __ix64  *input ) { fill_buff< __ix64 >( input ); }
 };
 
-template<> class buffer< __ix64 > : public buffer_abstract< __ix64 >
+template<> class buffer< __ix64 > : public buffer_base< __ix64 >
 {
     typedef __ix64 __type;
 public:
-      buffer() : buffer_abstract(){}
+      buffer() : buffer_base(){}
      ~buffer(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
 #ifdef FCOMPLEX_H
 
-template<> class buffer< fcomplex< __fx32 > > : public buffer_abstract< fcomplex< __fx32 > >
+template<> class buffer< fcomplex< __fx32 > > : public buffer_base< fcomplex< __fx32 > >
 {
     typedef fcomplex< __fx32 > __type;
 public:
-      buffer() : buffer_abstract(){}
+      buffer() : buffer_base(){}
      ~buffer(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( fcomplex< __fx64  > *input ) { fill_buff< fcomplex< __fx64  > >( input ); }
      inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64 > >( input ); }
 };
 
-template<> class buffer< fcomplex< __fx64 > > : public buffer_abstract< fcomplex< __fx64 > >
+template<> class buffer< fcomplex< __fx64 > > : public buffer_base< fcomplex< __fx64 > >
 {
     typedef fcomplex< __fx64 > __type;
 public:
-      buffer() : buffer_abstract(){}
+      buffer() : buffer_base(){}
      ~buffer(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
      inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64 > >( input ); }
 };
 
-template<> class buffer< fcomplex< __fxx64 > > : public buffer_abstract< fcomplex< __fxx64 > >
+template<> class buffer< fcomplex< __fxx64 > > : public buffer_base< fcomplex< __fxx64 > >
 {
     typedef fcomplex< __fxx64 > __type;
 public:
-      buffer() : buffer_abstract(){}
+      buffer() : buffer_base(){}
      ~buffer(){};
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };

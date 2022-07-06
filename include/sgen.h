@@ -1,13 +1,3 @@
-/*!
- * file
- * brief   Test signal template generator
- * authors A.Tykvinskiy
- * date    28.01.2022
- * version 1.0
- *
- * The header declares template signal generator
-*/
-
 #ifndef SGEN_H
 #define SGEN_H
 
