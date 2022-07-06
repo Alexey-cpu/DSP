@@ -1,5 +1,5 @@
-#ifndef EXAMPLE_COMPLEX_NUMBERS_H
-#define EXAMPLE_COMPLEX_NUMBERS_H
+#ifndef EXAMPLE_MATH_COMPLEX_NUMBERS_H
+#define EXAMPLE_MATH_COMPLEX_NUMBERS_H
 
 #ifndef WRITE_LOGS
 //#define WRITE_LOGS
@@ -50,4 +50,4 @@ int complex_numbers_example()
 }
 
 
-#endif // EXAMPLE_COMPLEX_NUMBERS_H
+#endif // EXAMPLE_MATH_COMPLEX_NUMBERS_H

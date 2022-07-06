@@ -85,7 +85,7 @@ private:
     __ix32 allocate()
     {
         #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter::allocate call");
+        Debugger::Log("harmonic_filter","allocate()","Memory allocation");
         #endif
 
         // allocate debugging output
@@ -111,7 +111,7 @@ private:
     {
 
         #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter::deallocate call");
+        Debugger::Log("harmonic_filter","allocate()","Memory free");
         #endif
 
         // free debugging outputs
@@ -178,7 +178,7 @@ public:
         m_im               = nullptr;
 
         #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter::init call");
+        Debugger::Log("harmonic_filter","init()","Filter initialization");
         Debugger::Log("Fs               = " + to_string(m_Fs));
         Debugger::Log("Fn               = " + to_string(m_Fn));
         Debugger::Log("HBuffSize        = " + to_string(m_HBuffSize));
@@ -198,7 +198,7 @@ public:
     harmonic_filter()
     {
         #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter() call");
+        Debugger::Log("harmonic_filter","harmonic_filter()","Filter constructor call");
         #endif
 
         m_Fs               = 4000;
@@ -218,7 +218,7 @@ public:
     ~harmonic_filter()
     {
         #ifdef HMF_DEBUG
-        Debugger::Log("~harmonic_filter() call");
+        Debugger::Log("harmonic_filter","~harmonic_filter()","Filter destructor call");
         #endif
 
         deallocate();

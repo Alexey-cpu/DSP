@@ -466,6 +466,15 @@ public:
         return __ceq__( this->m_data , _c2.m_data );
     }
 
+    #ifdef _STRINGFWD_H
+
+        string to_string()
+        {
+            return std::to_string( m_data[REAL] ) + "\t" + std::to_string( m_data[IMAG] );
+        }
+
+    #endif
+
     /*!
      *  \brief friend real part extraction function
      *  \param[_complex] input complex number

@@ -551,13 +551,11 @@ public:
     /*!
      *  \brief initialization function
      *  \param[Fs] sampling frequency, Hz
-     *  \param[T1] leadlag transfer function numerator time constant, s
-     *  \param[T1] leadlag transfer function denominator time constant, s
+     *  \param[Fc] cut-off frequency, Hz
+     *  \param[Kd] damping ratio
+     *  \param[type] filter type ( see kernel_dsp.h for the further details )
      *  \details The function allocates filter resources and computes coefficients
-     *           of the leadlag filter:
-     *     \f[
-     *          Ws = \frac{ s * T1 + 1 }{ s * T2 + 1 }
-     *     \f]
+     *           of the simple second order lowpass/highpass/bandpass/bandstop filter depending upon the type.
     */
     void init(__fx64 Fs, __fx64 Fc, __fx64 Kd, filter_type type)
     {

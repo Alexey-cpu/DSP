@@ -8,6 +8,7 @@
 #include "cstring"
 #endif
 
+#include "fcomplex.h"
 #include "utils.h"
 
 /*! \defgroup <SPECIAL_MATH_FUNCTIONS> ( Special functions )
@@ -1483,7 +1484,17 @@ __convf__( const __type *_a, const __type *_b, __ix32 _Na,  __ix32 _Nb )
     return { _c, _Nc };
 }
 
-// sustitutes poly A into poly B
+/*!
+     * \brief Numeric fraction/fraction substitution function
+     * \param[AN] numerator of the first fraction
+     * \param[AD] denominator of the first fraction
+     * \param[BN] numerator of the fraction to substitute into the first fraction
+     * \param[BD] denominator of the fraction to substitute into the first fraction
+     * \param[N] the numerator/denominator size of the first fraction
+     * \param[P] the numerator/denominator size of the fraction to substitute into the first fraction
+     * \returns The function returns the tuple_x3
+     *          containing resulting fraction array and it's first and second dimention sizes
+*/
 template<typename __type> tuple_x3<void**, __ix32, __ix32>
 __fraction_numeric_substitution__(__type *AN, __type *AD, __type *BN, __type *BD, __ix32 N, __ix32 P)
 {
@@ -1546,6 +1557,204 @@ __fraction_numeric_substitution__(__type *AN, __type *AD, __type *BN, __type *BD
     output[0] = Nx;
     output[1] = Dx;
     return { output, 2, ncols };
+}
+
+/*!
+     * \brief Numeric fraction/fraction substitution function
+     * \param[input] input samples array
+     * \param[output] output samples array
+     * \param[Gain] output gain
+     * \param[M] input array size
+     * \param[N] output array size
+     * \param[order] interpolation order
+     * \details The function generates interpolated output of input signal multiplied by gain.
+     *          The function supports linear, quad and cubic interpolation.
+*/
+template<typename __InputType, typename __OutputType> void
+interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32 M, __ix32 N, __ix32 order)
+{
+    // time step
+    __fx64 dN = (__fx64)M / (__fx64)N;
+
+    if( order == 1 ) // linear interpolation
+    {
+        for( __ix32 i = 0 ; i < N ; i++ )
+        {
+            // time stamps
+            __fx64 t  = (i+0)*dN;
+            __fx64 t0 = t;
+            __fx64 t1 = (i+1)*dN;
+
+            // indexes
+            __ix32 idx0 = (__ix32)t0;
+            __ix32 idx1 = (__ix32)ceil(t1);
+
+            // samples
+            __InputType y0 = input[ idx0 ];
+            __InputType y1 = input[ idx1 ];
+
+            // result
+            output[i] = y0 + ( y1 - y0 ) * ( t - t0 ) / ( t1 - t0 );
+            output[i] *= Gain;
+        }
+    }
+    else if( order == 2 ) // quadratic interpolation
+    {
+        for( __ix32 i = 0 ; i < N ; i++ )
+        {
+            // time stamps
+            __fx64 t  = (i+0)*dN;
+            __fx64 t0 = t;
+            __fx64 t1 = (i+1)*dN;
+            __fx64 t2 = (i+2)*dN;
+
+            // indexes
+            __ix32 idx0 = (__ix32)t0;
+            __ix32 idx1 = (__ix32)ceil(t1);
+            __ix32 idx2 = (__ix32)ceil(t2);
+
+            // samples
+            __InputType y0 = input[ idx0 ];
+            __InputType y1 = input[ idx1 ];
+            __InputType y2 = input[ idx2 ];
+
+            // interpolation coefficients
+            /*
+                __fx64 k0 = ( t - t1 ) * ( t - t2 ) / ( t0 - t1 ) / ( t0 - t2 );
+                __fx64 k1 = ( t - t0 ) * ( t - t2 ) / ( t1 - t0 ) / ( t1 - t2 );
+                __fx64 k2 = ( t - t0 ) * ( t - t1 ) / ( t2 - t0 ) / ( t2 - t1 );
+            */
+
+            __fx64 a = ( t - t2 );
+            __fx64 b = ( t - t0 );
+            __fx64 c = ( t - t1 );
+
+            __fx64 k0 = c * a / ( t0 - t1 ) / ( t0 - t2 );
+            __fx64 k1 = b * a / ( t1 - t0 ) / ( t1 - t2 );
+            __fx64 k2 = b * c / ( t2 - t0 ) / ( t2 - t1 );
+
+            // result
+            output[i] = y0 * k0 + y1 * k1 + y2 * k2;
+            output[i] *= Gain;
+        }
+    }
+    else if( order == 3 ) // cubic interpolation
+    {
+        for( __ix32 i = 0 ; i < N ; i++ )
+        {
+            // time stamps
+            __fx64 t  = (i)*dN;
+            __fx64 t0 = t;
+            __fx64 t1 = (i+1)*dN;
+            __fx64 t2 = (i+2)*dN;
+            __fx64 t3 = (i+3)*dN;
+
+            // indexes
+            __ix32 idx0 = (__ix32)t0;
+            __ix32 idx1 = (__ix32)ceil(t1);
+            __ix32 idx2 = (__ix32)ceil(t2);
+            __ix32 idx3 = (__ix32)ceil(t3);
+
+            // samples
+            __InputType y0 = input[ idx0 ];
+            __InputType y1 = input[ idx1 ];
+            __InputType y2 = input[ idx2 ];
+            __InputType y3 = input[ idx3 ];
+
+            // interpolation coefficients
+            /*
+            __fx64 k0 = ( t - t1 ) * ( t - t2 ) * ( t - t3 ) / ( t0 - t1 ) / ( t0 - t2 ) / ( t0 - t3 );
+            __fx64 k1 = ( t - t0 ) * ( t - t2 ) * ( t - t3 ) / ( t1 - t0 ) / ( t1 - t2 ) / ( t1 - t3 );
+            __fx64 k2 = ( t - t0 ) * ( t - t1 ) * ( t - t3 ) / ( t2 - t0 ) / ( t2 - t1 ) / ( t2 - t3 );
+            __fx64 k3 = ( t - t0 ) * ( t - t1 ) * ( t - t2 ) / ( t3 - t0 ) / ( t3 - t1 ) / ( t3 - t2 );
+            */
+
+            __fx64 a = ( t - t0 );
+            __fx64 b = ( t - t1 );
+            __fx64 c = ( t - t2 );
+            __fx64 d = ( t - t3 );
+
+            __fx64 k0 = b * c * d / ( t0 - t1 ) / ( t0 - t2 ) / ( t0 - t3 );
+            __fx64 k1 = a * c * d / ( t1 - t0 ) / ( t1 - t2 ) / ( t1 - t3 );
+            __fx64 k2 = a * b * d / ( t2 - t0 ) / ( t2 - t1 ) / ( t2 - t3 );
+            __fx64 k3 = a * b * c / ( t3 - t0 ) / ( t3 - t1 ) / ( t3 - t2 );
+
+            // result
+            output[i] = y0 * k0 + y1 * k1 + y2 * k2 + y3 * k3;
+            output[i] *= Gain;
+        }
+    }
+}
+
+/*!
+     * \brief Numeric fraction/fraction substitution function
+     * \param[input] input samples array
+     * \param[spectrum] output samples array
+     * \param[M] input signal array size
+     * \param[N] output spectrum array size
+     * \details The function computes input signal spectrum.
+     *          The spectrum array size should be of a power of two
+*/
+template<typename __type> void
+fft( __type *input, fcomplex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 interpolationOrder = 1 )
+{
+    // initialization
+    __ix32 L = N;
+    __fx64 G = 2.0 / N;
+
+    // interpolate the input if it's size is not of a power of two
+    if( M != N )
+    {
+        interpolation<__type, fcomplex<__type> >( input, spectrum, G, M, N, interpolationOrder );
+    }
+    else
+    {
+        for( __ix32 i = 0 ; i < N ; i++ )
+        {
+            spectrum[i] = input[i] * G;
+        }
+    }
+
+    // compute FFT
+    while ( L >= 2 )
+    {
+        fcomplex<__type> Wn( cos(-PI2/L), sin(-PI2/L) );
+        for( __ix32 i = 0; i < N; i += L )
+        {
+            fcomplex<__type> *pointer = &spectrum[i];
+            fcomplex<__type> W1(1,0);
+            for( __ix32 j = 0, k = L / 2 ; j < L / 2 ; j++, k++ )
+            {
+                fcomplex<__type> S0 = pointer[j] + pointer[k];
+                fcomplex<__type> S1 = pointer[j] - pointer[k];
+                pointer[j] = S0;
+                pointer[k] = S1 * W1;
+                W1 *= Wn;
+            }
+        }
+        L /= 2;
+    }
+
+    // spectrum reordering
+    for (__ix32 i = 1, j = 0 ; i < N ; i++)
+    {
+        __ix32 bit = N >> 1;
+
+        for ( ; j >= bit; bit >>= 1 )
+        {
+            j -= bit;
+        }
+
+        j += bit;
+
+        if ( i < j )
+        {
+            swap ( spectrum[i], spectrum[j] );
+        }
+    }
+
+    // scale zero component
+    spectrum[0] /= 2.0;
 }
 
 /*! @} */

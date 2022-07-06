@@ -2,6 +2,7 @@ QT -= gui
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
+QMAKE_CXXFLAGS = -O2
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -21,10 +22,11 @@ HEADERS += \
     examples/example_classic_iir_cheb1.h \
     examples/example_classic_iir_cheb2.h \
     examples/example_classic_iir_ellip.h \
-    examples/example_complex_numbers.h \
-    examples/example_hmf.h \
-    examples/example_rff.h \
-    examples/example_special_functions.h \
+    examples/example_custom_filters_hmf.h \
+    examples/example_custom_filters_rff.h \
+    examples/example_fft.h \
+    examples/example_math_complex_numbers.h \
+    examples/example_math_special_functions.h \
     examples/example_transfer_functions_aperiodic.h \
     examples/example_transfer_functions_differentiator.h \
     examples/example_transfer_functions_filter_2nd_order.h \

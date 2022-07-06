@@ -1,5 +1,5 @@
-#ifndef EXAMPLE_HMF_H
-#define EXAMPLE_HMF_H
+#ifndef EXAMPLE_CUSTOM_FILTERS_HMF_H
+#define EXAMPLE_CUSTOM_FILTERS_HMF_H
 
 #ifndef WRITE_LOGS
 //#define WRITE_LOGS
@@ -103,4 +103,4 @@ int filtes_hmf_example()
 }
 
 
-#endif // EXAMPLE_HMF_H
+#endif // EXAMPLE_CUSTOM_FILTERS_HMF_H

@@ -7,4 +7,5 @@ pH = TEXTFILE_TO_MATFILE("pH.txt" , directory);
 
 % plotting
 %plot(Km)
-plot(dt, xt, dt, yt)
+%plot(dt, xt, dt, yt)
+plot(yt)

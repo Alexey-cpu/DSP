@@ -11,12 +11,12 @@
 #include "example_classic_fir.h"
 
 // some specific filters examples
-#include "example_hmf.h"
-#include "example_rff.h"
+#include "example_custom_filters_hmf.h"
+#include "example_custom_filters_rff.h"
 
 // special functions and complex arithmetics examples
-#include "example_special_functions.h"
-#include "example_complex_numbers.h"
+#include "example_math_special_functions.h"
+#include "example_math_complex_numbers.h"
 
 // transfer functions
 #include "example_transfer_functions_differentiator.h"
@@ -27,6 +27,8 @@
 // simple filters
 #include "example_transfer_functions_filter_2nd_order.h"
 
+// FFT example
+#include "example_fft.h"
 
 
 #endif // EXAMPLES_H

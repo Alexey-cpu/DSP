@@ -1,5 +1,5 @@
-#ifndef EXAMPLE_RFF_H
-#define EXAMPLE_RFF_H
+#ifndef EXAMPLE_CUSTOM_FILTERS_RFF_H
+#define EXAMPLE_CUSTOM_FILTERS_RFF_H
 
 #ifndef WRITE_LOGS
 //#define WRITE_LOGS
@@ -103,4 +103,4 @@ int filters_rff_example()
 }
 
 
-#endif // EXAMPLE_RFF_H
+#endif // EXAMPLE_CUSTOM_FILTERS_RFF_H
