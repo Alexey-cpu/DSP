@@ -5,7 +5,9 @@ dt = TEXTFILE_TO_MATFILE("dt.txt" , directory);
 Km = TEXTFILE_TO_MATFILE("Km.txt" , directory);
 pH = TEXTFILE_TO_MATFILE("pH.txt" , directory);
 
+l = 1 : length(xt);
+
 % plotting
 %plot(Km)
 %plot(dt, xt, dt, yt)
-plot(yt)
+plot(l, yt,l, xt)
