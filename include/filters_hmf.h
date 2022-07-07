@@ -33,7 +33,7 @@
 #endif
 
 /*! \defgroup <HARMONIC_FILTER> ( harmonic filter )
- *  \ingroup FILTERS
+ *  \ingroup SPECIAL_FILTERS
  *  \brief The module contains implementation of the harmonic filter
     @{
 */
@@ -57,7 +57,7 @@ template<typename __type> class harmonic_filter
 private:
 
     /*! \brief filte epsilon value ( the filte lowest operation value ) */
-    __type m_epsilon = 1e-4;
+    __type m_epsilon   = 1e-4;
     __type m_max_value = +sqrt( 3.4028235E+38 / 2 );
     __type m_min_value = -sqrt( 3.4028235E+38 / 2 );
 

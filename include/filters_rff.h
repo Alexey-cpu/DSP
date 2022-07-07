@@ -34,7 +34,7 @@ using namespace DSP_KERNEL;
 #endif
 
 /*! \defgroup <RECURSIVE_FOURIER_FILTER> ( Recursive fourier filter )
- *  \ingroup FILTERS
+ *  \ingroup SPECIAL_FILTERS
  *  \brief the module contains abstract model and implementation of recursive Fourier filter
     @{
 */
