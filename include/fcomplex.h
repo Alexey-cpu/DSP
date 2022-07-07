@@ -251,6 +251,24 @@ public:
         return fcomplex<__fxx64>( m_data[REAL], m_data[IMAG] );
     }
 
+    /*! \brief operator to convert fcomplex<__type>() -> __fx32 it must be used explicitly !!! */
+    explicit operator __fx32()
+    {
+        return m_data[REAL];
+    }
+
+    /*! \brief operator to convert fcomplex<__type>() -> __fx32 it must be used explicitly !!! */
+    explicit operator __fx64()
+    {
+        return m_data[REAL];
+    }
+
+    /*! \brief operator to convert fcomplex<__type>() -> __fx32 it must be used explicitly !!! */
+    explicit operator __fxx64()
+    {
+        return m_data[REAL];
+    }
+
     /*!
      *  \brief initializing operator
      *  \param[_re] input real part of a complex number

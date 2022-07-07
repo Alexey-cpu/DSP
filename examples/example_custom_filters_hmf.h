@@ -2,7 +2,7 @@
 #define EXAMPLE_CUSTOM_FILTERS_HMF_H
 
 #ifndef WRITE_LOGS
-//#define WRITE_LOGS
+#define WRITE_LOGS
 #endif
 
 #include "include/utils.h"
@@ -53,7 +53,7 @@ int filtes_hmf_example()
     sgen<__type> gen;
 
     harmonic_filter<__type> hmf;
-    hmf.init(Fs, Fn, frames_per_cycle, 2);
+    hmf.init(Fs, Fn, frames_per_cycle, 3);
 
     // buffer
     __type *buffer = __alloc__<__type>(frames_per_cycle);
@@ -63,11 +63,11 @@ int filtes_hmf_example()
     {
         for( int j = 0 ; j < frames_per_cycle ; j++ )
         {
-            buffer[j] = gen.sine( 1, Fn, 30, Fs );
+            buffer[j] = 0.5 + gen.sine( 1, 2*Fn, 30, Fs );
         }
 
         // filtering
-        hmf.filt(1, buffer);
+        hmf.filt(2, buffer);
 
         // logginig
         #ifdef WRITE_LOGS

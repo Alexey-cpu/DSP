@@ -45,6 +45,12 @@
 
 /*! @} */
 
+/*! \defgroup <SPECIAL_FILTERS> ( Special filters )
+ *  \brief The module contains some specific filters
+    @{
+*/
+
+/*! @} */
 
 /*! \defgroup <KERNELS> ( Kernels )
  *  \brief The module contains low level DSP kernels

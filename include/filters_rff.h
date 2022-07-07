@@ -34,7 +34,7 @@ using namespace DSP_KERNEL;
 #endif
 
 /*! \defgroup <RECURSIVE_FOURIER_FILTER> ( Recursive fourier filter )
- *  \ingroup FILTERS
+ *  \ingroup SPECIAL_FILTERS
  *  \brief the module contains abstract model and implementation of recursive Fourier filter
     @{
 */
@@ -53,6 +53,7 @@ using namespace DSP_KERNEL;
  *      W(z) = \frac{1}{N} * \frac{ 1 - z^{-N} }{ 1 - z^{-1} * e^{-2*\pi * T_s} }
  *  \f]
 */
+
 template< typename __type >
 class recursive_fourier_abstract : public model_base
 {
@@ -72,7 +73,7 @@ private:
    __ix32 deallocate()
    {
        #ifdef RFF_DEBUG
-       Debugger::Log("recursive_fourier_abstract","allocate()","Filter memory free");
+       Debugger::Log("recursive_fourier_abstract","deallocate()","Filter memory free");
        #endif
 
        m_buffer_sx.deallocate();
@@ -140,7 +141,7 @@ protected:
          m_Fs      = _Fs;
          m_Ts      = (__fx64)1 / m_Fs;
          m_order   = ceil( _Fs / _Fn );
-         m_Gain    = ( _hnum == 0 ) ? ( 1.0 / (__fx64)m_order ) : ( 2.0 / (__fx64)m_order / sqrt(2) );
+         m_Gain    = ( _hnum == 0 ) ? ( 1.0 / (__fx64)m_order ) : ( 2.0 / (__fx64)m_order );
          m_hnum    = _hnum;
          m_rot(cos( PI2 * (__fx64)m_hnum / (__fx64)m_order ), sin( PI2 * (__fx64)m_hnum / (__fx64)m_order ) );
 

@@ -1594,8 +1594,8 @@ interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32
             __InputType y1 = input[ idx1 ];
 
             // result
-            output[i] = y0 + ( y1 - y0 ) * ( t - t0 ) / ( t1 - t0 );
-            output[i] *= Gain;
+            output[i] = (__OutputType)( y0 + ( y1 - y0 ) * ( t - t0 ) / ( t1 - t0 ) );
+            output[i] *= (__OutputType)Gain;
         }
     }
     else if( order == 2 ) // quadratic interpolation
@@ -1634,8 +1634,8 @@ interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32
             __fx64 k2 = b * c / ( t2 - t0 ) / ( t2 - t1 );
 
             // result
-            output[i] = y0 * k0 + y1 * k1 + y2 * k2;
-            output[i] *= Gain;
+            output[i] = (__OutputType)(y0 * k0 + y1 * k1 + y2 * k2);
+            output[i] *= (__OutputType)Gain;
         }
     }
     else if( order == 3 ) // cubic interpolation
@@ -1680,45 +1680,54 @@ interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32
             __fx64 k3 = a * b * c / ( t3 - t0 ) / ( t3 - t1 ) / ( t3 - t2 );
 
             // result
-            output[i] = y0 * k0 + y1 * k1 + y2 * k2 + y3 * k3;
-            output[i] *= Gain;
+            output[i] = (__OutputType)(y0 * k0 + y1 * k1 + y2 * k2 + y3 * k3);
+            output[i] *= (__OutputType)Gain;
         }
     }
 }
 
 /*!
-     * \brief Numeric fraction/fraction substitution function
+     * \brief Fast Fourier transform
      * \param[input] input samples array
      * \param[spectrum] output samples array
-     * \param[M] input signal array size
-     * \param[N] output spectrum array size
-     * \details The function computes input signal spectrum.
-     *          The spectrum array size should be of a power of two
+     * \param[M] signal array size
+     * \param[N] spectrum array size
+     * \param[direct] direct / inverse transform
+     * \param[interpolationForceOrder] interpolation order ( 1, 2 or 3 )
+     * \details The function uses fast Fourier transform algorithm with frequency domain decimation.
+     *          If the flag direct == 1 the function computes direct Fourier transform and fills spectrum array [spectrum]
+     *          with the [input] array signal spectrum. if the flag direct == 0 the function computes inverse Fourier transform
+     *          and fills [input] array with the values of the result. If [input] array size is not equal to the size of
+     *          [spectrum] array - interpolation procedure is implemented. The interpolation order is set by the
+     *          [interpolationForceOrder] parameter and can be between 1..3.
 */
 template<typename __type> void
-fft( __type *input, fcomplex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 interpolationOrder = 1 )
+fft0( __type *input, fcomplex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 direct, __ix32 interpolationOrder = 1 )
 {
     // initialization
-    __ix32 L = N;
-    __fx64 G = 2.0 / N;
+    __fx64 G = direct ? 2.0 / N : 0.5;
 
     // interpolate the input if it's size is not of a power of two
-    if( M != N )
+    if( direct )
     {
-        interpolation<__type, fcomplex<__type> >( input, spectrum, G, M, N, interpolationOrder );
-    }
-    else
-    {
-        for( __ix32 i = 0 ; i < N ; i++ )
+        if( M != N )
         {
-            spectrum[i] = input[i] * G;
+            interpolation<__type, fcomplex<__type> >( input, spectrum, G, M, N, interpolationOrder );
+        }
+        else
+        {
+            for( __ix32 i = 0 ; i < N ; i++ )
+            {
+                spectrum[i] = input[i] * G;
+            }
         }
     }
 
     // compute FFT
-    while ( L >= 2 )
+    for(__ix32 L = N; L >= 2 ; L /= 2 )
     {
-        fcomplex<__type> Wn( cos(-PI2/L), sin(-PI2/L) );
+        __fx64 angle = PI2/L * (direct ? -1.0 : +1.0);
+        fcomplex<__type> Wn( cos(angle), sin(angle) );
         for( __ix32 i = 0; i < N; i += L )
         {
             fcomplex<__type> *pointer = &spectrum[i];
@@ -1732,7 +1741,6 @@ fft( __type *input, fcomplex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 inte
                 W1 *= Wn;
             }
         }
-        L /= 2;
     }
 
     // spectrum reordering
@@ -1755,6 +1763,117 @@ fft( __type *input, fcomplex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 inte
 
     // scale zero component
     spectrum[0] /= 2.0;
+
+    // interpolate the input if it's size is not equal to the size of an input
+    if( !direct )
+    {
+        if( M != N )
+        {
+            interpolation< fcomplex<__type>, __type  >( spectrum, input, G, N, M, interpolationOrder );
+        }
+        else
+        {
+            for( __ix32 i = 0 ; i < N ; i++ )
+            {
+                input[i] = (__type)spectrum[i] * G;
+            }
+        }
+    }
+}
+
+/*!
+     * \brief Fast Fourier transform
+     * \param[input] input samples array
+     * \param[spectrum] output samples array
+     * \param[M] signal array size
+     * \param[N] spectrum array size
+     * \param[direct] direct / inverse transform
+     * \param[interpolationForceOrder] interpolation order ( 1, 2 or 3 )
+     * \details The function uses fast Fourier transform algorithm with time domain decimation.
+     *          If the flag direct == 1 the function computes direct Fourier transform and fills spectrum array [spectrum]
+     *          with the [input] array signal spectrum. if the flag direct == 0 the function computes inverse Fourier transform
+     *          and fills [input] array with the values of the result. If [input] array size is not equal to the size of
+     *          [spectrum] array - interpolation procedure is implemented. The interpolation order is set by the
+     *          [interpolationForceOrder] parameter and can be between 1..3.
+*/
+template<typename __type> void
+fft1( __type *input, fcomplex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 direct, __ix32 interpolationOrder = 1 )
+{
+    // initialization
+    __fx64 G = direct ? 2.0 / N : 0.5;
+
+    // interpolate the input if it's size is not of a power of two
+    if( direct )
+    {
+        if( M != N )
+        {
+            interpolation<__type, fcomplex<__type> >( input, spectrum, G, M, N, interpolationOrder );
+        }
+        else
+        {
+            for( __ix32 i = 0 ; i < N ; i++ )
+            {
+                spectrum[i] = input[i] * G;
+            }
+        }
+    }
+
+    // spectrum reordering
+    for (__ix32 i = 1, j = 0 ; i < N ; i++)
+    {
+        __ix32 bit = N >> 1;
+
+        for ( ; j >= bit; bit >>= 1 )
+        {
+            j -= bit;
+        }
+
+        j += bit;
+
+        if ( i < j )
+        {
+            swap ( spectrum[i], spectrum[j] );
+        }
+    }
+
+    // compute FFT
+    for( __ix32 L = 2; L <= N; L<<=1 )
+    {
+        __fx64 angle = PI2/L * (direct ? -1.0 : +1.0);
+        fcomplex<__type> Wn ( cos(angle), sin(angle) );
+        for ( __ix32 i = 0; i < N; i+=L)
+        {
+            fcomplex<__type> W1(1,0);
+
+            for ( __ix32 j=0 ; j < L / 2 ; j++ )
+            {
+                fcomplex<__type> S0 = spectrum[i+j];
+                fcomplex<__type> S1 = spectrum[i+j+L/2] * W1;
+                spectrum[i+j] = S0 + S1;
+                spectrum[i+j+L/2] = S0 - S1;
+                W1 *= Wn;
+            }
+        }
+    }
+
+    // scale zero component
+    spectrum[0] /= 2.0;
+
+    // interpolate the input if it's size is not equal to the size of an input
+    if( !direct )
+    {
+        if( M != N )
+        {
+            interpolation< fcomplex<__type>, __type  >( spectrum, input, G, N, M, interpolationOrder );
+        }
+        else
+        {
+            for( __ix32 i = 0 ; i < N ; i++ )
+            {
+                input[i] = (__type)spectrum[i] * G;
+            }
+        }
+    }
 }
 
 /*! @} */

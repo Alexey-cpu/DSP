@@ -532,35 +532,87 @@ template<typename __type> __type __saturation__(__type input, __type UpperLimit,
 
 /*!
  *  \brief bit set function
- *  \param[bits] input bits
+ *  \param[bitMask] input bit mask
  *  \param[bit] bit number
  *  \details The function sets the given bit of an input number
 */
-void __sbit__(__uix32 &bits, __uix32 bit )
+template<typename __type>
+void __set_bit__(__type &bitMask, __ix32 bit )
 {
-    if(bit < sizeof (bit)*8 ) bits |= (1 << bit);
+    if(bit < sizeof (bitMask)*8 )
+    {
+        bitMask |= (1 << bit);
+    }
 }
 
 /*!
  *  \brief bit reset function
- *  \param[bits] input bits
+ *  \param[bitMask] input bit mask
  *  \param[bit] bit number
  *  \details The function resets the given bit of an input number
 */
-void __rbit__(__uix32 &bits, __uix32 bit )
+template<typename __type>
+void __reset_bit__(__type &bitMask, __ix32 bit )
 {
-    if(bit < sizeof (bit)*8 ) bits &= ~(1 << bit);
+    if(bit < sizeof (bitMask)*8 )
+    {
+        bitMask &= ~(1 << bit);
+    }
 }
 
 /*!
  *  \brief get bit function
- *  \param[bits] input bits
+ *  \param[bitMask] input bit mask
  *  \param[bit] bit number
  *  \details The function returns the given bit value of an input number
 */
-void __gbit__(__uix32 &bits, __uix32 bit )
+template<typename __type>
+__type __get_bit__(__type &bitMask, __ix32 bit )
 {
-    if(bit < sizeof (bit)*8 ) bits &= (1 << bit);
+    __type result = 0;
+    if(bit < sizeof (bitMask)*8 )
+    {
+        result = bitMask & (1 << bit);
+    }
+    return result;
+}
+
+/*!
+ *  \brief bit mask revertion function
+ *  \param[bitMask] input bit mask
+ *  \param[MSB] input bit mask most significant bit
+ *  \details The function returns the given bit value of an input number
+*/
+template<typename __type>
+__type __bit_reverse__(__type bitMask, __ix32 MSB)
+{
+    __type result = 0;
+    for ( __ix32 i = 0 ; i < MSB ; ++i)
+    {
+        if ( bitMask & ( 1 << i ) ) // look for the set bits
+        {
+            result |= 1 << ( MSB - 1 - i ); // set the bits at the end of the resulting bit mask
+        }
+    }
+
+    return result;
+}
+
+/*!
+ *  \brief MSB number computation function
+ *  \param[bitMask] input bit mask
+ *  \details The function returns the number of the most sifnificant bit
+*/
+template<typename __type>
+__ix32 __bit_get_MSB__( __ix32 bitMask )
+{
+    __ix32 MSB = 0;
+    while ( ( 1 << MSB ) < bitMask )
+    {
+        MSB++;
+    }
+
+    return MSB;
 }
 
 /*!

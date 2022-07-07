@@ -33,7 +33,7 @@
 #endif
 
 /*! \defgroup <HARMONIC_FILTER> ( harmonic filter )
- *  \ingroup FILTERS
+ *  \ingroup SPECIAL_FILTERS
  *  \brief The module contains implementation of the harmonic filter
     @{
 */
@@ -51,13 +51,14 @@
  *           RMS filter. The filter outputs the average of RMS values of real and imaginary parts RMS values
 */
 
-template<typename __type> class harmonic_filter
+template<typename __type>
+class harmonic_filter
 {
 
 private:
 
     /*! \brief filte epsilon value ( the filte lowest operation value ) */
-    __type m_epsilon = 1e-4;
+    __type m_epsilon   = 1e-4;
     __type m_max_value = +sqrt( 3.4028235E+38 / 2 );
     __type m_min_value = -sqrt( 3.4028235E+38 / 2 );
 
@@ -67,7 +68,6 @@ private:
     recursive_fourier<__type>  m_rmean_im; ///< zero-frequency recursive Fourier filter
 
     // system variables
-    __fx64 m_Gain = sqrt(2);   ///< recurisve Fourier filter additional Gain
     __fx64 m_Fs;               ///< recurisve Fourier sampling frequency, Hz
     __fx64 m_Fn;               ///< recurisve Fourier reference signal frequency, Hz
     __ix32 m_HBuffSize;        ///< IDE ADC buffer size
@@ -111,7 +111,7 @@ private:
     {
 
         #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter","allocate()","Memory free");
+        Debugger::Log("harmonic_filter","deallocate()","Memory free");
         #endif
 
         // free debugging outputs
@@ -121,7 +121,7 @@ private:
         // clear recursive Fourier filter
         if( m_rdft != nullptr )
         {
-            delete [] m_rdft;
+            delete [] m_rdft; // delete operator calls object destructor which frees the object resources
             m_rdft = nullptr;
         }
 
@@ -170,7 +170,7 @@ public:
         m_Fs               = Fs;
         m_Fn               = Fn;
         m_HBuffSize        = HBuffSize;
-        m_SpectrumWidth    = SpectrumWidth + 1;
+        m_SpectrumWidth    = SpectrumWidth;
         m_SamplesPerPeriod = m_Fs / m_Fn;
         m_CycleWidth	   = m_HBuffSize / m_Fs * 1000;
         m_rdft             = nullptr;
@@ -240,7 +240,7 @@ public:
         }
 
         // check input
-        if( harmonic_num >= m_SpectrumWidth )
+        if( harmonic_num >= m_SpectrumWidth ) // may be add error code here
         {
             harmonic_num = m_SpectrumWidth - 1;
         }
@@ -252,7 +252,7 @@ public:
             __type signal = __saturation__(input[i], m_max_value, m_min_value);
 
             // filtering
-            fcomplex<__type> vector = m_rdft[harmonic_num](&signal) * m_Gain;
+            fcomplex<__type> vector = m_rdft[harmonic_num](&signal);
             __fx64 a = __realf__(vector) * __realf__(vector);
             __fx64 b = __imagf__(vector) * __imagf__(vector);
             m_rmean_re(&a);
