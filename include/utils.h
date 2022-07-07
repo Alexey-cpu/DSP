@@ -598,23 +598,6 @@ __type __bit_reverse__(__type bitMask, __ix32 MSB)
     return result;
 }
 
-/*
-template<typename __type>
-__type __bit_reverse__(__type n)
-{
-    __type j = 0;
-
-    __ix32 bit = n >> 1;
-    for ( ; j >= bit; bit >>= 1 )
-    {
-        j -= bit;
-    }
-    j += bit;
-
-    return j;
-}
-*/
-
 /*!
  *  \brief MSB number computation function
  *  \param[bitMask] input bit mask
