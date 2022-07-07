@@ -253,7 +253,7 @@ public:
 
 template< typename T > class delay;
 
-template<> class delay< __fx32 > : public delay_base< __fx32 >
+template<> class delay< __fx32  > final : public delay_base< __fx32 >
 {
     typedef __fx32 __type;
 public:
@@ -264,7 +264,7 @@ public:
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
-template<> class delay< __fx64 > : public delay_base< __fx64 >
+template<> class delay< __fx64  > final : public delay_base< __fx64 >
 {
     typedef __fx64 __type;
 public:
@@ -274,7 +274,7 @@ public:
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
-template<> class delay< __fxx64 > : public delay_base< __fxx64 >
+template<> class delay< __fxx64 > final : public delay_base< __fxx64 >
 {
     typedef __fxx64 __type;
 public:
@@ -283,7 +283,7 @@ public:
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
-template<> class delay< __ix32 > : public delay_base< __ix32 >
+template<> class delay< __ix32  > final : public delay_base< __ix32 >
 {
     typedef __ix32 __type;
 public:
@@ -293,7 +293,7 @@ public:
      inline void operator () ( __ix64  *input ) { fill_buff< __ix64 >( input ); }
 };
 
-template<> class delay< __ix64 > : public delay_base< __ix64 >
+template<> class delay< __ix64  > final : public delay_base< __ix64 >
 {
     typedef __ix64 __type;
 public:
@@ -304,7 +304,7 @@ public:
 
 #ifdef FCOMPLEX_H
 
-template<> class delay< fcomplex< __fx32 > > : public delay_base< fcomplex< __fx32 > >
+template<> class delay< fcomplex< __fx32  > > final : public delay_base< fcomplex< __fx32 > >
 {
     typedef fcomplex< __fx32 > __type;
 public:
@@ -315,7 +315,7 @@ public:
      inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64  > >( input ); }
 };
 
-template<> class delay< fcomplex< __fx64 > > : public delay_base< fcomplex< __fx64 > >
+template<> class delay< fcomplex< __fx64  > > final : public delay_base< fcomplex< __fx64 > >
 {
     typedef fcomplex< __fx64 > __type;
 public:
@@ -325,7 +325,7 @@ public:
      inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64  > >( input ); }
 };
 
-template<> class delay< fcomplex< __fxx64 > > : public delay_base< fcomplex< __fxx64 > >
+template<> class delay< fcomplex< __fxx64 > > final : public delay_base< fcomplex< __fxx64 > >
 {
     typedef fcomplex< __fxx64 > __type;
 public:
@@ -346,7 +346,7 @@ public:
 
 template< typename T > class buffer;
 
-template<> class buffer< __fx32 > : public buffer_base< __fx32 >
+template<> class buffer< __fx32  > final : public buffer_base< __fx32 >
 {
     typedef __fx32 __type;
 public:
@@ -357,7 +357,7 @@ public:
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
-template<> class buffer< __fx64 > : public buffer_base< __fx64 >
+template<> class buffer< __fx64  > final : public buffer_base< __fx64 >
 {
     typedef __fx64 __type;
 public:
@@ -367,7 +367,7 @@ public:
      inline void operator () ( __fxx64 *input ) { fill_buff< __fxx64 >( input ); }
 };
 
-template<> class buffer< __fxx64 > : public buffer_base< __fxx64 >
+template<> class buffer< __fxx64 > final : public buffer_base< __fxx64 >
 {
     typedef __fxx64 __type;
 public:
@@ -376,7 +376,7 @@ public:
      inline void operator () ( __type  *input ) override { fill_buff< __type >( input ); }
 };
 
-template<> class buffer< __ix32 > : public buffer_base< __ix32 >
+template<> class buffer< __ix32  > final : public buffer_base< __ix32 >
 {
     typedef __ix32 __type;
 public:
@@ -386,7 +386,7 @@ public:
      inline void operator () ( __ix64  *input ) { fill_buff< __ix64 >( input ); }
 };
 
-template<> class buffer< __ix64 > : public buffer_base< __ix64 >
+template<> class buffer< __ix64  > final : public buffer_base< __ix64 >
 {
     typedef __ix64 __type;
 public:
@@ -397,7 +397,7 @@ public:
 
 #ifdef FCOMPLEX_H
 
-template<> class buffer< fcomplex< __fx32 > > : public buffer_base< fcomplex< __fx32 > >
+template<> class buffer< fcomplex< __fx32  > > final : public buffer_base< fcomplex< __fx32 > >
 {
     typedef fcomplex< __fx32 > __type;
 public:
@@ -408,7 +408,7 @@ public:
      inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64 > >( input ); }
 };
 
-template<> class buffer< fcomplex< __fx64 > > : public buffer_base< fcomplex< __fx64 > >
+template<> class buffer< fcomplex< __fx64  > > final : public buffer_base< fcomplex< __fx64 > >
 {
     typedef fcomplex< __fx64 > __type;
 public:
@@ -418,7 +418,7 @@ public:
      inline void operator () ( fcomplex< __fxx64 > *input ) { fill_buff< fcomplex< __fxx64 > >( input ); }
 };
 
-template<> class buffer< fcomplex< __fxx64 > > : public buffer_base< fcomplex< __fxx64 > >
+template<> class buffer< fcomplex< __fxx64 > > final : public buffer_base< fcomplex< __fxx64 > >
 {
     typedef fcomplex< __fxx64 > __type;
 public:

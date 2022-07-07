@@ -70,7 +70,7 @@ class transfer_function : public model_base
     __ix32 allocate()
     {
         #ifdef TSF_FILTERS_DEBUG
-        Debugger::Log("filters_tsf","transfer_function","Transfer function memory allocation");
+        Debugger::Log("filters_tsf","allocate()","Transfer function memory allocation");
         #endif
 
         // substitute billinear transform fraction into transfer function fraction
@@ -93,7 +93,7 @@ class transfer_function : public model_base
     __ix32 deallocate()
     {
         #ifdef TSF_FILTERS_DEBUG
-        Debugger::Log("filters_tsf","transfer_function","Transfer function memory deallocation");
+        Debugger::Log("filters_tsf","deallocate()","Transfer function memory deallocation");
         #endif
 
         m_Wz = __mfree__(m_Wz);
@@ -127,7 +127,7 @@ class transfer_function : public model_base
         if( !Ws.item0 || Ws.item1 <= 0 || Ws.item2 <= 0 )
         {
             #ifdef TSF_FILTERS_DEBUG
-            Debugger::Log("filters_tsf","transfer_function","Wrong input");
+            Debugger::Log("filters_tsf","init()","Wrong input");
             #endif
 
             return;
@@ -138,7 +138,7 @@ class transfer_function : public model_base
             if( !Ws.item0[i] )
             {
                 #ifdef TSF_FILTERS_DEBUG
-                Debugger::Log("filters_tsf","transfer_function","The input fraction is empty");
+                Debugger::Log("filters_tsf","init()","The input fraction is empty");
                 #endif
 
                 return;
@@ -166,7 +166,7 @@ class transfer_function : public model_base
     transfer_function()
     {
         #ifdef TSF_FILTERS_DEBUG
-        Debugger::Log("filters_tsf","~transfer_function()","Constructor call");
+        Debugger::Log("filters_tsf","transfer_function()","Constructor call");
         #endif
     }
 
