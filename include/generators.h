@@ -1,5 +1,5 @@
-#ifndef SGEN_H
-#define SGEN_H
+#ifndef GENERATORS_H
+#define GENERATORS_H
 
 // standart headers
 #ifndef __ALG_PLATFORM // identify if the compilation is for ProsoftSystems IDE
@@ -7,59 +7,90 @@
 #include <stdlib.h>
 #endif
 
-/*! \brief defines 32-bit integer type */
 #ifndef __ix32
 #define __ix32 int
 #endif
 
-/*! \brief defines 32-bit floating point type */
 #ifndef __fx32
 #define __fx32 float
 #endif
 
-/*! \brief defines 64-bit floating point type */
 #ifndef __fx64
 #define __fx64 double
 #endif
 
-/*! \brief defines Pi */
 #ifndef PI0 // PI
 #define PI0 3.1415926535897932384626433832795
 #endif
 
-/*! \brief defines  2*Pi */
 #ifndef PI2 // 2*PI
 #define PI2 6.283185307179586476925286766559
 #endif
 
-/*! \brief converts radians to degrees */
 #ifndef __TO_DEGREES
 #define __TO_DEGREES(x) ( (x) * 57.295779513082320876798154814105)
 #endif
 
-/*! \brief converts degrees to radians */
 #ifndef __TO_RADIANS
 #define __TO_RADIANS(x) ( (x) * 0.01745329251994329576923690768489)
 #endif
 
-/*! \brief template test signal generator */
-template< typename T > class sgen
+template<typename __type = __fx64>
+class digital_clock
 {
-    typedef T __type;
-private:
-    /*! \brief time counter */
-    __type m_t;
+    __fx64 m_bound = 3600;
+    __fx64 m_time  = 0;
+    __fx64 m_Fs    = 4000;
+    __fx64 m_Ts    = 1.0 / m_Fs;
+
 public:
 
-    /*! \brief test signal generator output */
-    __type m_out;
+    // default constructor and destructor
+     digital_clock(){}
+    ~digital_clock(){}
 
-    /*! \brief test signal generator default constructor */
-    sgen()
+     void init(__fx64 Fs, __fx64 bound = 3600 )
+     {
+         m_Fs    = Fs;
+         m_Ts    = 1.0 / m_Fs;
+         m_bound = bound;
+         m_time  = 0;
+     }
+
+     // properties
+     __type time()
+     {
+         return m_time;
+     }
+
+     __fx64 SamplingTimeRate()
+     {
+         return m_Ts;
+     }
+
+     // public functions
+
+     __type tick()
+     {
+         if( m_time >= m_bound )
+         {
+             reset();
+         }
+
+         m_time += m_Ts;
+         return m_time;
+     }
+
+    void reset()
     {
-        m_t    = 0;
-        m_out  = 0;
+        m_time = 0;
     }
+};
+
+template < typename  __type >
+class generator
+{
+public:
 
     /*! \brief test sine generator function
      *  \param[amp] - test signal amplitude
@@ -69,13 +100,9 @@ public:
      *  \returns The function returns sine function output. Timer counter is dropped to a zero every hour
      *           to avoid overflow within the real time
     */
-    __type sine( __type amp , __type fn , __type phs , __type fs )
+    __type sine( __fx64 amp , __fx64 fn , __fx64 phase , __fx64 time )
     {
-        // signal generation:
-        m_out = amp * sin( fn * PI2 * m_t + __TO_RADIANS( phs ) );
-        if( m_t >= 3600 ) m_t = 0; // reset every hour
-        else m_t += 1.0 / fs;
-        return m_out;
+        return amp * sin( fn * PI2 * time + __TO_RADIANS( phase ) );
     }
 
     /*! \brief test pulse signal generator
@@ -86,14 +113,11 @@ public:
      *  \returns The function returns sine function output. Timer counter is dropped to a zero every hour
      *           to avoid overflow within the real time
     */
-    __type pulse( __type amp , __type fn , __type phs , __type fs )
+    __type pulse( __fx64 amp , __fx64 fn , __fx64 phase , __fx64 time )
     {
-        __type y1 = sin( fn * PI2 * m_t + __TO_RADIANS( 180 + phs ) );
-        __type y2 = sin( fn * PI2 * m_t );
-        m_out     = amp * ( ( y1 > 0 ) || ( y2 > 0 ) );
-        if( m_t >= 3600 ) m_t = 0; // reset every hour
-        else m_t += 1.0 / fs;
-        return m_out;
+        __fx64 y1 = sin( fn * PI2 * time + __TO_RADIANS( 180.0 + phase ) );
+        __fx64 y2 = sin( fn * PI2 * time );
+        return amp * (__fx64)( ( y1 > 0 ) || ( y2 > 0 ) );;
 
         return 0;
     }
@@ -106,5 +130,6 @@ public:
 #undef PI0
 #undef PI2
 #undef __TO_RADIANS
+#undef __TO_DEGREES
 
 #endif

@@ -9,4 +9,4 @@ tt   = TEXTFILE_TO_MATFILE( "tt.txt" , logs );
 %plot( tt , simout( 1 : length( simout )-1 ) )
 %plot(  tt , ft , tt , simout( 1 : length( simout )-1 ) );
 %plot(  FF , Km );
-plot( tt , ft );
+%plot( tt , ft );

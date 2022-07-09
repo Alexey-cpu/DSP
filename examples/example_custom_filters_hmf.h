@@ -6,7 +6,7 @@
 #endif
 
 #include "include/utils.h"
-#include "include/sgen.h"
+#include "include/generators.h"
 #include "include/filters_hmf.h"
 
 // Recursive Fourier filter based harmonic filter
@@ -49,8 +49,9 @@ int filtes_hmf_example()
     #endif
 
     // main driver code
-    Debugger::Log("filter initialization \n");
-    sgen<__type> gen;
+    generator<__type> gen;
+    digital_clock<double> time_provider;
+    time_provider.init(Fs);
 
     harmonic_filter<__type> hmf;
     hmf.init(Fs, Fn, frames_per_cycle, 3);
@@ -61,9 +62,9 @@ int filtes_hmf_example()
     Debugger::Log("emulation \n");
     for( int i = 0 ; i < cycles_num ; i++ )
     {
-        for( int j = 0 ; j < frames_per_cycle ; j++ )
+        for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick() )
         {
-            buffer[j] = 0.5 + gen.sine( 1, 2*Fn, 30, Fs );
+            buffer[j] = 0.5 + gen.sine( 1, 2*Fn, 30, time );
         }
 
         // filtering

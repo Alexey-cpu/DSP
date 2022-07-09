@@ -8,6 +8,6 @@ pH = TEXTFILE_TO_MATFILE("pH.txt" , directory);
 l = 1 : length(xt);
 
 % plotting
-%plot(Km)
+plot(Km)
 %plot(dt, xt, dt, yt)
-plot(l, yt,l, xt)
+%plot(l, yt,l, xt)

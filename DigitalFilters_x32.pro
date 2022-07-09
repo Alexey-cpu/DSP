@@ -40,11 +40,11 @@ HEADERS += \
     include/filters_iir.h \
     include/filters_rff.h \
     include/filters_tsf.h \
+    include/generators.h \
     include/kernel_dsp.h \
     include/kernel_fir.h \
     include/kernel_iir.h \
     include/logical.h \
-    include/sgen.h \
     include/special_functions.h \
     include/transformations.h \
     include/utils.h

@@ -6,7 +6,7 @@
 #endif
 
 #include "include/utils.h"
-#include "include/sgen.h"
+#include "include/generators.h"
 #include "include/filters_rff.h"
 
 // Recursive Fourier filter
@@ -49,23 +49,24 @@ int filters_rff_example()
     #endif
 
     // main driver code
-    Debugger::Log("filter initialization \n");
-    sgen<__type> gen;
+    generator<__type> gen;
+    digital_clock<double> time_provider;
+    time_provider.init(Fs);
+
     recursive_fourier<__type> rff;
     rff.init(Fs, Fn, 2);
 
     Debugger::Log("emulation \n");
     for( int i = 0 ; i < cycles_num ; i++ )
     {
-        for( int j = 0 ; j < frames_per_cycle ; j++, time += 1 / Fs )
+        for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick())
         {
-            __type signal = gen.sine( 1, 2*Fn, 0, Fs ) + 0.2;
+            __type signal = gen.sine( 1, 2*Fn, 0, time ) + 0.2;
             fcomplex<__type> output = rff( &signal );
 
             // logginig
-
             #ifdef WRITE_LOGS
-            yt << gen.m_out << "\n";
+            yt << signal << "\n";
             re << __realf__(output) << "\n";
             im << __imagf__(output) << "\n";
             am << __cabsf__(output) << "\n";
