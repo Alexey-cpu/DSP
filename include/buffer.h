@@ -1,6 +1,10 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
+#ifndef __ALG_PLATFORM
+#define BUFFER_DEBUG // debugging is not available if the algorithm is running on a device !!!
+#endif
+
 // identify if the compilation is for ProsoftSystems IDE
 #ifndef __ALG_PLATFORM
 #include <stdlib.h>
@@ -98,6 +102,11 @@ public:
     */
     __ix32 allocate( __ix32 nelem )
     {
+
+        #ifdef BUFFER_DEBUG
+        Debugger::Log("delay_base","allocate()","Memory allocation");
+        #endif
+
         if( ( nelem > 0 ) && !m_data )
         {
             m_nelem = nelem;
@@ -117,12 +126,20 @@ public:
     /*! \brief The function frees delay resources */
     void deallocate()
     {
+        #ifdef BUFFER_DEBUG
+        Debugger::Log("delay_base","deallocate()","Memory deallocation");
+        #endif
+
         m_data = __mfree__(m_data);
     }
 
     /*! \brief default constructor */
     delay_base()
     {
+        #ifdef BUFFER_DEBUG
+        Debugger::Log("delay_base","delay_base()","Constructor call");
+        #endif
+
         m_upper   = nullptr;
         m_lower   = nullptr;
         m_data    = nullptr;
@@ -136,22 +153,35 @@ public:
     */
     virtual ~delay_base()
     {
+        #ifdef BUFFER_DEBUG
+        Debugger::Log("delay_base","~delay_base()","Destructor call");
+        #endif
+
         deallocate();
     }
 
 
     /*! \brief the function returns current lower/upper part pointer position */
-    inline __ix32 getBuffPos() { return m_buffpos; }
+    inline __ix32 getBuffPos()
+    {
+        return m_buffpos;
+    }
 
     /*! \brief the function returns lower/upper part delay buffer size */
-    inline __ix32 getBuffSize(){ return m_nelem;   }
+    inline __ix32 getBuffSize()
+    {
+        return m_nelem;
+    }
 
 
     /*!
      *  \brief the operator invokation results in return of an n-th sample from the past values
      *  \param[n] sample number
     */
-    inline __type operator [] ( __ix32 n ) { return *( m_upper - n - 1 ); }
+    inline __type operator [] ( __ix32 n )
+    {
+        return *( m_upper - n - 1 );
+    }
 
     /*! \brief The operator invokation supposes to result in delay buffer fill */
     virtual inline void operator () ( __type *input ) = 0;
@@ -192,6 +222,10 @@ public:
     */
     __ix32 allocate( __ix32 nelem )
     {
+        #ifdef BUFFER_DEBUG
+        Debugger::Log("buffer_base","allocate()","Memory allocation");
+        #endif
+
         if( ( nelem > 0 ) && !m_data )
         {
             m_nelem = nelem;
@@ -205,12 +239,20 @@ public:
     /*! \brief The function frees delay resources */
     void deallocate()
     {
+        #ifdef BUFFER_DEBUG
+        Debugger::Log("buffer_base","deallocate()","Memory deallocation");
+        #endif
+
         m_data = __mfree__(m_data);
     }
 
     /*! \brief default constructor */
     buffer_base()
     {
+        #ifdef BUFFER_DEBUG
+        Debugger::Log("buffer_base","buffer_base()","Constructor call");
+        #endif
+
         m_lower   = nullptr;
         m_data    = nullptr;
         m_nelem   = 0;
@@ -223,21 +265,34 @@ public:
     */
     virtual ~buffer_base()
     {
+        #ifdef BUFFER_DEBUG
+        Debugger::Log("buffer_base","~buffer_base()","Destructor call");
+        #endif
+
         deallocate();
     }
 
     /*! \brief the function returns current lower/upper part pointer position */
-    inline __ix32 getBuffPos() { return m_buffpos; }
+    inline __ix32 getBuffPos()
+    {
+        return m_buffpos;
+    }
 
     /*! \brief the function returns lower/upper part delay buffer size */
-    inline __ix32 getBuffSize(){ return m_nelem;   }
+    inline __ix32 getBuffSize()
+    {
+        return m_nelem;
+    }
 
 
     /*!
      *  \brief the operator invokation results in return of an n-th sample from the past values
      *  \param[n] sample number
     */
-    inline __type operator [] ( __ix32 n ) { return m_data[n]; }
+    inline __type operator [] ( __ix32 n )
+    {
+        return m_data[n];
+    }
 
     /*! \brief The operator invokation supposes to result in delay buffer fill */
     virtual inline void operator () ( __type *input ) = 0;

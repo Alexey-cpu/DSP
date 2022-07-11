@@ -51,7 +51,7 @@ int filters_fir_example()
 
     // filter initialization
     window_function window;
-    window.Bartlett(80);
+    window.Hamming(80);
 
     // filter initialization
     fir<__type> filter;
@@ -62,7 +62,8 @@ int filters_fir_example()
     {
         for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick() )
         {
-            __type signal = gen.sine( 1, Fn, 0, time );
+            __type signal = gen.distortion( 1, Fn, 30, 0.4, 5, time );
+            //__type signal = gen.sine( 1, Fn, 0, time );
             __type output = filter(&signal);
 
             #ifdef WRITE_LOGS

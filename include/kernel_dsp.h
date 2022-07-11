@@ -140,9 +140,9 @@ namespace DSP_KERNEL
     {
         filter_data<__type> output;
         output.type  = lowpass;
-        output.poles   = nullptr;
-        output.zeros   = nullptr;
-        output.ratio   = nullptr;
+        output.poles = nullptr;
+        output.zeros = nullptr;
+        output.ratio = nullptr;
         output.cfnum = nullptr;
         output.cfden = nullptr;
         output.gains = nullptr;

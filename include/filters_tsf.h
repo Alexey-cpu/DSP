@@ -99,8 +99,6 @@ class transfer_function : public model_base
         m_Wz = __mfree__(m_Wz);
         m_Ws = __mfree__(m_Ws);
         m_Rz = __mfree__(m_Rz);
-        m_buff_sx.deallocate();
-        m_buff_sy.deallocate();
         return 1;
     }
 

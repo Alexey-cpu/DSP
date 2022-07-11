@@ -358,7 +358,7 @@ public:
 
 /*!  \brief defines the base of the FIR filters */
 template< typename __type >
-class classic_fir_base : public  model_base, classic_filter_interface
+class fir_base : public  model_base, classic_filter_interface
 {
 private:
     /*!
@@ -391,7 +391,6 @@ private:
         Debugger::Log("classic_fir_base","deallocate()", "fir filter memory deallocation");
         #endif
 
-        m_buff_sx.deallocate();
         m_FilterData = __dsp_clear_filter__(m_FilterData);
         return ( !m_FilterData.cfnum && !m_FilterData.cfden );
     }
@@ -429,13 +428,13 @@ public:
     }
 
     /*! \brief default destructor */
-    virtual ~classic_fir_base()
+    virtual ~fir_base()
     {
         deallocate();
     }
 
     /*! \brief default constructor */
-    classic_fir_base() : model_base()
+    fir_base() : model_base()
     {
         m_FilterType   = filter_type::lowpass;
         m_Bandwidth    = { 100 , 500 };
@@ -490,7 +489,7 @@ public:
 
 template<typename __type> class fir;
 
-template<> class fir< __fx32 > final : public classic_fir_base< __fx32 >
+template<> class fir< __fx32 > final : public fir_base< __fx32 >
 {
     typedef __fx32 __type;
 
@@ -502,7 +501,7 @@ template<> class fir< __fx32 > final : public classic_fir_base< __fx32 >
 public:
 
     // default constructor
-    fir() : classic_fir_base< __type >(){}
+    fir() : fir_base< __type >(){}
 
     // default destructor
     ~fir(){}
@@ -519,7 +518,7 @@ public:
     inline void operator << ( __fxx64* _input ) { m_buff_sx(_input ); }
 };
 
-template<> class fir< __fx64 > final : public classic_fir_base< __fx64 >
+template<> class fir< __fx64 > final : public fir_base< __fx64 >
 {
     typedef __fx64 __type;
 
@@ -531,7 +530,7 @@ template<> class fir< __fx64 > final : public classic_fir_base< __fx64 >
 public:
 
     // default constructor
-    fir() : classic_fir_base< __type >(){}
+    fir() : fir_base< __type >(){}
 
     // default destructor
     ~fir(){}

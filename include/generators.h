@@ -94,22 +94,52 @@ public:
 
     /*! \brief test sine generator function
      *  \param[amp] - test signal amplitude
-     *  \param[fn] - test signal frequency          , Hz
-     *  \param[phs] - test signal phase              , degrees
-     *  \param[fs] - test signal sampling frequency , Hz
+     *  \param[fn] - test signal frequency, Hz
+     *  \param[phase] - test signal phase, degrees
+     *  \param[time] - input time value, s
      *  \returns The function returns sine function output. Timer counter is dropped to a zero every hour
      *           to avoid overflow within the real time
     */
     __type sine( __fx64 amp , __fx64 fn , __fx64 phase , __fx64 time )
     {
-        return amp * sin( fn * PI2 * time + __TO_RADIANS( phase ) );
+        return fn == 0 ? amp : amp * sin( fn * PI2 * time + __TO_RADIANS( phase ) );
+    }
+
+    /*! \brief test sine generator function
+     *  \param[amp] - test signal amplitude
+     *  \param[fn] - test signal frequency, Hz
+     *  \param[phase] - test signal phase, degrees
+     *  \param[distortion] - total harmonic distortion, p.u
+     *  \param[number_of_harmonics] - number of harmonics
+     *  \param[time] - input time value, s
+     *  \returns The function returns sine function output. Timer counter is dropped to a zero every hour
+     *           to avoid overflow within the real time
+    */
+    __type distortion( __fx64 amp, __fx64 fn, __fx64 phase, __fx64 distortion, __ix32 number_of_harmonics, __fx64 time )
+    {
+        __fx64 ratio  = distortion / number_of_harmonics;
+        __fx64 output = 0;
+
+        for( __ix32 i = 0 ; i < number_of_harmonics ; i++ )
+        {
+            if( i != 1 )
+            {
+                output += amp * ratio * sine( amp, i * fn, 0, time );
+            }
+            else
+            {
+                output += amp * (1.0 - distortion) * sine( amp, i * fn, phase, time );
+            }
+        }
+
+        return output;
     }
 
     /*! \brief test pulse signal generator
      *  \param[amp] - test pulse amplitude
-     *  \param[fn] - test pulse frequency                        , Hz
+     *  \param[fn] - test pulse frequency, Hz
      *  \param[phs] - phase angle between two neighboirung pulses , degrees
-     *  \param[fs] - test signal sampling frequency              , Hz
+     *  \param[fs] - input time value, s
      *  \returns The function returns sine function output. Timer counter is dropped to a zero every hour
      *           to avoid overflow within the real time
     */
@@ -117,7 +147,7 @@ public:
     {
         __fx64 y1 = sin( fn * PI2 * time + __TO_RADIANS( 180.0 + phase ) );
         __fx64 y2 = sin( fn * PI2 * time );
-        return amp * (__fx64)( ( y1 > 0 ) || ( y2 > 0 ) );;
+        return fn == 0 ? amp : amp * (__fx64)( ( y1 > 0 ) || ( y2 > 0 ) );
 
         return 0;
     }
