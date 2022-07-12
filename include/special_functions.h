@@ -1495,7 +1495,7 @@ __convf__( const __type *_a, const __type *_b, __ix32 _Na,  __ix32 _Nb )
      * \returns The function returns the tuple_x3
      *          containing resulting fraction array and it's first and second dimention sizes
 */
-template<typename __type> tuple_x3<void**, __ix32, __ix32>
+template<typename __type> tuple_x3<__type**, __ix32, __ix32>
 __fraction_numeric_substitution__(__type *AN, __type *AD, __type *BN, __type *BD, __ix32 N, __ix32 P)
 {
     // decrement orders to omit zero power elements
@@ -1553,7 +1553,7 @@ __fraction_numeric_substitution__(__type *AN, __type *AD, __type *BN, __type *BD
     __mfree__(Cx);
 
     // generate the output
-    void** output = __alloc__<void*>(2);
+    __type** output = __alloc__<__type*>(2);
     output[0] = Nx;
     output[1] = Dx;
     return { output, 2, ncols };

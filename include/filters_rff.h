@@ -69,17 +69,6 @@ private:
        return ( m_buffer_sx.allocate( m_order + 2 ) );
    }
 
-   // memory free function
-   __ix32 deallocate()
-   {
-       #ifdef RFF_DEBUG
-       Debugger::Log("recursive_fourier_abstract","deallocate()","Filter memory free");
-       #endif
-
-       m_buffer_sx.deallocate();
-       return 0;
-   }
-
 protected:
 
     // system fields
@@ -123,8 +112,6 @@ protected:
         #ifdef RFF_DEBUG
         Debugger::Log("recursive_fourier_abstract","~recursive_fourier_abstract()","Filter destructor call");
         #endif
-
-        deallocate();
     }
 
     /*!

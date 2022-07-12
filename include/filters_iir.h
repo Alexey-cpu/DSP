@@ -11,32 +11,26 @@ using namespace IIR_KERNEL;
 #define IIR_FILTERS_DEBUG // debugging is not available if the algorithm is running on a device !!!
 #endif
 
-/*! \brief defines 32-bit floating point type */
 #ifndef __fx32
 #define __fx32 float
 #endif
 
-/*! \brief defines 64-bit floating point type */
 #ifndef __fx64
 #define __fx64 double
 #endif
 
-/*! \brief defines extended 64-bit floating point type */
 #ifndef __fxx64
 #define __fxx64 long double
 #endif
 
-/*! \brief defines 32-bit integer type */
 #ifndef __ix32
 #define __ix32 int
 #endif
 
-/*! \brief defines pi */
 #ifndef PI0
 #define PI0 3.1415926535897932384626433832795
 #endif
 
-/*! \brief defines 2*pi */
 #ifndef PI2
 #define PI2 6.283185307179586476925286766559
 #endif
@@ -61,13 +55,11 @@ template<typename __type> class iir_base : public model_base, public classic_fil
 private:
 
     // buffers array deallocation function
-    delay<__type>* buffers_array_free(delay<__type> *buffers, __ix32 buffersNumber)
+    delay<__type>* buffers_array_free(delay<__type> *buffers)
     {
         if( buffers != nullptr )
         {
-            for( __ix32 i = 0 ; i < buffersNumber ; i++ ) buffers[i].deallocate();
-
-            delete [] buffers;
+            delete [] buffers;  // delete operator calls object destructor which frees the object resources
             buffers = nullptr;
         }
 
@@ -91,7 +83,6 @@ private:
     __ix32 allocate()
     {
         m_FilterData     = round_coefficients<__type>(m_FilterType);
-        m_SectionsNumber = m_FilterData.N;
 
         if( m_FilterData.cfden && m_FilterData.cfnum  && m_FilterData.gains )
         {
@@ -116,8 +107,8 @@ private:
         Debugger::Log("iir_abstract","deallocate()", "memory deallocation");
         #endif
 
-        m_buff_sx = buffers_array_free(m_buff_sx, m_SectionsNumber);
-        m_buff_sy = buffers_array_free(m_buff_sy, m_SectionsNumber);
+        m_buff_sx = buffers_array_free(m_buff_sx);
+        m_buff_sy = buffers_array_free(m_buff_sy);
         __dsp_clear_filter__(m_FilterData);
         return 1;
     }
@@ -130,7 +121,6 @@ protected:
     attenuation         m_Attenuation;
     delay<__type>      *m_buff_sx;
     delay<__type>      *m_buff_sy;
-    __ix32              m_SectionsNumber;
 
     template<typename T> T filt(T *_input)
     {

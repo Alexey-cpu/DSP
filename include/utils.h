@@ -716,30 +716,11 @@ __mfree__( tuple_x2< __type*, __ix32 > tuple)
 
 /*!
  *  \brief memory clean function
- *  \param[tuple] two element tuple
- *  \details The function frees memory of **tuple.item0
-*/
-inline tuple_x2< void**, __ix32 >
-__mfree__( tuple_x2< void**, __ix32 > tuple)
-{
-    for(__ix32 i = 0 ; i < tuple.item1 ; i++)
-    {
-        tuple.item0[i] = __mfree__( tuple.item0[i] );
-    }
-
-    tuple.item0 = __mfree__( tuple.item0 );
-    tuple.item1 = -1;
-
-    return tuple;
-}
-
-/*!
- *  \brief memory clean function
  *  \param[tuple] three element tuple
  *  \details The function frees memory of **tuple.item0
 */
-inline tuple_x3< void**, __ix32, __ix32 >
-__mfree__( tuple_x3< void**, __ix32, __ix32 > tuple)
+template< typename __type > inline tuple_x3< __type**, __ix32, __ix32 >
+__mfree__( tuple_x3< __type**, __ix32, __ix32 > tuple)
 {
     for(__ix32 i = 0 ; i < tuple.item1 ; i++)
     {

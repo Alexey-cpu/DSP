@@ -6,7 +6,7 @@
 #endif
 
 #include "include/utils.h"
-#include "include/sgen.h"
+#include "include/generators.h"
 #include "include/filters_tsf.h"
 
 // Butterworth filter
@@ -46,7 +46,9 @@ int filters_differentiator_example()
     #endif
 
     // generator initialization
-    sgen<__type> gen;
+    generator<__type> gen;
+    digital_clock<double> time_provider;
+    time_provider.init(Fs);
 
     // filter initialization
     differentiator<__type> filter;
@@ -55,9 +57,9 @@ int filters_differentiator_example()
     // emulation
     for( int i = 0 ; i < cycles_num ; i++ )
     {
-        for( int j = 0 ; j < frames_per_cycle ; j++, time += 1 / Fs )
+        for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick() )
         {
-            __type signal = gen.sine( 1, Fn, 0, Fs );
+            __type signal = gen.sine( 1, Fn, 0, time );
             __type output = filter(&signal);
 
             #ifdef WRITE_LOGS

@@ -1,5 +1,0 @@
-COMTRADEFORM('FileName','VoltageUnits','CurrentUnits' , 'SIGA' , 'SIGB' , 'BusCreatorName',DAT)
-
-Example:
-
-COMTRADEFORM('trial_10_1_4','kV','A' , '0' , '0' , 'Registrator/Bus Creator', DAT )
