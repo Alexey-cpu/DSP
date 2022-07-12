@@ -41,14 +41,13 @@
 /*!
  *  \class harmonic_filter
  *  \brief defines harmonic filter based on recursive Fourier filter
- *  \details The filter computes a given harmonic RMS value. Recursive fourier algorithm is used as the filter kernel.
+ *  \details The filter computes a given harmonic root-mean-square (RMS) value. Recursive fourier algorithm is used as the filter kernel.
  *           The filter is supposed to be used within the relay protection IDE's and is adapted for ProsoftSystems MKPA
  *           series IDE's. The filter operates according the following algorithm:
  *           On every IDE operation step the input ADC buffer is transferred to the recusive Fourier filter.
- *           Recursive Fourier filter computes the vector having magnitude equal to the input signal RMS value.
- *           The mentioned vector is computed without convolution with the reference 50 Hz frame.
- *           The real and imaginary part of the mentioned uncovolutec vector are then transferred to the
- *           RMS filter. The filter outputs the average of RMS values of real and imaginary parts RMS values
+ *           Recursive Fourier filter computes the input signal vector without convolution with any reference frame.
+ *           The real and imaginary part of the mentioned uncovoluted vector are then transferred to the
+ *           RMS filter. The RMS filter outputs the average of RMS values of real and imaginary parts RMS values.
 */
 
 template<typename __type>

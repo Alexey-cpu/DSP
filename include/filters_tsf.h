@@ -51,17 +51,17 @@ class transfer_function : public model_base
     delay<__type> m_buff_sy;
 
     // transfer function fraction
-    tuple_x3<void**,
+    tuple_x3<__type**,
             __ix32,
             __ix32 > m_Wz;
 
     // input fraction to transform
-    tuple_x3<void**,
+    tuple_x3<__type**,
             __ix32,
             __ix32 > m_Ws;
 
     //
-    tuple_x3<void**,
+    tuple_x3<__type**,
             __ix32,
             __ix32 > m_Rz;
 
@@ -74,7 +74,7 @@ class transfer_function : public model_base
         #endif
 
         // substitute billinear transform fraction into transfer function fraction
-        m_Wz = __fraction_numeric_substitution__( &((__type*)m_Ws.item0[0])[0], &((__type*)m_Ws.item0[1])[0], &((__type*)m_Rz.item0[0])[0], &((__type*)m_Rz.item0[1])[0], m_Ws.item2, m_Rz.item2);
+        m_Wz = __fraction_numeric_substitution__( &m_Ws.item0[0][0], &m_Ws.item0[1][0], &m_Rz.item0[0][0], &m_Rz.item0[1][0], m_Ws.item2, m_Rz.item2);
 
         // compute Gain
         m_Gain = (__type)1 / ((__type*)m_Wz.item0[1])[0];
@@ -104,7 +104,7 @@ class transfer_function : public model_base
 
     template<typename T> T filt(T *_input)
     {
-        return __filt__(_input, &((__type*)m_Wz.item0[0])[0], &((__type*)m_Wz.item0[1])[0], &m_Gain, m_Wz.item2, m_Wz.item2, 1, &m_buff_sx, &m_buff_sy );
+        return __filt__(_input, &m_Wz.item0[0][0], &m_Wz.item0[1][0], &m_Gain, m_Wz.item2, m_Wz.item2, 1, &m_buff_sx, &m_buff_sy );
     }
 
 
@@ -119,7 +119,7 @@ class transfer_function : public model_base
      *           tuple_x3.item1 - number of fraction polynons - always equals 2 for fraction
      *           tuple_x3.item2 - number of numerator/denominator elements ( numerator size always equals to denominator size )
     */
-    void init(__fx64 Fs, tuple_x3< void**, __ix32, __ix32 > Ws, tuple_x3< void**, __ix32, __ix32 > Rz )
+    void init(__fx64 Fs, tuple_x3< __type**, __ix32, __ix32 > Ws, tuple_x3< __type**, __ix32, __ix32 > Rz )
     {
         // check the input
         if( !Ws.item0 || Ws.item1 <= 0 || Ws.item2 <= 0 )
@@ -243,36 +243,36 @@ public:
     void init(__fx64 Fs, __fx64 T1, __fx64 T2)
     {
         // Ws
-        tuple_x3<void**, __ix32, __ix32> Ws;
+        tuple_x3<__type**, __ix32, __ix32> Ws;
         Ws.item1    = 2;
         Ws.item2    = 2;
-        Ws.item0    = __alloc__<void*>(Ws.item1);
+        Ws.item0    = __alloc__<__type*>(Ws.item1);
         Ws.item0[0] = __alloc__<__type>(Ws.item2);
         Ws.item0[1] = __alloc__<__type>(Ws.item2);
 
         // initialize numerator
-        ((__type*)Ws.item0[0])[0] = 1;
-        ((__type*)Ws.item0[0])[1] = T1;
+        Ws.item0[0][0] = 1;
+        Ws.item0[0][1] = T1;
 
         // initialize denominator
-        ((__type*)Ws.item0[1])[0] = 1;
-        ((__type*)Ws.item0[1])[1] = T2;
+        Ws.item0[1][0] = 1;
+        Ws.item0[1][1] = T2;
 
         // Rz
-        tuple_x3<void**, __ix32, __ix32> Rz;
+        tuple_x3<__type**, __ix32, __ix32> Rz;
         Rz.item1    = 2;
         Rz.item2    = 2;
-        Rz.item0    = __alloc__<void*>(Rz.item1);
+        Rz.item0    = __alloc__<__type*>(Rz.item1);
         Rz.item0[0] = __alloc__<__type>(Rz.item2);
         Rz.item0[1] = __alloc__<__type>(Rz.item2);
 
         // initialize numerator
-        ((__type*)Rz.item0[0])[0] = +1;
-        ((__type*)Rz.item0[0])[1] = -1;
+        Rz.item0[0][0] = +1;
+        Rz.item0[0][1] = -1;
 
         // initialize denominator
-        ((__type*)Rz.item0[1])[0] = +1/Fs;
-        ((__type*)Rz.item0[1])[1] = +1/Fs;
+        Rz.item0[1][0] = +1/Fs;
+        Rz.item0[1][1] = +1/Fs;
 
         m_transfer_function.init(Fs, Ws, Rz);
         model_base::init(2, Fs);
@@ -322,36 +322,36 @@ public:
     */
     void init(__fx64 Fs, __fx64 Ta)
     {
-        tuple_x3<void**, __ix32, __ix32> Ws;
+        tuple_x3<__type**, __ix32, __ix32> Ws;
         Ws.item1    = 2;
         Ws.item2    = 2;
-        Ws.item0    = __alloc__<void*>(Ws.item1);
+        Ws.item0    = __alloc__<__type*>(Ws.item1);
         Ws.item0[0] = __alloc__<__type>(Ws.item2);
         Ws.item0[1] = __alloc__<__type>(Ws.item2);
 
         // initialize numerator
-        ((__type*)Ws.item0[0])[0] = 1;
-        ((__type*)Ws.item0[0])[1] = 0;
+        Ws.item0[0][0] = 1;
+        Ws.item0[0][1] = 0;
 
         // initialize denominator
-        ((__type*)Ws.item0[1])[0] = 1;
-        ((__type*)Ws.item0[1])[1] = Ta;
+        Ws.item0[1][0] = 1;
+        Ws.item0[1][1] = Ta;
 
         // Rz
-        tuple_x3<void**, __ix32, __ix32> Rz;
+        tuple_x3<__type**, __ix32, __ix32> Rz;
         Rz.item1    = 2;
         Rz.item2    = 2;
-        Rz.item0    = __alloc__<void*>(Rz.item1);
+        Rz.item0    = __alloc__<__type*>(Rz.item1);
         Rz.item0[0] = __alloc__<__type>(Rz.item2);
         Rz.item0[1] = __alloc__<__type>(Rz.item2);
 
         // initialize numerator
-        ((__type*)Rz.item0[0])[0] = +1;
-        ((__type*)Rz.item0[0])[1] = -1;
+        Rz.item0[0][0] = +1;
+        Rz.item0[0][1] = -1;
 
         // initialize denominator
-        ((__type*)Rz.item0[1])[0] = +1/Fs;
-        ((__type*)Rz.item0[1])[1] = +1/Fs;
+        Rz.item0[1][0] = +1/Fs;
+        Rz.item0[1][1] = +1/Fs;
 
         m_transfer_function.init(Fs, Ws, Rz);
         model_base::init(2, Fs);
@@ -400,36 +400,36 @@ public:
     */
     void init(__fx64 Fs)
     {
-        tuple_x3<void**, __ix32, __ix32> Ws;
+        tuple_x3<__type**, __ix32, __ix32> Ws;
         Ws.item1    = 2;
         Ws.item2    = 2;
-        Ws.item0    = __alloc__<void*>(Ws.item1);
+        Ws.item0    = __alloc__<__type*>(Ws.item1);
         Ws.item0[0] = __alloc__<__type>(Ws.item2);
         Ws.item0[1] = __alloc__<__type>(Ws.item2);
 
         // initialize numerator
-        ((__type*)Ws.item0[0])[0] = 1;
-        ((__type*)Ws.item0[0])[1] = 0;
+        Ws.item0[0][0] = 1;
+        Ws.item0[0][1] = 0;
 
         // initialize denominator
-        ((__type*)Ws.item0[1])[0] = 0;
-        ((__type*)Ws.item0[1])[1] = 1;
+        Ws.item0[1][0] = 0;
+        Ws.item0[1][1] = 1;
 
         // Rz
-        tuple_x3<void**, __ix32, __ix32> Rz;
+        tuple_x3<__type**, __ix32, __ix32> Rz;
         Rz.item1    = 2;
         Rz.item2    = 2;
-        Rz.item0    = __alloc__<void*>(Rz.item1);
+        Rz.item0    = __alloc__<__type*>(Rz.item1);
         Rz.item0[0] = __alloc__<__type>(Rz.item2);
         Rz.item0[1] = __alloc__<__type>(Rz.item2);
 
         // initialize numerator
-        ((__type*)Rz.item0[0])[0] = +1;
-        ((__type*)Rz.item0[0])[1] = -1;
+        Rz.item0[0][0] = +1;
+        Rz.item0[0][1] = -1;
 
         // initialize denominator
-        ((__type*)Rz.item0[1])[0] = +1/Fs;
-        ((__type*)Rz.item0[1])[1] = +1/Fs;
+        Rz.item0[1][0] = +1/Fs;
+        Rz.item0[1][1] = +1/Fs;
 
         m_transfer_function.init(Fs, Ws, Rz);
         model_base::init(2, Fs);
@@ -479,36 +479,36 @@ public:
     */
     void init(__fx64 Fs, __fx64 Td)
     {
-        tuple_x3<void**, __ix32, __ix32> Ws;
+        tuple_x3<__type**, __ix32, __ix32> Ws;
         Ws.item1 = 2;
         Ws.item2 = 2;
-        Ws.item0 = __alloc__<void*>(Ws.item1);
+        Ws.item0 = __alloc__<__type*>(Ws.item1);
         Ws.item0[0] = __alloc__<__type>(Ws.item2);
         Ws.item0[1] = __alloc__<__type>(Ws.item2);
 
         // initialize numerator
-        ((__type*)Ws.item0[0])[0] = 0;
-        ((__type*)Ws.item0[0])[1] = 1;
+        Ws.item0[0][0] = 0;
+        Ws.item0[0][1] = 1;
 
         // initialize denominator
-        ((__type*)Ws.item0[1])[0] = 1;
-        ((__type*)Ws.item0[1])[1] = Td;
+        Ws.item0[1][0] = 1;
+        Ws.item0[1][1] = Td;
 
         // Rz
-        tuple_x3<void**, __ix32, __ix32> Rz;
+        tuple_x3<__type**, __ix32, __ix32> Rz;
         Rz.item1    = 2;
         Rz.item2    = 2;
-        Rz.item0    = __alloc__<void*>(Rz.item1);
+        Rz.item0    = __alloc__<__type*>(Rz.item1);
         Rz.item0[0] = __alloc__<__type>(Rz.item2);
         Rz.item0[1] = __alloc__<__type>(Rz.item2);
 
         // initialize numerator
-        ((__type*)Rz.item0[0])[0] = +1;
-        ((__type*)Rz.item0[0])[1] = -1;
+        Rz.item0[0][0] = +1;
+        Rz.item0[0][1] = -1;
 
         // initialize denominator
-        ((__type*)Rz.item0[1])[0] = +1/Fs;
-        ((__type*)Rz.item0[1])[1] = +1/Fs;
+        Rz.item0[1][0] = +1/Fs;
+        Rz.item0[1][1] = +1/Fs;
 
         m_transfer_function.init(Fs, Ws, Rz);
         model_base::init(2, Fs);
@@ -557,10 +557,10 @@ public:
     */
     void init(__fx64 Fs, __fx64 Fc, __fx64 Kd, filter_type type)
     {
-        tuple_x3<void**, __ix32, __ix32> Ws;
+        tuple_x3<__type**, __ix32, __ix32> Ws;
         Ws.item1    = 2;
         Ws.item2    = 3;
-        Ws.item0    = __alloc__<void*>(Ws.item1);
+        Ws.item0    = __alloc__<__type*>(Ws.item1);
         Ws.item0[0] = __alloc__<__type>(Ws.item2);
         Ws.item0[1] = __alloc__<__type>(Ws.item2);
 
@@ -572,89 +572,89 @@ public:
             case filter_type::lowpass:
 
                 // initialize numerator
-                ((__type*)Ws.item0[0])[0] = omega * omega;
-                ((__type*)Ws.item0[0])[1] = 0;
-                ((__type*)Ws.item0[0])[2] = 0;
+                Ws.item0[0][0] = omega * omega;
+                Ws.item0[0][1] = 0;
+                Ws.item0[0][2] = 0;
 
                 // initialize denominator
-                ((__type*)Ws.item0[1])[0] = omega * omega;
-                ((__type*)Ws.item0[1])[1] = 2 * omega * Kd;
-                ((__type*)Ws.item0[1])[2] = 1;
+                Ws.item0[1][0] = omega * omega;
+                Ws.item0[1][1] = 2 * omega * Kd;
+                Ws.item0[1][2] = 1;
 
             break;
 
             case filter_type::highpass:
 
                 // initialize numerator
-                ((__type*)Ws.item0[0])[0] = 0;
-                ((__type*)Ws.item0[0])[1] = 0;
-                ((__type*)Ws.item0[0])[2] = 1;
+                Ws.item0[0][0] = 0;
+                Ws.item0[0][1] = 0;
+                Ws.item0[0][2] = 1;
 
                 // initialize denominator
-                ((__type*)Ws.item0[1])[0] = omega * omega;
-                ((__type*)Ws.item0[1])[1] = 2 * omega * Kd;
-                ((__type*)Ws.item0[1])[2] = 1;
+                Ws.item0[1][0] = omega * omega;
+                Ws.item0[1][1] = 2 * omega * Kd;
+                Ws.item0[1][2] = 1;
 
             break;
 
             case filter_type::bandpass:
 
                 // initialize numerator
-                ((__type*)Ws.item0[0])[0] = 0;
-                ((__type*)Ws.item0[0])[1] = 2 * omega * Kd;
-                ((__type*)Ws.item0[0])[2] = 0;
+                Ws.item0[0][0] = 0;
+                Ws.item0[0][1] = 2 * omega * Kd;
+                Ws.item0[0][2] = 0;
 
                 // initialize denominator
-                ((__type*)Ws.item0[1])[0] = omega * omega;
-                ((__type*)Ws.item0[1])[1] = 2 * omega * Kd;
-                ((__type*)Ws.item0[1])[2] = 1;
+                Ws.item0[1][0] = omega * omega;
+                Ws.item0[1][1] = 2 * omega * Kd;
+                Ws.item0[1][2] = 1;
 
             break;
 
             case filter_type::bandstop:
 
                 // initialize numerator
-                ((__type*)Ws.item0[0])[0] = omega * omega;
-                ((__type*)Ws.item0[0])[1] = 0;
-                ((__type*)Ws.item0[0])[2] = 1;
+                Ws.item0[0][0] = omega * omega;
+                Ws.item0[0][1] = 0;
+                Ws.item0[0][2] = 1;
 
                 // initialize denominator
-                ((__type*)Ws.item0[1])[0] = omega * omega;
-                ((__type*)Ws.item0[1])[1] = 2 * omega * Kd;
-                ((__type*)Ws.item0[1])[2] = 1;
+                Ws.item0[1][0] = omega * omega;
+                Ws.item0[1][1] = 2 * omega * Kd;
+                Ws.item0[1][2] = 1;
 
             break;
 
             default:
 
                 // initialize numerator
-                ((__type*)Ws.item0[0])[0] = omega * omega;
-                ((__type*)Ws.item0[0])[1] = 0;
-                ((__type*)Ws.item0[0])[2] = 0;
+                Ws.item0[0][0] = omega * omega;
+                Ws.item0[0][1] = 0;
+                Ws.item0[0][2] = 0;
 
                 // initialize denominator
-                ((__type*)Ws.item0[1])[0] = omega * omega;
-                ((__type*)Ws.item0[1])[1] = 2 * omega * Kd;
-                ((__type*)Ws.item0[1])[2] = 1;
+                Ws.item0[1][0] = omega * omega;
+                Ws.item0[1][1] = 2 * omega * Kd;
+                Ws.item0[1][2] = 1;
 
             break;
         }
 
         // Rz
-        tuple_x3<void**, __ix32, __ix32> Rz;
+        tuple_x3<__type**, __ix32, __ix32> Rz;
         Rz.item1    = 2;
         Rz.item2    = 2;
-        Rz.item0    = __alloc__<void*>(Rz.item1);
+        Rz.item0    = __alloc__<__type*>(Rz.item1);
         Rz.item0[0] = __alloc__<__type>(Rz.item2);
         Rz.item0[1] = __alloc__<__type>(Rz.item2);
 
         // initialize numerator
-        ((__type*)Rz.item0[0])[0] = +1;
-        ((__type*)Rz.item0[0])[1] = -1;
+        Rz.item0[0][0] = +1;
+        Rz.item0[0][1] = -1;
 
         // initialize denominator
-        ((__type*)Rz.item0[1])[0] = +1;
-        ((__type*)Rz.item0[1])[1] = +1;
+        Rz.item0[1][0] = +1;
+        Rz.item0[1][1] = +1;
 
         m_transfer_function.init(Fs, Ws, Rz);
         model_base::init(2, Fs);

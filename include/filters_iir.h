@@ -59,7 +59,7 @@ private:
     {
         if( buffers != nullptr )
         {
-            delete [] buffers;
+            delete [] buffers;  // delete operator calls object destructor which frees the object resources
             buffers = nullptr;
         }
 
