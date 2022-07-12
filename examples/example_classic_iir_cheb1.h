@@ -5,7 +5,6 @@
 //#define WRITE_LOGS
 #endif
 
-#include "include/utils.h"
 #include "include/generators.h"
 #include "include/filters_iir.h"
 

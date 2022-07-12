@@ -5,7 +5,6 @@
 //#define WRITE_LOGS
 #endif
 
-#include "include/utils.h"
 #include "include/fcomplex.h"
 
 // complex numbers example

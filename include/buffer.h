@@ -5,7 +5,6 @@
 #define BUFFER_DEBUG // debugging is not available if the algorithm is running on a device !!!
 #endif
 
-// identify if the compilation is for ProsoftSystems IDE
 #ifndef __ALG_PLATFORM
 #include <stdlib.h>
 #include <iostream>
