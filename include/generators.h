@@ -2,7 +2,7 @@
 #define GENERATORS_H
 
 // standart headers
-#ifndef __ALG_PLATFORM // identify if the compilation is for ProsoftSystems IDE
+#ifndef __ALG_PLATFORM
 #include "cmath"
 #include <stdlib.h>
 #endif

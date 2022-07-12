@@ -700,10 +700,11 @@ __ctnhf__( fcomplex<__type> _complex ) { return __coshf__(_complex) / __sinhf__(
 
 /*! @} */
 
+// macro undefinition to avoid aliases during compilation
 #undef __TO_DEGREES
 #undef __TO_RADIANS
 
-// customized types names exclusion to avoid aliases during compilation:
+// customized types names exclusion to avoid aliases during compilation
 #undef __ix16
 #undef __ix32
 #undef __ix64
@@ -714,7 +715,7 @@ __ctnhf__( fcomplex<__type> _complex ) { return __coshf__(_complex) / __sinhf__(
 #undef __fx64
 #undef __fxx64
 
-// customized upper limits exclusion to avoid aliases during compilation:
+// customized upper limits exclusion to avoid aliases during compilation
 #undef __max_fx32
 #undef __max_fx64
 #undef __max_ix16
@@ -724,7 +725,7 @@ __ctnhf__( fcomplex<__type> _complex ) { return __coshf__(_complex) / __sinhf__(
 #undef __max_uix32
 #undef __max_uix64
 
-// customized lower limits exclusion to avoid aliases during compilation:
+// customized lower limits exclusion to avoid aliases during compilation
 #undef __min_fx32
 #undef __min_fx64
 #undef __min_ix16
