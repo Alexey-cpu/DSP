@@ -1,8 +1,0 @@
-#ifndef RTW_HEADER_DZG_v6_SimGen_acc_types_h_
-#define RTW_HEADER_DZG_v6_SimGen_acc_types_h_
-#include "rtwtypes.h"
-#include "multiword_types.h"
-typedef struct P_Transferfunctionsfordetailedstabilizer_DZG_v6_SimGen_T_
-P_Transferfunctionsfordetailedstabilizer_DZG_v6_SimGen_T ; typedef struct
-P_DZG_v6_SimGen_T_ P_DZG_v6_SimGen_T ;
-#endif
