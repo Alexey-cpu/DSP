@@ -5,8 +5,9 @@
 #define WRITE_LOGS
 #endif
 
-#include "include/generators.h"
-#include "include/filters_hmf.h"
+#include "config.h"
+#include "../../DSP/include/generators.h"
+#include "../../DSP/include/filters_hmf.h"
 
 // Recursive Fourier filter based harmonic filter
 int filtes_hmf_example()
@@ -24,10 +25,8 @@ int filtes_hmf_example()
 
     #ifdef WRITE_LOGS
 
-    // logs directory:
-    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
-
     // log files
+    std::ofstream xt;
     std::ofstream yt;
     std::ofstream re;
     std::ofstream im;
@@ -37,13 +36,14 @@ int filtes_hmf_example()
     std::ofstream dt;
 
     // open files
-    yt .open(directory + "\\yt.txt");
-    re .open(directory + "\\re.txt");
-    im .open(directory + "\\im.txt");
-    am .open(directory + "\\am.txt");
-    pH .open(directory + "\\pH.txt");
-    Km .open(directory + "\\Km.txt");
-    dt .open(directory + "\\dt.txt");
+    xt.open( LOGS_DIRECTORY + OUTPUT_STREAM_INPUT);
+    yt.open( LOGS_DIRECTORY + OUTPUT_STREAM_OUTPUT);
+    pH.open( LOGS_DIRECTORY + OUTPUT_STREAM_PHASE_RESPONSE);
+    Km.open( LOGS_DIRECTORY + OUTPUT_STREAM_AMPLITUDE_RESPONSE);
+    dt.open( LOGS_DIRECTORY + OUTPUT_STREAM_TIME);
+    re .open(LOGS_DIRECTORY + OUTPUT_STREAM_REAL_COMPONENT);
+    im .open(LOGS_DIRECTORY + OUTPUT_STREAM_IMAG_COMPONENT);
+    am .open(LOGS_DIRECTORY + OUTPUT_STREAM_SIGNAL_AMPLITUDE);
 
     #endif
 
@@ -58,7 +58,6 @@ int filtes_hmf_example()
     // buffer
     __type *buffer = __alloc__<__type>(frames_per_cycle);
 
-    Debugger::Log("emulation \n");
     for( int i = 0 ; i < cycles_num ; i++ )
     {
         for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick() )
@@ -83,20 +82,19 @@ int filtes_hmf_example()
         #endif
     }
 
-    Debugger::Log("memory clean \n");
-
     buffer = __mfree__(buffer);
 
     // close files
 
     #ifdef WRITE_LOGS
-    yt .close();
-    re .close();
-    im .close();
-    am .close();
-    pH .close();
-    Km .close();
-    dt .close();
+    xt.close();
+    yt.close();
+    re.close();
+    im.close();
+    am.close();
+    pH.close();
+    Km.close();
+    dt.close();
     #endif
 
     return 0;

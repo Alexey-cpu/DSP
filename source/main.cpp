@@ -1,14 +1,13 @@
-// examples:
-#include "examples/examples.h"
-#include "math.h"
+#include "../../DSP/examples/examples.h"
 
 int main()
 {
     // driver examples
+
     //filters_fir_example();
     //complex_numbers_example();
     //filters_rff_example();
-    //filtes_hmf_example();
+    filtes_hmf_example();
     //filters_butt_example();
     //filters_cheb1_example();
     //filters_cheb2_example();

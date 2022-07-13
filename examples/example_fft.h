@@ -1,7 +1,7 @@
 #ifndef EXAMPLE_FFT_H
 #define EXAMPLE_FFT_H
 
-#include "include/special_functions.h"
+#include "../../DSP/include/special_functions.h"
 
 // Recursive Fourier filter
 int fft_example()

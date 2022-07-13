@@ -35,7 +35,7 @@
 #define __TO_RADIANS(x) ( (x) * 0.01745329251994329576923690768489)
 #endif
 
-template<typename __type = __fx64>
+template < typename __type = __fx64 >
 class digital_clock
 {
     __fx64 m_bound = 3600;
@@ -87,7 +87,7 @@ public:
     }
 };
 
-template < typename  __type >
+template < typename __type = __fx64 >
 class generator
 {
 public:

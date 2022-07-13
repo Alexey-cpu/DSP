@@ -1,12 +1,10 @@
 #ifndef EXAMPLE_TRANSFER_FUNCTIONS_FILTER_2ND_ORDER_H
 #define EXAMPLE_TRANSFER_FUNCTIONS_FILTER_2ND_ORDER_H
 
-#ifndef WRITE_LOGS
-#define WRITE_LOGS
-#endif
 
-#include "include/generators.h"
-#include "include/filters_tsf.h"
+#include "config.h"
+#include "../../DSP/include/generators.h"
+#include "../../DSP/include/filters_tsf.h"
 
 // Butterworth filter
 int filters_filter_2nd_order_example()
@@ -24,9 +22,6 @@ int filters_filter_2nd_order_example()
 
     #ifdef WRITE_LOGS
 
-    // logs directory:
-    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
-
     // log files
     std::ofstream xt;
     std::ofstream yt;
@@ -35,11 +30,11 @@ int filters_filter_2nd_order_example()
     std::ofstream dt;
 
     // open files
-    yt .open(directory + "\\yt.txt");
-    xt .open(directory + "\\xt.txt");
-    pH .open(directory + "\\pH.txt");
-    Km .open(directory + "\\Km.txt");
-    dt .open(directory + "\\dt.txt");
+    xt.open( LOGS_DIRECTORY + OUTPUT_STREAM_INPUT);
+    yt.open( LOGS_DIRECTORY + OUTPUT_STREAM_OUTPUT);
+    pH.open( LOGS_DIRECTORY + OUTPUT_STREAM_PHASE_RESPONSE);
+    Km.open( LOGS_DIRECTORY + OUTPUT_STREAM_AMPLITUDE_RESPONSE);
+    dt.open( LOGS_DIRECTORY + OUTPUT_STREAM_TIME);
 
     #endif
 
