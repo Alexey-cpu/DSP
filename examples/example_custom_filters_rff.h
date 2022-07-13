@@ -1,12 +1,9 @@
 #ifndef EXAMPLE_CUSTOM_FILTERS_RFF_H
 #define EXAMPLE_CUSTOM_FILTERS_RFF_H
 
-#ifndef WRITE_LOGS
-//#define WRITE_LOGS
-#endif
-
-#include "include/generators.h"
-#include "include/filters_rff.h"
+#include "config.h"
+#include "../../DSP/include/generators.h"
+#include "../../DSP/include/filters_rff.h"
 
 // Recursive Fourier filter
 int filters_rff_example()
@@ -24,10 +21,8 @@ int filters_rff_example()
 
     #ifdef WRITE_LOGS
 
-    // logs directory:
-    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
-
     // log files
+    std::ofstream xt;
     std::ofstream yt;
     std::ofstream re;
     std::ofstream im;
@@ -37,13 +32,14 @@ int filters_rff_example()
     std::ofstream dt;
 
     // open files
-    yt .open(directory + "\\yt.txt");
-    re .open(directory + "\\re.txt");
-    im .open(directory + "\\im.txt");
-    am .open(directory + "\\am.txt");
-    pH .open(directory + "\\pH.txt");
-    Km .open(directory + "\\Km.txt");
-    dt .open(directory + "\\dt.txt");
+    xt.open( LOGS_DIRECTORY + OUTPUT_STREAM_INPUT);
+    yt.open( LOGS_DIRECTORY + OUTPUT_STREAM_OUTPUT);
+    pH.open( LOGS_DIRECTORY + OUTPUT_STREAM_PHASE_RESPONSE);
+    Km.open( LOGS_DIRECTORY + OUTPUT_STREAM_AMPLITUDE_RESPONSE);
+    dt.open( LOGS_DIRECTORY + OUTPUT_STREAM_TIME);
+    re .open(LOGS_DIRECTORY + OUTPUT_STREAM_REAL_COMPONENT);
+    im .open(LOGS_DIRECTORY + OUTPUT_STREAM_IMAG_COMPONENT);
+    am .open(LOGS_DIRECTORY + OUTPUT_STREAM_SIGNAL_AMPLITUDE);
 
     #endif
 
@@ -55,7 +51,6 @@ int filters_rff_example()
     recursive_fourier<__type> rff;
     rff.init(Fs, Fn, 2);
 
-    Debugger::Log("emulation \n");
     for( int i = 0 ; i < cycles_num ; i++ )
     {
         for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick())
@@ -74,7 +69,6 @@ int filters_rff_example()
         }
     }
 
-    Debugger::Log("frequency response computation \n");
     for( int i = 0 ; i < Fs / 2 ; i++ )
     {
         fcomplex<__type> output = rff.frequency_response( (double)i );
@@ -85,18 +79,16 @@ int filters_rff_example()
         #endif
     }
 
-    Debugger::Log("memory clean \n");
-
     // close files
-
     #ifdef WRITE_LOGS
-    yt .close();
-    re .close();
-    im .close();
-    am .close();
-    pH .close();
-    Km .close();
-    dt .close();
+    xt.close();
+    yt.close();
+    re.close();
+    im.close();
+    am.close();
+    pH.close();
+    Km.close();
+    dt.close();
     #endif
 
     return 0;

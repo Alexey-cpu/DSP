@@ -1,12 +1,10 @@
 #ifndef EXAMPLE_CLASSIC_IIR_CHEB2_H
 #define EXAMPLE_CLASSIC_IIR_CHEB2_H
 
-#ifndef WRITE_LOGS
-//#define WRITE_LOGS
-#endif
 
-#include "include/generators.h"
-#include "include/filters_iir.h"
+#include "config.h"
+#include "../../DSP/include/generators.h"
+#include "../../DSP/include/filters_iir.h"
 
 // Checbyshev type II filter
 int filters_cheb2_example()
@@ -35,11 +33,11 @@ int filters_cheb2_example()
     std::ofstream dt;
 
     // open files
-    yt .open(directory + "\\yt.txt");
-    xt .open(directory + "\\xt.txt");
-    pH .open(directory + "\\pH.txt");
-    Km .open(directory + "\\Km.txt");
-    dt .open(directory + "\\dt.txt");
+    xt.open( LOGS_DIRECTORY + OUTPUT_STREAM_INPUT);
+    yt.open( LOGS_DIRECTORY + OUTPUT_STREAM_OUTPUT);
+    pH.open( LOGS_DIRECTORY + OUTPUT_STREAM_PHASE_RESPONSE);
+    Km.open( LOGS_DIRECTORY + OUTPUT_STREAM_AMPLITUDE_RESPONSE);
+    dt.open( LOGS_DIRECTORY + OUTPUT_STREAM_TIME);
 
     #endif
 

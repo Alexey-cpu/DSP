@@ -6,7 +6,7 @@
 using namespace FIR_KERNEL;
 
 #ifndef __ALG_PLATFORM
-//#define FIR_FILTERS_DEBUG // debugging is not available if the algorithm is running on a device !!!
+#define FIR_FILTERS_DEBUG // debugging is not available if the algorithm is running on a device !!!
 #endif
 
 #ifndef __fx32
