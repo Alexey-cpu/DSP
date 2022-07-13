@@ -1,7 +1,6 @@
 GitHub_access_token.txt
 doc/html
 doc/latex
-logs/
-matlab/
-builds/
+logs/txt/
+builds/DSP_TemplateToolBox_Library/
 projects/DSP_TemplateToolBox_Library/DSP_TemplateToolBox_Library.pro.user
