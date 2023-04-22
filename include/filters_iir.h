@@ -3,7 +3,7 @@
 
 // custom includes
 #include "buffer.h"
-#include "fcomplex.h"
+#include "Complex.h"
 #include "kernel_iir.h"
 using namespace IIR_KERNEL;
 
@@ -181,7 +181,7 @@ public:
      *  \param[F] input frequency, Hz
      *  \details The function computes the filter complex transfer function value for the given frequency
     */
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
+    Complex<__fx64> frequency_response( __fx64 F ) override
     {
         return __freq_resp__(m_FilterData.cfnum, m_FilterData.cfden, m_FilterData.gains, m_FilterData.Nx, m_FilterData.Ny, m_FilterData.N, m_Fs, F );
     }

@@ -56,7 +56,7 @@ int filters_rff_example()
         for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick())
         {
             __type signal = gen.sine( 1, 2*Fn, 0, time ) + 0.2;
-            fcomplex<__type> output = rff( &signal );
+            Complex<__type> output = rff( &signal );
 
             // logginig
             #ifdef WRITE_LOGS
@@ -71,7 +71,7 @@ int filters_rff_example()
 
     for( int i = 0 ; i < Fs / 2 ; i++ )
     {
-        fcomplex<__type> output = rff.frequency_response( (double)i );
+        Complex<__type> output = rff.frequency_response( (double)i );
 
         #ifdef WRITE_LOGS
         pH << __cargf__(output) << "\n";

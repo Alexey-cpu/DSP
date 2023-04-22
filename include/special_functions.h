@@ -8,7 +8,7 @@
 #include "cstring"
 #endif
 
-#include "fcomplex.h"
+#include "Complex.h"
 #include "utils.h"
 
 /*! \defgroup <SPECIAL_MATH_FUNCTIONS> ( Special functions )
@@ -1702,7 +1702,7 @@ interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32
      *          [interpolationForceOrder] parameter and can be between 1..3.
 */
 template<typename __type> void
-fft0( __type *input, fcomplex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 direct, __ix32 interpolationOrder = 1 )
+fft0( __type *input, Complex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 direct, __ix32 interpolationOrder = 1 )
 {
     // initialization
     __fx64 G = direct ? 2.0 / N : 0.5;
@@ -1712,7 +1712,7 @@ fft0( __type *input, fcomplex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 dir
     {
         if( M != N )
         {
-            interpolation<__type, fcomplex<__type> >( input, spectrum, G, M, N, interpolationOrder );
+            interpolation<__type, Complex<__type> >( input, spectrum, G, M, N, interpolationOrder );
         }
         else
         {
@@ -1727,15 +1727,15 @@ fft0( __type *input, fcomplex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 dir
     for(__ix32 L = N; L >= 2 ; L /= 2 )
     {
         __fx64 angle = PI2/L * (direct ? -1.0 : +1.0);
-        fcomplex<__type> Wn( cos(angle), sin(angle) );
+        Complex<__type> Wn( cos(angle), sin(angle) );
         for( __ix32 i = 0; i < N; i += L )
         {
-            fcomplex<__type> *pointer = &spectrum[i];
-            fcomplex<__type> W1(1,0);
+            Complex<__type> *pointer = &spectrum[i];
+            Complex<__type> W1(1,0);
             for( __ix32 j = 0, k = L / 2 ; j < L / 2 ; j++, k++ )
             {
-                fcomplex<__type> S0 = pointer[j] + pointer[k];
-                fcomplex<__type> S1 = pointer[j] - pointer[k];
+                Complex<__type> S0 = pointer[j] + pointer[k];
+                Complex<__type> S1 = pointer[j] - pointer[k];
                 pointer[j] = S0;
                 pointer[k] = S1 * W1;
                 W1 *= Wn;
@@ -1769,7 +1769,7 @@ fft0( __type *input, fcomplex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 dir
     {
         if( M != N )
         {
-            interpolation< fcomplex<__type>, __type  >( spectrum, input, G, N, M, interpolationOrder );
+            interpolation< Complex<__type>, __type  >( spectrum, input, G, N, M, interpolationOrder );
         }
         else
         {
@@ -1797,7 +1797,7 @@ fft0( __type *input, fcomplex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 dir
      *          [interpolationForceOrder] parameter and can be between 1..3.
 */
 template<typename __type> void
-fft1( __type *input, fcomplex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 direct, __ix32 interpolationOrder = 1 )
+fft1( __type *input, Complex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 direct, __ix32 interpolationOrder = 1 )
 {
     // initialization
     __fx64 G = direct ? 2.0 / N : 0.5;
@@ -1807,7 +1807,7 @@ fft1( __type *input, fcomplex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 dir
     {
         if( M != N )
         {
-            interpolation<__type, fcomplex<__type> >( input, spectrum, G, M, N, interpolationOrder );
+            interpolation<__type, Complex<__type> >( input, spectrum, G, M, N, interpolationOrder );
         }
         else
         {
@@ -1840,15 +1840,15 @@ fft1( __type *input, fcomplex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 dir
     for( __ix32 L = 2; L <= N; L<<=1 )
     {
         __fx64 angle = PI2/L * (direct ? -1.0 : +1.0);
-        fcomplex<__type> Wn ( cos(angle), sin(angle) );
+        Complex<__type> Wn ( cos(angle), sin(angle) );
         for ( __ix32 i = 0; i < N; i+=L)
         {
-            fcomplex<__type> W1(1,0);
+            Complex<__type> W1(1,0);
 
             for ( __ix32 j=0 ; j < L / 2 ; j++ )
             {
-                fcomplex<__type> S0 = spectrum[i+j];
-                fcomplex<__type> S1 = spectrum[i+j+L/2] * W1;
+                Complex<__type> S0 = spectrum[i+j];
+                Complex<__type> S1 = spectrum[i+j+L/2] * W1;
                 spectrum[i+j] = S0 + S1;
                 spectrum[i+j+L/2] = S0 - S1;
                 W1 *= Wn;
@@ -1864,7 +1864,7 @@ fft1( __type *input, fcomplex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 dir
     {
         if( M != N )
         {
-            interpolation< fcomplex<__type>, __type  >( spectrum, input, G, N, M, interpolationOrder );
+            interpolation< Complex<__type>, __type  >( spectrum, input, G, N, M, interpolationOrder );
         }
         else
         {

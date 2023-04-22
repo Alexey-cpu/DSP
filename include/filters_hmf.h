@@ -250,7 +250,7 @@ public:
             __type signal = __saturation__(input[i], m_max_value, m_min_value);
 
             // filtering
-            fcomplex<__type> vector = m_rdft[harmonic_num](&signal);
+            Complex<__type> vector = m_rdft[harmonic_num](&signal);
             __fx64 a = __realf__(vector) * __realf__(vector);
             __fx64 b = __imagf__(vector) * __imagf__(vector);
             m_rmean_re(&a);

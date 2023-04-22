@@ -7,7 +7,7 @@ int main()
     //filters_fir_example();
     //complex_numbers_example();
     //filters_rff_example();
-    filtes_hmf_example();
+    //filtes_hmf_example();
     //filters_butt_example();
     //filters_cheb1_example();
     //filters_cheb2_example();

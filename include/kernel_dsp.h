@@ -10,7 +10,7 @@
 
 #include "utils.h"
 #include "buffer.h"
-#include "fcomplex.h"
+#include "Complex.h"
 
 #define DEBUG
 
@@ -117,9 +117,9 @@ namespace DSP_KERNEL
     struct filter_data
     {
         filter_type         type  = lowpass; ///< filter type
-        fcomplex< __fx64 > *poles = nullptr; ///< lowpass normalized analogue prototype complex conjugate poles pairs
-        fcomplex< __fx64 > *zeros = nullptr; ///< lowpass normalized analogue prototype complex conjugate zeros pairs
-        fcomplex< __fx64 > *ratio = nullptr; ///< lowpass normalized analogue prototype zero frequency gains vector
+        Complex< __fx64 > *poles = nullptr; ///< lowpass normalized analogue prototype complex conjugate poles pairs
+        Complex< __fx64 > *zeros = nullptr; ///< lowpass normalized analogue prototype complex conjugate zeros pairs
+        Complex< __fx64 > *ratio = nullptr; ///< lowpass normalized analogue prototype zero frequency gains vector
         __type *cfnum             = nullptr; ///< filter numerator quadratic sections coefficients matrix
         __type *cfden             = nullptr; ///< filter denominator quadratic sections coefficients matrix
         __type *gains             = nullptr; ///< filter quadratic sections gains vector
@@ -220,7 +220,7 @@ namespace DSP_KERNEL
          *           and return the complex transfer function value
          *           for the given frequency F
         */
-        virtual fcomplex<__fx64> frequency_response( __fx64 F ) = 0;
+        virtual Complex<__fx64> frequency_response( __fx64 F ) = 0;
     };
 
     /*!
@@ -332,7 +332,7 @@ namespace DSP_KERNEL
             // overwrite zeros
             if( data.zeros )
             {
-                matrix.zeros = __alloc__< fcomplex<__fx64> >( data.N );
+                matrix.zeros = __alloc__< Complex<__fx64> >( data.N );
 
                 for( __ix32 j = 0 ; j < data.N ; j++ )
                 {
@@ -343,7 +343,7 @@ namespace DSP_KERNEL
             // overwrite poles
             if( data.zeros )
             {
-                matrix.poles = __alloc__< fcomplex<__fx64> >( data.N );
+                matrix.poles = __alloc__< Complex<__fx64> >( data.N );
 
                 for( __ix32 j = 0 ; j < data.N ; j++ )
                 {
@@ -354,7 +354,7 @@ namespace DSP_KERNEL
             // overwrite ratios
             if( data.ratio )
             {
-                matrix.ratio = __alloc__< fcomplex<__fx64> >( data.N );
+                matrix.ratio = __alloc__< Complex<__fx64> >( data.N );
 
                 for( __ix32 j = 0 ; j < data.N ; j++ )
                 {

@@ -154,7 +154,7 @@ class transfer_function : public model_base
      *  \param[F] input frequency, Hz
      *  \details The function computes the filter complex transfer function value for the given frequency
     */
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
+    Complex<__fx64> frequency_response( __fx64 F ) override
     {
         return __freq_resp__( &((__type*)m_Wz.item0[0])[0], &((__type*)m_Wz.item0[1])[0], &m_Gain, m_Wz.item2, m_Wz.item2, 1, m_Fs, F );
     }
@@ -283,7 +283,7 @@ public:
      *  \param[F] input frequency, Hz
      *  \details The function computes the filter complex transfer function value for the given frequency
     */
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
+    Complex<__fx64> frequency_response( __fx64 F ) override
     {
         return m_transfer_function.frequency_response(F);
     }
@@ -362,7 +362,7 @@ public:
      *  \param[F] input frequency, Hz
      *  \details The function computes the filter complex transfer function value for the given frequency
     */
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
+    Complex<__fx64> frequency_response( __fx64 F ) override
     {
         return m_transfer_function.frequency_response(F);
     }
@@ -440,7 +440,7 @@ public:
      *  \param[F] input frequency, Hz
      *  \details The function computes the filter complex transfer function value for the given frequency
     */
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
+    Complex<__fx64> frequency_response( __fx64 F ) override
     {
         return m_transfer_function.frequency_response(F);
     }
@@ -519,7 +519,7 @@ public:
      *  \param[F] input frequency, Hz
      *  \details The function computes the filter complex transfer function value for the given frequency
     */
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
+    Complex<__fx64> frequency_response( __fx64 F ) override
     {
         return m_transfer_function.frequency_response(F);
     }
@@ -665,7 +665,7 @@ public:
      *  \param[F] input frequency, Hz
      *  \details The function computes the filter complex transfer function value for the given frequency
     */
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
+    Complex<__fx64> frequency_response( __fx64 F ) override
     {
         return m_transfer_function.frequency_response(F);
     }

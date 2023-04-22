@@ -75,15 +75,15 @@ protected:
     __fx64           m_Gain;      ///< recursive Fourier filter gain
     __fx64           m_hnum;      ///< recursive Fourier harmonic number
     __fx64           m_Fn;        ///< recursive Fourier reference signal frequency, Hz
-    fcomplex<__fx64> m_rot;       ///< recursive Fourier rotation coefficient
-    fcomplex<__fx64> m_out;       ///< recursive Fourier rotation output
+    Complex<__fx64> m_rot;       ///< recursive Fourier rotation coefficient
+    Complex<__fx64> m_out;       ///< recursive Fourier rotation output
     delay<__type>    m_buffer_sx; ///< recursive Fourier rotation delay buffer
 
     /*!
      *  \brief Filtering function
      *  \param[input] input signal sample pointer
     */
-    template< typename T > inline fcomplex<__type>
+    template< typename T > inline Complex<__type>
     filt ( T *_input )
     {
         m_buffer_sx( _input );
@@ -93,7 +93,7 @@ protected:
    public:
 
     /*!  \brief returns the filter output */
-    fcomplex<__type> vector()
+    Complex<__type> vector()
     {
         return m_out;
     }
@@ -153,11 +153,11 @@ protected:
       *  \param[F] input frequency, Hz
       *  \returns The function returns the fiter transfer function complex value for the given frequency
      */
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
+    Complex<__fx64> frequency_response( __fx64 F ) override
     {
-        fcomplex<__fx64> num = fcomplex<__fx64>(1,0) - fcomplex<__fx64>( cos( -PI2 * F * m_order * m_Ts ) , sin( -PI2 * F * m_order * m_Ts ) );
-        fcomplex<__fx64> den = fcomplex<__fx64>(1,0) - fcomplex<__fx64>( cos( -PI2 * F * m_Ts ) , sin( -PI2 * F * m_Ts ) ) * m_rot;
-        fcomplex<__fx64> Wz = num / den / (__fx64)m_order;
+        Complex<__fx64> num = Complex<__fx64>(1,0) - Complex<__fx64>( cos( -PI2 * F * m_order * m_Ts ) , sin( -PI2 * F * m_order * m_Ts ) );
+        Complex<__fx64> den = Complex<__fx64>(1,0) - Complex<__fx64>( cos( -PI2 * F * m_Ts ) , sin( -PI2 * F * m_Ts ) ) * m_rot;
+        Complex<__fx64> Wz = num / den / (__fx64)m_order;
         return Wz;
     }
 
@@ -165,7 +165,7 @@ protected:
      *  \brief filtering operator
      *  \details The operator supposes to invoke filtering function
     */
-    inline virtual fcomplex<__type> operator ()(__type  *input ) = 0;
+    inline virtual Complex<__type> operator ()(__type  *input ) = 0;
 };
 
 /*! @} */
@@ -206,9 +206,9 @@ public:
     }
 
     // operators
-    inline fcomplex<__type> operator ()(__type  *input ) override { return filt<__type> ( input ); }
-    inline fcomplex<__type> operator ()(__fx64  *input ){ return filt<__fx64> ( input ); }
-    inline fcomplex<__type> operator ()(__fxx64 *input ){ return filt<__fxx64>( input ); }
+    inline Complex<__type> operator ()(__type  *input ) override { return filt<__type> ( input ); }
+    inline Complex<__type> operator ()(__fx64  *input ){ return filt<__fx64> ( input ); }
+    inline Complex<__type> operator ()(__fxx64 *input ){ return filt<__fxx64>( input ); }
 };
 
 template<> class recursive_fourier<__fx64> final : public recursive_fourier_abstract<__fx64>
@@ -239,8 +239,8 @@ public:
     }
 
     // operators
-    inline fcomplex<__type> operator ()(__type  *input ) override { return filt<__type> ( input ); }
-    inline fcomplex<__type> operator ()(__fxx64 *input ){ return filt<__fxx64>( input ); }
+    inline Complex<__type> operator ()(__type  *input ) override { return filt<__type> ( input ); }
+    inline Complex<__type> operator ()(__fxx64 *input ){ return filt<__fxx64>( input ); }
 };
 
 /*! @} */

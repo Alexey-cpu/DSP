@@ -10,7 +10,7 @@ int fft_example()
     int N = 128;
     int M = 80;
     double *sine = __alloc__<double>(M);
-    fcomplex<double> *spectrum0 = __alloc__< fcomplex<double> >(N);
+    Complex<double> *spectrum0 = __alloc__< Complex<double> >(N);
 
 
     // logs directory:
