@@ -116,19 +116,19 @@ namespace DSP_KERNEL
     template<typename __type>
     struct filter_data
     {
-        filter_type         type  = lowpass; ///< filter type
+        filter_type         type = lowpass; ///< filter type
         Complex< __fx64 > *poles = nullptr; ///< lowpass normalized analogue prototype complex conjugate poles pairs
         Complex< __fx64 > *zeros = nullptr; ///< lowpass normalized analogue prototype complex conjugate zeros pairs
         Complex< __fx64 > *ratio = nullptr; ///< lowpass normalized analogue prototype zero frequency gains vector
-        __type *cfnum             = nullptr; ///< filter numerator quadratic sections coefficients matrix
-        __type *cfden             = nullptr; ///< filter denominator quadratic sections coefficients matrix
-        __type *gains             = nullptr; ///< filter quadratic sections gains vector
-        __ix32 L                  = -1;      ///< filter complex conjugate poles/zeros pairs number
-        __ix32 R                  = -1;      ///< filter real odd pole existance flag
-        __ix32 N                  = -1;      ///< filter quadratic sections number
-        __ix32 Nx                 = -1;      ///< single section numerator order
-        __ix32 Ny                 = -1;      ///< single section denominator order
-        __ix32 order              = -1;      ///< filter order
+        __type *cfnum            = nullptr; ///< filter numerator quadratic sections coefficients matrix
+        __type *cfden            = nullptr; ///< filter denominator quadratic sections coefficients matrix
+        __type *gains            = nullptr; ///< filter quadratic sections gains vector
+        __ix32 L                 = -1;      ///< filter complex conjugate poles/zeros pairs number
+        __ix32 R                 = -1;      ///< filter real odd pole existance flag
+        __ix32 N                 = -1;      ///< filter quadratic sections number
+        __ix32 Nx                = -1;      ///< single section numerator order
+        __ix32 Ny                = -1;      ///< single section denominator order
+        __ix32 order             = -1;      ///< filter order
     };
 
     /*!

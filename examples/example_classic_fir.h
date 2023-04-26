@@ -43,11 +43,11 @@ int filters_fir_example()
     time_provider.init(Fs);
 
     // filter initialization
-    window_function window;
+    WindowFunction window;
     window.Hamming(80);
 
     // filter initialization
-    fir<__type> filter;
+    FirFilter<__type> filter;
     filter.init(Fs, filter_type::lowpass, {50, 500}, window, 1);
 
     // emulation

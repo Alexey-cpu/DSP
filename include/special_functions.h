@@ -1581,21 +1581,20 @@ interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32
         for( __ix32 i = 0 ; i < N ; i++ )
         {
             // time stamps
-            __fx64 t  = (i+0)*dN;
-            __fx64 t0 = t;
+            __fx64 t0 = (i+0)*dN;
             __fx64 t1 = (i+1)*dN;
+            __fx64 t  = (i+0.5)*dN;
 
             // indexes
             __ix32 idx0 = (__ix32)t0;
             __ix32 idx1 = (__ix32)ceil(t1);
 
             // samples
-            __InputType y0 = input[ idx0 ];
-            __InputType y1 = input[ idx1 ];
+            __InputType y0 = idx0 >= M ? input[ M - 1 ] : input[ idx0 ];
+            __InputType y1 = idx1 >= M ? input[ M - 1 ] : input[ idx1 ];
 
             // result
-            output[i] = (__OutputType)( y0 + ( y1 - y0 ) * ( t - t0 ) / ( t1 - t0 ) );
-            output[i] *= (__OutputType)Gain;
+            output[i] = (__OutputType)( y0 + ( y1 - y0 ) * ( t - t0 ) / ( t1 - t0 ) ) * (__OutputType)Gain;
         }
     }
     else if( order == 2 ) // quadratic interpolation
@@ -1603,10 +1602,10 @@ interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32
         for( __ix32 i = 0 ; i < N ; i++ )
         {
             // time stamps
-            __fx64 t  = (i+0)*dN;
-            __fx64 t0 = t;
+            __fx64 t0 = (i+0)*dN;
             __fx64 t1 = (i+1)*dN;
             __fx64 t2 = (i+2)*dN;
+            __fx64 t  = (i+1.5)*dN;
 
             // indexes
             __ix32 idx0 = (__ix32)t0;
@@ -1614,9 +1613,9 @@ interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32
             __ix32 idx2 = (__ix32)ceil(t2);
 
             // samples
-            __InputType y0 = input[ idx0 ];
-            __InputType y1 = input[ idx1 ];
-            __InputType y2 = input[ idx2 ];
+            __InputType y0 = idx0 >= M ? input[ M - 1 ] : input[ idx0 ];
+            __InputType y1 = idx1 >= M ? input[ M - 1 ] : input[ idx1 ];
+            __InputType y2 = idx2 >= M ? input[ M - 1 ] : input[ idx2 ];
 
             // interpolation coefficients
             /*
@@ -1634,8 +1633,7 @@ interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32
             __fx64 k2 = b * c / ( t2 - t0 ) / ( t2 - t1 );
 
             // result
-            output[i] = (__OutputType)(y0 * k0 + y1 * k1 + y2 * k2);
-            output[i] *= (__OutputType)Gain;
+            output[i] = (__OutputType)(y0 * k0 + y1 * k1 + y2 * k2) * (__OutputType)Gain;
         }
     }
     else if( order == 3 ) // cubic interpolation
@@ -1643,11 +1641,11 @@ interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32
         for( __ix32 i = 0 ; i < N ; i++ )
         {
             // time stamps
-            __fx64 t  = (i)*dN;
-            __fx64 t0 = t;
+            __fx64 t0 = (i+0)*dN;
             __fx64 t1 = (i+1)*dN;
             __fx64 t2 = (i+2)*dN;
             __fx64 t3 = (i+3)*dN;
+            __fx64 t  = (i+1.5)*dN;
 
             // indexes
             __ix32 idx0 = (__ix32)t0;
@@ -1656,10 +1654,10 @@ interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32
             __ix32 idx3 = (__ix32)ceil(t3);
 
             // samples
-            __InputType y0 = input[ idx0 ];
-            __InputType y1 = input[ idx1 ];
-            __InputType y2 = input[ idx2 ];
-            __InputType y3 = input[ idx3 ];
+            __InputType y0 = idx0 >= M ? input[ M - 1 ] : input[ idx0 ];
+            __InputType y1 = idx1 >= M ? input[ M - 1 ] : input[ idx1 ];
+            __InputType y2 = idx2 >= M ? input[ M - 1 ] : input[ idx2 ];
+            __InputType y3 = idx3 >= M ? input[ M - 1 ] : input[ idx3 ];
 
             // interpolation coefficients
             /*
@@ -1680,10 +1678,11 @@ interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32
             __fx64 k3 = a * b * c / ( t3 - t0 ) / ( t3 - t1 ) / ( t3 - t2 );
 
             // result
-            output[i] = (__OutputType)(y0 * k0 + y1 * k1 + y2 * k2 + y3 * k3);
-            output[i] *= (__OutputType)Gain;
+            output[i] = (__OutputType)(y0 * k0 + y1 * k1 + y2 * k2 + y3 * k3) * (__OutputType)Gain;
         }
     }
+
+    output[N-1] = (__OutputType)input[M-1];
 }
 
 /*!

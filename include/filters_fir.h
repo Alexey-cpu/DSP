@@ -51,20 +51,20 @@ using namespace FIR_KERNEL;
  *  \class window_function
  *  \brief Defines window functions high level shell
 */
-class window_function
+class WindowFunction
 {
     __ix32  m_order  = 80;
     __fx64 *m_window = nullptr;
 public:
 
     /*! \brief returns window function coefficients vector */
-    __fx64 *WindowFunction()
+    __fx64 *get_window_function()
     {
         return m_window;
     }
 
      /*! \brief returns window order */
-    __ix32 Order()
+    __ix32 get_order()
     {
         return m_order;
     }
@@ -313,7 +313,7 @@ public:
         m_window = __Tukey__(R, order);
     }
 
-    void copy(const window_function& window)
+    void copy(const WindowFunction& window)
     {
         m_order  = window.m_order;
         m_window = __mfree__(m_window);
@@ -325,24 +325,24 @@ public:
     }
 
     /*! \brief default constructor */
-    window_function(){}
+    WindowFunction(){}
 
     /*!
      *  \brief copy constructor
      *  \param[window] input window function
     */
-    window_function(const window_function& window)
+    WindowFunction(const WindowFunction& window)
     {
         copy(window);
     }
 
     /*! \brief default destructor */
-    ~window_function()
+    ~WindowFunction()
     {
         m_window = __mfree__(m_window);
     }
 
-    inline void operator = ( window_function& window)
+    inline void operator = ( WindowFunction& window)
     {
         copy(window);
     }
@@ -358,7 +358,7 @@ public:
 
 /*!  \brief defines the base of the FIR filters */
 template< typename __type >
-class fir_base : public  model_base, classic_filter_interface
+class FirFilter : public  model_base, classic_filter_interface
 {
 private:
     /*!
@@ -399,7 +399,7 @@ protected:
 
     filter_type         m_FilterType;
     filter_data<__type> m_FilterData;
-    window_function     m_WindowFunction;
+    WindowFunction     m_WindowFunction;
     bandwidth           m_Bandwidth;
     __ix32              m_Scale;
     delay<__type>       m_buff_sx;
@@ -415,26 +415,26 @@ public:
      *   \param[Scale] scale ot not to scale the filter coefficients
      *   \details The function is supposed to be called explicitly by the user before the filter resources are allocated
     */
-    void init( __fx64 Fs, filter_type FilterType, bandwidth Bandwidth, window_function& WindowFunction, __ix32 Scale )
+    void init( __fx64 Fs, filter_type FilterType, bandwidth Bandwidth, WindowFunction& WindowFunction, __ix32 Scale )
     {
         m_FilterType     = FilterType;
         m_Bandwidth      = Bandwidth;
         m_Scale          = Scale;
         m_WindowFunction = WindowFunction;
-        model_base::init(WindowFunction.Order(), Fs);
+        model_base::init(WindowFunction.get_order(), Fs);
 
         // allocation
         allocate();
     }
 
     /*! \brief default destructor */
-    virtual ~fir_base()
+    virtual ~FirFilter()
     {
         deallocate();
     }
 
     /*! \brief default constructor */
-    fir_base() : model_base()
+    FirFilter() : model_base()
     {
         m_FilterType   = filter_type::lowpass;
         m_Bandwidth    = { 100 , 500 };
@@ -455,21 +455,49 @@ public:
      *  \param[input] input samples pointer
      *  \details The operator is supposed to be used to fill the FIR filter buffer
     */
-    virtual inline void operator <<  ( __type *input ) = 0;
+    virtual inline void operator <<  ( __type *_input )
+    {
+        m_buff_sx( _input );
+    }
 
     /*!
      *  \brief FIR filter filtering operator
      *  \param[input] input samples pointer
      *  \details The operator is supposed to be used to filt the input signal
     */
-    virtual inline __type operator() ( __type *input ) = 0;
+    inline __type operator() ( __type* _input )
+    {
+        return __filt__< __type, __type >( _input, m_FilterData.cfnum, m_buff_sx, m_FilterData.N );
+    }
 
     /*!
      *  \brief FIR filter filtering operator
      *  \details The operator is supposed to be used to filt the input signal right after the FIR filter buffer is filled.
     */
-    virtual inline __type operator() () = 0;
+    inline __type operator() ()
+    {
+        return __filt__ < __type > ( m_FilterData.cfnum , m_buff_sx , m_FilterData.N );
+    }
 
+    virtual filter_data< __fx64 > compute_lowpass () override
+    {
+        return __fir_wind_digital_lp__<__fx64>( m_Fs , m_Bandwidth.Fc , m_order , m_Scale , m_WindowFunction.get_window_function() );
+    }
+
+    virtual filter_data< __fx64 > compute_highpass() override
+    {
+        return __fir_wind_digital_hp__<__fx64>( m_Fs , m_Bandwidth.Fc , m_order , m_Scale , m_WindowFunction.get_window_function() );
+    }
+
+    virtual filter_data< __fx64 > compute_bandpass() override
+    {
+        return __fir_wind_digital_bp__<__fx64>( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , m_Scale , m_WindowFunction.get_window_function() );
+    }
+
+    virtual filter_data< __fx64 > compute_bandstop() override
+    {
+        return __fir_wind_digital_bs__<__fx64>( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , m_Scale , m_WindowFunction.get_window_function() );
+    }
 
     #ifndef __ALG_PLATFORM
         void show()
@@ -477,72 +505,6 @@ public:
             __show_fir__( m_FilterData );
         }
     #endif
-};
-
-/*! @} */
-
-/*! \defgroup <CLASSIC_FIR_FILTER_IMPLEMENTATION> ( Classic FIR filter model implementation )
- *  \ingroup CLASSIC_FIR_FILTERS
- *  \brief the module contains the FIR filter model implementation
-    @{
-*/
-
-template<typename __type> class fir;
-
-template<> class fir< __fx32 > final : public fir_base< __fx32 >
-{
-    typedef __fx32 __type;
-
-    filter_data< __fx64 > compute_lowpass () override { return __fir_wind_digital_lp__<__fx64>( m_Fs , m_Bandwidth.Fc , m_order , m_Scale , m_WindowFunction.WindowFunction() ); }
-    filter_data< __fx64 > compute_highpass() override { return __fir_wind_digital_hp__<__fx64>( m_Fs , m_Bandwidth.Fc , m_order , m_Scale , m_WindowFunction.WindowFunction() ); }
-    filter_data< __fx64 > compute_bandpass() override { return __fir_wind_digital_bp__<__fx64>( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , m_Scale , m_WindowFunction.WindowFunction() ); }
-    filter_data< __fx64 > compute_bandstop() override { return __fir_wind_digital_bs__<__fx64>( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , m_Scale , m_WindowFunction.WindowFunction() ); }
-
-public:
-
-    // default constructor
-    fir() : fir_base< __type >(){}
-
-    // default destructor
-    ~fir(){}
-
-    // fir filtering operator
-    inline __type operator()( __type*  _input ) override { return __filt__< __type , __type >( _input, m_FilterData.cfnum, m_buff_sx, m_FilterData.N ); }
-    inline __type operator()( __fx64*  _input ) { return __filt__< __fx64  , __type >( _input, m_FilterData.cfnum, m_buff_sx, m_FilterData.N ); }
-    inline __type operator()( __fxx64* _input ) { return __filt__< __fxx64 , __type >( _input, m_FilterData.cfnum, m_buff_sx, m_FilterData.N ); }
-    inline __type operator()() override { return __filt__ < __type > ( m_FilterData.cfnum , m_buff_sx , m_FilterData.N ); }
-
-    // fir buffer filling operator
-    inline void operator << ( __type*  _input ) override { m_buff_sx(_input ); }
-    inline void operator << ( __fx64*  _input ) { m_buff_sx(_input ); }
-    inline void operator << ( __fxx64* _input ) { m_buff_sx(_input ); }
-};
-
-template<> class fir< __fx64 > final : public fir_base< __fx64 >
-{
-    typedef __fx64 __type;
-
-    filter_data< __fx64 > compute_lowpass () override { return __fir_wind_digital_lp__<__fx64>( m_Fs , m_Bandwidth.Fc , m_order , m_Scale , m_WindowFunction.WindowFunction() ); }
-    filter_data< __fx64 > compute_highpass() override { return __fir_wind_digital_hp__<__fx64>( m_Fs , m_Bandwidth.Fc , m_order , m_Scale , m_WindowFunction.WindowFunction() ); }
-    filter_data< __fx64 > compute_bandpass() override { return __fir_wind_digital_bp__<__fx64>( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , m_Scale , m_WindowFunction.WindowFunction() ); }
-    filter_data< __fx64 > compute_bandstop() override { return __fir_wind_digital_bs__<__fx64>( m_Fs , m_Bandwidth.Fc , m_Bandwidth.BW , m_order , m_Scale , m_WindowFunction.WindowFunction() ); }
-
-public:
-
-    // default constructor
-    fir() : fir_base< __type >(){}
-
-    // default destructor
-    ~fir(){}
-
-    // fir filtering operator
-    inline __type operator()( __type*  _input ) override { return __filt__< __type , __type >( _input, m_FilterData.cfnum, m_buff_sx, m_FilterData.N ); }
-    inline __type operator()( __fxx64* _input ) { return __filt__< __fxx64 , __type >( _input, m_FilterData.cfnum, m_buff_sx, m_FilterData.N ); }
-    inline __type operator()() override { return __filt__ < __type > ( m_FilterData.cfnum , m_buff_sx , m_FilterData.N ); }
-
-    // fir buffer filling operator
-    inline void operator << ( __type*  _input ) override { m_buff_sx(_input ); }
-    inline void operator << ( __fxx64* _input ) { m_buff_sx(_input ); }
 };
 
 /*! @} */

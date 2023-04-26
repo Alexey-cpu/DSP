@@ -50,7 +50,7 @@
 */
 
 template<typename __type>
-class harmonic_filter
+class harmonic_filter final
 {
 
 private:

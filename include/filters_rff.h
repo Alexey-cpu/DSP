@@ -72,12 +72,12 @@ private:
 protected:
 
     // system fields
-    __fx64           m_Gain;      ///< recursive Fourier filter gain
-    __fx64           m_hnum;      ///< recursive Fourier harmonic number
-    __fx64           m_Fn;        ///< recursive Fourier reference signal frequency, Hz
+    __fx64          m_Gain;      ///< recursive Fourier filter gain
+    __fx64          m_hnum;      ///< recursive Fourier harmonic number
+    __fx64          m_Fn;        ///< recursive Fourier reference signal frequency, Hz
     Complex<__fx64> m_rot;       ///< recursive Fourier rotation coefficient
     Complex<__fx64> m_out;       ///< recursive Fourier rotation output
-    delay<__type>    m_buffer_sx; ///< recursive Fourier rotation delay buffer
+    delay<__type>   m_buffer_sx; ///< recursive Fourier rotation delay buffer
 
     /*!
      *  \brief Filtering function

@@ -50,7 +50,8 @@ using namespace IIR_KERNEL;
     @{
 */
 
-template<typename __type> class iir_base : public model_base, public classic_filter_interface
+template<typename __type>
+class iir_base : public model_base, public classic_filter_interface
 {
 private:
 
