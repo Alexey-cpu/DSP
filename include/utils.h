@@ -1,10 +1,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+// some special target platform features
 #ifndef __ALG_PLATFORM
 
-// include malloc file if it presents
-// ( basically, needed by Windows )
 #ifdef _MALLOC_H
 #include "malloc.h"
 #endif
@@ -15,21 +14,20 @@
 
 #include "QElapsedTimer"
 #include <fstream>
+#include <algorithm>
+#include <random>
 #include "iostream"
 #include "cmath"
 #include "vector"
 #include "list"
 #include "map"
+#include <limits.h>
+#include <float.h>
 using namespace std;
 
 #endif
 
-/*! \defgroup <UTILITY> ( Utility functions and classes )
- *  \brief the module collaborates all the utility classes and functions
-    @{
-*/
-
-// data types:
+// define custom types
 #ifndef __fx32
 #define __fx32 float
 #endif
@@ -66,16 +64,33 @@ using namespace std;
 #define __uix64 unsigned long long
 #endif
 
-// utility macros
-#define __STRINGIFY__(INPUT) #INPUT
+#ifndef __TO_DEGREES_CONVERSION_MULTIPLYER__
+#define __TO_DEGREES_CONVERSION_MULTIPLYER__ 57.295779513082320876798154814105
+#endif
 
-// utilities:
+#ifndef __TO_RADIANS_CONVERSION_MULTIPLYER__
+#define __TO_RADIANS_CONVERSION_MULTIPLYER__ 0.01745329251994329576923690768489
+#endif
+
+#ifndef STRINGIFY
+#define STRINGIFY(INPUT) #INPUT
+#endif
+
+#ifndef CAT
+#define CAT(X,Y) X##_##Y
+#endif
+
+/*! \defgroup <UTILITY> ( Utility functions and classes )
+ *  \brief the module collaborates all the utility classes and functions
+    @{
+*/
 
 /*!
     \struct vector2D
  *  \brief 2D vector
 */
-template< typename __type > struct vector2D
+template< typename __type >
+struct vector2D
 {
     __type x; ///< x coordinate
     __type y; ///< y coordinate
@@ -85,7 +100,8 @@ template< typename __type > struct vector2D
     \struct vector3D
  *  \brief 3D vector
 */
-template< typename __type > struct vector3D
+template< typename __type >
+struct vector3D
 {
     __type x; ///< x coordinate
     __type y; ///< y coordinate
@@ -101,10 +117,6 @@ struct tuple_x2
 {
     a item0;
     b item1;
-
-    tuple_x2(){}
-    tuple_x2( a item0, b item1 ) :
-    item0(item0), item1(item1){}
 };
 
 /*!
@@ -117,10 +129,6 @@ struct tuple_x3
     a item0;
     b item1;
     c item2;
-
-    tuple_x3(){}
-    tuple_x3( a item0, b item1, c item2 ) :
-    item0(item0), item1(item1), item2(item2){}
 };
 
 /*!
@@ -134,10 +142,6 @@ struct tuple_x4
     b item1;
     c item2;
     d item3;
-
-    tuple_x4(){}
-    tuple_x4( a item0, b item1, c item2, d item3 ) :
-    item0(item0), item1(item1), item2(item2), item3(item3){}
 };
 
 /*!
@@ -152,10 +156,6 @@ struct tuple_x5
     c item2;
     d item3;
     e item4;
-
-    tuple_x5(){}
-    tuple_x5( a item0, b item1, c item2, d item3 , e item4 ) :
-    item0(item0), item1(item1), item2(item2), item3(item3), item4(item4){}
 };
 
 /*!
@@ -171,10 +171,6 @@ struct tuple_x6
     d item3;
     e item4;
     f item5;
-
-    tuple_x6(){}
-    tuple_x6( a item0, b item1, c item2, d item3, e item4, f item5 ) :
-    item0(item0), item1(item1), item2(item2), item3(item3), item4(item4), item5(item5){}
 };
 
 /*!
@@ -191,10 +187,6 @@ struct tuple_x7
     e item4;
     f item5;
     g item6;
-
-    tuple_x7(){}
-    tuple_x7( a item0, b item1, c item2, d item3, e item4, f item5, g item6 ) :
-    item0(item0), item1(item1), item2(item2), item3(item3), item4(item4), item5(item5), item6(item6){}
 };
 
 /*!
@@ -212,10 +204,6 @@ struct tuple_x8
     f item5;
     g item6;
     h item7;
-
-    tuple_x8(){}
-    tuple_x8( a item0, b item1, c item2, d item3, e item4, f item5, g item6, h item7 ) :
-    item0(item0), item1(item1), item2(item2), item3(item3), item4(item4), item5(item5), item6(item6), item7(item7){}
 };
 
 #ifdef _GLIBCXX_NUMERIC_LIMITS
@@ -447,21 +435,52 @@ template< typename __type > inline __type __min__ ( __type a , __type b , __type
  *  \param[input] input array
  *  \param[N] input array size
 */
-template< typename __type > inline __type __min__( __type *input , __ix32 N )
+template< typename __type >
+inline __type __min__( const __type *input, __ix32 N )
 {
-    __type vmin = input[0];
+    __ix32 imin = 0;
+    __type vmin = input[imin];
     for( __ix32 i = 1 ; i < N; i++ )
     {
-        if( input[i] < vmin ) vmin = input[i];
+        if( input[i] < vmin )
+        {
+            vmin = input[i];
+            imin = i;
+        }
     }
+
     return vmin;
+}
+
+/*!
+ *  \brief looks the minimum within the input array
+ *  \param[input] input array
+ *  \param[N] input array size
+*/
+template< typename __type > inline tuple_x2<__type, __ix32>
+__min__( tuple_x2<__type*, __ix32> vector )
+{
+    __type *input = vector.item0;
+    __ix32  imin = 0;
+    __type  vmin = input[imin];
+    for( __ix32 i = 1 ; i < vector.item1; i++ )
+    {
+        if( input[i] < vmin )
+        {
+            vmin = input[i];
+            imin = i;
+        }
+    }
+
+    return { vmin, imin };
 }
 
 /*!
  *  \brief returns an absolete value of an input
  *  \param[a] input
 */
-template< typename __type > inline __type __abs__ ( __type a )
+template< typename __type >
+inline __type __abs__ ( __type a )
 {
     return ( a < 0 ) ? -a : a;
 }
@@ -471,7 +490,8 @@ template< typename __type > inline __type __abs__ ( __type a )
  *  \param[a] a value
  *  \param[b] b value
 */
-template< typename __type > inline __type __sign__( __type a , __type b )
+template< typename __type >
+inline __type __sign__( __type a , __type b )
 {
     return a * ( ( b > 0 ) ? (__type)1 : -(__type)1 );
 }
@@ -489,10 +509,28 @@ template< typename __type > inline void __swap__( __type &a , __type &b )
 }
 
 /*!
+ *  \brief converts input angle to degrees
+ *  \param[angle] input angle
+*/
+inline __fx64 __to_degrees__(__fx64 angle)
+{
+    return angle * __TO_DEGREES_CONVERSION_MULTIPLYER__;
+}
+
+/*!
+ *  \brief converts input angle to radians
+ *  \param[angle] input angle
+*/
+inline __fx64 __to_radians__(__fx64 angle)
+{
+    return angle * __TO_RADIANS_CONVERSION_MULTIPLYER__;
+}
+
+/*!
  *  \brief returns -(a+1) i.e flips the sign and value of a number
  *  \param[a] a values
 */
-__ix32 __flip__(__ix32 a)
+inline __ix32 __flip__(__ix32 a)
 {
     return (a >= 0) ? ~a : a;
 }
@@ -501,7 +539,7 @@ __ix32 __flip__(__ix32 a)
  *  \brief returns -(a+1) of the flipped value i.e. flops the number
  *  \param[a] a values
 */
-__ix32 __flop__(__ix32 a)
+inline __ix32 __flop__(__ix32 a)
 {
     return a < 0 ? ~a : a;
 }
@@ -515,7 +553,8 @@ __ix32 __flop__(__ix32 a)
  *           If the input value is above upper limit - the upper limit is returned.
  *           If the input value is below lower limit - the lower limit is returned.
 */
-template<typename __type> __type __saturation__(__type input, __type UpperLimit, __type LowerLimit)
+template<typename __type> __type
+__saturation__(__type input, __type UpperLimit, __type LowerLimit)
 {
     if( input > UpperLimit )
     {
@@ -530,6 +569,17 @@ template<typename __type> __type __saturation__(__type input, __type UpperLimit,
     return input;
 }
 
+template<typename __type> void
+__cumulative_summ__( __type *input, __ix32 size )
+{
+    for( __ix32 i = 0, j = 0, k = 0 ; i < size ; i++ )
+    {
+        k += input[i];
+        input[i] = j;
+        j = k;
+    }
+}
+
 /*!
  *  \brief bit set function
  *  \param[bitMask] input bit mask
@@ -537,12 +587,10 @@ template<typename __type> __type __saturation__(__type input, __type UpperLimit,
  *  \details The function sets the given bit of an input number
 */
 template<typename __type>
-void __set_bit__(__type &bitMask, __ix32 bit )
+void __set_bit__(__type &_Mask, size_t _Bit )
 {
-    if(bit < sizeof (bitMask)*8 )
-    {
-        bitMask |= (1 << bit);
-    }
+    if( _Bit < sizeof (_Mask) * 8UL )
+        _Mask |= 1UL << _Bit;
 }
 
 /*!
@@ -552,12 +600,10 @@ void __set_bit__(__type &bitMask, __ix32 bit )
  *  \details The function resets the given bit of an input number
 */
 template<typename __type>
-void __reset_bit__(__type &bitMask, __ix32 bit )
+void __reset_bit__(__type &_Mask, size_t _N )
 {
-    if(bit < sizeof (bitMask)*8 )
-    {
-        bitMask &= ~(1 << bit);
-    }
+    if( _N < sizeof( _Mask ) * 8UL )
+        _Mask &= ~(1UL << _N);
 }
 
 /*!
@@ -566,15 +612,9 @@ void __reset_bit__(__type &bitMask, __ix32 bit )
  *  \param[bit] bit number
  *  \details The function returns the given bit value of an input number
 */
-template<typename __type>
-__type __get_bit__(__type &bitMask, __ix32 bit )
+inline char __get_bit__(size_t &_Mask, size_t _N )
 {
-    __type result = 0;
-    if(bit < sizeof (bitMask)*8 )
-    {
-        result = bitMask & (1 << bit);
-    }
-    return result;
+    return _N < sizeof (_Mask) * 8UL ? ( _Mask >> _N ) & 1UL : 0UL;
 }
 
 /*!
@@ -655,12 +695,12 @@ __alloc__(__ix32 size, __type value)
  *           object. Use new operator instead.
 */
 template< typename __type > inline __type*
-__alloc__( __ix32 size, void (*initializer)(__type *memory, __ix32 size) )
+__alloc__( __ix32 size, void (*__initializer__)(__type *memory, __ix32 size) )
 {
     if(size <= 0) return nullptr;
     __type *memory = (__type*)calloc( size, sizeof(__type) );
-    if(initializer && memory)
-        initializer(memory, size);
+    if(__initializer__ && memory)
+        __initializer__(memory, size);
     return memory;
 }
 
@@ -702,25 +742,58 @@ __mfree__(__type *memory)
 }
 
 /*!
- *  \brief memory clean function
- *  \param[tuple] two element tuple tuple.item0
- *  \details The function frees memory of *tuple.item0
+ *  \brief tuple based 1D array model memory allocation function
+ *  \param[tuple] input tuple
+ *  \details The function takes by pointer an input tuple and allocates it's memory pointer.
+ *           The function is not safe. Yout MUST guarantee that the input tuple
+ *           is empty or you get memory leak otherwise !!!
+*/
+template< typename __type > void
+__alloc__( tuple_x2< __type*, __ix32 > *tuple, __ix32 n )
+{
+    tuple->item1 = n;
+    tuple->item0 = __alloc__<__type>( tuple->item1 );
+}
+
+/*!
+ *  \brief tuple based 1D array model memory free function
+ *  \param[tuple] input tuple
+ *  \details The function frees input tuple based 1D array memory.
 */
 template< typename __type > inline tuple_x2< __type*, __ix32 >
-__mfree__( tuple_x2< __type*, __ix32 > tuple)
+__mfree__( tuple_x2< __type*, __ix32 > tuple )
 {
     tuple.item0 = __mfree__(tuple.item0);
     tuple.item1 = -1;
     return tuple;
 }
+/*!
+ *  \brief tuple based 2D array model memory allocation function
+ *  \param[tuple] input tuple
+ *  \details The function takes by pointer an input tuple and allocates it's memory pointer.
+ *           The function is not safe. Yout MUST guarantee that the input tuple
+ *           is empty or you get memory leak otherwise !!!
+*/
+template< typename __type > void
+__alloc__( tuple_x3< __type**, __ix32, __ix32 > *tuple, __ix32 m, __ix32 n )
+{
+    tuple->item1 = m;
+    tuple->item2 = n;
+    tuple->item0 = __alloc__<__type*>(m);
+
+    for( __ix32 i = 0 ; i < tuple->item1 ; i++ )
+    {
+        tuple->item0[i] = __alloc__<__type>(n);
+    }
+}
 
 /*!
- *  \brief memory clean function
- *  \param[tuple] three element tuple
- *  \details The function frees memory of **tuple.item0
+ *  \brief tuple based 2D array model memory free function
+ *  \param[tuple] input tuple
+ *  \details The function frees input tuple based 2D array memory.
 */
 template< typename __type > inline tuple_x3< __type**, __ix32, __ix32 >
-__mfree__( tuple_x3< __type**, __ix32, __ix32 > tuple)
+__mfree__( tuple_x3< __type**, __ix32, __ix32 > tuple )
 {
     for(__ix32 i = 0 ; i < tuple.item1 ; i++)
     {
@@ -733,30 +806,432 @@ __mfree__( tuple_x3< __type**, __ix32, __ix32 > tuple)
     return tuple;
 }
 
+// radix sort with binary base 8 implementation for integer types
+template< typename __type > void
+__radix_sort__( __type *input, __type *output, __ix32 size, __ix32 descending = 1 )
+{
+    // chek the input type
+    if( !is_same<__type, __ix16 >::value &&
+        !is_same<__type, __ix32 >::value &&
+        !is_same<__type, __ix64 >::value &&
+        !is_same<__type, __uix16>::value &&
+        !is_same<__type, __uix32>::value &&
+        !is_same<__type, __uix64>::value)
+        return;
+
+      // check input:
+      if( !input || !output )
+          return;
+
+      // auxiliary variables:
+      __ix32 i = 0 , j = 0 , k = 0;
+      __ix32 bit_shift = 0;
+      __ix32 N = size - 1;
+
+      // auxiliary workspace:
+      __ix32 box[8];
+
+      // looking for the maximum element within the input
+      // and initialaling the elements mapping
+      __ix32 max = input[0];
+      for (i = 0; i < size; i++)
+      {
+          if ( input[i] > max)
+              max = input[i];
+      }
+
+      while ( (max >> bit_shift) > 0 )
+      {
+         // initializing workspace:
+         box[0] = 0;
+         box[1] = 0;
+         box[2] = 0;
+         box[3] = 0;
+         box[4] = 0;
+         box[5] = 0;
+         box[6] = 0;
+         box[7] = 0;
+
+         for (i = 0; i < size; i++)
+         {
+             j = ( input[i] >> bit_shift ) & 7;
+             box[j]++;
+         }
+
+         // cumulative sum calculation:
+         box[1] += box[0];
+         box[2] += box[1];
+         box[3] += box[2];
+         box[4] += box[3];
+         box[5] += box[4];
+         box[6] += box[5];
+         box[7] += box[6];
+
+         for (i = N ; i >= 0; i--)
+         {
+             j = ( input[i] >> bit_shift ) & 7;
+             k = --box[j];
+             output [k] = input[i];
+         }
+
+         // ovewrite the input:
+         for (i = 0; i < size; i++)
+         {
+             input[i] = output[i];
+         }
+
+         // incrementing the bitshift:
+         bit_shift += 3;
+     }
+
+      if( !descending )
+      {
+          i = 0;
+          j = size-1;
+          while ( i < j )
+              __swap__( input[i++], input[j--] );
+      }
+}
+
+template< typename __key, typename __value > void
+__radix_sort__( __key *keys, __value *values, void **workspace, __ix32 size, __ix32 descending = 1 )
+{
+    // chek the input type
+    if( !is_same<__value, __ix16 >::value &&
+        !is_same<__value, __ix32 >::value &&
+        !is_same<__value, __ix64 >::value &&
+        !is_same<__value, __uix16>::value &&
+        !is_same<__value, __uix32>::value &&
+        !is_same<__value, __uix64>::value)
+        return;
+
+      // check input:
+      if( !values || !workspace )
+          return;
+
+      __value *sorted_values = (__value*)workspace[0];
+      __key   *sorted_keys   = (__key*)workspace[1];
+
+      // auxiliary variables:
+      __ix32 i = 0 , j = 0 , k = 0;
+      __ix32 bit_shift = 0;
+      __ix32 N = size - 1;
+
+      // auxiliary workspace:
+      __ix32 box[8];
+
+      // looking for the maximum element within the input
+      // and initialaling the elements mapping
+      __ix32 max = values[0];
+      for (i = 0; i < size; i++)
+      {
+          if ( values[i] > max)
+              max = values[i];
+      }
+
+      while ( (max >> bit_shift) > 0 )
+      {
+         // initializing workspace:
+         box[0] = 0;
+         box[1] = 0;
+         box[2] = 0;
+         box[3] = 0;
+         box[4] = 0;
+         box[5] = 0;
+         box[6] = 0;
+         box[7] = 0;
+
+         for (i = 0; i < size; i++)
+         {
+             j = ( values[i] >> bit_shift ) & 7;
+             box[j]++;
+         }
+
+         // cumulative sum calculation:
+         box[1] += box[0];
+         box[2] += box[1];
+         box[3] += box[2];
+         box[4] += box[3];
+         box[5] += box[4];
+         box[6] += box[5];
+         box[7] += box[6];
+
+         for (i = N ; i >= 0; i--)
+         {
+             j = ( values[i] >> bit_shift ) & 7;
+             k = --box[j];
+             sorted_values [k] = values[i];
+             sorted_keys[k] = keys[i];
+         }
+
+         // ovewrite the input:
+         for (i = 0; i < size; i++)
+         {
+             keys[i] = sorted_keys[i];
+             values[i] = sorted_values[i];
+         }
+
+         // incrementing the bitshift:
+         bit_shift += 3;
+     }
+
+     if( !descending )
+     {
+         i = 0;
+         j = size-1;
+         while ( i < j )
+         {
+             __swap__( keys[i], keys[j] );
+             __swap__( values[i], values[j] );
+             i++;
+             j--;
+         }
+     }
+}
+
+// pseudo random number generator
+inline uint64_t __PRNG__ ( uint64_t _SEED = 1 )
+{
+  static uint64_t S = (uint64_t)&_SEED;
+  S = ((((S >> 63) ^ (S >> 62) ^ (S >> 61) ^ (S >> 59) ^ (S >> 57) ^ S ) & (uint64_t)1 ) << 63 ) | (S >> 1);
+  return S;
+}
+
+
+inline __ix32 __generate_random_number__(__ix32 min, __ix32 max)
+{
+    return min + (rand() % max);
+}
+
 #ifdef _STRINGFWD_H
+
+#define DEBUGGER
 
     namespace STRING_EXTENSION
     {
-        vector<string> __split__(string input, string delimeter = " ")
+        inline map< size_t, string > __split__(string input, string delimeter = " ")
         {
+            if( input.empty() )
+                return map< size_t, string >();
+
             int start  = 0;
             int end    = 0;
             int size   = delimeter.size();
-            vector<string> output;
+            map< size_t, string > output;
 
             while ( end >= 0 )
             {
                 end = input.find(delimeter, start);
-                output.push_back( input.substr(start, end-start) );
+                output[ output.size() ] = input.substr(start, end-start);
                 start = end + size;
             }
 
             return output;
         }
+
+        inline bool __string_contains__(string input, char delimeter = ' ')
+        {
+            for( size_t i = 0 ; i < input.size() ; i++ )
+            {
+                if( input[i] == delimeter )
+                    return true;
+            }
+
+            return false;
+        }
+
+        inline string __to_upper__( string _String )
+        {
+            transform(_String.begin(), _String.end(), _String.begin(), ::toupper);
+            return _String;
+        }
+
+        inline string __to_lower__( string _String )
+        {
+            transform(_String.begin(), _String.end(), _String.begin(), ::tolower);
+            return _String;
+        }
+
+        inline string __remove_symbol__( string _String, char _Symbol )
+        {
+            string output;
+
+            // compute output string size
+            size_t size = 0;
+            for( size_t i = 0 ; i < _String.size() ; i++ )
+            {
+                if( _String[i] != _Symbol )
+                    size++;
+            }
+
+            // edit output string
+            output.resize(size);
+            for( size_t i = 0, j = 0 ; i < _String.size() ; i++ )
+            {
+                if( _String[i] != _Symbol )
+                    output[j++] = _String[i];
+            }
+
+            return output;
+        }
+
+        template< typename __type >
+        __type __from_string__( string _Input );
+
+        template<> inline float __from_string__< float >( string _Input )
+        {
+            try
+            {
+                return std::stof( _Input );
+            }
+            catch(...)
+            {
+                return 0.0;
+            }
+        }
+
+        template<> inline double __from_string__<double>( string _Input )
+        {
+            try
+            {
+                return std::stod( _Input );
+            }
+            catch(...)
+            {
+                return 0.0;
+            }
+        }
+
+        template<> inline long double __from_string__<long double>( string _Input )
+        {
+            try
+            {
+                return std::stold( _Input );
+            }
+            catch(...)
+            {
+                return 0.0;
+            }
+        }
+
+        template<> inline int __from_string__<int>( string _Input )
+        {
+            try
+            {
+                return std::stoi( _Input );
+            }
+            catch(...)
+            {
+                return 0.0;
+            }
+        }
+
+        template<> inline long long __from_string__<long long>( string _Input )
+        {
+            try
+            {
+                return std::stoll( _Input );
+            }
+            catch(...)
+            {
+                return 0.0;
+            }
+        }
+
+        template<> inline unsigned long __from_string__<unsigned long>( string _Input )
+        {
+            try
+            {
+                return std::stoul( _Input );
+            }
+            catch(...)
+            {
+                return 0.0;
+            }
+        }
+
+        template<> inline bool __from_string__<bool>( string _Input )
+        {
+            try
+            {
+                return _Input == "true" || _Input == "1" ? true : false;
+            }
+            catch(...)
+            {
+                return false;
+            }
+        }
+
+        template<> inline unsigned long long __from_string__<unsigned long long>( string _Input )
+        {
+            try
+            {
+                return std::stoull( _Input );
+            }
+            catch(...)
+            {
+                return 0.0;
+            }            
+        }
+
+        template<> inline string __from_string__<string>( string _Input )
+        {
+            return _Input;
+        }
+
+        template< typename __type >
+        string __to_string__( __type _Input );
+
+        template<> inline string __to_string__<bool>( bool _Input )
+        {
+            return std::to_string( _Input );
+        }
+
+        template<> inline string __to_string__< float >( float _Input )
+        {
+            return std::to_string( _Input );
+        }
+
+        template<> inline string __to_string__<double>( double _Input )
+        {
+            return std::to_string( _Input );
+        }
+
+        template<> inline string __to_string__<long double>( long double _Input )
+        {
+            return std::to_string( _Input );
+        }
+
+        template<> inline string __to_string__<int>( int _Input )
+        {
+            return std::to_string( _Input );
+        }
+
+        template<> inline string __to_string__<long long>( long long _Input )
+        {
+            return std::to_string( _Input );
+        }
+
+        template<> inline string __to_string__<unsigned long>( unsigned long _Input )
+        {
+            return std::to_string( _Input );
+        }
+
+        template<> inline string __to_string__<unsigned long long>( unsigned long long _Input )
+        {
+            return std::to_string( _Input );
+        }
+
+        template<> inline string __to_string__<string>( string _Input )
+        {
+            return _Input;
+        }
     }
 
     class Debugger
     {
+        public:
+
         static string GetCurrentTime()
         {
             time_t _time = chrono::system_clock::to_time_t(chrono::system_clock::now());
@@ -769,12 +1244,15 @@ __mfree__( tuple_x3< __type**, __ix32, __ix32 > tuple)
             return "[ " + GetCurrentTime() + " ] " + "[ " + _Typename + " ] " + "[ " + _OjectName + " ] " + _Message + "\n";
         }
 
+        static string MessageFormat( string _OjectName, string _Message)
+        {
+            return "[ " + GetCurrentTime() + " ] " + "[ " + _OjectName + " ] " + _Message + "\n";
+        }
+
         static string MessageFormat(string _Message)
         {
             return "[ " + GetCurrentTime() + " ] " + _Message + "\n";
         }
-
-        public:
 
         // logging functions
         static void Log(string _Message)
@@ -792,18 +1270,22 @@ __mfree__( tuple_x3< __type**, __ix32, __ix32 > tuple)
 
 /*! @} */
 
-
-// custom macroses undefenition to avoid aliases
+//------------------------------------------------------------------------------------------------------------------------------
+// forget macro to avoid aliases
+//------------------------------------------------------------------------------------------------------------------------------
+#undef __fx32
+#undef __fx64
+#undef __fxx64
+#undef __ix16
+#undef __ix32
+#undef __ix64
 #undef __uix16
 #undef __uix32
 #undef __uix64
 
-#undef __ix16
-#undef __ix32
-#undef __ix64
-
-#undef __fx32
-#undef __fx64
-#undef __fxx64
+// forget the custom constants
+#undef __TO_DEGREES_CONVERSION_MULTIPLYER__
+#undef __TO_RADIANS_CONVERSION_MULTIPLYER__
+//------------------------------------------------------------------------------------------------------------------------------
 
 #endif // UTILS_H
