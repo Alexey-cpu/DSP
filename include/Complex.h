@@ -1,168 +1,33 @@
-#ifndef FCOMPLEX_H
-#define FCOMPLEX_H
+#ifndef COMPLEX_H
+#define COMPLEX_H
 
 #ifndef __ALG_PLATFORM
 #include "math.h"
 #include "stdlib.h"
 #include <limits>
+#include "string"
+using namespace std;
 #endif
 
-#include "utils.h"
-
-/*! \brief converts radians to degrees */
-#ifndef __TO_DEGREES
-#define __TO_DEGREES(x) ( (x) * 57.295779513082320876798154814105)
-#endif
-
-/*! \brief converts degrees to radians */
-#ifndef __TO_RADIANS
-#define __TO_RADIANS(x) ( (x) * 0.01745329251994329576923690768489)
-#endif
-
-/*! \brief defines 16-bit integer type */
-#ifndef __ix16
-#define __ix16 short
-#endif
-
-/*! \brief defines 32-bit integer type */
-#ifndef __ix32
-#define __ix32 int
-#endif
-
-/*! \brief defines 64-bit integer type */
-#ifndef __ix64
-#define __ix64 long long
-#endif
-
-/*! \brief defines 32-bit floating point type */
+//------------------------------------------------------------------------------------------------------------------------------------------------
+// define custom types
+//------------------------------------------------------------------------------------------------------------------------------------------------
 #ifndef __fx32
 #define __fx32 float
 #endif
 
-/*! \brief defines 64-bit floating point type */
 #ifndef __fx64
 #define __fx64 double
 #endif
 
-/*! \brief defines extended 64-bit floating point type */
 #ifndef __fxx64
 #define __fxx64 long double
 #endif
 
-/*! \brief defines upper limit of 32-bit floating point type */
-#ifndef __max_fx32
-#define __max_fx32 3.402823466e+38
+#ifndef __TO_RADIANS_CONVERSION_MULTIPLYER__
+#define __TO_RADIANS_CONVERSION_MULTIPLYER__ 0.01745329251994329576923690768489
 #endif
-
-/*! \brief defines upper limit of 64-bit floating point type */
-#ifndef __max_fx64
-#define __max_fx64 1.7976931348623158e+308
-#endif
-
-/*! \brief defines lower limit of 32-bit floating point type */
-#ifndef __min_fx32
-#define __min_fx32 1.175494351e-38
-#endif
-
-/*! \brief defines lower limit of 64-bit floating point type */
-#ifndef __min_fx64
-#define __min_fx64 2.22507e-308
-#endif
-
-/*!
-* \enum complex_plain
-* \brief defines the complex plain
-*/
-enum complex_plain
-{
-    REAL, ///< complex number real part
-    IMAG  ///< complex number imaginary part
-};
-
-// complex numbers addtion function
-template<typename __type> __attribute__( (always_inline) ) inline
-void __cadd__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
-{
-    _c3[REAL] = _c1[REAL] + _c2[REAL];
-    _c3[IMAG] = _c1[IMAG] + _c2[IMAG];
-}
-
-// complex numbers substraction function
-template<typename __type> inline __attribute__( (always_inline) )
-void __csub__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
-{
-    _c3[REAL] = _c1[REAL] - _c2[REAL];
-    _c3[IMAG] = _c1[IMAG] - _c2[IMAG];
-}
-
-// complex numbers multiplication function
-template<typename __type> inline __attribute__( (always_inline) )
-void __cmul__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
-{
-    _c3[REAL] = _c1[REAL] * _c2[REAL] - _c1[IMAG] * _c2[IMAG];
-    _c3[IMAG] = _c1[REAL] * _c2[IMAG] + _c1[IMAG] * _c2[REAL];
-}
-
-// complex numbers division function
-template<typename __type> inline __attribute__( (always_inline) )
-void __cdiv__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
-{
-    __type scal =  _c2[REAL] * _c2[REAL] + _c2[IMAG] * _c2[IMAG];
-    _c3[REAL]   =  _c1[REAL] * _c2[REAL] + _c1[IMAG] * _c2[IMAG];
-    _c3[IMAG]   = -_c1[REAL] * _c2[IMAG] + _c1[IMAG] * _c2[REAL];
-    _c3[REAL]  /= scal;
-    _c3[IMAG]  /= scal;
-}
-
-// complex numbers modulus computation function
-template<typename __type> inline __attribute__( (always_inline) )
-__type __cabs__(const __type _c1[2] )
-{
-    return sqrt( _c1[REAL] * _c1[REAL] + _c1[IMAG] * _c1[IMAG] );
-}
-
-// complex numbers angle computation function
-template<typename __type> inline __attribute__( (always_inline) )
-__type __carg__(const __type _c1[2] )
-{
-    return atan2( _c1[IMAG] , _c1[REAL] );
-}
-
-// complex numbers greater function
-template<typename __type> inline __attribute__( (always_inline) )
-bool __cgt__(const __type _c1[2], const  __type _c2[2] )
-{
-    return __cabs__(_c1) > __cabs__(_c2);
-}
-
-// complex numbers lower function
-template<typename __type> inline __attribute__( (always_inline) )
-bool __clt__(const __type _c1[2], const  __type _c2[2] )
-{
-    return __cabs__(_c1) < __cabs__(_c2);
-}
-
-// complex numbers equality function
-template<typename __type> inline __attribute__( (always_inline) )
-bool __ceq__(const __type _c1[2], const  __type _c2[2] )
-{
-    return __cabs__(_c1) >= __cabs__(_c2);
-}
-
-// complex numbers greater/equal function
-template<typename __type> inline __attribute__( (always_inline) )
-bool __cge__(const __type _c1[2], const  __type _c2[2] )
-{
-    return __cabs__(_c1) >= __cabs__(_c2);
-}
-
-// complex numbers lower/equal function
-template<typename __type> inline __attribute__( (always_inline) )
-bool __cle__(const __type _c1[2], const  __type _c2[2] )
-{
-    return __cabs__(_c1) <= __cabs__(_c2);
-}
-
+//------------------------------------------------------------------------------------------------------------------------------------------------
 
 /*! \defgroup <COMPLEX_ARITHMETICS> ( Complex numbers )
  *  \brief the module describes complex numbers functions
@@ -179,14 +44,102 @@ bool __cle__(const __type _c1[2], const  __type _c2[2] )
 * \class fcomplex
 * \brief Represents complex number
 */
-template<typename __type = __fx32> class fcomplex
+template<typename __type = __fx32> class Complex
 {
+private:
+
+    // service types
+    /*!
+    * \enum complex_plain
+    * \brief defines the complex plain
+    */
+    enum complex_plain
+    {
+        REAL, ///< complex number real part
+        IMAG  ///< complex number imaginary part
+    };
+
+    // service methods
+
+    // complex numbers addtion function
+    static void __cadd__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
+    {
+        _c3[REAL] = _c1[REAL] + _c2[REAL];
+        _c3[IMAG] = _c1[IMAG] + _c2[IMAG];
+    }
+
+    // complex numbers substraction function
+    static void __csub__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
+    {
+        _c3[REAL] = _c1[REAL] - _c2[REAL];
+        _c3[IMAG] = _c1[IMAG] - _c2[IMAG];
+    }
+
+    // complex numbers multiplication function
+    static void __cmul__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
+    {
+        _c3[REAL] = _c1[REAL] * _c2[REAL] - _c1[IMAG] * _c2[IMAG];
+        _c3[IMAG] = _c1[REAL] * _c2[IMAG] + _c1[IMAG] * _c2[REAL];
+    }
+
+    // complex numbers division function
+    static void __cdiv__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
+    {
+        __type scal =  _c2[REAL] * _c2[REAL] + _c2[IMAG] * _c2[IMAG];
+        _c3[REAL]   =  _c1[REAL] * _c2[REAL] + _c1[IMAG] * _c2[IMAG];
+        _c3[IMAG]   = -_c1[REAL] * _c2[IMAG] + _c1[IMAG] * _c2[REAL];
+        _c3[REAL]  /= scal;
+        _c3[IMAG]  /= scal;
+    }
+
+    // complex numbers modulus computation function
+    static __type __cabs__(const __type _c1[2] )
+    {
+        return _c1[REAL] == 0.0 && _c1[IMAG] == 0.0 ? 0.0 : sqrt( _c1[REAL] * _c1[REAL] + _c1[IMAG] * _c1[IMAG] );
+    }
+
+    // complex numbers angle computation function
+    static __type __carg__(const __type _c1[2] )
+    {
+        return atan2( _c1[IMAG], _c1[REAL] );
+    }
+
+    // complex numbers greater function
+    static bool __cgt__(const __type _c1[2], const  __type _c2[2] )
+    {
+        return __cabs__(_c1) > __cabs__(_c2);
+    }
+
+    // complex numbers lower function
+    static bool __clt__(const __type _c1[2], const  __type _c2[2] )
+    {
+        return __cabs__(_c1) < __cabs__(_c2);
+    }
+
+    // complex numbers equality function
+    static bool __ceq__(const __type _c1[2], const  __type _c2[2] )
+    {
+        return __cabs__(_c1) == __cabs__(_c2);
+    }
+
+    // complex numbers greater/equal function
+    static bool __cge__(const __type _c1[2], const  __type _c2[2] )
+    {
+        return __cabs__(_c1) >= __cabs__(_c2);
+    }
+
+    // complex numbers lower/equal function
+    static bool __cle__(const __type _c1[2], const  __type _c2[2] )
+    {
+        return __cabs__(_c1) <= __cabs__(_c2);
+    }
+
     /*! \brief complex number real and imaginary part buffer */
-    __type m_data[2]{};
+    mutable __type m_data[2]{};
 public:
 
     /*! \brief default constructor */
-    fcomplex()
+    Complex()
     {
         m_data[REAL] = 0;
         m_data[IMAG] = 0;
@@ -196,7 +149,7 @@ public:
      *  \brief copy constructor
      *  \param[_c] input complex number
     */
-    fcomplex(const fcomplex& _c)
+    Complex(const Complex& _c)
     {
         m_data[REAL] = _c.m_data[REAL];
         m_data[IMAG] = _c.m_data[IMAG];
@@ -206,7 +159,7 @@ public:
      *  \brief initializing constructor
      *  \param[_n] input real number
     */
-    fcomplex( __type _n )
+    Complex( __type _n )
     {
         m_data[REAL] = _n;
         m_data[IMAG] = 0;
@@ -217,7 +170,7 @@ public:
      *  \param[_re] input real part of a complex number
      *  \param[_im] input imaginary of a complex number
     */
-    fcomplex( __type _re , __type _im )
+    Complex( __type _re , __type _im )
     {
         m_data[REAL] = _re;
         m_data[IMAG] = _im;
@@ -227,44 +180,65 @@ public:
      *  \brief initializing constructor
      *  \param[_c] input 2D array with a real and imaginary part of a complex number
     */
-    fcomplex( __type _c[2] )
+    Complex( __type _c[2] )
     {
         m_data[REAL] = _c[REAL];
         m_data[IMAG] = _c[IMAG];
     }
 
-    /*! \brief operator to convert fcomplex<__type>() -> fcomplex<__fx32>() */
-    operator fcomplex<__fx32>()
+    // properties
+    __type get_real()
     {
-        return fcomplex<__fx32>( m_data[REAL], m_data[IMAG] );
+        return m_data[REAL];
+    }
+
+    __type get_imag()
+    {
+        return m_data[IMAG];
+    }
+
+    void set_real( __type _Value )
+    {
+        m_data[REAL] = _Value;
+    }
+
+    void set_imag( __type _Value )
+    {
+        m_data[IMAG] = _Value;
+    }
+
+    /*! \brief operator to convert fcomplex<__type>() -> fcomplex<__fx32>() */
+    operator Complex<__fx32>() const
+    {
+        return Complex<__fx32>( m_data[REAL], m_data[IMAG] );
     }
 
     /*! \brief operator to convert fcomplex<__type>() -> fcomplex<__fx64>() */
-    operator fcomplex<__fx64>()
+    operator Complex<__fx64>() const
     {
-        return fcomplex<__fx64>( m_data[REAL], m_data[IMAG] );
+        return Complex<__fx64>( m_data[REAL], m_data[IMAG] );
     }
 
     /*! \brief operator to convert fcomplex<__type>() -> fcomplex<__fxx64>() */
-    operator fcomplex<__fxx64>()
+    operator Complex<__fxx64>() const
     {
-        return fcomplex<__fxx64>( m_data[REAL], m_data[IMAG] );
+        return Complex<__fxx64>( m_data[REAL], m_data[IMAG] );
     }
 
     /*! \brief operator to convert fcomplex<__type>() -> __fx32 it must be used explicitly !!! */
-    explicit operator __fx32()
-    {
-        return m_data[REAL];
-    }
-
-    /*! \brief operator to convert fcomplex<__type>() -> __fx32 it must be used explicitly !!! */
-    explicit operator __fx64()
+    explicit operator __fx32() const
     {
         return m_data[REAL];
     }
 
     /*! \brief operator to convert fcomplex<__type>() -> __fx32 it must be used explicitly !!! */
-    explicit operator __fxx64()
+    explicit operator __fx64() const
+    {
+        return m_data[REAL];
+    }
+
+    /*! \brief operator to convert fcomplex<__type>() -> __fx32 it must be used explicitly !!! */
+    explicit operator __fxx64() const
     {
         return m_data[REAL];
     }
@@ -284,7 +258,7 @@ public:
      *  \brief initializing operator
      *  \param[_c] input complex number
     */
-    inline void operator()( fcomplex<__type> _c )
+    inline void operator()( Complex<__type> _c )
     {
         m_data[REAL] = _c.m_data[REAL];
         m_data[IMAG] = _c.m_data[IMAG];
@@ -294,20 +268,20 @@ public:
      *  \brief assigning operator
      *  \param[_c] input complex number
     */
-    inline fcomplex<__type> operator = ( fcomplex<__type> _c )
+    inline Complex<__type> operator = ( Complex<__type> _c )
     {
         m_data[REAL] = _c.m_data[REAL];
         m_data[IMAG] = _c.m_data[IMAG];
         return *this;
-    };
+    }
 
     /*!
      *  \brief add operator
      *  \param[_c2] input complex number
     */
-    inline fcomplex<__type> operator + (fcomplex<__type> _c2 )
+    inline Complex<__type> operator + (Complex<__type> _c2 ) const
     {
-        fcomplex<__type> _c3;
+        Complex<__type> _c3;
         __cadd__( this->m_data , _c2.m_data , _c3.m_data );
         return _c3;
     }
@@ -316,10 +290,10 @@ public:
      *  \brief add operator
      *  \param[_c2] input complex number
     */
-    inline fcomplex<__type> operator += (fcomplex<__type> _c2 )
+    inline Complex<__type> operator += (Complex<__type> _c2 )
     {
-        fcomplex<__type> _c3;
-        __cadd__( this->m_data , _c2.m_data , _c3.m_data );
+        Complex<__type> _c3;
+        __cadd__( this->m_data, _c2.m_data , _c3.m_data );
         this->m_data[REAL] = _c3.m_data[REAL];
         this->m_data[IMAG] = _c3.m_data[IMAG];
         return *this;
@@ -329,166 +303,190 @@ public:
      *  \brief substraction operator
      *  \param[_c2] input complex number
     */
-    inline fcomplex<__type> operator - (fcomplex<__type> _c2 )
+    inline Complex<__type> operator - (Complex<__type> _c2 ) const
     {
-        fcomplex<__type> _c3;
+        Complex<__type> _c3;
         __csub__( this->m_data , _c2.m_data , _c3.m_data ) ;
         return _c3;
-    };
+    }
 
     /*!
      *  \brief substraction operator
      *  \param[_c2] input complex number
     */
-    inline fcomplex<__type> operator -= ( fcomplex<__type> _c2 )
+    inline Complex<__type> operator -= ( Complex<__type> _c2 )
     {
-        fcomplex<__type> _c3;
+        Complex<__type> _c3;
         __csub__( this->m_data , _c2.m_data , _c3.m_data );
         this->m_data[REAL] = _c3.m_data[REAL];
         this->m_data[IMAG] = _c3.m_data[IMAG];
         return *this;
-    };
+    }
 
     /*!
      *  \brief multiply operator
      *  \param[_c2] input complex number
     */
-    inline fcomplex<__type> operator * (fcomplex<__type> _c2 )
+    inline Complex<__type> operator * (Complex<__type> _c2 ) const
     {
-        fcomplex<__type> _c3;
+        Complex<__type> _c3;
         __cmul__( this->m_data , _c2.m_data , _c3.m_data );
         return _c3;
-    };
+    }
 
     /*!
      *  \brief multiply operator
      *  \param[_c2] input complex number
     */
-    inline fcomplex<__type> operator * ( __type _c2 )
+    inline Complex<__type> operator * ( __type _c2 ) const
     {
-        fcomplex<__type> _c3( this->m_data[REAL]*_c2 , this->m_data[IMAG]*_c2 );
+        Complex<__type> _c3( this->m_data[REAL] * _c2 , this->m_data[IMAG] * _c2 );
         return _c3;
-    };
+    }
 
     /*!
      *  \brief multiply operator
      *  \param[_c2] input complex number
     */
-    inline fcomplex<__type> operator *= (fcomplex<__type> _c2 )
+    inline Complex<__type> operator *= (Complex<__type> _c2 )
     {
-        fcomplex<__type> _c3;
+        Complex<__type> _c3;
         __cmul__( this->m_data , _c2.m_data , _c3.m_data );
         this->m_data[REAL] = _c3.m_data[REAL];
         this->m_data[IMAG] = _c3.m_data[IMAG];
         return *this;
-    };
+    }
 
     /*!
      *  \brief multiply operator
      *  \param[_c2] input real number
     */
-    inline fcomplex<__type> operator *= (__type _c2 )
+    inline Complex<__type> operator *= (__type _c2 ) const
     {
         this->m_data[REAL] *=_c2;
         this->m_data[IMAG] *=_c2;
         return *this;
-    };
+    }
 
     /*!
      *  \brief divide operator
      *  \param[_c2] input complex number
     */
-    inline fcomplex<__type> operator / (fcomplex<__type> _c2 )
+    inline Complex<__type> operator / (Complex<__type> _c2 ) const
     {
-        fcomplex<__type> _c3;
+        Complex<__type> _c3;
         __cdiv__( this->m_data , _c2.m_data , _c3.m_data );
         return _c3;
-    };
+    }
 
     /*!
      *  \brief divide operator
      *  \param[_c2] input real number
     */
-    inline fcomplex<__type> operator / ( __type _c2 )
+    inline Complex<__type> operator / ( __type _c2 ) const
     {
-        fcomplex<__type> _c3( this->m_data[REAL] / _c2 ,this->m_data[IMAG] / _c2 );
+        Complex<__type> _c3( this->m_data[REAL] / _c2 ,this->m_data[IMAG] / _c2 );
         return _c3;
-    };
+    }
 
     /*!
      *  \brief divide operator
      *  \param[_c2] input complex number
     */
-    inline fcomplex<__type> operator /= (fcomplex<__type> _c2 )
+    inline Complex<__type> operator /= (Complex<__type> _c2 ) const
     {
-        fcomplex<__type> _c3;
+        Complex<__type> _c3;
         __cdiv__( this->m_data , _c2.m_data , _c3.m_data );
         this->m_data[REAL] = _c3.m_data[REAL];
         this->m_data[IMAG] = _c3.m_data[IMAG];
         return *this;
-    };
+    }
 
     /*!
      *  \brief divide operator
      *  \param[_c2] input real number
     */
-    inline fcomplex<__type> operator /= (__type _c2 )
+    inline Complex<__type> operator /= (__type _c2 ) const
     {
         this->m_data[REAL] /= _c2;
         this->m_data[IMAG] /= _c2;
         return *this;
-    };
+    }
 
     /*!
      *  \brief greater operator
      *  \param[_c2] input complex number
     */
-    inline bool operator > (fcomplex<__type> _c2 )
+    inline bool operator > (Complex<__type> _c2 ) const
     {
         return __cgt__( this->m_data , _c2.m_data );
-    };
+    }
 
     /*!
      *  \brief greater or equal operator
      *  \param[_c2] input complex number
     */
-    inline bool operator >= (fcomplex<__type> _c2 )
+    inline bool operator >= (Complex<__type> _c2 ) const
     {
         return __cge__( this->m_data , _c2.m_data );
-    };
+    }
 
     /*!
      *  \brief lower operator
      *  \param[_c2] input complex number
     */
-    inline bool operator < (fcomplex<__type> _c2 )
+    inline bool operator < (Complex<__type> _c2 ) const
     {
         return __clt__( this->m_data , _c2.m_data );
-    };
+    }
 
     /*!
      *  \brief lower or equal operator
      *  \param[_c2] input complex number
     */
-    inline bool operator <= (fcomplex<__type> _c2 )
+    inline bool operator <= (Complex<__type> _c2 ) const
     {
         return __cle__( this->m_data , _c2.m_data );
-    };
+    }
 
     /*!
      *  \brief equal operator
      *  \param[_c2] input complex number
     */
-    inline bool operator == (fcomplex<__type> _c2 )
+    inline bool operator == (Complex<__type> _c2 ) const
     {
         return __ceq__( this->m_data , _c2.m_data );
     }
 
+    /*!
+     *  \brief not equal operator
+     *  \param[_c2] input complex number
+    */
+    inline bool operator != (Complex<__type> _c2 ) const
+    {
+        return !__ceq__( this->m_data , _c2.m_data );
+    }
+
+    static Complex<__type> zero()
+    {
+        return Complex<__type>(0,0);
+    }
+
     #ifdef _STRINGFWD_H
 
-        string to_string()
+        string to_string() const
         {
-            return std::to_string( m_data[REAL] ) + "\t" + std::to_string( m_data[IMAG] );
+            return std::to_string( m_data[REAL] ) + " " + std::to_string( m_data[IMAG] );
+        }
+
+        explicit operator string() const
+        {
+            return this->to_string();
+        }
+
+        friend std::ostream& operator << ( std::ostream& _Stream, Complex<__type> const& _Input)
+        {
+               return _Stream << _Input.to_string();
         }
 
     #endif
@@ -497,25 +495,25 @@ public:
      *  \brief friend real part extraction function
      *  \param[_complex] input complex number
     */
-    template<typename T> friend T __realf__(fcomplex<T> _complex );
+    template<typename T> friend T __realf__(Complex<T> _complex );
 
     /*!
      *  \brief friend imaginary part extraction function
      *  \param[_complex] input complex number
     */
-    template<typename T> friend T __imagf__(fcomplex<T> _complex );
+    template<typename T> friend T __imagf__(Complex<T> _complex );
 
     /*!
      *  \brief friend complex number modulus computation function
      *  \param[_complex] input complex number
     */
-    template<typename T> friend T __cabsf__ (fcomplex<T> _complex );
+    template<typename T> friend T __cabsf__ (Complex<T> _complex );
 
     /*!
      *  \brief friend complex number angle computation function
      *  \param[_complex] input complex number
     */
-    template<typename T> friend T __cargf__ (fcomplex<T> _complex );
+    template<typename T> friend T __cargf__ (Complex<T> _complex );
 };
 
 /*! @} */
@@ -532,9 +530,9 @@ public:
  *  \return The function returns the input complex number real part
 */
 template<typename __type> __type
-__realf__(fcomplex<__type> _complex )
+__realf__(Complex<__type> _complex )
 {
-    return _complex.m_data[REAL];
+    return _complex.m_data[ Complex<__type>::complex_plain::REAL ];
 }
 
 /*!
@@ -543,9 +541,9 @@ __realf__(fcomplex<__type> _complex )
  *  \return The function returns the input complex number imaginary part
 */
 template<typename __type> __type
-__imagf__(fcomplex<__type> _complex )
+__imagf__(Complex<__type> _complex )
 {
-    return _complex.m_data[IMAG];
+    return _complex.m_data[ Complex<__type>::complex_plain::IMAG ];
 }
 
 /*!
@@ -557,9 +555,15 @@ __imagf__(fcomplex<__type> _complex )
 * \f]
 */
 template<typename __type>
-__type __cabsf__(fcomplex<__type> _complex )
+__type __cabsf__(Complex<__type> _complex )
 {
-    return __cabs__<__type>(_complex.m_data );
+    return Complex<__type>::__cabs__(_complex.m_data );
+}
+
+template<typename __type>
+__type __abs__(Complex<__type> _complex )
+{
+    return __cabsf__(_complex);
 }
 
 /*!
@@ -571,9 +575,9 @@ __type __cabsf__(fcomplex<__type> _complex )
 * \f]
 */
 template<typename __type>
-__type __cargf__( fcomplex<__type> _complex )
+__type __cargf__( Complex<__type> _complex )
 {
-    return __carg__<__type>(_complex.m_data );
+    return Complex<__type>::__carg__(_complex.m_data );
 }
 
 /*!
@@ -584,12 +588,12 @@ __type __cargf__( fcomplex<__type> _complex )
 *       \sqrt{z} = \sqrt{ abs(z) } * cos \left( \frac{ arg(z) }{ 2 } \right) + j*\sqrt{ abs(z) } * sin \left( \frac{ arg(z) }{ 2 } \right)
 * \f]
 */
-template<typename __type> fcomplex<__type>
-__csqrtf__(fcomplex<__type> _complex )
+template<typename __type> Complex<__type>
+__csqrtf__(Complex<__type> _complex )
 {
     __type abs = __cabsf__(_complex );
     __type arg = __cargf__(_complex );
-    return fcomplex<__type>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
+    return Complex<__type>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
 }
 
 /*!
@@ -600,8 +604,8 @@ __csqrtf__(fcomplex<__type> _complex )
 *       conj(z) = real(z) + j * imag(z)
 * \f]
 */
-template<typename __type> fcomplex<__type>
-__conjf__( fcomplex<__type> _complex )
+template<typename __type> Complex<__type>
+__conjf__( Complex<__type> _complex )
 {
     _complex( __realf__(_complex) , -__imagf__(_complex) );
     return _complex;
@@ -615,10 +619,10 @@ __conjf__( fcomplex<__type> _complex )
 *       norm(z) = \frac{ real(z) + j * imag(z) }{ abs( z ) }
 * \f]
 */
-template<typename __type> fcomplex<__type>
-__cnormf__( fcomplex<__type> _complex )
+template<typename __type> Complex<__type>
+__cnormf__( Complex<__type> _complex )
 {
-    return fcomplex<__type>( _complex / __cabsf__( _complex ) );
+    return Complex<__type>( _complex / __cabsf__( _complex ) );
 }
 
 /*!
@@ -635,11 +639,11 @@ __cnormf__( fcomplex<__type> _complex )
 *       \end{cases}
 * \f]
 */
-template<typename __type> fcomplex<__type>
+template<typename __type> Complex<__type>
 __crotf__(__fx64 _arg, bool _mode )
 {
-    if(_mode ) { _arg = __TO_RADIANS( _arg ); }
-    return fcomplex<__type>( cos(_arg) , sin(_arg) );
+    if(_mode ) { _arg *= __TO_RADIANS_CONVERSION_MULTIPLYER__; }
+    return Complex<__type>( cos(_arg) , sin(_arg) );
 }
 
 /*!
@@ -650,12 +654,12 @@ __crotf__(__fx64 _arg, bool _mode )
 *       snih( z ) = \frac{ e^{z} - e^{-z} }{ 2 }
 * \f]
 */
-template<typename __type> fcomplex<__type>
-__sinhf__( fcomplex<__type> _complex )
+template<typename __type> Complex<__type>
+__sinhf__( Complex<__type> _complex )
 {
     __type re = ( exp( __realf__(_complex) ) * cos( __imagf__(_complex) ) - exp( -__realf__(_complex) ) * cos( -__imagf__(_complex) ) ) * (__type)0.5;
     __type im = ( exp( __realf__(_complex) ) * sin( __imagf__(_complex) ) - exp( -__realf__(_complex) ) * sin( -__imagf__(_complex) ) ) * (__type)0.5;
-    return fcomplex<__type>( re , im );
+    return Complex<__type>( re , im );
 }
 
 /*!
@@ -666,12 +670,12 @@ __sinhf__( fcomplex<__type> _complex )
 *       cosh( z ) = \frac{ e^{z} + e^{-z} }{ 2 }
 * \f]
 */
-template<typename __type> fcomplex<__type>
-__coshf__( fcomplex<__type> _complex )
+template<typename __type> Complex<__type>
+__coshf__( Complex<__type> _complex )
 {
     __fx32 re = ( exp( __realf__(_complex) ) * cos( __imagf__(_complex) ) + exp( -__realf__(_complex) ) * cos( -__imagf__(_complex) ) ) * (__type)0.5;
     __fx32 im = ( exp( __realf__(_complex) ) * sin( __imagf__(_complex) ) + exp( -__realf__(_complex) ) * sin( -__imagf__(_complex) ) ) * (__type)0.5;
-    return fcomplex<__type>( re , im );
+    return Complex<__type>( re , im );
 }
 
 /*!
@@ -682,8 +686,8 @@ __coshf__( fcomplex<__type> _complex )
 *       tanh( z ) = \frac{ snih(z) }{ cosh(z) }
 * \f]
 */
-template<typename __type> fcomplex<__type>
-__tanhf__( fcomplex<__type> _complex ) { return __sinhf__(_complex) / __coshf__(_complex); }
+template<typename __type> Complex<__type>
+__tanhf__( Complex<__type> _complex ) { return __sinhf__(_complex) / __coshf__(_complex); }
 
 /*!
 * \brief complex hyperbollic catan function
@@ -693,47 +697,20 @@ __tanhf__( fcomplex<__type> _complex ) { return __sinhf__(_complex) / __coshf__(
 *       catanh( z ) = \frac{ cosh(z) }{ snih(z) }
 * \f]
 */
-template<typename __type> fcomplex<__type>
-__ctnhf__( fcomplex<__type> _complex ) { return __coshf__(_complex) / __sinhf__(_complex); }
+template<typename __type> Complex<__type>
+__ctnhf__( Complex<__type> _complex ) { return __coshf__(_complex) / __sinhf__(_complex); }
 
 /*! @} */
 
 /*! @} */
 
-// macro undefinition to avoid aliases during compilation
-#undef __TO_DEGREES
-#undef __TO_RADIANS
-
-// customized types names exclusion to avoid aliases during compilation
-#undef __ix16
-#undef __ix32
-#undef __ix64
-#undef __uix16
-#undef __uix32
-#undef __uix64
+//------------------------------------------------------------------------------------------------------------------------------------------------
+// forget macro to avoid aliases
+//------------------------------------------------------------------------------------------------------------------------------------------------
 #undef __fx32
 #undef __fx64
 #undef __fxx64
+#undef __TO_RADIANS_CONVERSION_MULTIPLYER__
+//------------------------------------------------------------------------------------------------------------------------------------------------
 
-// customized upper limits exclusion to avoid aliases during compilation
-#undef __max_fx32
-#undef __max_fx64
-#undef __max_ix16
-#undef __max_ix32
-#undef __max_ix64
-#undef __max_uix16
-#undef __max_uix32
-#undef __max_uix64
-
-// customized lower limits exclusion to avoid aliases during compilation
-#undef __min_fx32
-#undef __min_fx64
-#undef __min_ix16
-#undef __min_ix32
-#undef __min_ix64
-#undef __min_uix16
-#undef __min_uix32
-#undef __min_uix64
-
-
-#endif // FCOMPLEX_H
+#endif // COMPLEX_H

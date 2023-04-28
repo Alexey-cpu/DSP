@@ -8,30 +8,6 @@
 #define HMF_DEBUG // debugging is not available if the algorithm is running on a device !!!
 #endif
 
-#ifndef __fx32
-#define __fx32 float
-#endif
-
-#ifndef __fx64
-#define __fx64 double
-#endif
-
-#ifndef __fxx64
-#define __fxx64 long double
-#endif
-
-#ifndef __ix32
-#define __ix32 int
-#endif
-
-#ifndef PI0
-#define PI0 3.1415926535897932384626433832795
-#endif
-
-#ifndef PI2
-#define PI2 6.283185307179586476925286766559
-#endif
-
 /*! \defgroup <HARMONIC_FILTER> ( harmonic filter )
  *  \ingroup SPECIAL_FILTERS
  *  \brief The module contains implementation of the harmonic filter
@@ -50,7 +26,7 @@
 */
 
 template<typename __type>
-class harmonic_filter
+class harmonic_filter final
 {
 
 private:
@@ -66,33 +42,33 @@ private:
     recursive_fourier<__type>  m_rmean_im; ///< zero-frequency recursive Fourier filter
 
     // system variables
-    __fx64 m_Fs;               ///< recurisve Fourier sampling frequency, Hz
-    __fx64 m_Fn;               ///< recurisve Fourier reference signal frequency, Hz
-    __ix32 m_HBuffSize;        ///< IDE ADC buffer size
-    __ix32 m_CycleWidth;       ///< IDE ADC cycle width
-    __ix32 m_SpectrumWidth;    ///< harmonic filter spectrum width
-    __ix32 m_SamplesPerPeriod; ///< sample per period of the reference signal
-    __type m_module;           ///< harmonic RMS value
+    double  m_Fs;               ///< recurisve Fourier sampling frequency, Hz
+    double  m_Fn;               ///< recurisve Fourier reference signal frequency, Hz
+    int64_t m_HBuffSize;        ///< IDE ADC buffer size
+    int64_t m_CycleWidth;       ///< IDE ADC cycle width
+    int64_t m_SpectrumWidth;    ///< harmonic filter spectrum width
+    int64_t m_SamplesPerPeriod; ///< sample per period of the reference signal
+    __type  m_Module;           ///< harmonic RMS value
 
     // debugging output
-    __type *m_re; ///< recursive Fourier output vector real part
-    __type *m_im; ///< recursive Fourier output vector imaginary part
+    __type *m_Re; ///< recursive Fourier output vector real part
+    __type *m_Im; ///< recursive Fourier output vector imaginary part
 
 
     /*! \brief allocates filter resources */
-    __ix32 allocate()
+    int64_t allocate()
     {
         #ifdef HMF_DEBUG
         Debugger::Log("harmonic_filter","allocate()","Memory allocation");
         #endif
 
         // allocate debugging output
-        m_re = __alloc__<__type>(m_HBuffSize);
-        m_im = __alloc__<__type>(m_HBuffSize);
+        m_Re = __alloc__<__type>(m_HBuffSize);
+        m_Im = __alloc__<__type>(m_HBuffSize);
 
         // initialize and allocate recursive Fourier filter
         m_rdft = new recursive_fourier<__type>[m_SpectrumWidth];
-        for( __ix32 i = 0 ; i < m_SpectrumWidth ; i++ )
+        for( int64_t i = 0 ; i < m_SpectrumWidth ; i++ )
         {
             m_rdft[i].init( m_Fs, m_Fn, i );
         }
@@ -105,7 +81,7 @@ private:
     }
 
     /*! \brief allocates filter resources */
-    __ix32 deallocate()
+    int64_t deallocate()
     {
 
         #ifdef HMF_DEBUG
@@ -113,8 +89,8 @@ private:
         #endif
 
         // free debugging outputs
-        m_re = __mfree__(m_re);
-        m_im = __mfree__(m_im);
+        m_Re = __mfree__(m_Re);
+        m_Im = __mfree__(m_Im);
 
         // clear recursive Fourier filter
         if( m_rdft != nullptr )
@@ -127,68 +103,6 @@ private:
     }
 
 public:
-
-    // public get-only properties
-
-    /*! \brief outputs harmonic RMS value */
-    __type module()
-    {
-        return m_module;
-    }
-
-    /*!
-     *  \brief outputs harmonic recursive Fourier vector real part
-     *  \param[n] recursive Fourier vector real part sample number
-    */
-    __type real(__ix32 n)
-    {
-        return m_re[n];
-    }
-
-    /*!
-     *  \brief outputs harmonic recursive Fourier vector imaginary part
-     *  \param[n] recursive Fourier vector imaginary part sample number
-    */
-    __type imag(__ix32 n)
-    {
-        return m_im[n];
-    }
-
-    /*!
-     *  \brief initializes the harmonic filter
-     *  \param[Fs] filter sampling frequency, Hz
-     *  \param[Fn] filter reference signal frequency, Hz
-     *  \param[HBuffSize] IDE's ADC buffer size
-     *  \param[SpectrumWidth] filter spectrum width
-     *  \details The function is supposed to be called explicitly by the user
-     *           before filter resources are allocated
-    */
-    void init(__fx64 Fs, __fx64 Fn, __ix32 HBuffSize, __ix32 SpectrumWidth)
-    {
-        m_Fs               = Fs;
-        m_Fn               = Fn;
-        m_HBuffSize        = HBuffSize;
-        m_SpectrumWidth    = SpectrumWidth;
-        m_SamplesPerPeriod = m_Fs / m_Fn;
-        m_CycleWidth	   = m_HBuffSize / m_Fs * 1000;
-        m_rdft             = nullptr;
-        m_re               = nullptr;
-        m_im               = nullptr;
-
-        #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter","init()","Filter initialization");
-        Debugger::Log("Fs               = " + to_string(m_Fs));
-        Debugger::Log("Fn               = " + to_string(m_Fn));
-        Debugger::Log("HBuffSize        = " + to_string(m_HBuffSize));
-        Debugger::Log("SpectrumWidth    = " + to_string(m_SpectrumWidth));
-        Debugger::Log("SamplesPerPeriod = " + to_string(m_SamplesPerPeriod));
-        Debugger::Log("CycleWidth       = " + to_string(m_CycleWidth));
-        #endif
-
-        //
-        allocate();
-
-    }
 
     /*!
      *  \brief default constructor
@@ -206,20 +120,80 @@ public:
         m_SamplesPerPeriod = m_Fs / m_Fn;
         m_CycleWidth	   = m_HBuffSize / m_Fs * 1000;
         m_rdft             = nullptr;
-        m_re               = nullptr;
-        m_im               = nullptr;
+        m_Re               = nullptr;
+        m_Im               = nullptr;
     }
 
     /*!
      *  \brief default destructor
     */
-    ~harmonic_filter()
+    virtual ~harmonic_filter()
     {
         #ifdef HMF_DEBUG
         Debugger::Log("harmonic_filter","~harmonic_filter()","Filter destructor call");
         #endif
 
         deallocate();
+    }
+
+    /*! \brief outputs harmonic RMS value */
+    __type module()
+    {
+        return m_Module;
+    }
+
+    /*!
+     *  \brief outputs harmonic recursive Fourier vector real part
+     *  \param[n] recursive Fourier vector real part sample number
+    */
+    __type real(int64_t n)
+    {
+        return m_Re[n];
+    }
+
+    /*!
+     *  \brief outputs harmonic recursive Fourier vector imaginary part
+     *  \param[n] recursive Fourier vector imaginary part sample number
+    */
+    __type imag(int64_t n)
+    {
+        return m_Im[n];
+    }
+
+    /*!
+     *  \brief initializes the harmonic filter
+     *  \param[Fs] filter sampling frequency, Hz
+     *  \param[Fn] filter reference signal frequency, Hz
+     *  \param[HBuffSize] IDE's ADC buffer size
+     *  \param[SpectrumWidth] filter spectrum width
+     *  \details The function is supposed to be called explicitly by the user
+     *           before filter resources are allocated
+    */
+    void init(double Fs, double Fn, int64_t HBuffSize, int64_t SpectrumWidth)
+    {
+        m_Fs               = Fs;
+        m_Fn               = Fn;
+        m_HBuffSize        = HBuffSize;
+        m_SpectrumWidth    = SpectrumWidth;
+        m_SamplesPerPeriod = m_Fs / m_Fn;
+        m_CycleWidth	   = m_HBuffSize / m_Fs * 1000;
+        m_rdft             = nullptr;
+        m_Re               = nullptr;
+        m_Im               = nullptr;
+
+        #ifdef HMF_DEBUG
+        Debugger::Log("harmonic_filter","init()","Filter initialization");
+        Debugger::Log("Fs               = " + to_string(m_Fs));
+        Debugger::Log("Fn               = " + to_string(m_Fn));
+        Debugger::Log("HBuffSize        = " + to_string(m_HBuffSize));
+        Debugger::Log("SpectrumWidth    = " + to_string(m_SpectrumWidth));
+        Debugger::Log("SamplesPerPeriod = " + to_string(m_SamplesPerPeriod));
+        Debugger::Log("CycleWidth       = " + to_string(m_CycleWidth));
+        #endif
+
+        //
+        allocate();
+
     }
 
     /*!
@@ -229,7 +203,7 @@ public:
      *  \details The function is supposed to be called
      *           every IDE's operation step
     */
-    void filt(__ix32 harmonic_num, __fx64 *input)
+    void filt(int64_t harmonic_num, double *input)
     {
         // check input
         if( input == nullptr )
@@ -244,46 +218,38 @@ public:
         }
 
         // filter input
-        for( __ix32 i = 0 ; i < m_HBuffSize ; i++ )
+        for( int64_t i = 0 ; i < m_HBuffSize ; i++ )
         {
             // saturation ( keeps the signal value between the given Upper and Lower limits )
             __type signal = __saturation__(input[i], m_max_value, m_min_value);
 
             // filtering
-            fcomplex<__type> vector = m_rdft[harmonic_num](&signal);
-            __fx64 a = __realf__(vector) * __realf__(vector);
-            __fx64 b = __imagf__(vector) * __imagf__(vector);
+            Complex<__type> vector = m_rdft[harmonic_num](&signal);
+            double a = __realf__(vector) * __realf__(vector);
+            double b = __imagf__(vector) * __imagf__(vector);
             m_rmean_re(&a);
             m_rmean_im(&b);
 
             // generate dubugging output
-            m_re[i] = __realf__(vector);
-            m_im[i] = __imagf__(vector);
+            m_Re[i] = __realf__(vector);
+            m_Im[i] = __imagf__(vector);
         }
 
         // generating output:
         if( harmonic_num == 0 )
         {
-            __fx64 a = __abs__( __realf__( m_rmean_re.vector() ) );
-            m_module = ( a < m_epsilon ) ? (__type)0 : sqrt( a );
+            double a = __abs__( __realf__( m_rmean_re.vector() ) );
+            m_Module = ( a < m_epsilon ) ? (__type)0 : sqrt( a );
         }
         else
         {
-            __fx64 a = __abs__( __realf__( m_rmean_re.vector() ) );
-            __fx64 b = __abs__( __realf__( m_rmean_im.vector() ) );
-            m_module = ( ( a < m_epsilon ) && ( b < m_epsilon ) ) ? (__type)0 : sqrt( ( a + b ) * (__type)0.5 );
+            double a = __abs__( __realf__( m_rmean_re.vector() ) );
+            double b = __abs__( __realf__( m_rmean_im.vector() ) );
+            m_Module = ( ( a < m_epsilon ) && ( b < m_epsilon ) ) ? (__type)0 : sqrt( ( a + b ) * (__type)0.5 );
         }
     }
 };
 
 /*! @} */
-
-// macro undefenition to avoid aliases
-#undef __fx32
-#undef __fx64
-#undef __fxx64
-#undef __ix32
-#undef PI0
-#undef PI2
 
 #endif // FILTERS_HMF_H

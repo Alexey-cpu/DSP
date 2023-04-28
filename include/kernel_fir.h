@@ -92,11 +92,11 @@ namespace FIR_KERNEL
      *      W(j*2*\pi*f) = \sum_{i=0}^N a_{i} * e^{-j*2*\pi*f*Ts }
      * \f]
     */
-    template< typename __type > fcomplex<__fx64>  __freq_resp__ ( __type *_cfden, __ix32 _N, __fx64 _Fs, __fx64 _F )
+    template< typename __type > Complex<__fx64>  __freq_resp__ ( __type *_cfden, __ix32 _N, __fx64 _Fs, __fx64 _F )
     {
         __type Ts = 1 / _Fs;
-        fcomplex<__fx64> Wz(0,0);
-        for ( __ix32 i = 0; i < _N; i++) Wz += fcomplex<__fx64>(cos(-PI2 * i * _F * Ts), sin(-PI2 * i * _F * Ts))*_cfden[ i ];
+        Complex<__fx64> Wz(0,0);
+        for ( __ix32 i = 0; i < _N; i++) Wz += Complex<__fx64>(cos(-PI2 * i * _F * Ts), sin(-PI2 * i * _F * Ts))*_cfden[ i ];
         return Wz;
     }
 
@@ -150,7 +150,7 @@ namespace FIR_KERNEL
         // filter pulse characteristic normalization:
         if (_scale )
         {
-            fcomplex<__fx64> fr = __freq_resp__( cfbuff, _N, _Fs, 0 );
+            Complex<__fx64> fr = __freq_resp__( cfbuff, _N, _Fs, 0 );
             for ( __ix32 n = 0; n < _N; n++) cfbuff[n] /= __cabsf__(fr);
         }
 
@@ -221,7 +221,7 @@ namespace FIR_KERNEL
         // filter pulse characteristic scaling:
         if (_scale )
         {
-            fcomplex<__fx64> fr = __freq_resp__( cfbuff, _N, _Fs, _Fs / 2 );
+            Complex<__fx64> fr = __freq_resp__( cfbuff, _N, _Fs, _Fs / 2 );
             for ( __ix32 n = 0; n < _N; n++) cfbuff[n] /= __cabsf__(fr);
         }
 
@@ -294,7 +294,7 @@ namespace FIR_KERNEL
         // filter pulse characteristic normalization:
         if (_scale )
         {
-            fcomplex<__fx64> fr = __freq_resp__( cfbuff , _N , _Fs , ( ( Fp1 + 0.5 * ( Fp2 - Fp1 ) ) * _Fs ) );
+            Complex<__fx64> fr = __freq_resp__( cfbuff , _N , _Fs , ( ( Fp1 + 0.5 * ( Fp2 - Fp1 ) ) * _Fs ) );
             for ( __ix32 n = 0; n < _N; n++) cfbuff[n] /= __cabsf__(fr);
         }
 
@@ -353,7 +353,7 @@ namespace FIR_KERNEL
         // filter pulse characteristic normalization:
         if (_scale )
         {
-            fcomplex<__fx64> fr = __freq_resp__(cfbuff, _N, _Fs , 0 );
+            Complex<__fx64> fr = __freq_resp__(cfbuff, _N, _Fs , 0 );
             for ( __ix32 n = 0; n < _N; n++) cfbuff[n] /= __cabsf__(fr);
         }
 

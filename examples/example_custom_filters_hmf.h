@@ -76,7 +76,7 @@ int filtes_hmf_example()
             yt << buffer[j] << "\n";
             re << hmf.real(j) << "\n";
             im << hmf.imag(j) << "\n";
-            am << __cabsf__( fcomplex<__type>(hmf.real(j), hmf.imag(j)) ) << "\n";
+            am << __cabsf__( Complex<__type>(hmf.real(j), hmf.imag(j)) ) << "\n";
             dt << time << "\n";
         }
         #endif

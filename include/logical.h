@@ -6,22 +6,6 @@
     @{
 */
 
-#ifndef __fx32
-#define __fx32 float
-#endif
-
-#ifndef __fx64
-#define __fx64 double
-#endif
-
-#ifndef __ix16
-#define __ix16 short
-#endif
-
-#ifndef __ix32
-#define __ix32 int
-#endif
-
 /*! \defgroup <DSP_TIMERS> ( Timers )
  *  \ingroup DSP_LOGICAL
  *  \brief the module contains timers class
@@ -32,20 +16,17 @@
  *  \class timers
  *  \brief timers class
 */
-class timers
+class timers final
 {
-    typedef bool __bool ;
-    typedef void __void ;
-
 private:
 
-    __fx64 m_Time;
-    __fx64 m_Fs;
-    __fx64 m_Ts;
-    __ix32 m_FramesPerCycle;
-    __bool m_Q;
-    __bool m_CC;
-    __bool m_QQ;
+    double m_Time;
+    double m_Fs;
+    double m_Ts;
+    int64_t m_FramesPerCycle;
+    bool m_Q;
+    bool m_CC;
+    bool m_QQ;
 
 public:
 
@@ -62,13 +43,13 @@ public:
     }
 
     /*! \brief default destructor */
-    ~timers(){};
+    virtual ~timers(){}
 
     /*! \brief timers class initialization function
      *  \param[Fs] - sampling frequency , Hz
      *  \param[FramesPerCycle] - number frames per IDE cycle
     */
-    __void init( __fx64 Fs, __ix32 FramesPerCycle )
+    void init( double Fs, int64_t FramesPerCycle )
     {
         m_Fs             = Fs;
         m_Ts             = 1 / m_Fs;
@@ -87,14 +68,16 @@ public:
      *          The function returns false if the input signal S stays true within the time less than dT.
      *          The true output is dropped if the input S becomes false.
     */
-    __bool ton( __bool S , __fx64 dT )
+    bool ton( bool S , double dT )
     {
         if ( ( S == 1 ) && ( m_Q == 0 ) )
         {
-            for ( __ix32 n = 0 ; n < m_FramesPerCycle; n++)
+            for ( int64_t n = 0 ; n < m_FramesPerCycle; n++)
             {
                 m_Time = m_Time + m_Ts;
-                if ( m_Time > dT ) break;
+
+                if ( m_Time > dT )
+                    break;
             }
         }
 
@@ -119,7 +102,7 @@ public:
      *          the true output exists during the time dT. Then, if dT has expired and the input signal S
      *          is false - the function output becomes false.
     */
-    __bool tof( __bool S , __fx64 dT)
+    bool tof( bool S , double dT)
     {
         if ( S == 1 )
         {
@@ -135,10 +118,12 @@ public:
 
         if( (m_Q == 1) && (S == 0) )
         {
-            for ( __ix32 n = 0; n < m_FramesPerCycle; n++ )
+            for ( int64_t n = 0; n < m_FramesPerCycle; n++ )
             {
                 m_Time = m_Time + 1 / m_Fs;
-                if (m_Time > dT) break;
+
+                if (m_Time > dT)
+                    break;
             }
         }
 
@@ -151,7 +136,7 @@ public:
      *  \return The function outputs true if the input signal changes from 0 to 1.
      *          The true output exists untill time dT is expired
     */
-    __bool tp( __bool S , __fx64 dT)
+    bool tp( bool S , double dT)
     {
         // rising front detection:
         m_QQ = ( (S == 1) && (m_CC == 0) ) ? 1 : 0;
@@ -171,10 +156,12 @@ public:
         }
         else if( m_Q == 1 )
         {
-            for ( __ix32 n = 0; n < m_FramesPerCycle; n++)
+            for ( int64_t n = 0; n < m_FramesPerCycle; n++)
             {
                 m_Time += m_Ts;
-                if (m_Time > dT) break;
+
+                if (m_Time > dT)
+                    break;
             }
         }
 
@@ -184,12 +171,18 @@ public:
     /*! \brief timer state control function
      *  \return The function returns current timer object state
     */
-    __bool getState() { return m_Q; }
+    bool getState()
+    {
+        return m_Q;
+    }
 
     /*! \brief timer time control function
      *  \return The function returns current timer time
     */
-    __fx64 getTime () { return m_Time; }
+    double getTime ()
+    {
+        return m_Time;
+    }
 
 };
 
@@ -206,15 +199,13 @@ public:
 /*!
  *  \class triggers
  *  \brief triggers class */
-class triggers
+class triggers final
 {
-    typedef bool __bool ;
-
 private:
 
-    __bool m_CC;
-    __bool m_QQ;
-    __bool m_Q;
+    bool m_CC;
+    bool m_QQ;
+    bool m_Q;
 
 public:
 
@@ -227,13 +218,13 @@ public:
     }
 
     /*! \brief default trigger destructor */
-    ~triggers(){};
+    virtual ~triggers(){}
 
     /*! \brief rising edge detecting function
      *  \param[CLK] - controlled logical input
      *  \return The function returns true single frame ( IDE cycle ) pulse if the input changes from 0 to 1.
     */
-    __bool rr_trig( __bool CLK )
+    bool rr_trig( bool CLK )
     {
         m_Q  = CLK && m_CC;
         m_CC = CLK;
@@ -244,7 +235,7 @@ public:
      *  \param[CLK] - controlled logical input
      *  \return The function returns true single frame ( IDE cycle ) pulse if the input changes from 1 to 0.
     */
-    __bool ff_trig( __bool CLK )
+    bool ff_trig( bool CLK )
     {
         m_Q  = !CLK && m_CC;
         m_CC = CLK;
@@ -258,7 +249,7 @@ public:
      *          The output becomes false if the input R becomes false.
      *          If S and R inputs become true at the same time the output is false.
     */
-    __bool rs_trig( __bool S , __bool R )
+    bool rs_trig( bool S , bool R )
     {
         if ( ( S && !R ) || ( m_QQ && !R ) )
         {
@@ -281,7 +272,7 @@ public:
      *          The output becomes false if the input R becomes false.
      *          If S and R inputs become true at the same time the output is true.
     */
-    __bool sr_trig( __bool S , __bool R )
+    bool sr_trig( bool S , bool R )
     {
         if ( S || ( S && !R ) )
         {
@@ -304,19 +295,20 @@ public:
      *  \return If falling == false: the function returns true if the input signal increases the offset.
      *          If falling == true : the function returns true if the input signal becomes bellow the offset.
     */
-    template< typename T > __bool hit_crossing( T input , T offset , __bool falling ) { return ( !falling ) ? rr_trig( ( input > offset ) ) : ff_trig( ( input > offset ) ); }
+    template< typename T > bool hit_crossing( T input , T offset , bool falling )
+    {
+        return ( !falling ) ? rr_trig( ( input > offset ) ) : ff_trig( ( input > offset ) );
+    }
 
     /*! \brief trigger state control function
      *  \return The function returns current trigger state
     */
-    __bool getState() { return m_Q; }
+    bool getState()
+    {
+        return m_Q;
+    }
 };
 
 /*! @} */
-
-#undef __fx32
-#undef __fx64
-#undef __ix32
-#undef __ix16
 
 #endif

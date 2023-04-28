@@ -5,13 +5,13 @@
 //#define WRITE_LOGS
 #endif
 
-#include "../../DSP/include/fcomplex.h"
+#include "../../DSP/include/Complex.h"
 
 // complex numbers example
 int complex_numbers_example()
 {
     printf( " ...complex arithmetics utilization example and test... \n " );
-    fcomplex<double> z0( 1.0 , 2.0 ) , z1( 2.0 , 0.5 ) , z2( 3.5 , 4.5 );
+    Complex<double> z0( 1.0 , 2.0 ) , z1( 2.0 , 0.5 ) , z2( 3.5 , 4.5 );
     printf( "complex math functions check: \n" );
     printf( "z0 = %.4f \t %.4f \n" , __realf__(z0) , __imagf__(z0) );
     printf( "z1 = %.4f \t %.4f \n" , __realf__(z1) , __imagf__(z1) );

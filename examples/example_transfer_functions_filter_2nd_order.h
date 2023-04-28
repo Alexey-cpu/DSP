@@ -66,7 +66,7 @@ int filters_filter_2nd_order_example()
 
     for( int i = 0 ; i < Fs / 2 ; i++ )
     {
-        fcomplex<__type> output = filter.frequency_response( (double)i );
+        Complex<__type> output = filter.frequency_response( (double)i );
 
         #ifdef WRITE_LOGS
         pH << __cargf__(output) << "\n";

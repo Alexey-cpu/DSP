@@ -9,22 +9,6 @@ using namespace DSP_KERNEL;
 #define RFF_DEBUG // debugging is not available if the algorithm is running on a device !!!
 #endif
 
-#ifndef __fx32
-#define __fx32 float
-#endif
-
-#ifndef __fx64
-#define __fx64 double
-#endif
-
-#ifndef __fxx64
-#define __fxx64 long double
-#endif
-
-#ifndef __ix32
-#define __ix32 int
-#endif
-
 #ifndef PI0
 #define PI0 3.1415926535897932384626433832795
 #endif
@@ -35,18 +19,12 @@ using namespace DSP_KERNEL;
 
 /*! \defgroup <RECURSIVE_FOURIER_FILTER> ( Recursive fourier filter )
  *  \ingroup SPECIAL_FILTERS
- *  \brief the module contains abstract model and implementation of recursive Fourier filter
-    @{
-*/
-
-/*! \defgroup <RECURSIVE_FOURIER_FILTER_ABSTRACT_MODEL> ( Recursive fourier filter abstract model )
- *  \ingroup RECURSIVE_FOURIER_FILTER
- *  \brief the module contains abstract model of recursive Fourier filter
+ *  \brief the module contains model implementation of recursive Fourier filter
     @{
 */
 
 /*!
- *  \class recursive_fourier_abstract
+ *  \class recursive_fourier
  *  \brief defines recursive Fourier filter
  *  \details Defines recursive FIR filter having the following transfer function:
  *   \f[
@@ -55,51 +33,33 @@ using namespace DSP_KERNEL;
 */
 
 template< typename __type >
-class recursive_fourier_abstract : public model_base
+class recursive_fourier final : public transfer_function_model
 {
-private:
-
-    // memory allocation function
-   __ix32  allocate()
-   {
-       #ifdef RFF_DEBUG
-       Debugger::Log("recursive_fourier_abstract","allocate()","Filter memory allocation");
-       #endif
-
-       return ( m_buffer_sx.allocate( m_order + 2 ) );
-   }
-
 protected:
 
     // system fields
-    __fx64           m_Gain;      ///< recursive Fourier filter gain
-    __fx64           m_hnum;      ///< recursive Fourier harmonic number
-    __fx64           m_Fn;        ///< recursive Fourier reference signal frequency, Hz
-    fcomplex<__fx64> m_rot;       ///< recursive Fourier rotation coefficient
-    fcomplex<__fx64> m_out;       ///< recursive Fourier rotation output
-    delay<__type>    m_buffer_sx; ///< recursive Fourier rotation delay buffer
+    double          m_Gain;      ///< recursive Fourier filter gain
+    double          m_hnum;      ///< recursive Fourier harmonic number
+    double          m_Fn;        ///< recursive Fourier reference signal frequency, Hz
+    Complex<double> m_rot;       ///< recursive Fourier rotation coefficient
+    Complex<double> m_out;       ///< recursive Fourier rotation output
+    delay<__type>   m_buffer_sx; ///< recursive Fourier rotation delay buffer
 
     /*!
      *  \brief Filtering function
      *  \param[input] input signal sample pointer
     */
-    template< typename T > inline fcomplex<__type>
+    template< typename T > inline Complex<__type>
     filt ( T *_input )
     {
         m_buffer_sx( _input );
-        return (m_out = m_out * m_rot + ( ( __fx64 )*_input - ( __fx64 )m_buffer_sx[ m_order ] ) * m_Gain);
+        return (m_out = m_out * m_rot + ( ( double )*_input - ( double )m_buffer_sx[ m_Order ] ) * m_Gain);
     }
 
    public:
 
-    /*!  \brief returns the filter output */
-    fcomplex<__type> vector()
-    {
-        return m_out;
-    }
-
     /*!  \brief default constructor */
-    recursive_fourier_abstract() : model_base()
+    recursive_fourier() : transfer_function_model()
     {
         #ifdef RFF_DEBUG
         Debugger::Log("recursive_fourier_abstract","recursive_fourier_abstract()","Filter constructor call");
@@ -107,11 +67,17 @@ protected:
     }
 
     /*!  \brief destructor */
-    virtual ~recursive_fourier_abstract()
+    virtual ~recursive_fourier()
     {
         #ifdef RFF_DEBUG
         Debugger::Log("recursive_fourier_abstract","~recursive_fourier_abstract()","Filter destructor call");
         #endif
+    }
+
+    /*!  \brief returns the filter output */
+    Complex<__type> vector()
+    {
+        return m_out;
     }
 
     /*!
@@ -122,15 +88,15 @@ protected:
      *  \details The function is supposed to be called explicitly by the user
      *           before filter resources are allocated
     */
-     void init( __fx64 _Fs, __fx64 _Fn, __ix32 _hnum )
+     void init( double _Fs, double _Fn, int64_t _HarmonicNumber )
      {
          m_Fn      = _Fn;
          m_Fs      = _Fs;
-         m_Ts      = (__fx64)1 / m_Fs;
-         m_order   = ceil( _Fs / _Fn );
-         m_Gain    = ( _hnum == 0 ) ? ( 1.0 / (__fx64)m_order ) : ( 2.0 / (__fx64)m_order );
-         m_hnum    = _hnum;
-         m_rot(cos( PI2 * (__fx64)m_hnum / (__fx64)m_order ), sin( PI2 * (__fx64)m_hnum / (__fx64)m_order ) );
+         m_Ts      = (double)1 / m_Fs;
+         m_Order   = ceil( _Fs / _Fn );
+         m_Gain    = ( _HarmonicNumber == 0 ) ? ( 1.0 / (double)m_Order ) : ( 2.0 / (double)m_Order );
+         m_hnum    = _HarmonicNumber;
+         m_rot(cos( PI2 * (double)m_hnum / (double)m_Order ), sin( PI2 * (double)m_hnum / (double)m_Order ) );
 
         #ifdef RFF_DEBUG
 
@@ -138,14 +104,17 @@ protected:
         Debugger::Log("Fn    = " + to_string(m_Fn) );
         Debugger::Log("Fs    = " + to_string(m_Fs) );
         Debugger::Log("Ts    = " + to_string(m_Ts) );
-        Debugger::Log("order = " + to_string(m_order));
+        Debugger::Log("order = " + to_string(m_Order));
         Debugger::Log("Gain  = " + to_string(m_Gain));
         Debugger::Log("hnum  = " + to_string(m_hnum) + "\n");
         #endif
 
-        //
-        allocate();
+        // memory allocation
+        #ifdef RFF_DEBUG
+        Debugger::Log("recursive_fourier_abstract","allocate()","Filter memory allocation");
+        #endif
 
+        m_buffer_sx.allocate( m_Order + 2 );
      }
 
      /*!
@@ -153,11 +122,11 @@ protected:
       *  \param[F] input frequency, Hz
       *  \returns The function returns the fiter transfer function complex value for the given frequency
      */
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
+    Complex<double> frequency_response( double F ) override
     {
-        fcomplex<__fx64> num = fcomplex<__fx64>(1,0) - fcomplex<__fx64>( cos( -PI2 * F * m_order * m_Ts ) , sin( -PI2 * F * m_order * m_Ts ) );
-        fcomplex<__fx64> den = fcomplex<__fx64>(1,0) - fcomplex<__fx64>( cos( -PI2 * F * m_Ts ) , sin( -PI2 * F * m_Ts ) ) * m_rot;
-        fcomplex<__fx64> Wz = num / den / (__fx64)m_order;
+        Complex<double> num = Complex<double>(1,0) - Complex<double>( cos( -PI2 * F * m_Order * m_Ts ) , sin( -PI2 * F * m_Order * m_Ts ) );
+        Complex<double> den = Complex<double>(1,0) - Complex<double>( cos( -PI2 * F * m_Ts ) , sin( -PI2 * F * m_Ts ) ) * m_rot;
+        Complex<double> Wz = num / den / (double)m_Order;
         return Wz;
     }
 
@@ -165,82 +134,10 @@ protected:
      *  \brief filtering operator
      *  \details The operator supposes to invoke filtering function
     */
-    inline virtual fcomplex<__type> operator ()(__type  *input ) = 0;
-};
-
-/*! @} */
-
-/*! \defgroup <RECURSIVE_FOURIER_FILTER_IMPLEMENTATION> ( Recursive fourier filter abstract model implementation )
- *  \ingroup RECURSIVE_FOURIER_FILTER
- *  \brief the module contains abstract model of recursive Fourier filter
-    @{
-*/
-
-template<typename __type > class recursive_fourier;
-
-template<> class recursive_fourier<__fx32> final : public recursive_fourier_abstract<__fx32>
-{
-    typedef __fx32 __type;
-public:
-
-    // initialization functiom
-    void init( __fx64 _Fs, __fx64 _Fn, __ix32 _hnum )
+    inline Complex<__type> operator ()(__type  *input )
     {
-       recursive_fourier_abstract<__fx32> :: init(_Fs, _Fn, _hnum );
+        return filt<__type> ( input );
     }
-
-    // constructors
-    recursive_fourier() : recursive_fourier_abstract()
-    {
-        #ifdef RFF_DEBUG
-        Debugger::Log("recursive_fourier","recursive_fourier()","Filter construction");
-        #endif
-    }
-
-    // destructor
-    ~recursive_fourier()
-    {
-        #ifdef RFF_DEBUG
-        Debugger::Log("recursive_fourier","~recursive_fourier()","Filter destruction");
-        #endif
-    }
-
-    // operators
-    inline fcomplex<__type> operator ()(__type  *input ) override { return filt<__type> ( input ); }
-    inline fcomplex<__type> operator ()(__fx64  *input ){ return filt<__fx64> ( input ); }
-    inline fcomplex<__type> operator ()(__fxx64 *input ){ return filt<__fxx64>( input ); }
-};
-
-template<> class recursive_fourier<__fx64> final : public recursive_fourier_abstract<__fx64>
-{
-    typedef __fx64 __type;
-public:
-
-    // initialization functiom
-    void init( __fx64 _Fs, __fx64 _Fn, __ix32 _hnum )
-    {
-       recursive_fourier_abstract<__fx64> :: init(_Fs, _Fn, _hnum );
-    }
-
-    // constructors
-    recursive_fourier() : recursive_fourier_abstract()
-    {
-        #ifdef RFF_DEBUG
-        Debugger::Log("recursive_fourier","recursive_fourier()","Filter construction");
-        #endif
-    }
-
-    // destructor
-    ~recursive_fourier()
-    {
-        #ifdef RFF_DEBUG
-        Debugger::Log("recursive_fourier","~recursive_fourier()","Filter destruction");
-        #endif
-    }
-
-    // operators
-    inline fcomplex<__type> operator ()(__type  *input ) override { return filt<__type> ( input ); }
-    inline fcomplex<__type> operator ()(__fxx64 *input ){ return filt<__fxx64>( input ); }
 };
 
 /*! @} */
@@ -248,10 +145,6 @@ public:
 /*! @} */
 
 // macro undefenition to avoid aliases
-#undef __fx32
-#undef __fx64
-#undef __fxx64
-#undef __ix32
 #undef PI0
 #undef PI2
 

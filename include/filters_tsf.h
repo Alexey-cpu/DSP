@@ -10,22 +10,6 @@ using namespace DSP_KERNEL;
 #define TSF_FILTERS_DEBUG // debugging is not available if the algorithm is running on a device !!!
 #endif
 
-#ifndef __fx32
-#define __fx32 float
-#endif
-
-#ifndef __fx64
-#define __fx64 double
-#endif
-
-#ifndef __fxx64
-#define __fxx64 long double
-#endif
-
-#ifndef __ix32
-#define __ix32 int
-#endif
-
 #ifndef PI0
 #define PI0 3.1415926535897932384626433832795
 #endif
@@ -41,7 +25,7 @@ using namespace DSP_KERNEL;
 */
 
 template<typename __type>
-class transfer_function : public model_base
+class transfer_function : public transfer_function_model
 {
     private:
 
@@ -52,22 +36,22 @@ class transfer_function : public model_base
 
     // transfer function fraction
     tuple_x3<__type**,
-            __ix32,
-            __ix32 > m_Wz;
+            int,
+            int > m_Wz;
 
     // input fraction to transform
     tuple_x3<__type**,
-            __ix32,
-            __ix32 > m_Ws;
+            int,
+            int > m_Ws;
 
     //
     tuple_x3<__type**,
-            __ix32,
-            __ix32 > m_Rz;
+            int,
+            int > m_Rz;
 
 
     // memory allocation function
-    __ix32 allocate()
+    int allocate()
     {
         #ifdef TSF_FILTERS_DEBUG
         Debugger::Log("filters_tsf","allocate()","Transfer function memory allocation");
@@ -78,7 +62,7 @@ class transfer_function : public model_base
 
         // compute Gain
         m_Gain = (__type)1 / ((__type*)m_Wz.item0[1])[0];
-        for( __ix32 j = 0 ; j < m_Wz.item2; j++ )
+        for( int j = 0 ; j < m_Wz.item2; j++ )
         {
             ((__type*)m_Wz.item0[1])[j] *= m_Gain;
         }
@@ -90,7 +74,7 @@ class transfer_function : public model_base
     }
 
 
-    __ix32 deallocate()
+    int deallocate()
     {
         #ifdef TSF_FILTERS_DEBUG
         Debugger::Log("filters_tsf","deallocate()","Transfer function memory deallocation");
@@ -107,58 +91,7 @@ class transfer_function : public model_base
         return __filt__(_input, &m_Wz.item0[0][0], &m_Wz.item0[1][0], &m_Gain, m_Wz.item2, m_Wz.item2, 1, &m_buff_sx, &m_buff_sy );
     }
 
-
-    public:
-
-    /*!
-     *  \class initialization function
-     *  \param[Fs] sampling frequency, Hz
-     *  \param[fraction] transfer function fraction
-     *  \details Transfer function fraction is represented by the tuple_x4 that contains:
-     *           tuple_x3.item0 - pointer to the numerator/denominator of the transfer function
-     *           tuple_x3.item1 - number of fraction polynons - always equals 2 for fraction
-     *           tuple_x3.item2 - number of numerator/denominator elements ( numerator size always equals to denominator size )
-    */
-    void init(__fx64 Fs, tuple_x3< __type**, __ix32, __ix32 > Ws, tuple_x3< __type**, __ix32, __ix32 > Rz )
-    {
-        // check the input
-        if( !Ws.item0 || Ws.item1 <= 0 || Ws.item2 <= 0 )
-        {
-            #ifdef TSF_FILTERS_DEBUG
-            Debugger::Log("filters_tsf","init()","Wrong input");
-            #endif
-
-            return;
-        }
-
-        for( __ix32 i = 0 ; i < Ws.item1; i++ )
-        {
-            if( !Ws.item0[i] )
-            {
-                #ifdef TSF_FILTERS_DEBUG
-                Debugger::Log("filters_tsf","init()","The input fraction is empty");
-                #endif
-
-                return;
-            }
-        }
-
-        m_Ws = Ws;
-        m_Rz = Rz;
-        model_base::init(Ws.item2, Fs);
-        allocate();
-    }
-
-    /*!
-     *  \brief frequency responce computation function
-     *  \param[F] input frequency, Hz
-     *  \details The function computes the filter complex transfer function value for the given frequency
-    */
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
-    {
-        return __freq_resp__( &((__type*)m_Wz.item0[0])[0], &((__type*)m_Wz.item0[1])[0], &m_Gain, m_Wz.item2, m_Wz.item2, 1, m_Fs, F );
-    }
-
+public:
 
     /*!  \class default constructor */
     transfer_function()
@@ -178,6 +111,55 @@ class transfer_function : public model_base
         deallocate();
     }
 
+    /*!
+     *  \class initialization function
+     *  \param[Fs] sampling frequency, Hz
+     *  \param[fraction] transfer function fraction
+     *  \details Transfer function fraction is represented by the tuple_x4 that contains:
+     *           tuple_x3.item0 - pointer to the numerator/denominator of the transfer function
+     *           tuple_x3.item1 - number of fraction polynons - always equals 2 for fraction
+     *           tuple_x3.item2 - number of numerator/denominator elements ( numerator size always equals to denominator size )
+    */
+    void init(double Fs, tuple_x3< __type**, int, int > Ws, tuple_x3< __type**, int, int > Rz )
+    {
+        // check the input
+        if( !Ws.item0 || Ws.item1 <= 0 || Ws.item2 <= 0 )
+        {
+            #ifdef TSF_FILTERS_DEBUG
+            Debugger::Log("filters_tsf","init()","Wrong input");
+            #endif
+
+            return;
+        }
+
+        for( int i = 0 ; i < Ws.item1; i++ )
+        {
+            if( !Ws.item0[i] )
+            {
+                #ifdef TSF_FILTERS_DEBUG
+                Debugger::Log("filters_tsf","init()","The input fraction is empty");
+                #endif
+
+                return;
+            }
+        }
+
+        m_Ws = Ws;
+        m_Rz = Rz;
+        transfer_function_model::init(Ws.item2, Fs);
+        allocate();
+    }
+
+    /*!
+     *  \brief frequency responce computation function
+     *  \param[F] input frequency, Hz
+     *  \details The function computes the filter complex transfer function value for the given frequency
+    */
+    Complex<double> frequency_response( double F ) override
+    {
+        return __freq_resp__( &((__type*)m_Wz.item0[0])[0], &((__type*)m_Wz.item0[1])[0], &m_Gain, m_Wz.item2, m_Wz.item2, 1, m_Fs, F );
+    }
+
     #ifdef TSF_FILTERS_DEBUG
     void show()
     {
@@ -189,9 +171,9 @@ class transfer_function : public model_base
         }
 
         cout << "Ws = \n";
-        for( __ix32 i = 0 ; i < m_Ws.item1; i++ )
+        for( int i = 0 ; i < m_Ws.item1; i++ )
         {
-            for( __ix32 j = 0 ; j < m_Ws.item2; j++ )
+            for( int j = 0 ; j < m_Ws.item2; j++ )
             {
                 cout << ((__type*)m_Ws.item0[i])[j] << "\t";
             }
@@ -200,9 +182,9 @@ class transfer_function : public model_base
         cout << "Gain(Ws) = " << 1 << "\n\n";
 
         cout << "Wz = \n";
-        for( __ix32 i = 0 ; i < m_Wz.item1; i++ )
+        for( int i = 0 ; i < m_Wz.item1; i++ )
         {
-            for( __ix32 j = 0 ; j < m_Wz.item2; j++ )
+            for( int j = 0 ; j < m_Wz.item2; j++ )
             {
                 cout << ((__type*)m_Wz.item0[i])[j] << "\t";
             }
@@ -224,10 +206,16 @@ class transfer_function : public model_base
 };
 
 template<typename __type>
-class leadlag final : public model_base
+class leadlag final : public transfer_function_model
 {
     transfer_function<__type> m_transfer_function;
 public:
+
+    /*! \brief default constructor */
+    leadlag(){}
+
+    /*! \brief default destructor */
+    virtual ~leadlag(){}
 
     /*!
      *  \brief initialization function
@@ -240,10 +228,10 @@ public:
      *          Ws = \frac{ s * T1 + 1 }{ s * T2 + 1 }
      *     \f]
     */
-    void init(__fx64 Fs, __fx64 T1, __fx64 T2)
+    void init(double Fs, double T1, double T2)
     {
         // Ws
-        tuple_x3<__type**, __ix32, __ix32> Ws;
+        tuple_x3<__type**, int, int> Ws;
         Ws.item1    = 2;
         Ws.item2    = 2;
         Ws.item0    = __alloc__<__type*>(Ws.item1);
@@ -259,7 +247,7 @@ public:
         Ws.item0[1][1] = T2;
 
         // Rz
-        tuple_x3<__type**, __ix32, __ix32> Rz;
+        tuple_x3<__type**, int, int> Rz;
         Rz.item1    = 2;
         Rz.item2    = 2;
         Rz.item0    = __alloc__<__type*>(Rz.item1);
@@ -275,7 +263,7 @@ public:
         Rz.item0[1][1] = +1/Fs;
 
         m_transfer_function.init(Fs, Ws, Rz);
-        model_base::init(2, Fs);
+        transfer_function_model::init(2, Fs);
     }
 
     /*!
@@ -283,16 +271,10 @@ public:
      *  \param[F] input frequency, Hz
      *  \details The function computes the filter complex transfer function value for the given frequency
     */
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
+    Complex<double> frequency_response( double F ) override
     {
         return m_transfer_function.frequency_response(F);
     }
-
-    /*! \brief default constructor */
-    leadlag(){}
-
-    /*! \brief default destructor */
-   ~leadlag(){}
 
     /*!
      *  \brief filtering operator
@@ -305,10 +287,16 @@ public:
 };
 
 template<typename __type>
-class aperiodic final : public model_base
+class aperiodic final : public transfer_function_model
 {
     transfer_function<__type> m_transfer_function;
 public:
+
+    /*! \brief default constructor */
+    aperiodic(){}
+
+    /*! \brief default destructor */
+    virtual ~aperiodic(){}
 
     /*!
      *  \brief initialization function
@@ -320,9 +308,9 @@ public:
      *          Ws = \frac{ 1 }{ s * Ta + 1 }
      *     \f]
     */
-    void init(__fx64 Fs, __fx64 Ta)
+    void init(double Fs, double Ta)
     {
-        tuple_x3<__type**, __ix32, __ix32> Ws;
+        tuple_x3<__type**, int, int> Ws;
         Ws.item1    = 2;
         Ws.item2    = 2;
         Ws.item0    = __alloc__<__type*>(Ws.item1);
@@ -338,7 +326,7 @@ public:
         Ws.item0[1][1] = Ta;
 
         // Rz
-        tuple_x3<__type**, __ix32, __ix32> Rz;
+        tuple_x3<__type**, int, int> Rz;
         Rz.item1    = 2;
         Rz.item2    = 2;
         Rz.item0    = __alloc__<__type*>(Rz.item1);
@@ -354,7 +342,7 @@ public:
         Rz.item0[1][1] = +1/Fs;
 
         m_transfer_function.init(Fs, Ws, Rz);
-        model_base::init(2, Fs);
+        transfer_function_model::init(2, Fs);
     }
 
     /*!
@@ -362,16 +350,10 @@ public:
      *  \param[F] input frequency, Hz
      *  \details The function computes the filter complex transfer function value for the given frequency
     */
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
+    Complex<double> frequency_response( double F ) override
     {
         return m_transfer_function.frequency_response(F);
     }
-
-    /*! \brief default constructor */
-    aperiodic(){}
-
-    /*! \brief default destructor */
-   ~aperiodic(){}
 
     /*!
      *  \brief filtering operator
@@ -384,10 +366,16 @@ public:
 };
 
 template<typename __type>
-class integrator final : public model_base
+class integrator final : public transfer_function_model
 {
     transfer_function<__type> m_transfer_function;
 public:
+
+    /*! \brief default constructor */
+    integrator(){}
+
+    /*! \brief default destructor */
+    virtual ~integrator(){}
 
     /*!
      *  \brief initialization function
@@ -398,9 +386,9 @@ public:
      *          Ws = \frac{ 1 }{ s }
      *     \f]
     */
-    void init(__fx64 Fs)
+    void init(double Fs)
     {
-        tuple_x3<__type**, __ix32, __ix32> Ws;
+        tuple_x3<__type**, int, int> Ws;
         Ws.item1    = 2;
         Ws.item2    = 2;
         Ws.item0    = __alloc__<__type*>(Ws.item1);
@@ -416,7 +404,7 @@ public:
         Ws.item0[1][1] = 1;
 
         // Rz
-        tuple_x3<__type**, __ix32, __ix32> Rz;
+        tuple_x3<__type**, int, int> Rz;
         Rz.item1    = 2;
         Rz.item2    = 2;
         Rz.item0    = __alloc__<__type*>(Rz.item1);
@@ -432,7 +420,7 @@ public:
         Rz.item0[1][1] = +1/Fs;
 
         m_transfer_function.init(Fs, Ws, Rz);
-        model_base::init(2, Fs);
+        transfer_function_model::init(2, Fs);
     }
 
     /*!
@@ -440,16 +428,10 @@ public:
      *  \param[F] input frequency, Hz
      *  \details The function computes the filter complex transfer function value for the given frequency
     */
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
+    Complex<double> frequency_response( double F ) override
     {
         return m_transfer_function.frequency_response(F);
     }
-
-    /*! \brief default constructor */
-    integrator(){}
-
-    /*! \brief default destructor */
-   ~integrator(){}
 
     /*!
      *  \brief filtering operator
@@ -462,10 +444,16 @@ public:
 };
 
 template<typename __type>
-class differentiator final : public model_base
+class differentiator final : public transfer_function_model
 {
     transfer_function<__type> m_transfer_function;
 public:
+
+    /*! \brief default constructor */
+    differentiator(){}
+
+    /*! \brief default destructor */
+    virtual ~differentiator(){}
 
     /*!
      *  \brief initialization function
@@ -477,9 +465,9 @@ public:
      *          Ws = \frac{ s }{ s * Td + 1 }
      *     \f]
     */
-    void init(__fx64 Fs, __fx64 Td)
+    void init(double Fs, double Td)
     {
-        tuple_x3<__type**, __ix32, __ix32> Ws;
+        tuple_x3<__type**, int, int> Ws;
         Ws.item1 = 2;
         Ws.item2 = 2;
         Ws.item0 = __alloc__<__type*>(Ws.item1);
@@ -495,7 +483,7 @@ public:
         Ws.item0[1][1] = Td;
 
         // Rz
-        tuple_x3<__type**, __ix32, __ix32> Rz;
+        tuple_x3<__type**, int, int> Rz;
         Rz.item1    = 2;
         Rz.item2    = 2;
         Rz.item0    = __alloc__<__type*>(Rz.item1);
@@ -511,7 +499,7 @@ public:
         Rz.item0[1][1] = +1/Fs;
 
         m_transfer_function.init(Fs, Ws, Rz);
-        model_base::init(2, Fs);
+        transfer_function_model::init(2, Fs);
     }
 
     /*!
@@ -519,16 +507,10 @@ public:
      *  \param[F] input frequency, Hz
      *  \details The function computes the filter complex transfer function value for the given frequency
     */
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
+    Complex<double> frequency_response( double F ) override
     {
         return m_transfer_function.frequency_response(F);
     }
-
-    /*! \brief default constructor */
-    differentiator(){}
-
-    /*! \brief default destructor */
-   ~differentiator(){}
 
     /*!
      *  \brief filtering operator
@@ -541,10 +523,16 @@ public:
 };
 
 template<typename __type>
-class filter_2nd_order final : public model_base
+class filter_2nd_order final : public transfer_function_model
 {
     transfer_function<__type> m_transfer_function;
 public:
+
+    /*! \brief default constructor */
+    filter_2nd_order(){}
+
+    /*! \brief default destructor */
+    virtual ~filter_2nd_order(){}
 
     /*!
      *  \brief initialization function
@@ -555,16 +543,16 @@ public:
      *  \details The function allocates filter resources and computes coefficients
      *           of the simple second order lowpass/highpass/bandpass/bandstop filter depending upon the type.
     */
-    void init(__fx64 Fs, __fx64 Fc, __fx64 Kd, filter_type type)
+    void init(double Fs, double Fc, double Kd, filter_type type)
     {
-        tuple_x3<__type**, __ix32, __ix32> Ws;
+        tuple_x3<__type**, int, int> Ws;
         Ws.item1    = 2;
         Ws.item2    = 3;
         Ws.item0    = __alloc__<__type*>(Ws.item1);
         Ws.item0[0] = __alloc__<__type>(Ws.item2);
         Ws.item0[1] = __alloc__<__type>(Ws.item2);
 
-        __fx64 omega = 2 * PI0 * Fc;
+        double omega = 2 * PI0 * Fc;
         omega = tan( omega / Fs / 2.0 );
 
         switch (type)
@@ -641,7 +629,7 @@ public:
         }
 
         // Rz
-        tuple_x3<__type**, __ix32, __ix32> Rz;
+        tuple_x3<__type**, int, int> Rz;
         Rz.item1    = 2;
         Rz.item2    = 2;
         Rz.item0    = __alloc__<__type*>(Rz.item1);
@@ -657,7 +645,7 @@ public:
         Rz.item0[1][1] = +1;
 
         m_transfer_function.init(Fs, Ws, Rz);
-        model_base::init(2, Fs);
+        transfer_function_model::init(2, Fs);
     }
 
     /*!
@@ -665,16 +653,10 @@ public:
      *  \param[F] input frequency, Hz
      *  \details The function computes the filter complex transfer function value for the given frequency
     */
-    fcomplex<__fx64> frequency_response( __fx64 F ) override
+    Complex<double> frequency_response( double F ) override
     {
         return m_transfer_function.frequency_response(F);
     }
-
-    /*! \brief default constructor */
-    filter_2nd_order(){}
-
-    /*! \brief default destructor */
-   ~filter_2nd_order(){}
 
     /*!
      *  \brief filtering operator
@@ -694,10 +676,6 @@ public:
 /*! @} */
 
 // undefining the custom macro to avoid aliases
-#undef __fx32
-#undef __fx64
-#undef __fxx64
-#undef __ix32
 #undef PI0
 #undef PI2
 

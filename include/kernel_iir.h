@@ -107,7 +107,7 @@ namespace IIR_KERNEL
      *                                        { \sum_{m=0}^N_{y} b_{mi} * e^{-j*2*\pi*f*Ts*m} }
      * \f]
     */
-    template<typename __type> fcomplex<__fx64> __freq_resp__ (__type *_cfnum, __type *_cfden,  __type *_gains, __ix32 _Nx, __ix32 _Ny, __ix32 _N,  __fx64 _Fs,  __fx64 _F )
+    template<typename __type> Complex<__fx64> __freq_resp__ (__type *_cfnum, __type *_cfden,  __type *_gains, __ix32 _Nx, __ix32 _Ny, __ix32 _N,  __fx64 _Fs,  __fx64 _F )
     {
         // check the input:
         if( !_cfnum || !_cfden || !_gains )
@@ -124,7 +124,7 @@ namespace IIR_KERNEL
         __fx64 Ts = 1 / _Fs;
 
         // transfer function initialization:
-        fcomplex< __fx64 > Wz(1,0), num(0,0), den(0,0);
+        Complex< __fx64 > Wz(1,0), num(0,0), den(0,0);
 
         for(__ix32 i = 0; i < _N; i++ )
         {
@@ -133,8 +133,8 @@ namespace IIR_KERNEL
             den(0,0);
 
             // numerator and denominator sums computation:
-            for(__ix32 j = 0; j < _Nx; j++) num += fcomplex<__fx64>( cos( -PI2 * _F * Ts * j ) , sin( -PI2 * _F * Ts * j ) ) * (__fx64)_cfnum[_Nx * i + j];
-            for(__ix32 j = 0; j < _Ny; j++) den += fcomplex<__fx64>( cos( -PI2 * _F * Ts * j ) , sin( -PI2 * _F * Ts * j ) ) * (__fx64)_cfden[_Ny * i + j];
+            for(__ix32 j = 0; j < _Nx; j++) num += Complex<__fx64>( cos( -PI2 * _F * Ts * j ) , sin( -PI2 * _F * Ts * j ) ) * (__fx64)_cfnum[_Nx * i + j];
+            for(__ix32 j = 0; j < _Ny; j++) den += Complex<__fx64>( cos( -PI2 * _F * Ts * j ) , sin( -PI2 * _F * Ts * j ) ) * (__fx64)_cfden[_Ny * i + j];
             Wz *= num / den * (__fx64)_gains[i];
         }
 
@@ -168,9 +168,9 @@ namespace IIR_KERNEL
         __fx64 epsilon_stop = sqrt(pow(10, _g_stop / 10) - 1);
 
         // memory allocation for the lowpass analogue prototype poles, zeros and gains
-        fcomplex<__fx64> *plp = __alloc__< fcomplex<__fx64> >(N+0);
-        fcomplex<__fx64> *zlp = __alloc__< fcomplex<__fx64> >(N+0);
-        fcomplex<__fx64> *glp = __alloc__< fcomplex<__fx64> >(N+1);
+        Complex<__fx64> *plp = __alloc__< Complex<__fx64> >(N+0);
+        Complex<__fx64> *zlp = __alloc__< Complex<__fx64> >(N+0);
+        Complex<__fx64> *glp = __alloc__< Complex<__fx64> >(N+1);
 
         if( !plp || !zlp || !glp )
         {
@@ -191,14 +191,14 @@ namespace IIR_KERNEL
         for( __ix32 i = 0 ; i < L ; i++ )
         {
             alpha = (2 * (i + 1) - 1) * PI0 / (2 * _order);
-            plp[i] = fcomplex<__fx64>( ( -1 / beta * sin(alpha) ) , ( +1 / beta * cos(alpha) ) );
+            plp[i] = Complex<__fx64>( ( -1 / beta * sin(alpha) ) , ( +1 / beta * cos(alpha) ) );
             glp[i] = plp[i] * __conjf__( plp[i] ) ;
         }
 
         // real odd pole:
         if( R == 1 )
         {
-            plp[ N - 1 ] = fcomplex< __fx64 >( ( -1 / beta ) , 0 );
+            plp[ N - 1 ] = Complex< __fx64 >( ( -1 / beta ) , 0 );
             glp[ N - 1 ] = -__realf__<__fx64>( plp[ N - 1 ] );
         }
 
@@ -242,9 +242,9 @@ namespace IIR_KERNEL
         __fx64 epsilon_stop = sqrt(pow(10, _g_stop / 10) - 1);
 
         // memory allocation for the lowpass analogue prototype poles, zeros and gains:
-        fcomplex< __fx64 >  *plp = __alloc__< fcomplex<__fx64> >(N+0);
-        fcomplex< __fx64 >  *zlp = __alloc__< fcomplex<__fx64> >(N+0);
-        fcomplex< __fx64 >  *glp = __alloc__< fcomplex<__fx64> >(N+1);
+        Complex< __fx64 >  *plp = __alloc__< Complex<__fx64> >(N+0);
+        Complex< __fx64 >  *zlp = __alloc__< Complex<__fx64> >(N+0);
+        Complex< __fx64 >  *glp = __alloc__< Complex<__fx64> >(N+1);
 
         if( !plp || !zlp || !glp )
         {
@@ -264,14 +264,14 @@ namespace IIR_KERNEL
         for ( __ix32 i = 0; i < L; i++)
         {
             alpha = (2 * (i + 1) - 1) * PI0 / (2 * _order);
-            plp[i] = fcomplex< __fx64 >( -sin( alpha ) * sinh( beta ) , +cos( alpha ) * cosh( beta ) );
+            plp[i] = Complex< __fx64 >( -sin( alpha ) * sinh( beta ) , +cos( alpha ) * cosh( beta ) );
             glp[i] = plp[i] * __conjf__( plp[i] );
         }
 
         // real odd pole:
         if ( R == 1 )
         {
-            plp[ N - 1 ] = fcomplex< __fx64 >( -sinh( beta ) , 0 );
+            plp[ N - 1 ] = Complex< __fx64 >( -sinh( beta ) , 0 );
             glp[ N - 1 ] = -__realf__<__fx64>( plp[ N - 1 ] );
         }
 
@@ -316,9 +316,9 @@ namespace IIR_KERNEL
         __ix32 N = L + R;
 
         // allocate zeros and poles arrays:
-        fcomplex< __fx64 > *plp = __alloc__< fcomplex< __fx64 > >(N+0);
-        fcomplex< __fx64 > *zlp = __alloc__< fcomplex< __fx64 > >(N+0);
-        fcomplex< __fx64 > *glp = __alloc__< fcomplex< __fx64 > >(N+1);
+        Complex< __fx64 > *plp = __alloc__< Complex< __fx64 > >(N+0);
+        Complex< __fx64 > *zlp = __alloc__< Complex< __fx64 > >(N+0);
+        Complex< __fx64 > *glp = __alloc__< Complex< __fx64 > >(N+1);
 
         if( !plp || !zlp || !glp )
         {
@@ -348,22 +348,22 @@ namespace IIR_KERNEL
             alpha = (2 * ( i + 1 ) - 1) * PI0 / ( 2 * _order );
 
             // zeros:
-            zlp[i] = fcomplex< __fx64 >( 0 , 1 / cos( alpha ) );
+            zlp[i] = Complex< __fx64 >( 0 , 1 / cos( alpha ) );
 
             // poles:
             re = -( sin( alpha ) * sinh( beta ) ) / ( cos( alpha ) * cos( alpha ) * cosh( beta ) * cosh( beta ) + sin( alpha ) * sin( alpha ) * sinh( beta ) * sinh( beta ) );
             im = +( cos( alpha ) * cosh( beta ) ) / ( cos( alpha ) * cos( alpha ) * cosh( beta ) * cosh( beta ) + sin( alpha ) * sin( alpha ) * sinh( beta ) * sinh( beta ) );
-            plp[i] = fcomplex< __fx64 >( re , im );
+            plp[i] = Complex< __fx64 >( re , im );
 
             // gains:
             glp[i] = ( zlp[i] * __conjf__( zlp[i] ) ) / ( plp[i] * __conjf__( plp[i] ) );
-            glp[i] = fcomplex< __fx64 >( 1 , 0 ) / glp[i];
+            glp[i] = Complex< __fx64 >( 1 , 0 ) / glp[i];
         }
 
         // real odd pole:
         if( R >= 1 )
         {
-            plp[ N - 1 ] = fcomplex< __fx64 >( -1 / sinh( beta ) , 0 );
+            plp[ N - 1 ] = Complex< __fx64 >( -1 / sinh( beta ) , 0 );
             glp[ N - 1 ] = -__realf__<__fx64>( plp[ N - 1 ] );
         }
 
@@ -411,9 +411,9 @@ namespace IIR_KERNEL
         __ix32 N = L + R;
 
         // allocate zeros and poles arrays:
-        fcomplex< __fx64 > *plp = __alloc__< fcomplex< __fx64 > >(N+0);
-        fcomplex< __fx64 > *zlp = __alloc__< fcomplex< __fx64 > >(N+0);
-        fcomplex< __fx64 > *glp = __alloc__< fcomplex< __fx64 > >(N+1);
+        Complex< __fx64 > *plp = __alloc__< Complex< __fx64 > >(N+0);
+        Complex< __fx64 > *zlp = __alloc__< Complex< __fx64 > >(N+0);
+        Complex< __fx64 > *glp = __alloc__< Complex< __fx64 > >(N+1);
 
         if( !plp || !zlp || !glp )
         {
@@ -458,7 +458,7 @@ namespace IIR_KERNEL
             for ( __ix32 i = 0; i < L; i++)
             {
                 alpha  = (2 * i + 1) / ( ( __fx64 )_order) * KE;
-                zlp[i] = fcomplex< __fx64 >( 0 , 1 /( Kw * __sn__( alpha , Kw ) ) );
+                zlp[i] = Complex< __fx64 >( 0 , 1 /( Kw * __sn__( alpha , Kw ) ) );
             }
         }
         else if( _order % 2 != 0 ) // odd order filter
@@ -466,7 +466,7 @@ namespace IIR_KERNEL
             for ( __ix32 i = 0; i < L; i++)
             {
                 alpha  = (2 * i + 2) / ( ( __fx64 )_order) * KE;
-                zlp[i] = fcomplex< __fx64 >( 0 , 1 /( Kw * __sn__( alpha , Kw ) ) );
+                zlp[i] = Complex< __fx64 >( 0 , 1 /( Kw * __sn__( alpha , Kw ) ) );
             }
         }
 
@@ -522,7 +522,7 @@ namespace IIR_KERNEL
             C = A * A;
 
             // compute the real odd pole:
-            plp[ N - 1 ] = fcomplex< __fx64 >( A * B / ( 1 - C )  , 0 );
+            plp[ N - 1 ] = Complex< __fx64 >( A * B / ( 1 - C )  , 0 );
         }
 
         // GAINS COMPUTATION:
@@ -532,7 +532,7 @@ namespace IIR_KERNEL
             for ( __ix32 i = 0; i < L; i++)
             {
                 glp[i] = ( zlp[i] * __conjf__( zlp[i] ) ) / ( plp[i] * __conjf__( plp[i] ) );
-                glp[i] = fcomplex< __fx64 >( 1 , 0 ) / glp[i];
+                glp[i] = Complex< __fx64 >( 1 , 0 ) / glp[i];
             }
 
             // real odd pole:
@@ -576,9 +576,9 @@ namespace IIR_KERNEL
         filter_data<__type> data = ( !_type ) ? __butt_zeros_poles_plain__<__type>( _order , _g_stop ) : __cheb1_zeros_poles_plain__<__type>( _order , _g_stop );
 
         // allocate zeros and poles arrays:
-        fcomplex< __fx64 > *plp = data.poles;
-        fcomplex< __fx64 > *zlp = data.zeros;
-        fcomplex< __fx64 > *glp = data.ratio;
+        Complex< __fx64 > *plp = data.poles;
+        Complex< __fx64 > *zlp = data.zeros;
+        Complex< __fx64 > *glp = data.ratio;
         __ix32 L = data.L;
         __ix32 R = data.R;
         __ix32 N = data.N;
@@ -612,14 +612,14 @@ namespace IIR_KERNEL
         for( __ix32 i = 0 ; i < L ; i++ )
         {
             // quadratic section gain:
-            fcomplex< __fx64 > gain0 = glp[i];
-            fcomplex< __fx64 > gain1 = fcomplex< __fx64 >( K * K , 0 );
-            fcomplex< __fx64 > gain2 = ( fcomplex< __fx64 >( 1 , 0 ) - plp[i] * K ) * ( fcomplex< __fx64 >( 1 , 0 ) - __conjf__( plp[i] ) * K );
+            Complex< __fx64 > gain0 = glp[i];
+            Complex< __fx64 > gain1 = Complex< __fx64 >( K * K , 0 );
+            Complex< __fx64 > gain2 = ( Complex< __fx64 >( 1 , 0 ) - plp[i] * K ) * ( Complex< __fx64 >( 1 , 0 ) - __conjf__( plp[i] ) * K );
             gains[i] = __realf__( gain0 * gain1 / gain2 );
 
             // zeros and poles transformation:
-            zlp[i] = fcomplex< __fx64 >( -1 , 0 );
-            plp[i] = ( fcomplex< __fx64 >( 1 , 0 ) + plp[i] * K ) / ( fcomplex< __fx64 >( 1 , 0 ) - plp[i] * K );
+            zlp[i] = Complex< __fx64 >( -1 , 0 );
+            plp[i] = ( Complex< __fx64 >( 1 , 0 ) + plp[i] * K ) / ( Complex< __fx64 >( 1 , 0 ) - plp[i] * K );
 
             // quadratic section numerator coefficients:
             cfnum[ 3 * i + 0 ] = +1;
@@ -636,14 +636,14 @@ namespace IIR_KERNEL
         if ( R == 1 )
         {
             // quadratic section gain:
-            fcomplex< __fx64 > gain0 = glp[N-1];
-            fcomplex< __fx64 > gain1 = fcomplex< __fx64 >( K , 0 );
-            fcomplex< __fx64 > gain2 = ( fcomplex< __fx64 >( 1 , 0 ) - plp[N-1] * K );
+            Complex< __fx64 > gain0 = glp[N-1];
+            Complex< __fx64 > gain1 = Complex< __fx64 >( K , 0 );
+            Complex< __fx64 > gain2 = ( Complex< __fx64 >( 1 , 0 ) - plp[N-1] * K );
             gains[N-1] = __realf__( gain0 * gain1 / gain2 );
 
             // zeros and poles transformation:
-            zlp[ N - 1 ] = fcomplex< __fx64 >( -1 , 0 );
-            plp[ N - 1 ] = ( fcomplex< __fx64 >( 1 , 0 ) + plp[N-1] * K ) / ( fcomplex< __fx64 >( 1 , 0 ) - plp[N-1] * K );
+            zlp[ N - 1 ] = Complex< __fx64 >( -1 , 0 );
+            plp[ N - 1 ] = ( Complex< __fx64 >( 1 , 0 ) + plp[N-1] * K ) / ( Complex< __fx64 >( 1 , 0 ) - plp[N-1] * K );
 
             // real odd pole section coefficients computation:
 
@@ -694,9 +694,9 @@ namespace IIR_KERNEL
         // INITIALIZATION:
         filter_data<__type> data = ( !_type ) ? __butt_zeros_poles_plain__<__type>( _order , _g_stop ) : __cheb1_zeros_poles_plain__<__type>( _order , _g_stop );
 
-        fcomplex< __fx64 > *plp = data.poles;
-        fcomplex< __fx64 > *zlp = data.zeros;
-        fcomplex< __fx64 > *glp = data.ratio;
+        Complex< __fx64 > *plp = data.poles;
+        Complex< __fx64 > *zlp = data.zeros;
+        Complex< __fx64 > *glp = data.ratio;
         __ix32 L = data.L;
         __ix32 R = data.R;
         __ix32 N = L + R;
@@ -730,13 +730,13 @@ namespace IIR_KERNEL
         for ( __ix32 i = 0; i < L; i++)
         {
             // gains compputation:
-            fcomplex< __fx64 > gain0 = glp[i];
-            fcomplex< __fx64 > gain1 = ( fcomplex< __fx64 >( 1 , 0 ) - plp[i] / (__fx64)w ) * ( fcomplex< __fx64 >( 1 , 0 ) - __conjf__( plp[i] ) / (__fx64)w );
+            Complex< __fx64 > gain0 = glp[i];
+            Complex< __fx64 > gain1 = ( Complex< __fx64 >( 1 , 0 ) - plp[i] / (__fx64)w ) * ( Complex< __fx64 >( 1 , 0 ) - __conjf__( plp[i] ) / (__fx64)w );
             gains[i] = __realf__( gain0 / gain1 / (__fx64)w / (__fx64)w );
 
             // zeros and poles transformation:
-            zlp[i] = fcomplex< __fx64 >( 1 , 0 );
-            plp[i] = ( fcomplex< __fx64 >( 1 , 0 ) + plp[i] / (__fx64)w ) / ( fcomplex< __fx64 >( 1 , 0 ) - plp[i] / (__fx64)w ) * (__fx64)(-1);
+            zlp[i] = Complex< __fx64 >( 1 , 0 );
+            plp[i] = ( Complex< __fx64 >( 1 , 0 ) + plp[i] / (__fx64)w ) / ( Complex< __fx64 >( 1 , 0 ) - plp[i] / (__fx64)w ) * (__fx64)(-1);
 
             // digital highpass coefficients computation:
 
@@ -755,13 +755,13 @@ namespace IIR_KERNEL
         if ( R == 1 )
         {
             // gains compputation:
-            fcomplex< __fx64 > gain0 = glp[N-1];
-            fcomplex< __fx64 > gain1 = ( fcomplex< __fx64 >( 1 , 0 ) - plp[N-1] / (__fx64)w );
+            Complex< __fx64 > gain0 = glp[N-1];
+            Complex< __fx64 > gain1 = ( Complex< __fx64 >( 1 , 0 ) - plp[N-1] / (__fx64)w );
             gains[N-1] = __realf__( gain0 / gain1 / (__fx64)w );
 
             // zeros and poles transformation:
-            zlp[ N - 1 ] = fcomplex< __fx64 >( 1 , 0 );
-            plp[ N - 1 ] = ( fcomplex< __fx64 >( 1 , 0 ) + plp[ N - 1 ] / (__fx64)w ) / ( fcomplex< __fx64 >( 1 , 0 ) - plp[ N - 1 ] / (__fx64)w ) * (__fx64)(-1);
+            zlp[ N - 1 ] = Complex< __fx64 >( 1 , 0 );
+            plp[ N - 1 ] = ( Complex< __fx64 >( 1 , 0 ) + plp[ N - 1 ] / (__fx64)w ) / ( Complex< __fx64 >( 1 , 0 ) - plp[ N - 1 ] / (__fx64)w ) * (__fx64)(-1);
 
             // digital highpass coefficients computation:
 
@@ -822,17 +822,17 @@ namespace IIR_KERNEL
 
         // lowpass analogue prototype poles, zeros and gains:
         filter_data<__type> data = ( !_type ) ? __butt_zeros_poles_plain__<__type>( _order, _g_stop ) : __cheb1_zeros_poles_plain__<__type>( _order, _g_stop );
-        fcomplex< __fx64 > *plp = data.poles;
-        fcomplex< __fx64 > *glp = data.ratio;
-        fcomplex< __fx64 > *zlp = data.zeros;
+        Complex< __fx64 > *plp = data.poles;
+        Complex< __fx64 > *glp = data.ratio;
+        Complex< __fx64 > *zlp = data.zeros;
         __ix32 L = data.L;
         __ix32 R = data.R;
         __ix32 N = L + R;
 
         // bandpass digital prototype poles, zeros and gains:
-        fcomplex< __fx64 > *pbp = __alloc__< fcomplex< __fx64 > >(2*N);
-        fcomplex< __fx64 > *zbp = __alloc__< fcomplex< __fx64 > >(2*N);
-        fcomplex< __fx64 > *gbp = __alloc__< fcomplex< __fx64 > >(2*N);
+        Complex< __fx64 > *pbp = __alloc__< Complex< __fx64 > >(2*N);
+        Complex< __fx64 > *zbp = __alloc__< Complex< __fx64 > >(2*N);
+        Complex< __fx64 > *gbp = __alloc__< Complex< __fx64 > >(2*N);
 
         // coefficients matrix computation:
         __type *cfnum = __alloc__< __type >(3*(2*L+R));
@@ -869,18 +869,18 @@ namespace IIR_KERNEL
         for( __ix32 i = 0 ; i < L ; i++ , j+=2 )
         {
             // poles transformation by means of square equation solve:
-            fcomplex< __fx64 > a( 1 / w0 , 0 );
-            fcomplex< __fx64 > b( -__realf__(plp[i]) * dW / w0 , -__imagf__(plp[i]) * dW / w0 );
-            fcomplex< __fx64 > c( 1 , 0 );
-            fcomplex< __fx64 > D = b * b - a * c * (__fx64)4;
-            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
-            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
+            Complex< __fx64 > a( 1 / w0 , 0 );
+            Complex< __fx64 > b( -__realf__(plp[i]) * dW / w0 , -__imagf__(plp[i]) * dW / w0 );
+            Complex< __fx64 > c( 1 , 0 );
+            Complex< __fx64 > D = b * b - a * c * (__fx64)4;
+            Complex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
+            Complex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // zeros and poles bilinear transform:
-            zbp[ j + 0 ] = fcomplex< __fx64 >( +1 , 0 );
-            zbp[ j + 1 ] = fcomplex< __fx64 >( -1 , 0 );
-            pbp[ j + 0 ] = ( fcomplex< __fx64 >( 1 , 0 ) + p1 ) / ( fcomplex< __fx64 >( 1 , 0 ) - p1 );
-            pbp[ j + 1 ] = ( fcomplex< __fx64 >( 1 , 0 ) + p2 ) / ( fcomplex< __fx64 >( 1 , 0 ) - p2 );
+            zbp[ j + 0 ] = Complex< __fx64 >( +1 , 0 );
+            zbp[ j + 1 ] = Complex< __fx64 >( -1 , 0 );
+            pbp[ j + 0 ] = ( Complex< __fx64 >( 1 , 0 ) + p1 ) / ( Complex< __fx64 >( 1 , 0 ) - p1 );
+            pbp[ j + 1 ] = ( Complex< __fx64 >( 1 , 0 ) + p2 ) / ( Complex< __fx64 >( 1 , 0 ) - p2 );
 
             // digital filter coefficients computation:
 
@@ -901,12 +901,12 @@ namespace IIR_KERNEL
             cfden[ 3 * ( j + 1 ) + 2 ] = +__realf__( pbp[j+1] * __conjf__( pbp[j+1] ) );
 
             // fcomplex conjugate quadratic sections gains computation:
-            fcomplex< __fx64 > gain0 = glp[i];
-            fcomplex< __fx64 > gain1 = p1 * __conjf__( p1 );
-            fcomplex< __fx64 > gain2 = p2 * __conjf__( p2 );
-            fcomplex< __fx64 > gain3 = (fcomplex< __fx64 >(1,0) - p1)*(fcomplex< __fx64 >(1,0) - __conjf__(p1));
-            fcomplex< __fx64 > gain4 = (fcomplex< __fx64 >(1,0) - p2)*(fcomplex< __fx64 >(1,0) - __conjf__(p2));
-            fcomplex< __fx64 > gain5 = gain0 * gain1 * gain2 / gain3 / gain4 * dW * dW / w0 / w0;
+            Complex< __fx64 > gain0 = glp[i];
+            Complex< __fx64 > gain1 = p1 * __conjf__( p1 );
+            Complex< __fx64 > gain2 = p2 * __conjf__( p2 );
+            Complex< __fx64 > gain3 = (Complex< __fx64 >(1,0) - p1)*(Complex< __fx64 >(1,0) - __conjf__(p1));
+            Complex< __fx64 > gain4 = (Complex< __fx64 >(1,0) - p2)*(Complex< __fx64 >(1,0) - __conjf__(p2));
+            Complex< __fx64 > gain5 = gain0 * gain1 * gain2 / gain3 / gain4 * dW * dW / w0 / w0;
             gain5 = __csqrtf__( gain5 );
             gains[j+0] = __realf__(gain5);
             gains[j+1] = __realf__(gain5);
@@ -916,18 +916,18 @@ namespace IIR_KERNEL
         if( R == 1 )
         {
             // pole transformation by means of square equation solve:
-            fcomplex< __fx64 > a( 1 / w0 , 0 );
-            fcomplex< __fx64 > b( -__realf__(plp[ N - 1 ]) * dW / w0 , -__realf__(plp[ N - 1 ]) * dW / w0 );
-            fcomplex< __fx64 > c( 1 , 0 );
-            fcomplex< __fx64 > D = b * b - a * c * (__fx64)4;
-            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
-            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
+            Complex< __fx64 > a( 1 / w0 , 0 );
+            Complex< __fx64 > b( -__realf__(plp[ N - 1 ]) * dW / w0 , -__realf__(plp[ N - 1 ]) * dW / w0 );
+            Complex< __fx64 > c( 1 , 0 );
+            Complex< __fx64 > D = b * b - a * c * (__fx64)4;
+            Complex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
+            Complex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // zeros and poles bilinear transform:
-            zbp[ j + 0 ] = fcomplex< __fx64 >( +1 , 0 );
-            zbp[ j + 1 ] = fcomplex< __fx64 >( -1 , 0 );
-            pbp[ j + 0 ] = ( fcomplex< __fx64 >( 1 , 0 ) + p1 ) / ( fcomplex< __fx64 >( 1 , 0 ) - p1 );
-            pbp[ j + 1 ] = ( fcomplex< __fx64 >( 1 , 0 ) + p2 ) / ( fcomplex< __fx64 >( 1 , 0 ) - p2 );
+            zbp[ j + 0 ] = Complex< __fx64 >( +1 , 0 );
+            zbp[ j + 1 ] = Complex< __fx64 >( -1 , 0 );
+            pbp[ j + 0 ] = ( Complex< __fx64 >( 1 , 0 ) + p1 ) / ( Complex< __fx64 >( 1 , 0 ) - p1 );
+            pbp[ j + 1 ] = ( Complex< __fx64 >( 1 , 0 ) + p2 ) / ( Complex< __fx64 >( 1 , 0 ) - p2 );
 
             // digital filter coefficients computation:
 
@@ -942,10 +942,10 @@ namespace IIR_KERNEL
             cfden[ 3 * ( j + 0 ) + 2 ] = +__realf__( pbp[j] * pbp[j+1] );
 
             // fcomplex conjugate quadratic sections gains computation:
-            fcomplex< __fx64 > gain0 = glp[N-1];
-            fcomplex< __fx64 > gain1 = p1 * p2;
-            fcomplex< __fx64 > gain2 = (fcomplex< __fx64 >(1,0) - p1)*(fcomplex< __fx64 >(1,0) - p2);
-            fcomplex< __fx64 > gain3 = gain0 * gain1 / gain2 * dW / w0;
+            Complex< __fx64 > gain0 = glp[N-1];
+            Complex< __fx64 > gain1 = p1 * p2;
+            Complex< __fx64 > gain2 = (Complex< __fx64 >(1,0) - p1)*(Complex< __fx64 >(1,0) - p2);
+            Complex< __fx64 > gain3 = gain0 * gain1 / gain2 * dW / w0;
             gains[j+0] = __realf__(gain3);
         }
 
@@ -1000,17 +1000,17 @@ namespace IIR_KERNEL
 
        // lowpass analogue prototype poles, zeros and gains:
        filter_data<__type> data = ( !_type ) ? __butt_zeros_poles_plain__<__type>( _order, _g_stop ) : __cheb1_zeros_poles_plain__<__type>( _order, _g_stop );
-       fcomplex< __fx64 > *plp = data.poles;
-       fcomplex< __fx64 > *glp = data.ratio;
-       fcomplex< __fx64 > *zlp = data.zeros;
+       Complex< __fx64 > *plp = data.poles;
+       Complex< __fx64 > *glp = data.ratio;
+       Complex< __fx64 > *zlp = data.zeros;
        __ix32 L = data.L;
        __ix32 R = data.R;
        __ix32 N = L + R;
 
         // bandpass digital prototype poles, zeros and gains:
-        fcomplex< __fx64 > *pbs = __alloc__<fcomplex< __fx64 >>(2*N);
-        fcomplex< __fx64 > *zbs = __alloc__<fcomplex< __fx64 >>(2*N);
-        fcomplex< __fx64 > *gbs = __alloc__<fcomplex< __fx64 >>(2*N);
+        Complex< __fx64 > *pbs = __alloc__<Complex< __fx64 >>(2*N);
+        Complex< __fx64 > *zbs = __alloc__<Complex< __fx64 >>(2*N);
+        Complex< __fx64 > *gbs = __alloc__<Complex< __fx64 >>(2*N);
 
         // coefficients matrix computation:
         __type *cfnum = __alloc__< __type >(3*(2*L+R));
@@ -1047,18 +1047,18 @@ namespace IIR_KERNEL
         for( __ix32 i = 0 ; i < L ; i++ , j+=2 )
         {
             // poles transformation by means of square equation solve:
-            fcomplex< __fx64 > a = fcomplex< __fx64 >( -1 / w0 , 0 );
-            fcomplex< __fx64 > b = fcomplex< __fx64 >( dW , 0 ) / plp[i] / w0;
-            fcomplex< __fx64 > c = fcomplex< __fx64 >( -1 , 0 );
-            fcomplex< __fx64 > D = b * b - a * c * (__fx64)4;
-            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
-            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
+            Complex< __fx64 > a = Complex< __fx64 >( -1 / w0 , 0 );
+            Complex< __fx64 > b = Complex< __fx64 >( dW , 0 ) / plp[i] / w0;
+            Complex< __fx64 > c = Complex< __fx64 >( -1 , 0 );
+            Complex< __fx64 > D = b * b - a * c * (__fx64)4;
+            Complex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
+            Complex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // zeros and poles bilinear transform:
-            zbs[ j + 0 ] = fcomplex< __fx64 >( +1 , 0 );
-            zbs[ j + 1 ] = fcomplex< __fx64 >( -1 , 0 );
-            pbs[ j + 0 ] = ( fcomplex< __fx64 >( 1 , 0 ) + p1 ) / ( fcomplex< __fx64 >( 1 , 0 ) - p1 );
-            pbs[ j + 1 ] = ( fcomplex< __fx64 >( 1 , 0 ) + p2 ) / ( fcomplex< __fx64 >( 1 , 0 ) - p2 );
+            zbs[ j + 0 ] = Complex< __fx64 >( +1 , 0 );
+            zbs[ j + 1 ] = Complex< __fx64 >( -1 , 0 );
+            pbs[ j + 0 ] = ( Complex< __fx64 >( 1 , 0 ) + p1 ) / ( Complex< __fx64 >( 1 , 0 ) - p1 );
+            pbs[ j + 1 ] = ( Complex< __fx64 >( 1 , 0 ) + p2 ) / ( Complex< __fx64 >( 1 , 0 ) - p2 );
 
             // digital filter coefficients computation:
 
@@ -1079,12 +1079,12 @@ namespace IIR_KERNEL
             cfden[ 3 * ( j + 1 ) + 2 ] = +__realf__( pbs[j+1] * __conjf__( pbs[j+1] ) );
 
             // fcomplex conjugate quadratic sections gains computation:
-            fcomplex< __fx64 > gain0 = fcomplex< __fx64 >(1,0);
-            fcomplex< __fx64 > gain1 = p1 * __conjf__( p1 );
-            fcomplex< __fx64 > gain2 = p2 * __conjf__( p2 );
-            fcomplex< __fx64 > gain3 = (fcomplex< __fx64 >(1,0) - p1)*(fcomplex< __fx64 >(1,0) - __conjf__(p1));
-            fcomplex< __fx64 > gain4 = (fcomplex< __fx64 >(1,0) - p2)*(fcomplex< __fx64 >(1,0) - __conjf__(p2));
-            fcomplex< __fx64 > gain5 = gain0 * gain1 * gain2 / gain3 / gain4 / w0 / w0 * ( 1 + w0 ) * ( 1 + w0 );
+            Complex< __fx64 > gain0 = Complex< __fx64 >(1,0);
+            Complex< __fx64 > gain1 = p1 * __conjf__( p1 );
+            Complex< __fx64 > gain2 = p2 * __conjf__( p2 );
+            Complex< __fx64 > gain3 = (Complex< __fx64 >(1,0) - p1)*(Complex< __fx64 >(1,0) - __conjf__(p1));
+            Complex< __fx64 > gain4 = (Complex< __fx64 >(1,0) - p2)*(Complex< __fx64 >(1,0) - __conjf__(p2));
+            Complex< __fx64 > gain5 = gain0 * gain1 * gain2 / gain3 / gain4 / w0 / w0 * ( 1 + w0 ) * ( 1 + w0 );
             gain5 = __csqrtf__( gain5 );
             gains[j+0] = __realf__(gain5);
             gains[j+1] = gains[j+0];
@@ -1094,18 +1094,18 @@ namespace IIR_KERNEL
         if( R == 1 )
         {
             // poles transformation by means of square equation solve:
-            fcomplex< __fx64 > a = fcomplex< __fx64 >( -1 / w0 , 0 );
-            fcomplex< __fx64 > b = fcomplex< __fx64 >( dW , 0 ) / plp[N-1] / w0;
-            fcomplex< __fx64 > c = fcomplex< __fx64 >( -1 , 0 );
-            fcomplex< __fx64 > D = b * b - a * c * (__fx64)4;
-            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
-            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
+            Complex< __fx64 > a = Complex< __fx64 >( -1 / w0 , 0 );
+            Complex< __fx64 > b = Complex< __fx64 >( dW , 0 ) / plp[N-1] / w0;
+            Complex< __fx64 > c = Complex< __fx64 >( -1 , 0 );
+            Complex< __fx64 > D = b * b - a * c * (__fx64)4;
+            Complex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
+            Complex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // zeros and poles bilinear transform:
-            zbs[ j + 0 ] = fcomplex< __fx64 >( +1 , 0 );
-            zbs[ j + 1 ] = fcomplex< __fx64 >( -1 , 0 );
-            pbs[ j + 0 ] = ( fcomplex< __fx64 >( 1 , 0 ) + p1 ) / ( fcomplex< __fx64 >( 1 , 0 ) - p1 );
-            pbs[ j + 1 ] = ( fcomplex< __fx64 >( 1 , 0 ) + p2 ) / ( fcomplex< __fx64 >( 1 , 0 ) - p2 );
+            zbs[ j + 0 ] = Complex< __fx64 >( +1 , 0 );
+            zbs[ j + 1 ] = Complex< __fx64 >( -1 , 0 );
+            pbs[ j + 0 ] = ( Complex< __fx64 >( 1 , 0 ) + p1 ) / ( Complex< __fx64 >( 1 , 0 ) - p1 );
+            pbs[ j + 1 ] = ( Complex< __fx64 >( 1 , 0 ) + p2 ) / ( Complex< __fx64 >( 1 , 0 ) - p2 );
 
             // digital filter coefficients computation:
 
@@ -1120,11 +1120,11 @@ namespace IIR_KERNEL
             cfden[ 3 * ( j + 0 ) + 2 ] = +__realf__( pbs[j]*pbs[j+1] );
 
             // fcomplex conjugate quadratic sections gains computation:
-            fcomplex< __fx64 > gain0 = glp[N-1];
-            fcomplex< __fx64 > gain1 = p1 * p2;
-            fcomplex< __fx64 > gain2 = fcomplex< __fx64 >(1,0) / plp[N-1] / (__fx64)(-1);
-            fcomplex< __fx64 > gain3 = (fcomplex< __fx64 >(1,0) - p1)*(fcomplex< __fx64 >(1,0) - p2);
-            fcomplex< __fx64 > gain4 = gain0 * gain1 * gain2 / gain3 / w0 * ( 1 + w0 );
+            Complex< __fx64 > gain0 = glp[N-1];
+            Complex< __fx64 > gain1 = p1 * p2;
+            Complex< __fx64 > gain2 = Complex< __fx64 >(1,0) / plp[N-1] / (__fx64)(-1);
+            Complex< __fx64 > gain3 = (Complex< __fx64 >(1,0) - p1)*(Complex< __fx64 >(1,0) - p2);
+            Complex< __fx64 > gain4 = gain0 * gain1 * gain2 / gain3 / w0 * ( 1 + w0 );
             gains[j+0] = __realf__(gain4);
         }
 
@@ -1174,9 +1174,9 @@ namespace IIR_KERNEL
         filter_data<__type> data = ( !_type ) ? __cheb2_zeros_poles_plain__<__type>( _order, _g_stop ) : __ellip_zeros_poles_plain__<__type>( _order , _g_pass , _g_stop );
 
         // zeros / poles plain initialization:
-        fcomplex< __fx64 > *plp = data.poles;
-        fcomplex< __fx64 > *zlp = data.zeros;
-        fcomplex< __fx64 > *glp = data.ratio;
+        Complex< __fx64 > *plp = data.poles;
+        Complex< __fx64 > *zlp = data.zeros;
+        Complex< __fx64 > *glp = data.ratio;
 
         // zeros/poles and coefficients number:
         __ix32 L = data.L;
@@ -1208,14 +1208,14 @@ namespace IIR_KERNEL
         for ( __ix32 i = 0 ; i < L ; i++)
         {
             // quadratic sections gains computation:
-            fcomplex< __fx64 > gain0 = glp[i];
-            fcomplex< __fx64 > gain1 = ( fcomplex< __fx64 >( 1 , 0 ) - zlp[i] * w ) * ( fcomplex< __fx64 >( 1 , 0 ) - __conjf__( zlp[i] ) * w );
-            fcomplex< __fx64 > gain2 = ( fcomplex< __fx64 >( 1 , 0 ) - plp[i] * w ) * ( fcomplex< __fx64 >( 1 , 0 ) - __conjf__( plp[i] ) * w );
+            Complex< __fx64 > gain0 = glp[i];
+            Complex< __fx64 > gain1 = ( Complex< __fx64 >( 1 , 0 ) - zlp[i] * w ) * ( Complex< __fx64 >( 1 , 0 ) - __conjf__( zlp[i] ) * w );
+            Complex< __fx64 > gain2 = ( Complex< __fx64 >( 1 , 0 ) - plp[i] * w ) * ( Complex< __fx64 >( 1 , 0 ) - __conjf__( plp[i] ) * w );
             gains[ i ] = __realf__( gain0 * gain1 / gain2 );
 
             // zeros and poles transformation:
-            zlp[i] = ( fcomplex< __fx64 >( 1 , 0 ) + zlp[i] * w ) / ( fcomplex< __fx64 >( 1 , 0 ) - zlp[i] * w );
-            plp[i] = ( fcomplex< __fx64 >( 1 , 0 ) + plp[i] * w ) / ( fcomplex< __fx64 >( 1 , 0 ) - plp[i] * w );
+            zlp[i] = ( Complex< __fx64 >( 1 , 0 ) + zlp[i] * w ) / ( Complex< __fx64 >( 1 , 0 ) - zlp[i] * w );
+            plp[i] = ( Complex< __fx64 >( 1 , 0 ) + plp[i] * w ) / ( Complex< __fx64 >( 1 , 0 ) - plp[i] * w );
 
             // quadratic sections coefficients computation:
 
@@ -1234,14 +1234,14 @@ namespace IIR_KERNEL
         if( R >= 1 )
         {
             // quadratic sections gains computation:
-            fcomplex< __fx64 > gain0 = glp[ N - 1 ];
-            fcomplex< __fx64 > gain1 = fcomplex< __fx64 >( w , 0 );
-            fcomplex< __fx64 > gain2 = ( fcomplex< __fx64 >( 1 , 0 ) - plp[ N - 1 ] * w );
+            Complex< __fx64 > gain0 = glp[ N - 1 ];
+            Complex< __fx64 > gain1 = Complex< __fx64 >( w , 0 );
+            Complex< __fx64 > gain2 = ( Complex< __fx64 >( 1 , 0 ) - plp[ N - 1 ] * w );
             gains[ N - 1 ] = __realf__( gain0 * gain1 / gain2 );
 
             // zeros and poles transformation:
-            zlp[ N - 1 ] = fcomplex< __fx64 >( -1 , 0 );
-            plp[ N - 1 ] = ( fcomplex< __fx64 >( 1 , 0 ) + plp[ N - 1 ] * w ) / ( fcomplex< __fx64 >( 1 , 0 ) - plp[ N - 1 ] * w );
+            zlp[ N - 1 ] = Complex< __fx64 >( -1 , 0 );
+            plp[ N - 1 ] = ( Complex< __fx64 >( 1 , 0 ) + plp[ N - 1 ] * w ) / ( Complex< __fx64 >( 1 , 0 ) - plp[ N - 1 ] * w );
 
             // quadratic sections coefficients computation:
 
@@ -1298,9 +1298,9 @@ namespace IIR_KERNEL
         __ix32 N = data.N;
 
         // zeros / poles plain initialization:
-        fcomplex< __fx64 > *plp = data.poles;
-        fcomplex< __fx64 > *zlp = data.zeros;
-        fcomplex< __fx64 > *glp = data.ratio;
+        Complex< __fx64 > *plp = data.poles;
+        Complex< __fx64 > *zlp = data.zeros;
+        Complex< __fx64 > *glp = data.ratio;
 
         // coefficients matrix memory allocation:
          __type *cfnum = __alloc__<__type>(3*N);
@@ -1329,14 +1329,14 @@ namespace IIR_KERNEL
         for ( __ix32 i = 0 ; i < L ; i++)
         {
             // quadratic sections gains computation:
-            fcomplex< __fx64 > gain0 = glp[i];
-            fcomplex< __fx64 > gain1 = ( fcomplex< __fx64 >( 1 , 0 ) - zlp[i] / w ) * ( fcomplex< __fx64 >( 1 , 0 ) - __conjf__( zlp[i] ) / w );
-            fcomplex< __fx64 > gain2 = ( fcomplex< __fx64 >( 1 , 0 ) - plp[i] / w ) * ( fcomplex< __fx64 >( 1 , 0 ) - __conjf__( plp[i] ) / w );
+            Complex< __fx64 > gain0 = glp[i];
+            Complex< __fx64 > gain1 = ( Complex< __fx64 >( 1 , 0 ) - zlp[i] / w ) * ( Complex< __fx64 >( 1 , 0 ) - __conjf__( zlp[i] ) / w );
+            Complex< __fx64 > gain2 = ( Complex< __fx64 >( 1 , 0 ) - plp[i] / w ) * ( Complex< __fx64 >( 1 , 0 ) - __conjf__( plp[i] ) / w );
             gains[ i ] = __realf__( gain0 * gain1 / gain2 );
 
             // zeros and poles transformation:
-            zlp[i] = ( fcomplex< __fx64 >( 1 , 0 ) + zlp[i] / w ) / ( fcomplex< __fx64 >( 1 , 0 ) - zlp[i] / w );
-            plp[i] = ( fcomplex< __fx64 >( 1 , 0 ) + plp[i] / w ) / ( fcomplex< __fx64 >( 1 , 0 ) - plp[i] / w );
+            zlp[i] = ( Complex< __fx64 >( 1 , 0 ) + zlp[i] / w ) / ( Complex< __fx64 >( 1 , 0 ) - zlp[i] / w );
+            plp[i] = ( Complex< __fx64 >( 1 , 0 ) + plp[i] / w ) / ( Complex< __fx64 >( 1 , 0 ) - plp[i] / w );
 
             // quadratic sections coefficients computation:
 
@@ -1355,14 +1355,14 @@ namespace IIR_KERNEL
         if( R >= 1 )
         {
             // quadratic sections gains computation:
-            fcomplex< __fx64 > gain0 = glp[ N - 1 ];
-            fcomplex< __fx64 > gain1 = fcomplex< __fx64 >( 1 / w , 0 );
-            fcomplex< __fx64 > gain2 = ( fcomplex< __fx64 >( 1 , 0 ) - plp[ N - 1 ] / w );
+            Complex< __fx64 > gain0 = glp[ N - 1 ];
+            Complex< __fx64 > gain1 = Complex< __fx64 >( 1 / w , 0 );
+            Complex< __fx64 > gain2 = ( Complex< __fx64 >( 1 , 0 ) - plp[ N - 1 ] / w );
             gains[ N - 1 ] = __realf__( gain0 * gain1 / gain2 );
 
             // zeros and poles transformation:
-            zlp[ N - 1 ] = fcomplex< __fx64 >( -1 , 0 );
-            plp[ N - 1 ] = ( fcomplex< __fx64 >( 1 , 0 ) + plp[ N - 1 ] / w ) / ( fcomplex< __fx64 >( 1 , 0 ) - plp[ N - 1 ] / w );
+            zlp[ N - 1 ] = Complex< __fx64 >( -1 , 0 );
+            plp[ N - 1 ] = ( Complex< __fx64 >( 1 , 0 ) + plp[ N - 1 ] / w ) / ( Complex< __fx64 >( 1 , 0 ) - plp[ N - 1 ] / w );
 
             // quadratic sections coefficients computation:
 
@@ -1420,17 +1420,17 @@ namespace IIR_KERNEL
 
         // lowpass analogue prototype poles, zeros and gains:
         filter_data<__type> data = ( !_type ) ?__cheb2_zeros_poles_plain__<__type>(_order, _g_stop ) :__ellip_zeros_poles_plain__<__type>(_order, _g_pass, _g_stop );
-        fcomplex< __fx64 > *plp = data.poles;
-        fcomplex< __fx64 > *glp = data.ratio;
-        fcomplex< __fx64 > *zlp = data.zeros;
+        Complex< __fx64 > *plp = data.poles;
+        Complex< __fx64 > *glp = data.ratio;
+        Complex< __fx64 > *zlp = data.zeros;
         __ix32 L = data.L;
         __ix32 R = data.R;
         __ix32 N = L + R;
 
         // bandpass digital prototype poles, zeros and gains:
-        fcomplex< __fx64 > *pbp = __alloc__< fcomplex< __fx64 > >(2*N);
-        fcomplex< __fx64 > *zbp = __alloc__< fcomplex< __fx64 > >(2*N);
-        fcomplex< __fx64 > *gbp = __alloc__< fcomplex< __fx64 > >(2*N);
+        Complex< __fx64 > *pbp = __alloc__< Complex< __fx64 > >(2*N);
+        Complex< __fx64 > *zbp = __alloc__< Complex< __fx64 > >(2*N);
+        Complex< __fx64 > *gbp = __alloc__< Complex< __fx64 > >(2*N);
 
         // coefficients matrix computation:
         __type *cfnum = __alloc__<__type>( 3*(2*L+R) );
@@ -1466,7 +1466,7 @@ namespace IIR_KERNEL
         __ix32 j = 0;
 
         // auxiliary variables:
-        fcomplex< __fx64 > a , b , c , D , z1 , z2 , p1 , p2;
+        Complex< __fx64 > a , b , c , D , z1 , z2 , p1 , p2;
 
         for( __ix32 i = 0 ; i < L ; i++ , j+=2 )
         {
@@ -1487,10 +1487,10 @@ namespace IIR_KERNEL
             p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // zeros and poles bilinear transform:
-            zbp[ j + 0 ] = ( fcomplex< __fx64 >( 1 , 0 ) + z1 ) / ( fcomplex< __fx64 >( 1 , 0 ) - z1 );
-            zbp[ j + 1 ] = ( fcomplex< __fx64 >( 1 , 0 ) + z2 ) / ( fcomplex< __fx64 >( 1 , 0 ) - z2 );
-            pbp[ j + 0 ] = ( fcomplex< __fx64 >( 1 , 0 ) + p1 ) / ( fcomplex< __fx64 >( 1 , 0 ) - p1 );
-            pbp[ j + 1 ] = ( fcomplex< __fx64 >( 1 , 0 ) + p2 ) / ( fcomplex< __fx64 >( 1 , 0 ) - p2 );
+            zbp[ j + 0 ] = ( Complex< __fx64 >( 1 , 0 ) + z1 ) / ( Complex< __fx64 >( 1 , 0 ) - z1 );
+            zbp[ j + 1 ] = ( Complex< __fx64 >( 1 , 0 ) + z2 ) / ( Complex< __fx64 >( 1 , 0 ) - z2 );
+            pbp[ j + 0 ] = ( Complex< __fx64 >( 1 , 0 ) + p1 ) / ( Complex< __fx64 >( 1 , 0 ) - p1 );
+            pbp[ j + 1 ] = ( Complex< __fx64 >( 1 , 0 ) + p2 ) / ( Complex< __fx64 >( 1 , 0 ) - p2 );
 
             // filter coefficients computation:
 
@@ -1511,17 +1511,17 @@ namespace IIR_KERNEL
             cfden[ 3 * ( j + 1 ) + 2 ] = +__realf__( pbp[j+1] * __conjf__( pbp[j+1] ) );
 
             // fcomplex conjugate quadratic sections gains computation:
-            fcomplex< __fx64 > gain0 = glp[i];
-            fcomplex< __fx64 > gain1 = p1 * __conjf__( p1 );
-            fcomplex< __fx64 > gain2 = p2 * __conjf__( p2 );
-            fcomplex< __fx64 > gain3 = z1 * __conjf__( z1 );
-            fcomplex< __fx64 > gain4 = z2 * __conjf__( z2 );
-            fcomplex< __fx64 > gain5 = ( fcomplex< __fx64 >(1,0) - z1)*(fcomplex< __fx64 >(1,0) - __conjf__(z1) );
-            fcomplex< __fx64 > gain6 = ( fcomplex< __fx64 >(1,0) - z2)*(fcomplex< __fx64 >(1,0) - __conjf__(z2) );
-            fcomplex< __fx64 > gain7 = ( fcomplex< __fx64 >(1,0) - p1)*(fcomplex< __fx64 >(1,0) - __conjf__(p1) );
-            fcomplex< __fx64 > gain8 = ( fcomplex< __fx64 >(1,0) - p2)*(fcomplex< __fx64 >(1,0) - __conjf__(p2) );
+            Complex< __fx64 > gain0 = glp[i];
+            Complex< __fx64 > gain1 = p1 * __conjf__( p1 );
+            Complex< __fx64 > gain2 = p2 * __conjf__( p2 );
+            Complex< __fx64 > gain3 = z1 * __conjf__( z1 );
+            Complex< __fx64 > gain4 = z2 * __conjf__( z2 );
+            Complex< __fx64 > gain5 = ( Complex< __fx64 >(1,0) - z1)*(Complex< __fx64 >(1,0) - __conjf__(z1) );
+            Complex< __fx64 > gain6 = ( Complex< __fx64 >(1,0) - z2)*(Complex< __fx64 >(1,0) - __conjf__(z2) );
+            Complex< __fx64 > gain7 = ( Complex< __fx64 >(1,0) - p1)*(Complex< __fx64 >(1,0) - __conjf__(p1) );
+            Complex< __fx64 > gain8 = ( Complex< __fx64 >(1,0) - p2)*(Complex< __fx64 >(1,0) - __conjf__(p2) );
 
-            fcomplex< __fx64 > gain9 = gain0 * gain1 * gain2 / ( gain3 * gain4 ) * ( gain5 * gain6 ) / ( gain7 * gain8 );
+            Complex< __fx64 > gain9 = gain0 * gain1 * gain2 / ( gain3 * gain4 ) * ( gain5 * gain6 ) / ( gain7 * gain8 );
             gain9 = __csqrtf__( gain9 );
             gains[j+0] = __realf__(gain9);
             gains[j+1] = gains[j+0];
@@ -1531,18 +1531,18 @@ namespace IIR_KERNEL
         if( R == 1 )
         {
             // pole transformation by means of square equation solve:
-            fcomplex< __fx64 > a( 1 / w0 , 0 );
-            fcomplex< __fx64 > b( -__realf__(plp[ N - 1 ]) * dW / w0 , -__realf__(plp[ N - 1 ]) * dW / w0 );
-            fcomplex< __fx64 > c( 1 , 0 );
-            fcomplex< __fx64 > D = b * b - a * c * (__fx64)4;
-            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
-            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
+            Complex< __fx64 > a( 1 / w0 , 0 );
+            Complex< __fx64 > b( -__realf__(plp[ N - 1 ]) * dW / w0 , -__realf__(plp[ N - 1 ]) * dW / w0 );
+            Complex< __fx64 > c( 1 , 0 );
+            Complex< __fx64 > D = b * b - a * c * (__fx64)4;
+            Complex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
+            Complex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // zeros and poles bilinear transform:
-            zbp[ j + 0 ] = fcomplex< __fx64 >( +1 , 0 );
-            zbp[ j + 1 ] = fcomplex< __fx64 >( -1 , 0 );
-            pbp[ j + 0 ] = ( fcomplex< __fx64 >( 1 , 0 ) + p1 ) / ( fcomplex< __fx64 >( 1 , 0 ) - p1 );
-            pbp[ j + 1 ] = ( fcomplex< __fx64 >( 1 , 0 ) + p2 ) / ( fcomplex< __fx64 >( 1 , 0 ) - p2 );
+            zbp[ j + 0 ] = Complex< __fx64 >( +1 , 0 );
+            zbp[ j + 1 ] = Complex< __fx64 >( -1 , 0 );
+            pbp[ j + 0 ] = ( Complex< __fx64 >( 1 , 0 ) + p1 ) / ( Complex< __fx64 >( 1 , 0 ) - p1 );
+            pbp[ j + 1 ] = ( Complex< __fx64 >( 1 , 0 ) + p2 ) / ( Complex< __fx64 >( 1 , 0 ) - p2 );
 
             // digital filter coefficients computation:
 
@@ -1557,10 +1557,10 @@ namespace IIR_KERNEL
             cfden[ 3 * ( j + 0 ) + 2 ] = +__realf__( pbp[j] * pbp[j+1] );
 
             // fcomplex conjugate quadratic sections gains computation:
-            fcomplex< __fx64 > gain0 = glp[N-1];
-            fcomplex< __fx64 > gain1 = p1 * p2;
-            fcomplex< __fx64 > gain2 = (fcomplex< __fx64 >(1,0) - p1)*(fcomplex< __fx64 >(1,0) - p2);
-            fcomplex< __fx64 > gain3 = gain0 * gain1 / gain2 * dW / w0;
+            Complex< __fx64 > gain0 = glp[N-1];
+            Complex< __fx64 > gain1 = p1 * p2;
+            Complex< __fx64 > gain2 = (Complex< __fx64 >(1,0) - p1)*(Complex< __fx64 >(1,0) - p2);
+            Complex< __fx64 > gain3 = gain0 * gain1 / gain2 * dW / w0;
             gains[j+0] = __realf__(gain3);
         }
 
@@ -1616,15 +1616,15 @@ namespace IIR_KERNEL
         // lowpass analogue prototype poles, zeros and gains:
         filter_data<__type> data = ( !_type ) ?__cheb2_zeros_poles_plain__<__type>(_order, _g_stop ) :__ellip_zeros_poles_plain__<__type>(_order, _g_pass, _g_stop );
 
-        fcomplex< __fx64 > *plp = data.poles;
-        fcomplex< __fx64 > *glp = data.ratio;
-        fcomplex< __fx64 > *zlp = data.zeros;
+        Complex< __fx64 > *plp = data.poles;
+        Complex< __fx64 > *glp = data.ratio;
+        Complex< __fx64 > *zlp = data.zeros;
         __ix32 L = data.L , R = data.R , N = L + R;
 
         // bandpass digital prototype poles, zeros and gains:
-        fcomplex< __fx64 > *pbs = __alloc__< fcomplex< __fx64 > >(2*N);
-        fcomplex< __fx64 > *zbs = __alloc__< fcomplex< __fx64 > >(2*N);
-        fcomplex< __fx64 > *gbs = __alloc__< fcomplex< __fx64 > >(2*N);
+        Complex< __fx64 > *pbs = __alloc__< Complex< __fx64 > >(2*N);
+        Complex< __fx64 > *zbs = __alloc__< Complex< __fx64 > >(2*N);
+        Complex< __fx64 > *gbs = __alloc__< Complex< __fx64 > >(2*N);
 
         // coefficients matrix computation:
          __type *cfnum = __alloc__< __type >(3*(2*L+R));
@@ -1660,13 +1660,13 @@ namespace IIR_KERNEL
         __ix32 j = 0;
 
         // auxiliary variables:
-        fcomplex< __fx64 > a , b , c , D , z1 , z2 , p1 , p2;
+        Complex< __fx64 > a , b , c , D , z1 , z2 , p1 , p2;
 
         for( __ix32 i = 0 ; i < L ; i++ , j+=2 )
         {
             // zeros frequency transformation by means of square equation solve:
             a = -1 / w0;
-            b = fcomplex< __fx64 >( 1 , 0 ) / zlp[i] * dW / w0;
+            b = Complex< __fx64 >( 1 , 0 ) / zlp[i] * dW / w0;
             c = -1;
             D = b * b - a * c * (__fx64)4;
             z1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
@@ -1674,17 +1674,17 @@ namespace IIR_KERNEL
 
             // poles frequency transformation by means of square equation solve:
             a = -1 / w0;
-            b = fcomplex< __fx64 >( 1 , 0 ) / plp[i] * dW / w0;
+            b = Complex< __fx64 >( 1 , 0 ) / plp[i] * dW / w0;
             c = -1;
             D = b * b - a * c * (__fx64)4;
             p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
             p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // zeros and poles bilinear transform:
-            zbs[ j + 0 ] = ( fcomplex< __fx64 >( 1 , 0 ) + z1 ) / ( fcomplex< __fx64 >( 1 , 0 ) - z1 );
-            zbs[ j + 1 ] = ( fcomplex< __fx64 >( 1 , 0 ) + z2 ) / ( fcomplex< __fx64 >( 1 , 0 ) - z2 );
-            pbs[ j + 0 ] = ( fcomplex< __fx64 >( 1 , 0 ) + p1 ) / ( fcomplex< __fx64 >( 1 , 0 ) - p1 );
-            pbs[ j + 1 ] = ( fcomplex< __fx64 >( 1 , 0 ) + p2 ) / ( fcomplex< __fx64 >( 1 , 0 ) - p2 );
+            zbs[ j + 0 ] = ( Complex< __fx64 >( 1 , 0 ) + z1 ) / ( Complex< __fx64 >( 1 , 0 ) - z1 );
+            zbs[ j + 1 ] = ( Complex< __fx64 >( 1 , 0 ) + z2 ) / ( Complex< __fx64 >( 1 , 0 ) - z2 );
+            pbs[ j + 0 ] = ( Complex< __fx64 >( 1 , 0 ) + p1 ) / ( Complex< __fx64 >( 1 , 0 ) - p1 );
+            pbs[ j + 1 ] = ( Complex< __fx64 >( 1 , 0 ) + p2 ) / ( Complex< __fx64 >( 1 , 0 ) - p2 );
 
             // filter coefficients computation:
 
@@ -1705,15 +1705,15 @@ namespace IIR_KERNEL
             cfden[ 3 * ( j + 1 ) + 2 ] = +__realf__( pbs[j+1] * __conjf__( pbs[j+1] ) );
 
             // fcomplex conjugate quadratic sections gains computation:
-            fcomplex< __fx64 > gain0 = p1 * __conjf__( p1 );
-            fcomplex< __fx64 > gain1 = p2 * __conjf__( p2 );
-            fcomplex< __fx64 > gain2 = z1 * __conjf__( z1 );
-            fcomplex< __fx64 > gain3 = z2 * __conjf__( z2 );
-            fcomplex< __fx64 > gain4 = ( fcomplex< __fx64 >(1,0) - z1)*(fcomplex< __fx64 >(1,0) - __conjf__(z1) );
-            fcomplex< __fx64 > gain5 = ( fcomplex< __fx64 >(1,0) - z2)*(fcomplex< __fx64 >(1,0) - __conjf__(z2) );
-            fcomplex< __fx64 > gain6 = ( fcomplex< __fx64 >(1,0) - p1)*(fcomplex< __fx64 >(1,0) - __conjf__(p1) );
-            fcomplex< __fx64 > gain7 = ( fcomplex< __fx64 >(1,0) - p2)*(fcomplex< __fx64 >(1,0) - __conjf__(p2) );
-            fcomplex< __fx64 > gain8 = ( gain0 * gain1 ) / ( gain2 * gain3 ) * ( gain4 * gain5 ) / ( gain6 * gain7 );
+            Complex< __fx64 > gain0 = p1 * __conjf__( p1 );
+            Complex< __fx64 > gain1 = p2 * __conjf__( p2 );
+            Complex< __fx64 > gain2 = z1 * __conjf__( z1 );
+            Complex< __fx64 > gain3 = z2 * __conjf__( z2 );
+            Complex< __fx64 > gain4 = ( Complex< __fx64 >(1,0) - z1)*(Complex< __fx64 >(1,0) - __conjf__(z1) );
+            Complex< __fx64 > gain5 = ( Complex< __fx64 >(1,0) - z2)*(Complex< __fx64 >(1,0) - __conjf__(z2) );
+            Complex< __fx64 > gain6 = ( Complex< __fx64 >(1,0) - p1)*(Complex< __fx64 >(1,0) - __conjf__(p1) );
+            Complex< __fx64 > gain7 = ( Complex< __fx64 >(1,0) - p2)*(Complex< __fx64 >(1,0) - __conjf__(p2) );
+            Complex< __fx64 > gain8 = ( gain0 * gain1 ) / ( gain2 * gain3 ) * ( gain4 * gain5 ) / ( gain6 * gain7 );
             gain8 = __csqrtf__( gain8 );
             gains[j+0] = __realf__(gain8);
             gains[j+1] = gains[j+0];
@@ -1723,18 +1723,18 @@ namespace IIR_KERNEL
         if( R == 1 )
         {
             // poles transformation by means of square equation solve:
-            fcomplex< __fx64 > a = fcomplex< __fx64 >( -1 / w0 , 0 );
-            fcomplex< __fx64 > b = fcomplex< __fx64 >( dW , 0 ) / plp[N-1] / w0;
-            fcomplex< __fx64 > c = fcomplex< __fx64 >( -1 , 0 );
-            fcomplex< __fx64 > D = b * b - a * c * (__fx64)4;
-            fcomplex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
-            fcomplex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
+            Complex< __fx64 > a = Complex< __fx64 >( -1 / w0 , 0 );
+            Complex< __fx64 > b = Complex< __fx64 >( dW , 0 ) / plp[N-1] / w0;
+            Complex< __fx64 > c = Complex< __fx64 >( -1 , 0 );
+            Complex< __fx64 > D = b * b - a * c * (__fx64)4;
+            Complex< __fx64 > p1 = ( b*(__fx64)(-1) - __csqrtf__( D ) ) / (__fx64)2 / a;
+            Complex< __fx64 > p2 = ( b*(__fx64)(-1) + __csqrtf__( D ) ) / (__fx64)2 / a;
 
             // zeros and poles bilinear transform:
-            zbs[ j + 0 ] = fcomplex< __fx64 >( +1 , 0 );
-            zbs[ j + 1 ] = fcomplex< __fx64 >( -1 , 0 );
-            pbs[ j + 0 ] = ( fcomplex< __fx64 >( 1 , 0 ) + p1 ) / ( fcomplex< __fx64 >( 1 , 0 ) - p1 );
-            pbs[ j + 1 ] = ( fcomplex< __fx64 >( 1 , 0 ) + p2 ) / ( fcomplex< __fx64 >( 1 , 0 ) - p2 );
+            zbs[ j + 0 ] = Complex< __fx64 >( +1 , 0 );
+            zbs[ j + 1 ] = Complex< __fx64 >( -1 , 0 );
+            pbs[ j + 0 ] = ( Complex< __fx64 >( 1 , 0 ) + p1 ) / ( Complex< __fx64 >( 1 , 0 ) - p1 );
+            pbs[ j + 1 ] = ( Complex< __fx64 >( 1 , 0 ) + p2 ) / ( Complex< __fx64 >( 1 , 0 ) - p2 );
 
             // digital filter coefficients computation:
 
@@ -1749,11 +1749,11 @@ namespace IIR_KERNEL
             cfden[ 3 * ( j + 0 ) + 2 ] = +__realf__( pbs[j]*pbs[j+1] );
 
             // fcomplex conjugate quadratic sections gains computation:
-            fcomplex< __fx64 > gain0 = glp[N-1];
-            fcomplex< __fx64 > gain1 = p1 * p2;
-            fcomplex< __fx64 > gain2 = fcomplex< __fx64 >(1,0) / plp[N-1] / (__fx64)(-1);
-            fcomplex< __fx64 > gain3 = (fcomplex< __fx64 >(1,0) - p1)*(fcomplex< __fx64 >(1,0) - p2);
-            fcomplex< __fx64 > gain4 = gain0 * gain1 * gain2 / gain3 / w0 * ( 1 + w0 );
+            Complex< __fx64 > gain0 = glp[N-1];
+            Complex< __fx64 > gain1 = p1 * p2;
+            Complex< __fx64 > gain2 = Complex< __fx64 >(1,0) / plp[N-1] / (__fx64)(-1);
+            Complex< __fx64 > gain3 = (Complex< __fx64 >(1,0) - p1)*(Complex< __fx64 >(1,0) - p2);
+            Complex< __fx64 > gain4 = gain0 * gain1 * gain2 / gain3 / w0 * ( 1 + w0 );
             gains[j+0] = __realf__(gain4);
         }
 
