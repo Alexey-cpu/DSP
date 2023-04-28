@@ -6,26 +6,6 @@
 #include "math.h"
 #endif
 
-#ifndef __ix16
-#define __ix16 short
-#endif
-
-#ifndef __ix32
-#define __ix32 int
-#endif
-
-#ifndef __ix64
-#define __ix64 long long
-#endif
-
-#ifndef __fx32
-#define __fx32 float
-#endif
-
-#ifndef __fx64
-#define __fx64 double
-#endif
-
 #ifndef PI0
 #define PI0 3.1415926535897932384626433832795
 #endif
@@ -137,7 +117,7 @@ public:
      *
      *          \f]
     */
-    inline void toward_transformation( __fx64 *A , __fx64 *B , __fx64 *C )
+    inline void toward_transformation( double *A , double *B , double *C )
     {
         m_a = (*A) * 0.6666666666666666666666666666667 - (*B) * 0.3333333333333333333333333333333 - (*C) * 0.3333333333333333333333333333333;
         m_b = (*B) * 0.577350269189625764509148780502  - (*C) * 0.577350269189625764509148780502;
@@ -223,7 +203,7 @@ public:
      *
      *          \f]
     */
-    inline void backward_transformation( __fx64 *A , __fx64 *B , __fx64 *C )
+    inline void backward_transformation( double *A , double *B , double *C )
     {
         m_a = (*A) + (*C);
         m_b = -(*A) * 0.5 + (*B) * 0.866025403784439 + (*C);
@@ -238,7 +218,7 @@ public:
       *\param[C]    pointer to the phase C signal or to 0 component
       *\param[type] Clarke's transformation type flag ( 0 - toward , 1 - backward )
     */
-    inline void operator () ( __type *A , __type *B , __type *C , __ix32 type )
+    inline void operator () ( __type *A , __type *B , __type *C , int64_t type )
     {
         if( !type ) toward_transformation  ( A , B , C );
         else        backward_transformation( A , B , C );
@@ -251,7 +231,7 @@ public:
       *\param[C]    pointer to the phase C signal or to 0 component
       *\param[type] Clarke's transformation type flag ( 0 - toward , 1 - backward )
     */
-    inline void operator () ( __fx64 *A , __fx64 *B , __fx64 *C  , __ix32 type )
+    inline void operator () ( double *A , double *B , double *C  , int64_t type )
     {
         if( !type ) toward_transformation  ( A , B , C );
         else        backward_transformation( A , B , C );
@@ -354,7 +334,7 @@ public:
      *              \end{pmatrix}
      *          \f]
     */
-    inline void toward_transformation( __type *A, __type *B, __type *C, __fx64 Fn , __fx64 Fs, bool a_axis_alignment = 1 )
+    inline void toward_transformation( __type *A, __type *B, __type *C, double Fn , double Fs, bool a_axis_alignment = 1 )
     {
         // angles computation:
         __type phi0 = PI2 * Fn * (__type)m_cnt / Fs;
@@ -459,7 +439,7 @@ public:
      *
      *          \f]
     */
-    inline void backward_transformation( __type *D , __type *Q , __type *Z , __fx64 Fn , __fx64 Fs , bool a_axis_alignment = 1 )
+    inline void backward_transformation( __type *D , __type *Q , __type *Z , double Fn , double Fs , bool a_axis_alignment = 1 )
     {
         // angles computation:
         __type phi0 = PI2 * Fn * (__type)m_cnt / Fs;
@@ -484,7 +464,7 @@ public:
         else m_cnt = 0;
     }
 
-    inline void operator () ( __type *A, __type *B, __type *C, __fx64 Fn , __fx64 Fs, bool a_axis_alignment , bool type = 0 )
+    inline void operator () ( __type *A, __type *B, __type *C, double Fn , double Fs, bool a_axis_alignment , bool type = 0 )
     {
         if( !type ) toward_transformation  ( A , B ,  C,  Fn ,  Fs, a_axis_alignment );
         else backward_transformation( A , B ,  C,  Fn ,  Fs, a_axis_alignment );
@@ -613,7 +593,7 @@ public:
      *
      *          \f]
     */
-    inline void filt( __fx64 re_a, __fx64 im_a , __fx64 re_b, __fx64 im_b , __fx64 re_c , __fx64 im_c )
+    inline void filt( double re_a, double im_a , double re_b, double im_b , double re_c , double im_c )
     {
         // zero sequence
         m_re0 = (re_a + re_b + re_c) * 0.33333333333333333333333333333;
@@ -649,7 +629,7 @@ public:
      *  \param[re_c] - phase C real      component
      *  \param[im_c] - phase C imaginary component
      */
-    inline void operator() ( __fx64 re_a, __fx64 im_a , __fx64 re_b, __fx64 im_b , __fx64 re_c , __fx64 im_c )
+    inline void operator() ( double re_a, double im_a , double re_b, double im_b , double re_c , double im_c )
     {
         filt( re_a, im_a , re_b, im_b , re_c , im_c );
     }
@@ -659,15 +639,6 @@ public:
 /*! @} */
 
 // customized types names exclusion to avoid aliases during compilation:
-#undef __ix16
-#undef __ix32
-#undef __ix64
-#undef __uix16
-#undef __uix32
-#undef __uix64
-#undef __fx32
-#undef __fx64
-
 #undef PI0
 #undef PI2
 #undef PI_2

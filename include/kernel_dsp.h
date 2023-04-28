@@ -6,37 +6,13 @@
 #include "math.h"
 #include <iostream>
 #include <cstring>
+#include <stdlib.h>
 #endif
 
 #include "utils.h"
-#include "buffer.h"
 #include "Complex.h"
 
 #define DEBUG
-
-#ifndef __fx32
-#define __fx32 float
-#endif
-
-#ifndef __fx64
-#define __fx64 double
-#endif
-
-#ifndef __fxx64
-#define __fxx64 long double
-#endif
-
-#ifndef __ix32
-#define __ix32 int
-#endif
-
-#ifndef PI0
-#define PI0 3.1415926535897932384626433832795
-#endif
-
-#ifndef PI2
-#define PI2 6.283185307179586476925286766559
-#endif
 
 /*! \defgroup <FILTERS> ( Filters )
  *  \brief The module contains different filters implementations description
@@ -67,9 +43,7 @@ namespace DSP_KERNEL
      *  \ingroup KERNELS
      *  \brief   The module contains the main DSP low level kernel utilized to generate other DSP kernels and models
      *  \details The module contains the main DSP low level kernel utilized to generate other DSP kernels and models.
-     *           The main kernel defines DSP components models main data structure and base class.
-     *           It alse contains the range of auxiliary data structures and enumerations.
-     *           All the models implemented using this kernel must derive from the filter_abstract base class.
+     *           The main kernel defines main data structures, ennumerations and base classes.
         @{
     */
 
@@ -79,8 +53,8 @@ namespace DSP_KERNEL
     */
     struct bandwidth
     {
-        __fx64 Fc; ///< filter passband/stopband frequency, Hz
-        __fx64 BW; ///< filter passband/stopband width, Hz
+        double Fc; ///< filter passband/stopband frequency, Hz
+        double BW; ///< filter passband/stopband width, Hz
     };
 
     /*!
@@ -89,8 +63,8 @@ namespace DSP_KERNEL
     */
     struct attenuation
     {
-        __fx64 G1; ///< filter passband attenuation, Db
-        __fx64 G2; ///< filter stopband attenuation, Db
+        double G1; ///< filter passband attenuation, Db
+        double G2; ///< filter stopband attenuation, Db
     };
 
     /*!
@@ -117,18 +91,18 @@ namespace DSP_KERNEL
     struct filter_data
     {
         filter_type         type = lowpass; ///< filter type
-        Complex< __fx64 > *poles = nullptr; ///< lowpass normalized analogue prototype complex conjugate poles pairs
-        Complex< __fx64 > *zeros = nullptr; ///< lowpass normalized analogue prototype complex conjugate zeros pairs
-        Complex< __fx64 > *ratio = nullptr; ///< lowpass normalized analogue prototype zero frequency gains vector
+        Complex< double > *poles = nullptr; ///< lowpass normalized analogue prototype complex conjugate poles pairs
+        Complex< double > *zeros = nullptr; ///< lowpass normalized analogue prototype complex conjugate zeros pairs
+        Complex< double > *ratio = nullptr; ///< lowpass normalized analogue prototype zero frequency gains vector
         __type *cfnum            = nullptr; ///< filter numerator quadratic sections coefficients matrix
         __type *cfden            = nullptr; ///< filter denominator quadratic sections coefficients matrix
         __type *gains            = nullptr; ///< filter quadratic sections gains vector
-        __ix32 L                 = -1;      ///< filter complex conjugate poles/zeros pairs number
-        __ix32 R                 = -1;      ///< filter real odd pole existance flag
-        __ix32 N                 = -1;      ///< filter quadratic sections number
-        __ix32 Nx                = -1;      ///< single section numerator order
-        __ix32 Ny                = -1;      ///< single section denominator order
-        __ix32 order             = -1;      ///< filter order
+        int64_t L                = -1;      ///< filter complex conjugate poles/zeros pairs number
+        int64_t R                = -1;      ///< filter real odd pole existance flag
+        int64_t N                = -1;      ///< filter quadratic sections number
+        int64_t Nx               = -1;      ///< single section numerator order
+        int64_t Ny               = -1;      ///< single section denominator order
+        int64_t order            = -1;      ///< filter order
     };
 
     /*!
@@ -180,39 +154,19 @@ namespace DSP_KERNEL
     }
 
     /*!
-     *  \brief base DSP model class
+     *  \brief frequency responce computation interface
      *  \details Defines the building base for the DSP components creation.
      *           Use inheritance mechnism to create the deriving filter class
     */
-    class model_base
+    class frequency_responce_interface
     {
-    protected:
-
-        // system variables
-        __ix32 m_order; ///< filter order
-        __fx64 m_Fs;    ///< filter sampling frequency
-        __fx64 m_Ts;    ///< filter sampling period
+    public:
 
         /*! \brief default constructor */
-        model_base(){}
-
-        /*!
-         *  \brief initialazation function
-         *  \param[order] filter order
-         *  \param[Fs] filter sampling frequency
-        */
-
-        void init(__ix32 order, __fx64 Fs)
-        {
-            m_order = order;
-            m_Fs    = Fs;
-            m_Ts    = (__fx64)1 / m_Fs;
-        }
+        frequency_responce_interface(){}
 
         /*! \brief default virtual destructor */
-        virtual ~model_base(){}
-
-    public:
+        virtual ~frequency_responce_interface(){}
 
         /*!
          *  \brief filter frequency responce computation function
@@ -220,7 +174,7 @@ namespace DSP_KERNEL
          *           and return the complex transfer function value
          *           for the given frequency F
         */
-        virtual Complex<__fx64> frequency_response( __fx64 F ) = 0;
+        virtual Complex<double> frequency_response( double F ) = 0;
     };
 
     /*!
@@ -232,22 +186,22 @@ namespace DSP_KERNEL
     public:
 
         /*!  \brief lowpass filter computation function */
-        virtual filter_data<__fx64> compute_lowpass()  = 0;
+        virtual filter_data<double> compute_lowpass()  = 0;
 
         /*!  \brief highpass filter computation function */
-        virtual filter_data<__fx64> compute_highpass() = 0;
+        virtual filter_data<double> compute_highpass() = 0;
 
         /*!  \brief bandpass filter computation function */
-        virtual filter_data<__fx64> compute_bandpass() = 0;
+        virtual filter_data<double> compute_bandpass() = 0;
 
         /*!  \brief bandstop filter computation function */
-        virtual filter_data<__fx64> compute_bandstop() = 0;
+        virtual filter_data<double> compute_bandstop() = 0;
 
         /*!
          *   \brief coefficients computation function
          *   \param[type] filter type
         */
-        filter_data<__fx64> compute_filter_data(filter_type type)
+        filter_data<double> compute_filter_data(filter_type type)
         {
             switch (type)
             {
@@ -283,7 +237,7 @@ namespace DSP_KERNEL
         template< typename __type > filter_data< __type > round_coefficients(filter_type type)
         {
             // compute filter data
-            filter_data<__fx64> data = compute_filter_data(type);
+            filter_data<double> data = compute_filter_data(type);
 
             // generate rouned filter data version
             filter_data<__type> matrix;
@@ -293,9 +247,9 @@ namespace DSP_KERNEL
             {
                 matrix.cfnum = __alloc__<__type>( data.Nx * data.N );
 
-                for( __ix32 j = 0 ; j < data.N ; j++ )
+                for( int64_t j = 0 ; j < data.N ; j++ )
                 {
-                    for( __ix32 i = 0 ; i < data.Nx ; i++ )
+                    for( int64_t i = 0 ; i < data.Nx ; i++ )
                     {
                         matrix.cfnum[ j * data.Nx + i ] = data.cfnum[ j * data.Nx + i ];
                     }
@@ -307,9 +261,9 @@ namespace DSP_KERNEL
             {
                 matrix.cfden = __alloc__<__type>( data.Ny * data.N );
 
-                for( __ix32 j = 0 ; j < data.N ; j++ )
+                for( int64_t j = 0 ; j < data.N ; j++ )
                 {
-                    for( __ix32 i = 0 ; i < data.Ny ; i++ )
+                    for( int64_t i = 0 ; i < data.Ny ; i++ )
                     {
                         matrix.cfden[ j * data.Ny + i ] = data.cfden[ j * data.Ny + i ];
                     }
@@ -321,7 +275,7 @@ namespace DSP_KERNEL
             {
                 matrix.gains = __alloc__<__type>( data.N + 1 );
 
-                for( __ix32 j = 0 ; j < data.N ; j++ )
+                for( int64_t j = 0 ; j < data.N ; j++ )
                 {
                     matrix.gains[j] = data.gains[j];
                 }
@@ -332,9 +286,9 @@ namespace DSP_KERNEL
             // overwrite zeros
             if( data.zeros )
             {
-                matrix.zeros = __alloc__< Complex<__fx64> >( data.N );
+                matrix.zeros = __alloc__< Complex<double> >( data.N );
 
-                for( __ix32 j = 0 ; j < data.N ; j++ )
+                for( int64_t j = 0 ; j < data.N ; j++ )
                 {
                     matrix.zeros[j] = data.zeros[j];
                 }
@@ -343,9 +297,9 @@ namespace DSP_KERNEL
             // overwrite poles
             if( data.zeros )
             {
-                matrix.poles = __alloc__< Complex<__fx64> >( data.N );
+                matrix.poles = __alloc__< Complex<double> >( data.N );
 
-                for( __ix32 j = 0 ; j < data.N ; j++ )
+                for( int64_t j = 0 ; j < data.N ; j++ )
                 {
                     matrix.poles[j] = data.poles[j];
                 }
@@ -354,9 +308,9 @@ namespace DSP_KERNEL
             // overwrite ratios
             if( data.ratio )
             {
-                matrix.ratio = __alloc__< Complex<__fx64> >( data.N );
+                matrix.ratio = __alloc__< Complex<double> >( data.N );
 
-                for( __ix32 j = 0 ; j < data.N ; j++ )
+                for( int64_t j = 0 ; j < data.N ; j++ )
                 {
                     matrix.ratio[j] = data.ratio[j];
                 }
@@ -380,13 +334,284 @@ namespace DSP_KERNEL
 
     /*! @} */
 
-}
+    /*!
+     *  \brief base DSP model class
+     *  \details Defines the building base for the DSP components creation.
+     *           Use inheritance mechnism to create the deriving filter class
+    */
+    class transfer_function_model : public frequency_responce_interface
+    {
+    protected:
 
-#undef __fx32
-#undef __fx64
-#undef __fxx64
-#undef __ix32
-#undef PI0
-#undef PI2
+        // system variables
+        int64_t m_Order; ///< filter order
+        double  m_Fs;    ///< filter sampling frequency
+        double  m_Ts;    ///< filter sampling period
+
+        /*!
+         *  \brief initialazation function
+         *  \param[order] filter order
+         *  \param[Fs] filter sampling frequency
+        */
+
+        void init(int64_t order, double Fs)
+        {
+            m_Order = order;
+            m_Fs    = Fs;
+            m_Ts    = 1.0 / m_Fs;
+        }
+
+    public:
+
+        /*! \brief default constructor */
+        transfer_function_model(){}
+
+        /*! \brief default virtual destructor */
+        virtual ~transfer_function_model(){}
+    };
+
+    /*! @} */
+
+    template< typename __type >
+    class delay
+    {
+    protected:
+        __type *m_upper;   ///< delay buffer upper part pointer
+        __type *m_lower;   ///< delay buffer lower part pointer
+        __type *m_data;    ///< delay buffer data samples buffer
+        int     m_nelem;   ///< delay buffer single ( upper/lower ) part size
+        int     m_buffpos; ///< delay buffer current upper/lower part pointer position
+
+        /*!
+         *  \brief The function fills delay buffer
+         *  \param[input] input sample pointer
+        */
+        template< typename T > inline void fill_buff( T *input )
+        {
+            *m_lower = *input;
+            *m_upper = *input;
+            if( ++m_buffpos >= m_nelem )
+            {
+                m_lower = &m_data[0];
+                m_upper = &m_data[m_nelem];
+                m_buffpos = 0;
+            }
+            else
+            {
+                m_lower++;
+                m_upper++;
+            }
+        }
+
+    public:
+
+        /*!
+         *  \brief The function allocates delay buffer
+         *  \param[nelem] delay buffer upper/lower part size
+         *  \details The function is supposed to be called explicitly by the user
+        */
+        int allocate( int nelem )
+        {
+
+            #ifdef BUFFER_DEBUG
+            Debugger::Log("delay_base","allocate()","Memory allocation");
+            #endif
+
+            if( ( nelem > 0 ) && !m_data )
+            {
+                m_nelem = nelem;
+                m_data = __alloc__<__type>( 2 * m_nelem );
+
+                if( m_data )
+                {
+                   m_lower = &m_data[0];
+                   m_upper = &m_data[m_nelem];
+                }
+
+                return ( m_data != 0 );
+            }
+            else return 0;
+        }
+
+        /*! \brief The function frees delay resources */
+        void deallocate()
+        {
+            #ifdef BUFFER_DEBUG
+            Debugger::Log("delay_base","deallocate()","Memory deallocation");
+            #endif
+
+            m_data = __mfree__(m_data);
+        }
+
+        /*! \brief default constructor */
+        delay()
+        {
+            #ifdef BUFFER_DEBUG
+            Debugger::Log("delay_base","delay_base()","Constructor call");
+            #endif
+
+            m_upper   = nullptr;
+            m_lower   = nullptr;
+            m_data    = nullptr;
+            m_nelem   = 0;
+            m_buffpos = 0;
+        }
+
+        /*!
+         *  \brief default constructor
+         *  \details The functions clears delay resources at the end of it's lifetime
+        */
+        virtual ~delay()
+        {
+            #ifdef BUFFER_DEBUG
+            Debugger::Log("delay_base","~delay_base()","Destructor call");
+            #endif
+
+            deallocate();
+        }
+
+
+        /*! \brief the function returns current lower/upper part pointer position */
+        inline int getBuffPos()
+        {
+            return m_buffpos;
+        }
+
+        /*! \brief the function returns lower/upper part delay buffer size */
+        inline int getBuffSize()
+        {
+            return m_nelem;
+        }
+
+
+        /*!
+         *  \brief the operator invokation results in return of an n-th sample from the past values
+         *  \param[n] sample number
+        */
+        inline __type operator [] ( int n )
+        {
+            return *( m_upper - n - 1 );
+        }
+
+        /*! \brief The operator invokation supposes to result in delay buffer fill */
+        template< typename T > inline void operator () ( T *input )
+        {
+            this->fill_buff<T>(input);
+        }
+    };
+
+    template< typename __type >
+    class buffer
+    {
+    protected:
+
+        __type *m_lower;   ///< buffer pointer
+        __type *m_data;    ///< data samples buffer
+        int     m_nelem;   ///< buffer size
+        int     m_buffpos; ///< current buffer pointer position
+
+        /*!
+         *  \brief The function fills buffer
+         *  \param[input] input sample pointer
+        */
+        template< typename T > inline void fill_buff( T *input )
+        {
+            *m_lower = *input;
+            if( ++m_buffpos >= m_nelem )
+            {
+                m_lower   = &m_data[0];
+                m_buffpos = 0;
+            }
+            else m_lower++;
+        }
+
+    public:
+
+        /*!
+         *  \brief The function allocates buffer
+         *  \param[nelem] delay buffer upper/lower part size
+         *  \details The function is supposed to be called explicitly by the user
+        */
+        int allocate( int nelem )
+        {
+            #ifdef BUFFER_DEBUG
+            Debugger::Log("buffer_base","allocate()","Memory allocation");
+            #endif
+
+            if( ( nelem > 0 ) && !m_data )
+            {
+                m_nelem = nelem;
+                m_data  = __alloc__<__type>( m_nelem );
+                m_lower = ( m_data ) ? &m_data[0] : 0;
+                return ( m_data != 0 );
+            }
+            else return 0;
+        }
+
+        /*! \brief The function frees delay resources */
+        void deallocate()
+        {
+            #ifdef BUFFER_DEBUG
+            Debugger::Log("buffer_base","deallocate()","Memory deallocation");
+            #endif
+
+            m_data = __mfree__(m_data);
+        }
+
+        /*! \brief default constructor */
+        buffer()
+        {
+            #ifdef BUFFER_DEBUG
+            Debugger::Log("buffer_base","buffer_base()","Constructor call");
+            #endif
+
+            m_lower   = nullptr;
+            m_data    = nullptr;
+            m_nelem   = 0;
+            m_buffpos = 0;
+        }
+
+        /*!
+         *  \brief default destructor
+         *  \details The function clears buffer resources
+        */
+        virtual ~buffer()
+        {
+            #ifdef BUFFER_DEBUG
+            Debugger::Log("buffer_base","~buffer_base()","Destructor call");
+            #endif
+
+            deallocate();
+        }
+
+        /*! \brief the function returns current lower/upper part pointer position */
+        inline int getBuffPos()
+        {
+            return m_buffpos;
+        }
+
+        /*! \brief the function returns lower/upper part delay buffer size */
+        inline int getBuffSize()
+        {
+            return m_nelem;
+        }
+
+
+        /*!
+         *  \brief the operator invokation results in return of an n-th sample from the past values
+         *  \param[n] sample number
+        */
+        inline __type operator [] ( int n )
+        {
+            return m_data[n];
+        }
+
+        /*! \brief The operator invokation supposes to result in delay buffer fill */
+        template< typename T > inline void operator () ( T *input )
+        {
+            this->fill_buff<T>(input);
+        }
+    };
+}
 
 #endif // KERNEL_DSP_H

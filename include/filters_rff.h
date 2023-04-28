@@ -55,7 +55,7 @@ using namespace DSP_KERNEL;
 */
 
 template< typename __type >
-class recursive_fourier_abstract : public model_base
+class recursive_fourier_abstract : public transfer_function_model
 {
 private:
 
@@ -66,7 +66,7 @@ private:
        Debugger::Log("recursive_fourier_abstract","allocate()","Filter memory allocation");
        #endif
 
-       return ( m_buffer_sx.allocate( m_order + 2 ) );
+       return ( m_buffer_sx.allocate( m_Order + 2 ) );
    }
 
 protected:
@@ -87,7 +87,7 @@ protected:
     filt ( T *_input )
     {
         m_buffer_sx( _input );
-        return (m_out = m_out * m_rot + ( ( __fx64 )*_input - ( __fx64 )m_buffer_sx[ m_order ] ) * m_Gain);
+        return (m_out = m_out * m_rot + ( ( __fx64 )*_input - ( __fx64 )m_buffer_sx[ m_Order ] ) * m_Gain);
     }
 
    public:
@@ -99,7 +99,7 @@ protected:
     }
 
     /*!  \brief default constructor */
-    recursive_fourier_abstract() : model_base()
+    recursive_fourier_abstract() : transfer_function_model()
     {
         #ifdef RFF_DEBUG
         Debugger::Log("recursive_fourier_abstract","recursive_fourier_abstract()","Filter constructor call");
@@ -127,10 +127,10 @@ protected:
          m_Fn      = _Fn;
          m_Fs      = _Fs;
          m_Ts      = (__fx64)1 / m_Fs;
-         m_order   = ceil( _Fs / _Fn );
-         m_Gain    = ( _hnum == 0 ) ? ( 1.0 / (__fx64)m_order ) : ( 2.0 / (__fx64)m_order );
+         m_Order   = ceil( _Fs / _Fn );
+         m_Gain    = ( _hnum == 0 ) ? ( 1.0 / (__fx64)m_Order ) : ( 2.0 / (__fx64)m_Order );
          m_hnum    = _hnum;
-         m_rot(cos( PI2 * (__fx64)m_hnum / (__fx64)m_order ), sin( PI2 * (__fx64)m_hnum / (__fx64)m_order ) );
+         m_rot(cos( PI2 * (__fx64)m_hnum / (__fx64)m_Order ), sin( PI2 * (__fx64)m_hnum / (__fx64)m_Order ) );
 
         #ifdef RFF_DEBUG
 
@@ -138,7 +138,7 @@ protected:
         Debugger::Log("Fn    = " + to_string(m_Fn) );
         Debugger::Log("Fs    = " + to_string(m_Fs) );
         Debugger::Log("Ts    = " + to_string(m_Ts) );
-        Debugger::Log("order = " + to_string(m_order));
+        Debugger::Log("order = " + to_string(m_Order));
         Debugger::Log("Gain  = " + to_string(m_Gain));
         Debugger::Log("hnum  = " + to_string(m_hnum) + "\n");
         #endif
@@ -155,9 +155,9 @@ protected:
      */
     Complex<__fx64> frequency_response( __fx64 F ) override
     {
-        Complex<__fx64> num = Complex<__fx64>(1,0) - Complex<__fx64>( cos( -PI2 * F * m_order * m_Ts ) , sin( -PI2 * F * m_order * m_Ts ) );
+        Complex<__fx64> num = Complex<__fx64>(1,0) - Complex<__fx64>( cos( -PI2 * F * m_Order * m_Ts ) , sin( -PI2 * F * m_Order * m_Ts ) );
         Complex<__fx64> den = Complex<__fx64>(1,0) - Complex<__fx64>( cos( -PI2 * F * m_Ts ) , sin( -PI2 * F * m_Ts ) ) * m_rot;
-        Complex<__fx64> Wz = num / den / (__fx64)m_order;
+        Complex<__fx64> Wz = num / den / (__fx64)m_Order;
         return Wz;
     }
 

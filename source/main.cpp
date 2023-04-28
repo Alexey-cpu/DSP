@@ -1,6 +1,6 @@
 #include "../../DSP/examples/examples.h"
 
-int main()
+int function()
 {
     // logs directory:
     std::string directory = "C:\\Qt_projects\\DSP\\logs";
@@ -52,12 +52,41 @@ int main()
     yt.close();
     zt.close();
 
+    return 0;
+}
+
+template<typename T> class A
+{
+public:
+    A(){}
+    virtual ~A(){}
+
+    int f()
+    {
+        cout << "AAAAAAAAAAA \n";
+        return 0;
+    }
+};
+
+template<typename T> class B : public A<T>
+{
+public:
+    B()
+    {
+        this->f();
+    }
+
+    virtual ~B(){}
+};
+
+int main()
+{
     // driver examples
     //filters_fir_example();
     //complex_numbers_example();
     //filters_rff_example();
     //filtes_hmf_example();
-    //filters_butt_example();
+    filters_butt_example();
     //filters_cheb1_example();
     //filters_cheb2_example();
     //filters_ellip_example();

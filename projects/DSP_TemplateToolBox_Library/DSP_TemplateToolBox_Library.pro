@@ -34,7 +34,6 @@ HEADERS += \
     ../../examples/example_transfer_functions_leadlag.h \
     ../../examples/examples.h \
     ../../include/Complex.h \
-    ../../include/buffer.h \
     ../../include/filters_fir.h \
     ../../include/filters_hmf.h \
     ../../include/filters_iir.h \

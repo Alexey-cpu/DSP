@@ -2,13 +2,11 @@
 #define COMPLEX_H
 
 #ifndef __ALG_PLATFORM
-
 #include "math.h"
 #include "stdlib.h"
 #include <limits>
 #include "string"
 using namespace std;
-
 #endif
 
 //------------------------------------------------------------------------------------------------------------------------------------------------

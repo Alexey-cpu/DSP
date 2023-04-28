@@ -41,7 +41,7 @@ using namespace DSP_KERNEL;
 */
 
 template<typename __type>
-class transfer_function : public model_base
+class transfer_function : public transfer_function_model
 {
     private:
 
@@ -145,7 +145,7 @@ class transfer_function : public model_base
 
         m_Ws = Ws;
         m_Rz = Rz;
-        model_base::init(Ws.item2, Fs);
+        transfer_function_model::init(Ws.item2, Fs);
         allocate();
     }
 
@@ -224,7 +224,7 @@ class transfer_function : public model_base
 };
 
 template<typename __type>
-class leadlag final : public model_base
+class leadlag final : public transfer_function_model
 {
     transfer_function<__type> m_transfer_function;
 public:
@@ -275,7 +275,7 @@ public:
         Rz.item0[1][1] = +1/Fs;
 
         m_transfer_function.init(Fs, Ws, Rz);
-        model_base::init(2, Fs);
+        transfer_function_model::init(2, Fs);
     }
 
     /*!
@@ -305,7 +305,7 @@ public:
 };
 
 template<typename __type>
-class aperiodic final : public model_base
+class aperiodic final : public transfer_function_model
 {
     transfer_function<__type> m_transfer_function;
 public:
@@ -354,7 +354,7 @@ public:
         Rz.item0[1][1] = +1/Fs;
 
         m_transfer_function.init(Fs, Ws, Rz);
-        model_base::init(2, Fs);
+        transfer_function_model::init(2, Fs);
     }
 
     /*!
@@ -384,7 +384,7 @@ public:
 };
 
 template<typename __type>
-class integrator final : public model_base
+class integrator final : public transfer_function_model
 {
     transfer_function<__type> m_transfer_function;
 public:
@@ -432,7 +432,7 @@ public:
         Rz.item0[1][1] = +1/Fs;
 
         m_transfer_function.init(Fs, Ws, Rz);
-        model_base::init(2, Fs);
+        transfer_function_model::init(2, Fs);
     }
 
     /*!
@@ -462,7 +462,7 @@ public:
 };
 
 template<typename __type>
-class differentiator final : public model_base
+class differentiator final : public transfer_function_model
 {
     transfer_function<__type> m_transfer_function;
 public:
@@ -511,7 +511,7 @@ public:
         Rz.item0[1][1] = +1/Fs;
 
         m_transfer_function.init(Fs, Ws, Rz);
-        model_base::init(2, Fs);
+        transfer_function_model::init(2, Fs);
     }
 
     /*!
@@ -541,7 +541,7 @@ public:
 };
 
 template<typename __type>
-class filter_2nd_order final : public model_base
+class filter_2nd_order final : public transfer_function_model
 {
     transfer_function<__type> m_transfer_function;
 public:
@@ -657,7 +657,7 @@ public:
         Rz.item0[1][1] = +1;
 
         m_transfer_function.init(Fs, Ws, Rz);
-        model_base::init(2, Fs);
+        transfer_function_model::init(2, Fs);
     }
 
     /*!
