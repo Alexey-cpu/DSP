@@ -48,6 +48,24 @@ class window_function final
 
 public:
 
+    /*! \brief default constructor */
+    window_function(){}
+
+    /*!
+     *  \brief copy constructor
+     *  \param[window] input window function
+    */
+    window_function(const window_function& _Window)
+    {
+        copy(_Window);
+    }
+
+    /*! \brief default destructor */
+    virtual ~window_function()
+    {
+        m_Window = __mfree__(m_Window);
+    }
+
     /*! \brief returns window function coefficients vector */
     double* get_window_function()
     {
@@ -302,24 +320,6 @@ public:
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __Tukey__(_R, _Order);
-    }
-
-    /*! \brief default constructor */
-    window_function(){}
-
-    /*!
-     *  \brief copy constructor
-     *  \param[window] input window function
-    */
-    window_function(const window_function& _Window)
-    {
-        copy(_Window);
-    }
-
-    /*! \brief default destructor */
-    virtual ~window_function()
-    {
-        m_Window = __mfree__(m_Window);
     }
 
     inline void operator = ( window_function& _Window)
