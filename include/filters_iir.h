@@ -10,30 +10,6 @@ using namespace IIR_KERNEL;
 #define IIR_FILTERS_DEBUG // debugging is not available if the algorithm is running on a device !!!
 #endif
 
-#ifndef __fx32
-#define __fx32 float
-#endif
-
-#ifndef __fx64
-#define __fx64 double
-#endif
-
-#ifndef __fxx64
-#define __fxx64 long double
-#endif
-
-#ifndef __ix32
-#define __ix32 int
-#endif
-
-#ifndef PI0
-#define PI0 3.1415926535897932384626433832795
-#endif
-
-#ifndef PI2
-#define PI2 6.283185307179586476925286766559
-#endif
-
 /*! \defgroup <CLASSIC_IIR_FILTERS> ( classic IIR filters)
  *  \ingroup FILTERS
  *  \brief The module contains abstract model and implementation of the classic IIR filters
@@ -63,8 +39,8 @@ public:
     // creator function
     virtual filter_data< __type >
     Create(
-            __fx64 _Fs,
-            __ix32 _order,
+            double _Fs,
+            int64_t _order,
             filter_type _type,
             bandwidth _bandwidth,
             attenuation _attenuation = {1, -1} ) = 0;
@@ -101,20 +77,20 @@ public:
         return __butt_cheb1_digital_hp__< double >( m_Fs, m_Bandwidth.Fc, m_Order, 0 , m_Attenuation.G1 );
     }
 
-    filter_data< __fx64 > compute_bandpass() override
+    filter_data< double > compute_bandpass() override
     {
         return __butt_cheb1_digital_bp__< double >( m_Fs, m_Bandwidth.Fc, m_Bandwidth.BW , m_Order , 0 , m_Attenuation.G1 );
     }
 
-    filter_data< __fx64 > compute_bandstop() override
+    filter_data< double > compute_bandstop() override
     {
         return __butt_cheb1_digital_bs__< double >( m_Fs, m_Bandwidth.Fc, m_Bandwidth.BW , m_Order , 0 , m_Attenuation.G1 );
     }
 
     // creator function
     filter_data< __type > Create(
-            __fx64 _Fs,
-            __ix32 _order,
+            double _Fs,
+            int64_t _order,
             filter_type _type,
             bandwidth _bandwidth,
             attenuation _attenuation ) override
@@ -172,8 +148,8 @@ public:
 
     // creator function
     filter_data< __type > Create(
-            __fx64 _Fs,
-            __ix32 _order,
+            double _Fs,
+            int64_t _order,
             filter_type _type,
             bandwidth _bandwidth,
             attenuation _attenuation ) override
@@ -230,8 +206,8 @@ public:
 
     // creator function
     filter_data< __type > Create(
-            __fx64 _Fs,
-            __ix32 _order,
+            double _Fs,
+            int64_t _order,
             filter_type _type,
             bandwidth _bandwidth,
             attenuation _attenuation ) override
@@ -288,8 +264,8 @@ public:
 
     // creator function
     filter_data< __type > Create(
-            __fx64 _Fs,
-            __ix32 _order,
+            double _Fs,
+            int64_t _order,
             filter_type _type,
             bandwidth _bandwidth,
             attenuation _attenuation ) override
@@ -322,11 +298,11 @@ private:
     }
 
     // buffers array allocatinon function
-    delay<__type>* buffers_array_alloc(__ix32 buffersNumber, __ix32 singleBufferSize)
+    delay<__type>* buffers_array_alloc(int64_t buffersNumber, int64_t singleBufferSize)
     {
         delay<__type>* buffers = new delay<__type>[buffersNumber];
 
-        for( __ix32 i = 0 ; i < buffersNumber ; i++)
+        for( int64_t i = 0 ; i < buffersNumber ; i++)
         {
             buffers[i].allocate(singleBufferSize);
         }
@@ -521,7 +497,7 @@ template< typename __type > class chebyshev_1 final : public IIRFactory< __type 
     public:
 
     // initialization function
-    void init( __fx64 _Fs , __ix32 _order , filter_type _type, bandwidth _bandwidth , __fx64 _Gs )
+    void init( double _Fs , int64_t _order , filter_type _type, bandwidth _bandwidth , double _Gs )
     {
         #ifdef IIR_FILTERS_DEBUG
         Debugger::Log("chebyshev_1","init()", "filter initialization");
@@ -568,7 +544,7 @@ template< typename __type > class chebyshev_2 final : public IIRFactory< __type 
 public:
 
     // initializing function
-    void init( __fx64 _Fs, __ix32 _order, filter_type _type, bandwidth _bandwidth, __fx64 _Gp )
+    void init( double _Fs, int64_t _order, filter_type _type, bandwidth _bandwidth, double _Gp )
     {
         #ifdef IIR_FILTERS_DEBUG
         Debugger::Log("chebyshev_2","init()", "filter initialization");
@@ -650,12 +626,5 @@ public:
 };
 
 /*! @} */
-
-#undef __fx32
-#undef __fx64
-#undef __fxx64
-#undef __ix32
-#undef PI0
-#undef PI2
 
 #endif // FILTERS_IIR_H

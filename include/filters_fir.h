@@ -27,14 +27,14 @@ using namespace FIR_KERNEL;
  *  \class window_function
  *  \brief Defines window functions high level shell
 */
-class WindowFunction final
+class window_function final
 {
     // info
     int64_t m_Order  = 80;
     double *m_Window = nullptr;
 
     // service methods
-    void copy(const WindowFunction& _Window)
+    void copy(const window_function& _Window)
     {
         m_Order  = _Window.m_Order;
         m_Window = __mfree__(m_Window);
@@ -305,24 +305,24 @@ public:
     }
 
     /*! \brief default constructor */
-    WindowFunction(){}
+    window_function(){}
 
     /*!
      *  \brief copy constructor
      *  \param[window] input window function
     */
-    WindowFunction(const WindowFunction& _Window)
+    window_function(const window_function& _Window)
     {
         copy(_Window);
     }
 
     /*! \brief default destructor */
-    virtual ~WindowFunction()
+    virtual ~window_function()
     {
         m_Window = __mfree__(m_Window);
     }
 
-    inline void operator = ( WindowFunction& _Window)
+    inline void operator = ( window_function& _Window)
     {
         copy(_Window);
     }
@@ -338,13 +338,13 @@ public:
 
 /*!  \brief defines the base of the FIR filters */
 template< typename __type >
-class FirFilter : public  transfer_function_model, classic_filter_interface
+class fir final : public  transfer_function_model, classic_filter_interface
 {
 protected:
 
     filter_type         m_FilterType;
     filter_data<__type> m_FilterData;
-    WindowFunction      m_WindowFunction;
+    window_function      m_WindowFunction;
     bandwidth           m_Bandwidth;
     int64_t             m_Scale;
     delay<__type>       m_buff_sx;
@@ -352,14 +352,14 @@ protected:
 public:
 
     /*! \brief default constructor */
-    FirFilter() : transfer_function_model()
+    fir() : transfer_function_model()
     {
         m_FilterType   = filter_type::lowpass;
         m_Bandwidth    = { 100 , 500 };
     }
 
     /*! \brief default destructor */
-    virtual ~FirFilter()
+    virtual ~fir()
     {
         #ifdef FIR_FILTERS_DEBUG
         Debugger::Log("classic_fir_base","deallocate()", "fir filter memory deallocation");
@@ -377,7 +377,7 @@ public:
      *   \param[Scale] scale ot not to scale the filter coefficients
      *   \details The function is supposed to be called explicitly by the user before the filter resources are allocated
     */
-    void init( double Fs, filter_type FilterType, bandwidth Bandwidth, WindowFunction& WindowFunction, int64_t Scale )
+    void init( double Fs, filter_type FilterType, bandwidth Bandwidth, window_function& WindowFunction, int64_t Scale )
     {
         m_FilterType     = FilterType;
         m_Bandwidth      = Bandwidth;

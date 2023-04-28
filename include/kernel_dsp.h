@@ -372,8 +372,13 @@ namespace DSP_KERNEL
 
     /*! @} */
 
+    /*!
+     *  \brief delay model
+     *  \details Defines delay model
+     *           The class models delay for DSP
+    */
     template< typename __type >
-    class delay
+    class delay final
     {
     protected:
         __type *m_upper;   ///< delay buffer upper part pointer
@@ -404,6 +409,33 @@ namespace DSP_KERNEL
         }
 
     public:
+
+        /*! \brief default constructor */
+        delay()
+        {
+            #ifdef BUFFER_DEBUG
+            Debugger::Log("delay_base","delay_base()","Constructor call");
+            #endif
+
+            m_upper   = nullptr;
+            m_lower   = nullptr;
+            m_data    = nullptr;
+            m_nelem   = 0;
+            m_buffpos = 0;
+        }
+
+        /*!
+         *  \brief default constructor
+         *  \details The functions clears delay resources at the end of it's lifetime
+        */
+        virtual ~delay()
+        {
+            #ifdef BUFFER_DEBUG
+            Debugger::Log("delay_base","~delay_base()","Destructor call");
+            #endif
+
+            deallocate();
+        }
 
         /*!
          *  \brief The function allocates delay buffer
@@ -443,34 +475,6 @@ namespace DSP_KERNEL
             m_data = __mfree__(m_data);
         }
 
-        /*! \brief default constructor */
-        delay()
-        {
-            #ifdef BUFFER_DEBUG
-            Debugger::Log("delay_base","delay_base()","Constructor call");
-            #endif
-
-            m_upper   = nullptr;
-            m_lower   = nullptr;
-            m_data    = nullptr;
-            m_nelem   = 0;
-            m_buffpos = 0;
-        }
-
-        /*!
-         *  \brief default constructor
-         *  \details The functions clears delay resources at the end of it's lifetime
-        */
-        virtual ~delay()
-        {
-            #ifdef BUFFER_DEBUG
-            Debugger::Log("delay_base","~delay_base()","Destructor call");
-            #endif
-
-            deallocate();
-        }
-
-
         /*! \brief the function returns current lower/upper part pointer position */
         inline int getBuffPos()
         {
@@ -500,8 +504,15 @@ namespace DSP_KERNEL
         }
     };
 
+    /*! @} */
+
+    /*!
+     *  \brief buffer model
+     *  \details Defines buffer model
+     *           The class models circular buffer
+    */
     template< typename __type >
-    class buffer
+    class buffer final
     {
     protected:
 
@@ -526,6 +537,32 @@ namespace DSP_KERNEL
         }
 
     public:
+
+        /*! \brief default constructor */
+        buffer()
+        {
+            #ifdef BUFFER_DEBUG
+            Debugger::Log("buffer_base","buffer_base()","Constructor call");
+            #endif
+
+            m_lower   = nullptr;
+            m_data    = nullptr;
+            m_nelem   = 0;
+            m_buffpos = 0;
+        }
+
+        /*!
+         *  \brief default destructor
+         *  \details The function clears buffer resources
+        */
+        virtual ~buffer()
+        {
+            #ifdef BUFFER_DEBUG
+            Debugger::Log("buffer_base","~buffer_base()","Destructor call");
+            #endif
+
+            deallocate();
+        }
 
         /*!
          *  \brief The function allocates buffer
@@ -558,32 +595,6 @@ namespace DSP_KERNEL
             m_data = __mfree__(m_data);
         }
 
-        /*! \brief default constructor */
-        buffer()
-        {
-            #ifdef BUFFER_DEBUG
-            Debugger::Log("buffer_base","buffer_base()","Constructor call");
-            #endif
-
-            m_lower   = nullptr;
-            m_data    = nullptr;
-            m_nelem   = 0;
-            m_buffpos = 0;
-        }
-
-        /*!
-         *  \brief default destructor
-         *  \details The function clears buffer resources
-        */
-        virtual ~buffer()
-        {
-            #ifdef BUFFER_DEBUG
-            Debugger::Log("buffer_base","~buffer_base()","Destructor call");
-            #endif
-
-            deallocate();
-        }
-
         /*! \brief the function returns current lower/upper part pointer position */
         inline int getBuffPos()
         {
@@ -612,6 +623,8 @@ namespace DSP_KERNEL
             this->fill_buff<T>(input);
         }
     };
+
+    /*! @} */
 }
 
 #endif // KERNEL_DSP_H
