@@ -250,6 +250,10 @@ public:
     }
 };
 
+/*!
+ *  \example example_custom_filters_hmf.h
+*/
+
 /*! @} */
 
 #endif // FILTERS_HMF_H

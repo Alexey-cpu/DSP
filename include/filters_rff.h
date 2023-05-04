@@ -140,6 +140,10 @@ protected:
     }
 };
 
+/*!
+ *  \example example_custom_filters_rff.h
+*/
+
 /*! @} */
 
 /*! @} */

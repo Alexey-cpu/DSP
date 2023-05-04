@@ -24,9 +24,10 @@ HEADERS += \
     ../../examples/example_classic_iir_ellip.h \
     ../../examples/example_custom_filters_hmf.h \
     ../../examples/example_custom_filters_rff.h \
-    ../../examples/example_fft.h \
     ../../examples/example_math_complex_numbers.h \
     ../../examples/example_math_special_functions.h \
+    ../../examples/example_math_special_functions_fft.h \
+    ../../examples/example_math_special_functions_interpolation.h \
     ../../examples/example_transfer_functions_aperiodic.h \
     ../../examples/example_transfer_functions_differentiator.h \
     ../../examples/example_transfer_functions_filter_2nd_order.h \

@@ -205,6 +205,11 @@ public:
     }
 };
 
+/*!
+ *  \class leadlag
+ *  \brief defines discrete leadlag transfer function model
+*/
+
 template<typename __type>
 class leadlag final : public transfer_function_model
 {
@@ -286,6 +291,17 @@ public:
     }
 };
 
+/*!
+ *  \example example_transfer_functions_leadlag.h
+*/
+
+/*! @} */
+
+/*!
+ *  \class aperiodic
+ *  \brief defines discrete aperiodic transfer function model
+*/
+
 template<typename __type>
 class aperiodic final : public transfer_function_model
 {
@@ -365,6 +381,17 @@ public:
     }
 };
 
+/*!
+ *  \example example_transfer_functions_aperiodic.h
+*/
+
+/*! @} */
+
+/*!
+ *  \class integrator
+ *  \brief defines discrete integrator transfer function model
+*/
+
 template<typename __type>
 class integrator final : public transfer_function_model
 {
@@ -442,6 +469,17 @@ public:
         return m_transfer_function(input);
     }
 };
+
+/*!
+ *  \example example_transfer_functions_integrator.h
+*/
+
+/*! @} */
+
+/*!
+ *  \class differentiator
+ *  \brief defines discrete differentiator transfer function model
+*/
 
 template<typename __type>
 class differentiator final : public transfer_function_model
@@ -521,6 +559,17 @@ public:
         return m_transfer_function(input);
     }
 };
+
+/*!
+ *  \example example_transfer_functions_differentiator.h
+*/
+
+/*! @} */
+
+/*!
+ *  \class filter_2nd_order
+ *  \brief defines discrete second order lowpass/highpass/bandpass/bandstop transfer function model
+*/
 
 template<typename __type>
 class filter_2nd_order final : public transfer_function_model
@@ -672,6 +721,12 @@ public:
         m_transfer_function.show();
     }
 };
+
+/*!
+ *  \example example_transfer_functions_filter_2nd_order.h
+*/
+
+/*! @} */
 
 /*! @} */
 

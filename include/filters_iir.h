@@ -18,13 +18,6 @@ using namespace IIR_KERNEL;
 
 /*! @} */
 
-/*!
- *  \defgroup <CLASSIC_IIR_FILTERS_ABSTRACT_MODEL> ( classic IIR filters abstract model )
- *  \ingroup CLASSIC_IIR_FILTERS
- *  \brief The module contains abstract model of the classic IIR filters
-    @{
-*/
-
 template< typename __type >
 class IIRCreator
 {
@@ -437,8 +430,6 @@ public:
 
 };
 
-/*! @} */
-
 /*! \defgroup <BUTTERWORTH_FILTER_IMPLEMENTATION> ( Butterworth filter )
  *  \ingroup CLASSIC_IIR_FILTERS
  *  \brief The module contains implementation of the Butterworth filter
@@ -481,6 +472,10 @@ template< typename __type > class butterworth final : public IIRFactory< __type 
         #endif
     }
 };
+
+/*!
+ *  \example example_classic_iir_butt.h
+*/
 
 /*! @} */
 
@@ -529,6 +524,10 @@ template< typename __type > class chebyshev_1 final : public IIRFactory< __type 
     }
 };
 
+/*!
+ *  \example example_classic_iir_cheb1.h
+*/
+
 /*! @} */
 
 /*!
@@ -575,6 +574,10 @@ public:
         #endif
     }
 };
+
+/*!
+ *  \example example_classic_iir_cheb2.h
+*/
 
 /*! @} */
 
@@ -624,6 +627,10 @@ public:
         #endif
     }
 };
+
+/*!
+ *  \example example_classic_iir_ellip.h
+*/
 
 /*! @} */
 

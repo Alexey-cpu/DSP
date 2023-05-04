@@ -1,5 +1,5 @@
-#ifndef EXAMPLE_FFT_H
-#define EXAMPLE_FFT_H
+#ifndef EXAMPLE_MATH_SPECIAL_FUNCTIONS_FFT_H
+#define EXAMPLE_MATH_SPECIAL_FUNCTIONS_FFT_H
 
 #include "../../DSP/include/special_functions.h"
 
@@ -75,4 +75,4 @@ int fft_example()
     return 0;
 }
 
-#endif // EXAMPLE_FFT_H
+#endif // EXAMPLE_MATH_SPECIAL_FUNCTIONS_FFT_H

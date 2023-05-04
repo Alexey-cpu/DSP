@@ -28,7 +28,7 @@
 #include "example_transfer_functions_filter_2nd_order.h"
 
 // FFT example
-#include "example_fft.h"
+#include "example_math_special_functions_fft.h"
 
 
 #endif // EXAMPLES_H

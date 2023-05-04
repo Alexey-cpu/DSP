@@ -328,6 +328,10 @@ public:
     }
 };
 
+/*!
+ *  \example example_classic_fir.h
+*/
+
 /*! @} */
 
 /*! \defgroup <CLASSIC_FIR_FILTER_ABSTRACT_MODEL> ( Classic FIR filter abstract model )
@@ -459,6 +463,10 @@ public:
         }
     #endif
 };
+
+/*!
+ *  \example example_classic_fir.h
+*/
 
 /*! @} */
 

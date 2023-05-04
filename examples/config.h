@@ -1,6 +1,12 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+/*!
+ *  \file pakcage debugging config file
+ *  \details the file defines log writing directive macro,
+ *  directories and basic log files, that are written
+*/
+
 // write logs
 #define WRITE_LOGS
 

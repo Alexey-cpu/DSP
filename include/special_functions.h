@@ -255,6 +255,9 @@ extern __fx64 __am__( __fx64 u , __fx64 k )
 */
 extern __fx64 __sn__( __fx64 u , __fx64 x ) { return sin( __am__( u , x ) ); }
 
+/*!  \example example_math_special_functions.h */
+
+
 /*!
     \brief Elliptic Jacobi CN function
     \param[u] incomplete elliptic integral of the first kind
@@ -262,6 +265,8 @@ extern __fx64 __sn__( __fx64 u , __fx64 x ) { return sin( __am__( u , x ) ); }
     \return  returns Ellptic Jacobi CN( u , x ) = cos( am( u , x ) ) function
 */
 extern __fx64 __cn__( __fx64 u , __fx64 x ) { return cos( __am__( u , x ) ); }
+
+/*!  \example example_math_special_functions.h */
 
 /*!
     \brief Elliptic Jacobi DN function
@@ -271,6 +276,8 @@ extern __fx64 __cn__( __fx64 u , __fx64 x ) { return cos( __am__( u , x ) ); }
 */
 extern __fx64 __dn__( __fx64 u , __fx64 x ) { __fx64 SN = __sn__( u , x ); return sqrt(1.0 - x * x * SN * SN); }
 
+/*!  \example example_math_special_functions.h */
+
 /*!
     \brief Elliptic Jacobi CD function
     \param[u] incomplete elliptic integral of the first kind
@@ -278,6 +285,8 @@ extern __fx64 __dn__( __fx64 u , __fx64 x ) { __fx64 SN = __sn__( u , x ); retur
     \return  returns Ellptic Jacobi CD( u , x ) = CN( u , x ) / DN( u , x ) function
 */
 extern __fx64 __cd__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __dn__( u , x ); }
+
+/*!  \example example_math_special_functions.h */
 
 /*!
     \brief Elliptic Jacobi SD function
@@ -287,6 +296,8 @@ extern __fx64 __cd__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __dn__( u
 */
 extern __fx64 __sd__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __dn__( u , x ); }
 
+/*!  \example example_math_special_functions.h */
+
 /*!
     \brief Elliptic Jacobi ND function
     \param[u] incomplete elliptic integral of the first kind
@@ -294,6 +305,8 @@ extern __fx64 __sd__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __dn__( u
     \return  returns Ellptic Jacobi ND( u , x ) = SN( u , x ) / DN( u , x ) function
 */
 extern __fx64 __nd__( __fx64 u , __fx64 x ) { return 1 / __dn__( u , x ); }
+
+/*!  \example example_math_special_functions.h */
 
 /*!
     \brief Elliptic Jacobi DC function
@@ -303,6 +316,8 @@ extern __fx64 __nd__( __fx64 u , __fx64 x ) { return 1 / __dn__( u , x ); }
 */
 extern __fx64 __dc__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __cn__( u , x ); }
 
+/*!  \example example_math_special_functions.h */
+
 /*!
     \brief Elliptic Jacobi NC function
     \param[u] incomplete elliptic integral of the first kind
@@ -310,6 +325,8 @@ extern __fx64 __dc__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __cn__( u
     \return  returns Ellptic Jacobi NC( u , x ) = 1 / CN( u , x ) function
 */
 extern __fx64 __nc__( __fx64 u , __fx64 x ) { return 1 / __cn__(u, x); }
+
+/*!  \example example_math_special_functions.h */
 
 /*!
     \brief Elliptic Jacobi SC function
@@ -319,6 +336,8 @@ extern __fx64 __nc__( __fx64 u , __fx64 x ) { return 1 / __cn__(u, x); }
 */
 extern __fx64 __sc__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __cn__( u , x ); }
 
+/*!  \example example_math_special_functions.h */
+
 /*!
     \brief Elliptic Jacobi NS function
     \param[u] incomplete elliptic integral of the first kind
@@ -327,6 +346,8 @@ extern __fx64 __sc__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __cn__( u
 */
 extern __fx64 __ns__( __fx64 u , __fx64 x ) { return 1 / __sn__( u , x ); }
 
+/*!  \example example_math_special_functions.h */
+
 /*!
     \brief Elliptic Jacobi DS function
     \param[u] incomplete elliptic integral of the first kind
@@ -334,6 +355,9 @@ extern __fx64 __ns__( __fx64 u , __fx64 x ) { return 1 / __sn__( u , x ); }
     \return  returns Ellptic Jacobi DS( u , x ) = DN( u , x ) / SN( u , x ) function
 */
 extern __fx64 __ds__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __sn__( u , x ); }
+
+/*!  \example example_math_special_functions.h */
+
 /*!
  * \brief Elliptic Jacobi CS function
  * \param[u] incomplete elliptic integral of the first kind
@@ -341,6 +365,8 @@ extern __fx64 __ds__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __sn__( u
  * \return  returns Ellptic Jacobi CS( u , x ) = CN( u , x ) / SN( u , x ) function
 */
 extern __fx64 __cs__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __sn__( u , x ); }
+
+/*!  \example example_math_special_functions.h */
 
 /*!
  * \brief Elliptic Jacobi inverse SN function
@@ -916,7 +942,7 @@ extern __fxx64 __modified_bessel_in__( __fxx64 x  , __ix32 order )
  *      \end{equation}
  *  \f]
 */
-__fx64 *__Bartlett__( __ix32 _order )
+__fx64* __Bartlett__( __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -936,7 +962,7 @@ __fx64 *__Bartlett__( __ix32 _order )
  *      y( n ) = 0.62 - 0.48 * \left|  \frac{ n }{ Ns - 1 } - 0.5 \right| + 0.38 * cos \left[ \ 2 * \pi * \left( \frac{ n }{ Ns - 1 } - 0.5 \right) \right]
  *  \f]
 */
-__fx64 *__BartlettHanning__( __ix32 _order )
+__fx64* __BartlettHanning__( __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -958,7 +984,7 @@ __fx64 *__BartlettHanning__( __ix32 _order )
      *      y( n ) = 0.42 - 0.50 * cos \left( 2 * \pi * \frac { n } { Ns - 1 } \right ) + 0.08 * cos \left( 4 * \pi * \frac{ n } { Ns - 1 } \right )
      *  \f]
 */
-__fx64 *__Blackman__(__ix32 _order)
+__fx64* __Blackman__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -979,7 +1005,7 @@ __fx64 *__Blackman__(__ix32 _order)
      *      y( n ) = 0.35875 - 0.48829 * cos \left( 2 * \pi * \frac{ n } { Ns - 1 } \right ) + 0.14128 * cos\left( 4 * \pi * \frac{ n } { Ns - 1 } \right ) - 0.01168 * cos \left( 6 * \pi * \frac{ n } { Ns - 1 } \right )
      *  \f]
     */
-__fx64 *__BlackmanHarris__(__ix32 _order)
+__fx64* __BlackmanHarris__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1005,7 +1031,7 @@ __fx64 *__BlackmanHarris__(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 *__Bohman__(__ix32 _order)
+__fx64* __Bohman__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1092,7 +1118,7 @@ __fx64 *__Chebyshev__( __fx64 _atten , __ix32 _order )
      *      + 0.006947368 * cos \left( 8 * \pi * \frac{ n } { Ns - 1 } \right)
      *  \f]
     */
-__fx64 *__FlatTop__(__ix32 _order)
+__fx64* __FlatTop__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1131,7 +1157,7 @@ __fx64 *__FlatTop__(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 *__Gaussian__( __fx64 _alpha, __ix32 _order )
+__fx64* __Gaussian__( __fx64 _alpha, __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1163,7 +1189,7 @@ __fx64 *__Gaussian__( __fx64 _alpha, __ix32 _order )
      *      y( n ) = 0.54 - 0.46 * cos \left( 2 * \pi * \frac{ n } { Ns-1 } \right)
      *  \f]
     */
-__fx64 *__Hamming__(__ix32 _order )
+__fx64* __Hamming__(__ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1186,7 +1212,7 @@ __fx64 *__Hamming__(__ix32 _order )
      *      y( n ) = 0.5 - 0.5 * cos \left( 2 * \pi * \frac{ n } { Ns-1 } \right)
      *  \f]
     */
-__fx64 *__Hann__(__ix32 _order)
+__fx64* __Hann__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1214,7 +1240,7 @@ __fx64 *__Hann__(__ix32 _order)
      *      y(n) = \frac{ ModifiedBessel( B , 0 ) }{ ModifiedBessel( C , 0 ) }
      *  \f]
     */
-__fx64 *__Kaiser__(__fx64 _betta, __ix32 _order )
+__fx64* __Kaiser__(__fx64 _betta, __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1249,7 +1275,7 @@ __fx64 *__Kaiser__(__fx64 _betta, __ix32 _order )
      *      - 0.0106411 * cos \left( 6 * \pi * \frac{ n }{ Ns - 1 } \right)
      *  \f]
     */
-__fx64 *__Nutall__(__ix32 _order)
+__fx64* __Nutall__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1287,7 +1313,7 @@ __fx64 *__Nutall__(__ix32 _order)
      *
      *  \f]
     */
-__fx64 *__Parzen__(__ix32 _order)
+__fx64* __Parzen__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1325,7 +1351,7 @@ __fx64 *__Parzen__(__ix32 _order)
      *      y(n) = 1
      *  \f]
     */
-__fx64 *__Rectangular__(__ix32 _order)
+__fx64* __Rectangular__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1352,7 +1378,7 @@ __fx64 *__Rectangular__(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 *__Triangular__(__ix32 _order)
+__fx64* __Triangular__(__ix32 _order)
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1401,7 +1427,7 @@ __fx64 *__Triangular__(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 *__Tukey__(__fx64 _R, __ix32 _order )
+__fx64* __Tukey__(__fx64 _R, __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1780,6 +1806,8 @@ fft0( __type *input, Complex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 dire
     }
 }
 
+/*!  \example example_math_special_functions_fft.h */
+
 /*!
      * \brief Fast Fourier transform
      * \param[input] input samples array
@@ -1874,6 +1902,8 @@ fft1( __type *input, Complex<__type> *spectrum, __ix32 M , __ix32 N, __ix32 dire
         }
     }
 }
+
+/*!  \example example_math_special_functions_fft.h */
 
 /*! @} */
 
