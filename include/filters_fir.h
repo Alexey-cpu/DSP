@@ -51,6 +51,9 @@ public:
     /*! \brief default constructor */
     window_function(){}
 
+    /*! \brief virtual destructor */
+    virtual ~window_function(){}
+
     /*!
      *  \brief copy constructor
      *  \param[window] input window function

@@ -158,15 +158,15 @@ namespace DSP_KERNEL
      *  \details Defines the building base for the DSP components creation.
      *           Use inheritance mechnism to create the deriving filter class
     */
-    class frequency_responce_interface
+    class frequency_responce_computation_interface
     {
     public:
 
         /*! \brief default constructor */
-        frequency_responce_interface(){}
+        frequency_responce_computation_interface(){}
 
         /*! \brief default virtual destructor */
-        virtual ~frequency_responce_interface(){}
+        virtual ~frequency_responce_computation_interface(){}
 
         /*!
          *  \brief filter frequency responce computation function
@@ -184,6 +184,12 @@ namespace DSP_KERNEL
     class classic_filter_interface
     {
     public:
+
+        // constructors
+        classic_filter_interface(){}
+
+        // virtual destructor
+        virtual ~classic_filter_interface(){}
 
         /*!  \brief lowpass filter computation function */
         virtual filter_data<double> compute_lowpass()  = 0;
@@ -339,7 +345,7 @@ namespace DSP_KERNEL
      *  \details Defines the building base for the DSP components creation.
      *           Use inheritance mechnism to create the deriving filter class
     */
-    class transfer_function_model : public frequency_responce_interface
+    class transfer_function_model : public frequency_responce_computation_interface
     {
     protected:
 

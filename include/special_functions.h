@@ -831,7 +831,6 @@ extern __fx64 __ellip_e__( __fx64 k )
 
 extern __fxx64 __factorial__( __ix64 n )
 {
-    //return (n == 1 || n == 0) ? 1 : __factorial__(n - 1) * n;
     __fxx64 out = 1;
     for( __ix64 i = 1 ; i <= n ; i++ ) out *= i;
     return out;
@@ -910,7 +909,9 @@ extern __fxx64 __modified_bessel_in__( __fxx64 x  , __ix32 order )
     __fxx64  sum = 0 , gamma1 = 0 , gamma2    = 0;
     for (int n = 0; n < 16; n++)
     {
-        if ( ( __fx64 )gamma2 / (__fx64)__max_fx64 > 0.9 ) break;
+        if ( ( __fxx64 )gamma2 / (__fxx64)__max_fx64 > 0.9 )
+            break;
+
         gamma1    = __gamma_integer__(n + 1);
         gamma2    = __gamma_integer__(n + order + 1);
         sum       = sum + powl(x / 2, 2 * n + order) / gamma1 / gamma2;
@@ -1062,7 +1063,7 @@ __fx64* __Bohman__(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 __cheby_poly__(__ix32 n, __fx64 x)
+__fx64 __Chebyshev_poly__(__ix32 n, __fx64 x)
 {
     __fx64 res;
     if (fabs(x) <= 1) res = cos(n*acos(x));
@@ -1076,7 +1077,7 @@ __fx64 __cheby_poly__(__ix32 n, __fx64 x)
      * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Chebyshev window coefficients
     */
-__fx64 *__Chebyshev__( __fx64 _atten , __ix32 _order )
+__fx64* __Chebyshev__( __fx64 _atten , __ix32 _order )
 {
     // memory allocation:
     __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
@@ -1093,7 +1094,7 @@ __fx64 *__Chebyshev__( __fx64 _atten , __ix32 _order )
     {
         n = nn - M;
         sum = 0;
-        for (kk = 1; kk <= M; kk++)  { sum += __cheby_poly__(Ns - 1, x0*cos(PI0*kk / Ns))*cos(2.0*n*PI0*kk / Ns); }
+        for (kk = 1; kk <= M; kk++)  { sum += __Chebyshev_poly__(Ns - 1, x0*cos(PI0*kk / Ns))*cos(2.0*n*PI0*kk / Ns); }
         buff[nn] = tg + 2 * sum;
         buff[(__ix32)Ns - nn - 1] = buff[nn];
         if (buff[nn] > max)max = buff[nn];
