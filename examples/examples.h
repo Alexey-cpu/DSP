@@ -29,6 +29,7 @@
 
 // FFT example
 #include "example_math_special_functions_fft.h"
+#include "example_math_special_functions_interpolation.h"
 
 
 #endif // EXAMPLES_H

@@ -63,12 +63,6 @@ public:
         copy(_Window);
     }
 
-    /*! \brief default destructor */
-    virtual ~window_function()
-    {
-        m_Window = __mfree__(m_Window);
-    }
-
     /*! \brief returns window function coefficients vector */
     double* get_window_function()
     {

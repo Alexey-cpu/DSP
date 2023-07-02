@@ -1597,9 +1597,30 @@ __fraction_numeric_substitution__(__type *AN, __type *AD, __type *BN, __type *BD
      * \details The function generates interpolated output of input signal multiplied by gain.
      *          The function supports linear, quad and cubic interpolation.
 */
+template< typename __type >
+__type get_data( __type* _Data, int _Size, __ix32 _Index )
+{
+    if( _Data == nullptr || _Size <= 0 )
+        return 0.0;
+
+    if( _Index < 0 )
+        return _Data[ _Index + _Size ];
+
+    if( _Index >= _Size )
+        return _Data[ _Index - _Size ];
+
+    return _Data[ _Index ];
+}
+
 template<typename __InputType, typename __OutputType> void
 interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32 M, __ix32 N, __ix32 order)
 {
+    //--------------------------------------------------------------------------------------------------------
+    std::ofstream xt;
+
+    xt.open( LOGS_DIRECTORY + (string)"\\int.txt");
+    //--------------------------------------------------------------------------------------------------------
+
     // time step
     __fx64 dN = (__fx64)M / (__fx64)N;
 
@@ -1608,20 +1629,17 @@ interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32
         for( __ix32 i = 0 ; i < N ; i++ )
         {
             // time stamps
-            __fx64 t0 = (i+0)*dN;
+            __fx64 t0 = (i-1)*dN;
             __fx64 t1 = (i+1)*dN;
-            __fx64 t  = (i+0.5)*dN;
-
-            // indexes
-            __ix32 idx0 = (__ix32)t0;
-            __ix32 idx1 = (__ix32)ceil(t1);
 
             // samples
-            __InputType y0 = idx0 >= M ? input[ M - 1 ] : input[ idx0 ];
-            __InputType y1 = idx1 >= M ? input[ M - 1 ] : input[ idx1 ];
+            __InputType y0 = get_data<__InputType>( input, M, t0 );
+            __InputType y1 = get_data<__InputType>( input, M, t1 );
 
             // result
-            output[i] = (__OutputType)( y0 + ( y1 - y0 ) * ( t - t0 ) / ( t1 - t0 ) ) * (__OutputType)Gain;
+            output[i] = (__OutputType)( y0 + ( y1 - y0 ) / dN ) * (__OutputType)Gain;
+
+            xt << output[i] / (__OutputType)Gain << "\n";
         }
     }
     else if( order == 2 ) // quadratic interpolation
@@ -1710,6 +1728,8 @@ interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32
     }
 
     output[N-1] = (__OutputType)input[M-1];
+
+    xt.close();
 }
 
 /*!

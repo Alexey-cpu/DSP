@@ -33,7 +33,7 @@ using namespace DSP_KERNEL;
 */
 
 template< typename __type >
-class recursive_fourier final : public transfer_function_model
+class recursive_fourier : public transfer_function_model
 {
 protected:
 
@@ -44,6 +44,8 @@ protected:
     Complex<double> m_rot;       ///< recursive Fourier rotation coefficient
     Complex<double> m_out;       ///< recursive Fourier rotation output
     delay<__type>   m_buffer_sx; ///< recursive Fourier rotation delay buffer
+
+    //Complex<double> m_rot;
 
     /*!
      *  \brief Filtering function

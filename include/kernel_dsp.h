@@ -384,7 +384,7 @@ namespace DSP_KERNEL
      *           The class models delay for DSP
     */
     template< typename __type >
-    class delay final
+    class delay
     {
     protected:
         __type *m_upper;   ///< delay buffer upper part pointer
@@ -482,13 +482,13 @@ namespace DSP_KERNEL
         }
 
         /*! \brief the function returns current lower/upper part pointer position */
-        inline int getBuffPos()
+        inline int get_buff_pos()
         {
             return m_buffpos;
         }
 
         /*! \brief the function returns lower/upper part delay buffer size */
-        inline int getBuffSize()
+        inline int get_buff_size()
         {
             return m_nelem;
         }
@@ -518,7 +518,7 @@ namespace DSP_KERNEL
      *           The class models circular buffer
     */
     template< typename __type >
-    class buffer final
+    class buffer
     {
     protected:
 
@@ -534,12 +534,16 @@ namespace DSP_KERNEL
         template< typename T > inline void fill_buff( T *input )
         {
             *m_lower = *input;
+
             if( ++m_buffpos >= m_nelem )
             {
                 m_lower   = &m_data[0];
                 m_buffpos = 0;
             }
-            else m_lower++;
+            else
+            {
+                m_lower++;
+            }
         }
 
     public:
@@ -602,17 +606,22 @@ namespace DSP_KERNEL
         }
 
         /*! \brief the function returns current lower/upper part pointer position */
-        inline int getBuffPos()
+        inline int get_buff_pos()
         {
             return m_buffpos;
         }
 
         /*! \brief the function returns lower/upper part delay buffer size */
-        inline int getBuffSize()
+        inline int get_buff_size()
         {
             return m_nelem;
         }
 
+        /*! \brief the function returns pointer to local buffer */
+        inline __type* get_data() const
+        {
+            return m_data;
+        }
 
         /*!
          *  \brief the operator invokation results in return of an n-th sample from the past values

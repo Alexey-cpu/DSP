@@ -38,6 +38,7 @@ HEADERS += \
     ../../include/filters_fir.h \
     ../../include/filters_hmf.h \
     ../../include/filters_iir.h \
+    ../../include/filters_qdm.h \
     ../../include/filters_rff.h \
     ../../include/filters_tsf.h \
     ../../include/generators.h \
