@@ -16,10 +16,10 @@ int main()
     //filters_integrator_example();
     //filters_leadlag_example();
     //filters_filter_2nd_order_example();
-    //fft_example();
+    fft_example();
     //interpolation_example();
 
-    fft_based_filter_example();
+    //fft_based_filter_example();
 
     return 0;
 }

@@ -23,6 +23,7 @@
 #include "map"
 #include <limits.h>
 #include <float.h>
+#include <set>
 using namespace std;
 
 #endif
@@ -643,7 +644,6 @@ __type __bit_reverse__(__type bitMask, __ix32 MSB)
  *  \param[bitMask] input bit mask
  *  \details The function returns the number of the most sifnificant bit
 */
-template<typename __type>
 __ix32 __bit_get_MSB__( __ix32 bitMask )
 {
     __ix32 MSB = 0;
@@ -653,6 +653,11 @@ __ix32 __bit_get_MSB__( __ix32 bitMask )
     }
 
     return MSB;
+}
+
+bool check_power_of_two( __ix32 _Number )
+{
+    return !(bool)( _Number & (_Number-1) );
 }
 
 /*!
@@ -1069,6 +1074,29 @@ inline __ix32 __generate_random_number__(__ix32 min, __ix32 max)
             for( size_t i = 0, j = 0 ; i < _String.size() ; i++ )
             {
                 if( _String[i] != _Symbol )
+                    output[j++] = _String[i];
+            }
+
+            return output;
+        }
+
+        inline string __remove_symbols__( string _String, std::set< char > _Symbols )
+        {
+            string output;
+
+            // compute output string size
+            size_t size = 0;
+            for( size_t i = 0 ; i < _String.size() ; i++ )
+            {
+                if( _Symbols.find( _String[i] ) == _Symbols.end() )
+                    size++;
+            }
+
+            // edit output string
+            output.resize(size);
+            for( size_t i = 0, j = 0 ; i < _String.size() ; i++ )
+            {
+                if( _Symbols.find( _String[i] ) == _Symbols.end() )
                     output[j++] = _String[i];
             }
 

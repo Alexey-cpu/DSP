@@ -9,29 +9,24 @@
 int fft_example()
 {
     QElapsedTimer timer;
-    int N = 128;
-    int M = 80;
-    double *sine = __alloc__<double>(M);
+    int    N  = 128;
+    double Fn = 50;
     Complex<double> *spectrum0 = __alloc__< Complex<double> >(N);
-
-
-    // logs directory:
-    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
 
     // log files
     std::ofstream xt;
     std::ofstream yt;
 
     // open files
-    yt .open(directory + "\\yt.txt");
-    xt .open(directory + "\\xt.txt");
+    xt.open( LOGS_DIRECTORY + OUTPUT_STREAM_INPUT);
+    yt.open( LOGS_DIRECTORY + OUTPUT_STREAM_OUTPUT);
 
 
-    for( int i = 0 ; i < M ; i++ )
+    for( int i = 0 ; i < N ; i++ )
     {
-        sine[i] = sin( 2.0 * 3.14 * 1 * 50.0 * (double)i / (M*50) );
+        spectrum0[i] = sin( 2.0 * 3.14 * 1 * Fn * (double)i / (N*Fn) );
 
-        xt << sine[i] << "\n";
+        xt << __realf__( spectrum0[i] ) << "\n";
 
         /*
         sine[i] = 0.5 +
@@ -43,8 +38,9 @@ int fft_example()
 
     // fft
     timer.start();
-    for( int i = 0 ; i < 1e3 ; i++ ) fft0( sine, spectrum0, M, N, 1 );
-    //for( int i = 0 ; i < 1e3 ; i++ ) fft1( sine, spectrum0, M, N, 1 );
+
+    fft0( spectrum0, N, 1 );
+
     double dt = timer.nsecsElapsed() / 1e9;
 
     // display info
@@ -53,26 +49,21 @@ int fft_example()
     for( int i = 0 ; i < N ; i++ ) cout << "S[" << i << "]" << spectrum0[i].to_string() << "\n";
     cout << "\n";
 
-    for( int i = 0 ; i < M ; i++ )
-    {
-        sine[i] = 0;
-    }
 
     //fft0( sine, spectrum0, M, N, 0, 3);
-    fft1( sine, spectrum0, M, N, 0, 3);
+    fft1( spectrum0, N, 0);
 
     cout << "Spectrum magnitudes of inverse transform: \n\n";
-    for( int i = 0 ; i < M ; i++ )
+    for( int i = 0 ; i < N ; i++ )
     {
-        yt << sine[i] << "\n";
-        //cout << "S[" << i << "]" << sine[i] << "\n";
+        cout << "S[" << i << "]" << spectrum0[i].to_string() << "\n";
+        yt << spectrum0[i].to_string() << "\n";
     }
 
     xt.close();
     yt.close();
 
     __mfree__(spectrum0);
-    __mfree__(sine);
 
     return 0;
 }
