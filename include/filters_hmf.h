@@ -37,9 +37,9 @@ private:
     __type m_min_value = -sqrt( 3.4028235E+38 / 2 );
 
     // filters
-    recursive_fourier<__type> *m_rdft;     ///< recursive Fourier filters ( each for it's own frequency )
-    recursive_fourier<__type>  m_rmean_re; ///< zero-frequency recursive Fourier filter
-    recursive_fourier<__type>  m_rmean_im; ///< zero-frequency recursive Fourier filter
+    standalone_recursive_fourier<__type> *m_rdft;     ///< recursive Fourier filters ( each for it's own frequency )
+    standalone_recursive_fourier<__type>  m_rmean_re; ///< zero-frequency recursive Fourier filter
+    standalone_recursive_fourier<__type>  m_rmean_im; ///< zero-frequency recursive Fourier filter
 
     // system variables
     double  m_Fs;               ///< recurisve Fourier sampling frequency, Hz
@@ -67,7 +67,7 @@ private:
         m_Im = __alloc__<__type>(m_HBuffSize);
 
         // initialize and allocate recursive Fourier filter
-        m_rdft = new recursive_fourier<__type>[m_SpectrumWidth];
+        m_rdft = new standalone_recursive_fourier<__type>[m_SpectrumWidth];
         for( int64_t i = 0 ; i < m_SpectrumWidth ; i++ )
         {
             m_rdft[i].init( m_Fs, m_Fn, i );

@@ -6,6 +6,7 @@
 #include "../include/filters_qdm.h"
 
 // Recursive Fourier filter
+/*
 int fft_example()
 {
     typedef double __type;
@@ -93,5 +94,6 @@ int fft_example()
 
     return 0;
 }
+*/
 
 #endif // EXAMPLE_MATH_SPECIAL_FUNCTIONS_FFT_H

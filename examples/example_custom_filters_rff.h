@@ -48,7 +48,7 @@ int filters_rff_example()
     digital_clock<double> time_provider;
     time_provider.init(Fs);
 
-    recursive_fourier<__type> rff;
+    standalone_recursive_fourier<__type> rff;
     rff.init(Fs, Fn, 2);
 
     for( int i = 0 ; i < cycles_num ; i++ )

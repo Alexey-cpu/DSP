@@ -4,24 +4,13 @@
 #include "filters_tsf.h"
 #include "filters_rff.h"
 
-#ifndef PI0
-#define PI0 3.1415926535897932384626433832795
-#endif
-
-#ifndef PI2
-#define PI2 6.283185307179586476925286766559
-#endif
-
 class quadrature_demodulator : public transfer_function_model
 {
 protected:
 
     // info
-    Complex<double>*           m_UnitVectors      = nullptr;
-    Complex<double>*           m_OutputVectors    = nullptr;
-    Complex<double>*           m_ReferenceVectors = nullptr;
-    recursive_fourier<double>* m_Filters          = nullptr;
-    int                        m_SpectrumWidth    = 5;
+    standalone_recursive_fourier<double>* m_Filters        = nullptr;
+    int                        m_SpectrumWidth  = 5;
 
 public:
 
@@ -31,15 +20,6 @@ public:
     // virtual destructor
     virtual ~quadrature_demodulator()
     {
-        if( m_UnitVectors != nullptr )
-            delete [] m_UnitVectors;
-
-        if( m_OutputVectors != nullptr )
-            delete [] m_OutputVectors;
-
-        if( m_ReferenceVectors != nullptr )
-            delete [] m_ReferenceVectors;
-
         if( m_Filters != nullptr )
             delete [] m_Filters;
     }
@@ -53,37 +33,8 @@ public:
         // initialize variables
         m_SpectrumWidth = _SpectrumWidth;
 
-        // initialize unit vectors for each harmonic
-        m_UnitVectors = new Complex<double>[ m_SpectrumWidth ];
-
-        for( int i = 0 ; i < m_SpectrumWidth ; i++ )
-        {
-            m_UnitVectors[i] =
-                    Complex<double>
-                    (
-                        +cos( PI2 * (double)i * _Fn / _Fs ),
-                        +sin( PI2 * (double)i * _Fn / _Fs )
-                    );
-        }
-
-        // initialize output vectors
-        m_OutputVectors = new Complex<double>[ m_SpectrumWidth ];
-
-        for( int i = 0 ; i < m_SpectrumWidth ; i++ )
-        {
-            m_OutputVectors[i] = 0.0;
-        }
-
-        // initialize referece vectors
-        m_ReferenceVectors = new Complex<double>[ m_SpectrumWidth ];
-
-        for( int i = 0 ; i < m_SpectrumWidth ; i++ )
-        {
-            m_ReferenceVectors[i] = Complex<double>( 1.0, 0.0 );
-        }
-
         // initialize recursive Fourier filters
-        m_Filters = new recursive_fourier<double>[ m_SpectrumWidth ];
+        m_Filters = new standalone_recursive_fourier<double>[ m_SpectrumWidth ];
 
         for( int i = 0 ; i < m_SpectrumWidth ; i++ )
         {
@@ -91,27 +42,30 @@ public:
         }
     }
 
-    Complex<double> filt( double* _Input, int _HarmonicNumber )
+    Complex<double> filt( double* _Input, int _HarmonicNumber, bool _ConvolutedOutput )
     {
         for( int i = 0 ; i < m_SpectrumWidth ; i++ )
-        {
-            m_OutputVectors[i] = m_Filters[i](_Input) * __conjf__( m_ReferenceVectors[i] );
+            m_Filters[i](_Input);
 
-            m_ReferenceVectors[i] *= m_UnitVectors[i];
-        }
-
-        return _HarmonicNumber < m_SpectrumWidth ? m_OutputVectors[_HarmonicNumber] : Complex<double>::zero();
+        return _HarmonicNumber < m_SpectrumWidth ?
+                    m_Filters[_HarmonicNumber].vector( _ConvolutedOutput ) :
+                    Complex<double>::zero();
     }
 
     // virtual functions override
     virtual Complex<double> frequency_response( double _F ) override
     {
-        return Complex<double>::zero();
+        return m_Filters != nullptr && m_SpectrumWidth > 0 ?
+                    m_Filters[0].frequency_response(_F) :
+                Complex<double>::zero();
+    }
+
+    virtual Complex<double> frequency_response( double _F, int _HarmonicNumber )
+    {
+        return m_Filters != nullptr && m_SpectrumWidth > 0 && _HarmonicNumber < m_SpectrumWidth ?
+                    m_Filters[_HarmonicNumber].frequency_response(_F) :
+                Complex<double>::zero();
     }
 };
-
-// macro undefenition to avoid aliases
-#undef PI0
-#undef PI2
 
 #endif // FILTERS_QDM_H

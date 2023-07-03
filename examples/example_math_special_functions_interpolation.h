@@ -110,8 +110,8 @@ int fft_based_filter_example()
     {
         for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick())
         {
-            __type signal = gen.sine( 1, 45, 0, time );
-            Complex<__type> output = rff.filt( &signal, 2 );
+            __type signal = gen.sine( 1, 2 * 50, 0, time );
+            Complex<__type> output = rff.filt( &signal, 2, true );
 
             // logginig
             #ifdef WRITE_LOGS
