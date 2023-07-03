@@ -393,27 +393,6 @@ namespace DSP_KERNEL
         int     m_nelem;   ///< delay buffer single ( upper/lower ) part size
         int     m_buffpos; ///< delay buffer current upper/lower part pointer position
 
-        /*!
-         *  \brief The function fills delay buffer
-         *  \param[input] input sample pointer
-        */
-        template< typename T > inline void fill_buff( T *input )
-        {
-            *m_lower = *input;
-            *m_upper = *input;
-            if( ++m_buffpos >= m_nelem )
-            {
-                m_lower = &m_data[0];
-                m_upper = &m_data[m_nelem];
-                m_buffpos = 0;
-            }
-            else
-            {
-                m_lower++;
-                m_upper++;
-            }
-        }
-
     public:
 
         /*! \brief default constructor */
@@ -493,6 +472,31 @@ namespace DSP_KERNEL
             return m_nelem;
         }
 
+        /*!
+         *  \brief The function fills delay buffer
+         *  \param[input] input sample pointer
+        */
+        template< typename T > inline void fill_buff( T *input )
+        {
+            *m_lower = *input;
+            *m_upper = *input;
+            if( ++m_buffpos >= m_nelem )
+            {
+                m_lower = &m_data[0];
+                m_upper = &m_data[m_nelem];
+                m_buffpos = 0;
+            }
+            else
+            {
+                m_lower++;
+                m_upper++;
+            }
+        }
+
+        inline __type get_data( int n )
+        {
+            return *( m_upper - n - 1 );
+        }
 
         /*!
          *  \brief the operator invokation results in return of an n-th sample from the past values
@@ -500,7 +504,7 @@ namespace DSP_KERNEL
         */
         inline __type operator [] ( int n )
         {
-            return *( m_upper - n - 1 );
+            return get_data(n);
         }
 
         /*! \brief The operator invokation supposes to result in delay buffer fill */
@@ -526,25 +530,6 @@ namespace DSP_KERNEL
         __type *m_data;    ///< data samples buffer
         int     m_nelem;   ///< buffer size
         int     m_buffpos; ///< current buffer pointer position
-
-        /*!
-         *  \brief The function fills buffer
-         *  \param[input] input sample pointer
-        */
-        template< typename T > inline void fill_buff( T *input )
-        {
-            *m_lower = *input;
-
-            if( ++m_buffpos >= m_nelem )
-            {
-                m_lower   = &m_data[0];
-                m_buffpos = 0;
-            }
-            else
-            {
-                m_lower++;
-            }
-        }
 
     public:
 
@@ -621,6 +606,25 @@ namespace DSP_KERNEL
         inline __type* get_data() const
         {
             return m_data;
+        }
+
+        /*!
+         *  \brief The function fills buffer
+         *  \param[input] input sample pointer
+        */
+        template< typename T > inline void fill_buff( T *input )
+        {
+            *m_lower = *input;
+
+            if( ++m_buffpos >= m_nelem )
+            {
+                m_lower   = &m_data[0];
+                m_buffpos = 0;
+            }
+            else
+            {
+                m_lower++;
+            }
         }
 
         /*!

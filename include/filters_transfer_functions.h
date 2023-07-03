@@ -1,5 +1,5 @@
-#ifndef FILTERS_TSF_H
-#define FILTERS_TSF_H
+#ifndef FILTERS_TRANSFER_FUNCTIONS_H
+#define FILTERS_TRANSFER_FUNCTIONS_H
 
 // custom includes
 #include "kernel_iir.h"
@@ -734,4 +734,4 @@ public:
 #undef PI0
 #undef PI2
 
-#endif // FILTERS_TSF_H
+#endif // FILTERS_TRANSFER_FUNCTIONS_H

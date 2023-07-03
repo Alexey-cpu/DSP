@@ -3,7 +3,7 @@
 
 #include "config.h"
 #include "../../DSP/include/generators.h"
-#include "../../DSP/include/filters_tsf.h"
+#include "../../DSP/include/filters_transfer_functions.h"
 
 // Butterworth filter
 int filters_aperiodic_example()

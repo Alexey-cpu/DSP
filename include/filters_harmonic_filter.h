@@ -1,8 +1,8 @@
-#ifndef FILTERS_HMF_H
-#define FILTERS_HMF_H
+#ifndef FILTERS_HARMONIC_FILTER_H
+#define FILTERS_HARMONIC_FILTER_H
 
 // include recursive Fourier filter
-#include "filters_rff.h"
+#include "filters_recursive_fourier_filter.h"
 
 #ifndef __ALG_PLATFORM
 #define HMF_DEBUG // debugging is not available if the algorithm is running on a device !!!
@@ -238,13 +238,13 @@ public:
         // generating output:
         if( harmonic_num == 0 )
         {
-            double a = __abs__( __realf__( m_rmean_re.vector() ) );
+            double a = __abs__( __realf__( m_rmean_re.get_vector() ) );
             m_Module = ( a < m_epsilon ) ? (__type)0 : sqrt( a );
         }
         else
         {
-            double a = __abs__( __realf__( m_rmean_re.vector() ) );
-            double b = __abs__( __realf__( m_rmean_im.vector() ) );
+            double a = __abs__( __realf__( m_rmean_re.get_vector() ) );
+            double b = __abs__( __realf__( m_rmean_im.get_vector() ) );
             m_Module = ( ( a < m_epsilon ) && ( b < m_epsilon ) ) ? (__type)0 : sqrt( ( a + b ) * (__type)0.5 );
         }
     }
@@ -256,4 +256,4 @@ public:
 
 /*! @} */
 
-#endif // FILTERS_HMF_H
+#endif // FILTERS_HARMONIC_FILTER_H

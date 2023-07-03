@@ -36,11 +36,11 @@ HEADERS += \
     ../../examples/examples.h \
     ../../include/Complex.h \
     ../../include/filters_fir.h \
-    ../../include/filters_hmf.h \
+    ../../include/filters_harmonic_filter.h \
     ../../include/filters_iir.h \
-    ../../include/filters_qdm.h \
-    ../../include/filters_rff.h \
-    ../../include/filters_tsf.h \
+    ../../include/filters_real_time_spectrum_analyzer.h \
+    ../../include/filters_recursive_fourier_filter.h \
+    ../../include/filters_transfer_functions.h \
     ../../include/generators.h \
     ../../include/kernel_dsp.h \
     ../../include/kernel_fir.h \

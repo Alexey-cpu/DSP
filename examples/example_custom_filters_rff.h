@@ -3,7 +3,7 @@
 
 #include "config.h"
 #include "../../DSP/include/generators.h"
-#include "../../DSP/include/filters_rff.h"
+#include "../../DSP/include/filters_recursive_fourier_filter.h"
 
 // Recursive Fourier filter
 int filters_rff_example()

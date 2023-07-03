@@ -3,7 +3,7 @@
 
 #include "../../DSP/include/special_functions.h"
 #include "config.h"
-#include "../include/filters_qdm.h"
+#include "../include/filters_real_time_spectrum_analyzer.h"
 
 // Recursive Fourier filter
 /*

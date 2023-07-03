@@ -2,7 +2,7 @@
 #define EXAMPLE_MATH_SPECIAL_FUNCTIONS_INTERPOLATION_H
 
 #include "../include/special_functions.h"
-#include "../include/filters_qdm.h"
+#include "../include/filters_real_time_spectrum_analyzer.h"
 #include "config.h"
 
 int interpolation_example()
@@ -103,7 +103,7 @@ int fft_based_filter_example()
     digital_clock<double> time_provider;
     time_provider.init(Fs);
 
-    quadrature_demodulator rff;
+    real_time_spectrum_analyzer rff;
     rff.init(Fs, Fn, 5);
 
     for( int i = 0 ; i < cycles_num ; i++ )

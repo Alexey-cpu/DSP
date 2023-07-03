@@ -1,31 +1,31 @@
-#ifndef FILTERS_QDM_H
-#define FILTERS_QDM_H
+#ifndef FILTERS_REAL_TIME_SPECTRUM_ANALYZER_H
+#define FILTERS_REAL_TIME_SPECTRUM_ANALYZER_H
 
-#include "filters_tsf.h"
-#include "filters_rff.h"
+#include "filters_recursive_fourier_filter.h"
 
-class quadrature_demodulator : public transfer_function_model
+class real_time_spectrum_analyzer : public transfer_function_model
 {
 protected:
 
     // info
-    standalone_recursive_fourier<double>* m_Filters        = nullptr;
-    int                        m_SpectrumWidth  = 5;
+    delay<double>             m_Buffer;
+    shared_recursive_fourier* m_Filters        = nullptr;
+    int                       m_SpectrumWidth  = 5;
 
 public:
 
     // constructors
-    quadrature_demodulator(){}
+    real_time_spectrum_analyzer(){}
 
     // virtual destructor
-    virtual ~quadrature_demodulator()
+    virtual ~real_time_spectrum_analyzer()
     {
         if( m_Filters != nullptr )
             delete [] m_Filters;
     }
 
     // public methods
-    void init( double _Fs, double _Fn, int _SpectrumWidth )
+    void init( double _Fs, double _Fn, int _SpectrumWidth = 5 )
     {
         // call base initializer
         transfer_function_model::init( _Fs, _Fn );
@@ -33,22 +33,27 @@ public:
         // initialize variables
         m_SpectrumWidth = _SpectrumWidth;
 
-        // initialize recursive Fourier filters
-        m_Filters = new standalone_recursive_fourier<double>[ m_SpectrumWidth ];
+        // allocate and initialize recursive Fourier filters
+        m_Filters = new shared_recursive_fourier[ m_SpectrumWidth ];
 
         for( int i = 0 ; i < m_SpectrumWidth ; i++ )
-        {
             m_Filters[i].init( _Fs, _Fn, i );
-        }
+
+        // allocate common buffer
+        m_Buffer.allocate( m_Filters[0].get_buffer_size() );
     }
 
     Complex<double> filt( double* _Input, int _HarmonicNumber, bool _ConvolutedOutput )
     {
+        // fill buffer
+        m_Buffer.fill_buff(_Input);
+
+        // filt signal
         for( int i = 0 ; i < m_SpectrumWidth ; i++ )
-            m_Filters[i](_Input);
+            m_Filters[i].filt<double,double>( _Input, &m_Buffer );
 
         return _HarmonicNumber < m_SpectrumWidth ?
-                    m_Filters[_HarmonicNumber].vector( _ConvolutedOutput ) :
+                    m_Filters[_HarmonicNumber].get_vector( _ConvolutedOutput ) :
                     Complex<double>::zero();
     }
 
@@ -68,4 +73,4 @@ public:
     }
 };
 
-#endif // FILTERS_QDM_H
+#endif // FILTERS_REAL_TIME_SPECTRUM_ANALYZER_H
