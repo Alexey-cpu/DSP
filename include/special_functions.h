@@ -1615,12 +1615,6 @@ __type get_data( __type* _Data, int _Size, __ix32 _Index )
 template<typename __InputType, typename __OutputType> void
 interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32 M, __ix32 N, __ix32 order)
 {
-    //--------------------------------------------------------------------------------------------------------
-    std::ofstream xt;
-
-    xt.open( LOGS_DIRECTORY + (string)"\\int.txt");
-    //--------------------------------------------------------------------------------------------------------
-
     // time step
     __fx64 dN = (__fx64)M / (__fx64)N;
 
@@ -1638,8 +1632,6 @@ interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32
 
             // result
             output[i] = (__OutputType)( y0 + ( y1 - y0 ) / dN ) * (__OutputType)Gain;
-
-            xt << output[i] / (__OutputType)Gain << "\n";
         }
     }
     else if( order == 2 ) // quadratic interpolation
@@ -1647,20 +1639,15 @@ interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32
         for( __ix32 i = 0 ; i < N ; i++ )
         {
             // time stamps
-            __fx64 t0 = (i+0)*dN;
-            __fx64 t1 = (i+1)*dN;
+            __fx64 t0 = (i-2)*dN;
+            __fx64 t1 = (i-1)*dN;
             __fx64 t2 = (i+2)*dN;
-            __fx64 t  = (i+1.5)*dN;
-
-            // indexes
-            __ix32 idx0 = (__ix32)t0;
-            __ix32 idx1 = (__ix32)ceil(t1);
-            __ix32 idx2 = (__ix32)ceil(t2);
+            __fx64 t  = (i+0)*dN;
 
             // samples
-            __InputType y0 = idx0 >= M ? input[ M - 1 ] : input[ idx0 ];
-            __InputType y1 = idx1 >= M ? input[ M - 1 ] : input[ idx1 ];
-            __InputType y2 = idx2 >= M ? input[ M - 1 ] : input[ idx2 ];
+            __InputType y0 = get_data<__InputType>( input, M, t0 );
+            __InputType y1 = get_data<__InputType>( input, M, t1 );
+            __InputType y2 = get_data<__InputType>( input, M, t2 );
 
             // interpolation coefficients
             /*
@@ -1726,10 +1713,6 @@ interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32
             output[i] = (__OutputType)(y0 * k0 + y1 * k1 + y2 * k2 + y3 * k3) * (__OutputType)Gain;
         }
     }
-
-    output[N-1] = (__OutputType)input[M-1];
-
-    xt.close();
 }
 
 /*!
@@ -1756,7 +1739,7 @@ dft( Complex<__type>* _Input, Complex<__type>* _Spectrum, __ix32 _N, __ix32 _Dir
 
         for( int j = 0 ; j < _N ; j++ )
         {
-            _Spectrum[i] += _Input[i] * W1;
+            _Spectrum[i] += _Input[j] * W1;
             W1 *= Wn;
         }
     }

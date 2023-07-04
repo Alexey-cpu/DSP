@@ -100,11 +100,11 @@ public:
         m_UnitVector =
                 Complex<double>
                 (
-                    cos( PI2 * m_HarmonicNumber * m_Fn / m_Fs ),
-                    sin( PI2 * m_HarmonicNumber * m_Fn / m_Fs )
+                    +cos( PI2 * m_HarmonicNumber * m_Fn / m_Fs ),
+                    +sin( PI2 * m_HarmonicNumber * m_Fn / m_Fs )
                 );
 
-        m_ReferenceFrame = Complex<double>( 1.0, 0.0 );
+        m_ReferenceFrame = Complex<double>( 0.0, -1.0 );
 
         #ifdef RFF_DEBUG
         Debugger::Log("shared_recursive_fourier","init()","Filter initialization");

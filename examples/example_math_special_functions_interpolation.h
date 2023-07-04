@@ -2,6 +2,7 @@
 #define EXAMPLE_MATH_SPECIAL_FUNCTIONS_INTERPOLATION_H
 
 #include "../include/special_functions.h"
+#include "../include/filters_transfer_functions.h"
 #include "../include/filters_real_time_spectrum_analyzer.h"
 #include "config.h"
 
@@ -20,7 +21,7 @@ int interpolation_example()
     xt.open(directory + "\\xt.txt");
     zt.open(directory + "\\zt.txt");
 
-    int M = 80;
+    int M = 64;
     int N = 128;
     int K = 128;
     double  Fn = 50;
@@ -36,7 +37,7 @@ int interpolation_example()
     }
 
     interpolation<double, double>(a, b, 1, M, N, 1);
-    interpolation<double, double>(a, c, 1, M, K, 3);
+    interpolation<double, double>(a, c, 1, M, K, 2);
 
     for( int i = 0 ; i < N ; i++ )
     {
@@ -103,15 +104,16 @@ int fft_based_filter_example()
     digital_clock<double> time_provider;
     time_provider.init(Fs);
 
-    real_time_frequency_invariant_spectrum_analyzer rff;
+    // filter
+    real_time_spectrum_analyzer rff;
     rff.init(Fs, Fn, 5);
 
     for( int i = 0 ; i < cycles_num ; i++ )
     {
         for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick())
         {
-            __type signal = gen.sine( 1, 2 * 50, 0, time );
-            Complex<__type> output = rff.filt( &signal, 2, true );
+            __type signal = gen.sine( 1, 2 * 50, 30.0, time );
+            Complex<__type> output = rff.filt( &signal, 4 );
 
             // logginig
             #ifdef WRITE_LOGS
