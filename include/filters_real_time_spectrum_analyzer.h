@@ -148,19 +148,19 @@ public:
         }
 
         // initialize input delays
-        int N = 2 * _Fs / _Fn + 1;
+        int N = 2 * _Fs / _Fn;
         m_InputDelays1 = new delay<double>[ m_SpectrumWidth ];
         m_InputDelays2 = new delay<double>[ m_SpectrumWidth ];
 
         for( int i = 0 ; i < m_SpectrumWidth ; i++ )
         {
-            m_InputDelays1[i].allocate(N);
-            m_InputDelays2[i].allocate(N);
+            m_InputDelays1[i].allocate(N+1);
+            m_InputDelays2[i].allocate(N+1);
         }
 
         //
         m_N1   = (double)N / 2.0;
-        m_N2   = N - 1;
+        m_N2   = N;
         m_Gain = 1 / (double)m_N1 / (double)m_N1;
 
         // initialize output delays
@@ -187,9 +187,6 @@ public:
             m_InputDelays2[i].fill_buff( &b );
 
             // filt
-            //a = m_OutputDelays1[i][0] + ( m_InputDelays1[i][0] - m_InputDelays1[i][ m_N1 ] ) / m_N1;
-            //b = m_OutputDelays2[i][0] + ( m_InputDelays2[i][0] - m_InputDelays2[i][ m_N1 ] ) / m_N1;
-
             a = ( 2 * m_OutputDelays1[i][0] - m_OutputDelays1[i][1] ) +
                     ( m_InputDelays1[i][0] - 2 * m_InputDelays1[i][ m_N1 ] + m_InputDelays1[i][ m_N2 ] ) * m_Gain;
 
