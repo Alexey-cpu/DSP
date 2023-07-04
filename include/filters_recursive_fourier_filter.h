@@ -49,6 +49,8 @@ protected:
     Complex<double> m_ReferenceFrame   = Complex<double>::zero(); ///< recursive Fourier reference frame
     Complex<double> m_ConvolutedVector = Complex<double>::zero(); ///< recursive Fourier output vector with phase relative to the reference frame
 
+    virtual void allocate(){}
+
 public:
 
     /*!  \brief default constructor */
@@ -85,7 +87,7 @@ public:
      *  \param[hnum] harmonic number
      *  \details The function is supposed to be called explicitly by the user
     */
-    virtual void init( double _Fs, double _Fn, int64_t _HarmonicNumber )
+    void init( double _Fs, double _Fn, int64_t _HarmonicNumber )
     {
         m_Fn             = _Fn;
         m_Fs             = _Fs;
@@ -118,6 +120,8 @@ public:
         #ifdef RFF_DEBUG
         Debugger::Log("shared_recursive_fourier","allocate()","Filter memory allocation");
         #endif
+
+        allocate();
     }
 
     /*!
@@ -179,9 +183,8 @@ public:
         #endif
     }
 
-    virtual void init( double _Fs, double _Fn, int64_t _HarmonicNumber ) override
+    virtual void allocate() override
     {
-        shared_recursive_fourier::init( _Fs, _Fn, _HarmonicNumber );
         m_InputBuffer.allocate( m_Order + 2 );
     }
 

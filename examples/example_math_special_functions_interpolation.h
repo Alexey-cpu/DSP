@@ -103,7 +103,7 @@ int fft_based_filter_example()
     digital_clock<double> time_provider;
     time_provider.init(Fs);
 
-    real_time_spectrum_analyzer rff;
+    real_time_frequency_invariant_spectrum_analyzer rff;
     rff.init(Fs, Fn, 5);
 
     for( int i = 0 ; i < cycles_num ; i++ )
