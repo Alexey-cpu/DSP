@@ -811,6 +811,8 @@ __mfree__( tuple_x3< __type**, __ix32, __ix32 > tuple )
     return tuple;
 }
 
+#ifndef __ALG_PLATFORM
+
 // radix sort with binary base 8 implementation for integer types
 template< typename __type > void
 __radix_sort__( __type *input, __type *output, __ix32 size, __ix32 descending = 1 )
@@ -994,18 +996,19 @@ __radix_sort__( __key *keys, __value *values, void **workspace, __ix32 size, __i
      }
 }
 
+inline __ix32 __generate_random_number__(__ix32 min, __ix32 max)
+{
+    return min + (rand() % max);
+}
+
+#endif
+
 // pseudo random number generator
 inline uint64_t __PRNG__ ( uint64_t _SEED = 1 )
 {
   static uint64_t S = (uint64_t)&_SEED;
   S = ((((S >> 63) ^ (S >> 62) ^ (S >> 61) ^ (S >> 59) ^ (S >> 57) ^ S ) & (uint64_t)1 ) << 63 ) | (S >> 1);
   return S;
-}
-
-
-inline __ix32 __generate_random_number__(__ix32 min, __ix32 max)
-{
-    return min + (rand() % max);
 }
 
 #ifdef _STRINGFWD_H

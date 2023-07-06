@@ -46,7 +46,7 @@ int filters_butt_example()
 
     // filter initialization
     butterworth<__type> filter;
-    filter.init(Fs, 11, filter_type::bandstop, {100 , 400} );
+    filter.init(Fs, 10, filter_type::lowpass, {100 , 400} );
     filter.show();
 
     // emulation

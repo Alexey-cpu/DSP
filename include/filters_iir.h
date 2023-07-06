@@ -41,7 +41,7 @@ public:
 };
 
 template< typename __type >
-class ButterworthCreator : public IIRCreator<__type>, public classic_filter_interface
+class ButterworthCreator : public IIRCreator<__type>, public classic_filter_coefficients_computation_interface
 {
 protected:
 
@@ -99,7 +99,7 @@ public:
 };
 
 template< typename __type >
-class Chebyshev1Creator : public IIRCreator<__type>, public classic_filter_interface
+class Chebyshev1Creator : public IIRCreator<__type>, public classic_filter_coefficients_computation_interface
 {
 protected:
 
@@ -158,7 +158,7 @@ public:
 };
 
 template< typename __type >
-class Chebyshev2Creator : public IIRCreator<__type>, public classic_filter_interface
+class Chebyshev2Creator : public IIRCreator<__type>, public classic_filter_coefficients_computation_interface
 {
 protected:
 
@@ -216,7 +216,7 @@ public:
 };
 
 template< typename __type >
-class EllipticCreator : public IIRCreator<__type>, public classic_filter_interface
+class EllipticCreator : public IIRCreator<__type>, public classic_filter_coefficients_computation_interface
 {
 protected:
 
@@ -309,20 +309,6 @@ protected:
     filter_data<__type> m_FilterData;
     delay<__type>      *m_buff_sx;
     delay<__type>      *m_buff_sy;
-
-    template<typename T> T filt(T *_input)
-    {
-        return __filt__(
-                    _input,
-                    m_FilterData.cfnum,
-                    m_FilterData.cfden,
-                    m_FilterData.gains,
-                    m_FilterData.Nx,
-                    m_FilterData.Ny,
-                    m_FilterData.N,
-                    m_buff_sx,
-                    m_buff_sy );
-    }
 
 public:
 
@@ -418,6 +404,20 @@ public:
         }
 
     #endif
+
+    template<typename T> T filt(T *_input)
+    {
+            return __filt__(
+                        _input,
+                        m_FilterData.cfnum,
+                        m_FilterData.cfden,
+                        m_FilterData.gains,
+                        m_FilterData.Nx,
+                        m_FilterData.Ny,
+                        m_FilterData.N,
+                        m_buff_sx,
+                        m_buff_sy );
+    }
 
     /*!
      *  \brief filtering operator

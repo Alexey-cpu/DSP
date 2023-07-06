@@ -178,18 +178,18 @@ namespace DSP_KERNEL
     };
 
     /*!
-     *  \brief classic filter interface
-     *  \details Defines the IIR/FIR classic filter interface
+     *  \brief classic filter coefficients computation interface
+     *  \details Defines the IIR/FIR classic filter coefficients computation interface
     */
-    class classic_filter_interface
+    class classic_filter_coefficients_computation_interface
     {
     public:
 
         // constructors
-        classic_filter_interface(){}
+        classic_filter_coefficients_computation_interface(){}
 
         // virtual destructor
-        virtual ~classic_filter_interface(){}
+        virtual ~classic_filter_coefficients_computation_interface(){}
 
         /*!  \brief lowpass filter computation function */
         virtual filter_data<double> compute_lowpass()  = 0;
@@ -249,7 +249,7 @@ namespace DSP_KERNEL
             filter_data<__type> matrix;
 
             // round numerator coefficients
-            if(data.cfnum)
+            if( data.cfnum != nullptr )
             {
                 matrix.cfnum = __alloc__<__type>( data.Nx * data.N );
 
@@ -263,7 +263,7 @@ namespace DSP_KERNEL
             }
 
             // round denominator coefficients
-            if(data.cfden)
+            if( data.cfden != nullptr )
             {
                 matrix.cfden = __alloc__<__type>( data.Ny * data.N );
 
@@ -277,7 +277,7 @@ namespace DSP_KERNEL
             }
 
             // round gains
-            if(data.gains)
+            if( data.gains != nullptr )
             {
                 matrix.gains = __alloc__<__type>( data.N + 1 );
 
@@ -290,7 +290,7 @@ namespace DSP_KERNEL
             }
 
             // overwrite zeros
-            if( data.zeros )
+            if( data.zeros != nullptr )
             {
                 matrix.zeros = __alloc__< Complex<double> >( data.N );
 
@@ -301,7 +301,7 @@ namespace DSP_KERNEL
             }
 
             // overwrite poles
-            if( data.zeros )
+            if( data.poles != nullptr )
             {
                 matrix.poles = __alloc__< Complex<double> >( data.N );
 
@@ -312,9 +312,9 @@ namespace DSP_KERNEL
             }
 
             // overwrite ratios
-            if( data.ratio )
+            if( data.ratio != nullptr )
             {
-                matrix.ratio = __alloc__< Complex<double> >( data.N );
+                matrix.ratio = __alloc__< Complex<double> >( data.N + 1 );
 
                 for( int64_t j = 0 ; j < data.N ; j++ )
                 {
@@ -434,6 +434,9 @@ namespace DSP_KERNEL
             Debugger::Log("delay_base","allocate()","Memory allocation");
             #endif
 
+            if( m_data != nullptr )
+                deallocate();
+
             if( ( nelem > 0 ) && !m_data )
             {
                 m_nelem = nelem;
@@ -447,7 +450,8 @@ namespace DSP_KERNEL
 
                 return ( m_data != 0 );
             }
-            else return 0;
+
+            return 0;
         }
 
         /*! \brief The function frees delay resources */
@@ -457,7 +461,12 @@ namespace DSP_KERNEL
             Debugger::Log("delay_base","deallocate()","Memory deallocation");
             #endif
 
-            m_data = __mfree__(m_data);
+            m_data    = __mfree__(m_data);
+            m_upper   = nullptr;
+            m_lower   = nullptr;
+            m_data    = nullptr;
+            m_nelem   = 0;
+            m_buffpos = 0;
         }
 
         /*! \brief the function returns current lower/upper part pointer position */
@@ -476,10 +485,13 @@ namespace DSP_KERNEL
          *  \brief The function fills delay buffer
          *  \param[input] input sample pointer
         */
-        template< typename T > inline void fill_buff( T *input )
+        template< typename T > inline void fill_buff( T* _Input )
         {
-            *m_lower = *input;
-            *m_upper = *input;
+            if( _Input == nullptr )
+                return;
+
+            *m_lower = *_Input;
+            *m_upper = *_Input;
             if( ++m_buffpos >= m_nelem )
             {
                 m_lower = &m_data[0];
@@ -540,7 +552,6 @@ namespace DSP_KERNEL
             Debugger::Log("buffer_base","buffer_base()","Constructor call");
             #endif
 
-            m_lower   = nullptr;
             m_data    = nullptr;
             m_nelem   = 0;
             m_buffpos = 0;
@@ -570,14 +581,17 @@ namespace DSP_KERNEL
             Debugger::Log("buffer_base","allocate()","Memory allocation");
             #endif
 
+            if( m_data != nullptr )
+                deallocate();
+
             if( ( nelem > 0 ) && !m_data )
             {
                 m_nelem = nelem;
                 m_data  = __alloc__<__type>( m_nelem );
-                m_lower = ( m_data ) ? &m_data[0] : 0;
-                return ( m_data != 0 );
+                return ( m_data != nullptr );
             }
-            else return 0;
+
+            return 0;
         }
 
         /*! \brief The function frees delay resources */
@@ -587,7 +601,10 @@ namespace DSP_KERNEL
             Debugger::Log("buffer_base","deallocate()","Memory deallocation");
             #endif
 
-            m_data = __mfree__(m_data);
+            m_data    = __mfree__(m_data);
+            m_lower   = nullptr;
+            m_nelem   = 0;
+            m_buffpos = 0;
         }
 
         /*! \brief the function returns current lower/upper part pointer position */
@@ -603,28 +620,24 @@ namespace DSP_KERNEL
         }
 
         /*! \brief the function returns pointer to local buffer */
-        inline __type* get_data() const
+        inline __type get_data( int n ) const
         {
-            return m_data;
+            return m_data[n];
         }
 
         /*!
          *  \brief The function fills buffer
          *  \param[input] input sample pointer
         */
-        template< typename T > inline void fill_buff( T *input )
+        template< typename T > inline void fill_buff( T* _Input )
         {
-            *m_lower = *input;
+            if( _Input == nullptr )
+                return;
+
+            m_data[m_buffpos] = *_Input;
 
             if( ++m_buffpos >= m_nelem )
-            {
-                m_lower   = &m_data[0];
                 m_buffpos = 0;
-            }
-            else
-            {
-                m_lower++;
-            }
         }
 
         /*!
@@ -633,7 +646,7 @@ namespace DSP_KERNEL
         */
         inline __type operator [] ( int n )
         {
-            return m_data[n];
+            return get_data( n );
         }
 
         /*! \brief The operator invokation supposes to result in delay buffer fill */

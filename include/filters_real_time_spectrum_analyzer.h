@@ -53,6 +53,9 @@ public:
 
     Complex<double> filt( double* _Input, int _HarmonicNumber )
     {
+        if( _Input == nullptr )
+            return Complex<double>::zero();
+
         // fill buffer
         m_Buffer.fill_buff(_Input);
 
@@ -146,10 +149,10 @@ public:
                     Complex<double>
                     (
                         +cos( PI2 * (double)i * _Fn / _Fs ),
-                        -sin( PI2 * (double)i * _Fn / _Fs )
+                        +sin( PI2 * (double)i * _Fn / _Fs )
                     );
 
-            m_ReferenceFrames[i] = Complex<double>( 0.0, 1.0 );
+            m_ReferenceFrames[i] = Complex<double>( 1.0, 0.0 );
         }
 
         // initialize input delays
@@ -183,11 +186,14 @@ public:
 
     Complex<double> filt( double* _Input, int _HarmonicNumber )
     {
+        if( _Input == nullptr )
+            return Complex<double>::zero();
+
         for( int i = 0 ; i < m_SpectrumWidth ; i++ )
         {
             // multiply by reference frames
-            double a = *_Input * __realf__( m_ReferenceFrames[i] );
-            double b = *_Input * __imagf__( m_ReferenceFrames[i] );
+            double a = *_Input * __imagf__( m_ReferenceFrames[i] );
+            double b = *_Input * __realf__( m_ReferenceFrames[i] );
 
             // fill direct / quadrature filters delays
             m_InputDelays1[i].fill_buff( &a );

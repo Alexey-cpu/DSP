@@ -1457,7 +1457,6 @@ __fx64* __Tukey__(__fx64 _R, __ix32 _order )
     return buff;
 }
 
-
 /*!
      * \brief Linear convolution function
      * \param[_Na] size of the first input polynom of a linear convolution function
@@ -1522,8 +1521,8 @@ __convf__( const __type *_a, const __type *_b, __ix32 _Na,  __ix32 _Nb )
      * \returns The function returns the tuple_x3
      *          containing resulting fraction array and it's first and second dimention sizes
 */
-template<typename __type> tuple_x3<__type**, __ix32, __ix32>
-__fraction_numeric_substitution__(__type *AN, __type *AD, __type *BN, __type *BD, __ix32 N, __ix32 P)
+template<typename __type> tuple_x3<__type**, int, int>
+__fraction_numeric_substitution__(__type *AN, __type *AD, __type *BN, __type *BD, int N, int P)
 {
     // decrement orders to omit zero power elements
     N--;
@@ -1612,106 +1611,76 @@ __type get_data( __type* _Data, int _Size, __ix32 _Index )
     return _Data[ _Index ];
 }
 
-template<typename __InputType, typename __OutputType> void
-interpolation(__InputType *input, __OutputType *output, __InputType Gain, __ix32 M, __ix32 N, __ix32 order)
+double lagrange_polynom_interpolation( double* _X, double* _Y, double _Point, int _N )
 {
+    // check
+    if( _X == nullptr || _N <= 0 )
+        return 0.0;
+
+    double result = 0.0;
+
+    for( int i = 0 ; i < _N ; i++ )
+    {
+        double product = 1;
+
+        for( int j = 0 ; j < _N ; j++ )
+        {
+            if( i != j )
+            {
+                product *= ( _Point - _X[j] ) / ( _X[i] - _X[j] );
+            }
+        }
+
+        result += product * _Y[i];
+    }
+
+    return result;
+}
+
+template<typename T1, typename T2, typename T3> void
+samples_range_interpolation(T1 _Input, T2 _Output, T3 _Gain, int _M, int _N, int _K, int _Order)
+{
+    // check
+    //if( _N < _M * _K || _K == 1 ) return;
+
     // time step
-    __fx64 dN = (__fx64)M / (__fx64)N;
+    double dN = (double)_M / (double)_N;
 
-    if( order == 1 ) // linear interpolation
+    for( int i = _Order, k = 0 ; i < _M ; i++ )
     {
-        for( __ix32 i = 0 ; i < N ; i++ )
+        double X[_Order+1];
+        double Y[_Order+1];
+
+        for( int j = _Order, m = 0 ; j >= 0 ; j--, m++ )
         {
-            // time stamps
-            __fx64 t0 = (i-1)*dN;
-            __fx64 t1 = (i+1)*dN;
+            X[m] = (double)( i - j );
+            Y[m] = _Input[ (int)X[m] ];
+        }
 
-            // samples
-            __InputType y0 = get_data<__InputType>( input, M, t0 );
-            __InputType y1 = get_data<__InputType>( input, M, t1 );
+        for( int m = 0 ; m < _Order+1 ; m++ )
+        {
+            for( int j = 0 ; j < _K ; j++, k++ )
+            {
+                _Output[k] = lagrange_polynom_interpolation( X, Y, ( X[m] + (__fx64)j * dN ), _Order + 1 ) * _Gain;
+            }
 
-            // result
-            output[i] = (__OutputType)( y0 + ( y1 - y0 ) / dN ) * (__OutputType)Gain;
+            if( i != _M-1 )
+                break;
         }
     }
-    else if( order == 2 ) // quadratic interpolation
+}
+
+template<typename __InputType, typename __OutputType> void
+samples_range_decimation(__InputType _Input, __OutputType _Output, int _M, int _N, int _K)
+{
+    // check
+    if( _Input == nullptr || _Output == nullptr || _N > _M / _K || _K == 1 )
+        return;
+
+    // main code
+    for( int i = 0, j = 0 ; i < _M ; i += _K, j++ )
     {
-        for( __ix32 i = 0 ; i < N ; i++ )
-        {
-            // time stamps
-            __fx64 t0 = (i-2)*dN;
-            __fx64 t1 = (i-1)*dN;
-            __fx64 t2 = (i+2)*dN;
-            __fx64 t  = (i+0)*dN;
-
-            // samples
-            __InputType y0 = get_data<__InputType>( input, M, t0 );
-            __InputType y1 = get_data<__InputType>( input, M, t1 );
-            __InputType y2 = get_data<__InputType>( input, M, t2 );
-
-            // interpolation coefficients
-            /*
-                __fx64 k0 = ( t - t1 ) * ( t - t2 ) / ( t0 - t1 ) / ( t0 - t2 );
-                __fx64 k1 = ( t - t0 ) * ( t - t2 ) / ( t1 - t0 ) / ( t1 - t2 );
-                __fx64 k2 = ( t - t0 ) * ( t - t1 ) / ( t2 - t0 ) / ( t2 - t1 );
-            */
-
-            __fx64 a = ( t - t2 );
-            __fx64 b = ( t - t0 );
-            __fx64 c = ( t - t1 );
-
-            __fx64 k0 = c * a / ( t0 - t1 ) / ( t0 - t2 );
-            __fx64 k1 = b * a / ( t1 - t0 ) / ( t1 - t2 );
-            __fx64 k2 = b * c / ( t2 - t0 ) / ( t2 - t1 );
-
-            // result
-            output[i] = (__OutputType)(y0 * k0 + y1 * k1 + y2 * k2) * (__OutputType)Gain;
-        }
-    }
-    else if( order == 3 ) // cubic interpolation
-    {
-        for( __ix32 i = 0 ; i < N ; i++ )
-        {
-            // time stamps
-            __fx64 t0 = (i+0)*dN;
-            __fx64 t1 = (i+1)*dN;
-            __fx64 t2 = (i+2)*dN;
-            __fx64 t3 = (i+3)*dN;
-            __fx64 t  = (i+1.5)*dN;
-
-            // indexes
-            __ix32 idx0 = (__ix32)t0;
-            __ix32 idx1 = (__ix32)ceil(t1);
-            __ix32 idx2 = (__ix32)ceil(t2);
-            __ix32 idx3 = (__ix32)ceil(t3);
-
-            // samples
-            __InputType y0 = idx0 >= M ? input[ M - 1 ] : input[ idx0 ];
-            __InputType y1 = idx1 >= M ? input[ M - 1 ] : input[ idx1 ];
-            __InputType y2 = idx2 >= M ? input[ M - 1 ] : input[ idx2 ];
-            __InputType y3 = idx3 >= M ? input[ M - 1 ] : input[ idx3 ];
-
-            // interpolation coefficients
-            /*
-            __fx64 k0 = ( t - t1 ) * ( t - t2 ) * ( t - t3 ) / ( t0 - t1 ) / ( t0 - t2 ) / ( t0 - t3 );
-            __fx64 k1 = ( t - t0 ) * ( t - t2 ) * ( t - t3 ) / ( t1 - t0 ) / ( t1 - t2 ) / ( t1 - t3 );
-            __fx64 k2 = ( t - t0 ) * ( t - t1 ) * ( t - t3 ) / ( t2 - t0 ) / ( t2 - t1 ) / ( t2 - t3 );
-            __fx64 k3 = ( t - t0 ) * ( t - t1 ) * ( t - t2 ) / ( t3 - t0 ) / ( t3 - t1 ) / ( t3 - t2 );
-            */
-
-            __fx64 a = ( t - t0 );
-            __fx64 b = ( t - t1 );
-            __fx64 c = ( t - t2 );
-            __fx64 d = ( t - t3 );
-
-            __fx64 k0 = b * c * d / ( t0 - t1 ) / ( t0 - t2 ) / ( t0 - t3 );
-            __fx64 k1 = a * c * d / ( t1 - t0 ) / ( t1 - t2 ) / ( t1 - t3 );
-            __fx64 k2 = a * b * d / ( t2 - t0 ) / ( t2 - t1 ) / ( t2 - t3 );
-            __fx64 k3 = a * b * c / ( t3 - t0 ) / ( t3 - t1 ) / ( t3 - t2 );
-
-            // result
-            output[i] = (__OutputType)(y0 * k0 + y1 * k1 + y2 * k2 + y3 * k3) * (__OutputType)Gain;
-        }
+        _Output[j] = _Input[i];
     }
 }
 
@@ -1889,6 +1858,23 @@ fft1( Complex<__type>* _Spectrum, __ix32 _N, __ix32 _Direct )
 }
 
 /*!  \example example_math_special_functions_fft.h */
+
+long __euclide_algorithm__(long a, long b)
+{
+    while (a && b)
+    {
+        if (a >= b)
+        {
+            a %= b;
+        }
+        else
+        {
+            b %= a;
+        }
+    }
+
+    return a | b;
+}
 
 /*! @} */
 

@@ -6,6 +6,9 @@
 #include "../include/filters_real_time_spectrum_analyzer.h"
 #include "config.h"
 
+#include "../include/filters_iir.h"
+#include "../include/filters_fir.h"
+
 int interpolation_example()
 {
     // logs directory:
@@ -21,9 +24,11 @@ int interpolation_example()
     xt.open(directory + "\\xt.txt");
     zt.open(directory + "\\zt.txt");
 
-    int M = 64;
-    int N = 128;
-    int K = 128;
+    double k = 8;
+    double m = 5;
+    int M = 80;
+    int N = k*M;
+    int K = N / m;
     double  Fn = 50;
     double  Fs = Fn * M;
     double* a = __alloc__<double>(M);
@@ -32,12 +37,12 @@ int interpolation_example()
 
     for( int i = 0 ; i < M ; i++ )
     {
-        a[i] = sin( 2.0 * 3.14 * 50.0 * (double)i / Fs );
+        a[i] = sin( 2.0 * 3.14 * 45.0 * (double)i / Fs + 30.0 * 3.14 / 180.0 );
         xt << a[i] << "\n";
     }
 
-    interpolation<double, double>(a, b, 1, M, N, 1);
-    interpolation<double, double>(a, c, 1, M, K, 2);
+    samples_range_interpolation<double*, double*, double>(a, b, 1, M, N, k, 1);
+    samples_range_decimation<double*, double*>(b, c, N, K, m);
 
     for( int i = 0 ; i < N ; i++ )
     {
@@ -62,7 +67,7 @@ int interpolation_example()
     return 0;
 }
 
-int fft_based_filter_example()
+int interpolator_example()
 {
     typedef double __type;
 
@@ -70,7 +75,7 @@ int fft_based_filter_example()
     double Fs                = 4000;
     double Fn                = 50;
     double time              = 0;
-    double EmulationDuration = 0.08;
+    double EmulationDuration = 0.02;
     int    CycleWidth        = 5;
     int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
     int    frames_per_cycle  = CycleWidth * Fs / 1000;
@@ -80,22 +85,12 @@ int fft_based_filter_example()
     // log files
     std::ofstream xt;
     std::ofstream yt;
-    std::ofstream re;
-    std::ofstream im;
-    std::ofstream am;
-    std::ofstream pH;
-    std::ofstream Km;
     std::ofstream dt;
 
     // open files
     xt.open( LOGS_DIRECTORY + OUTPUT_STREAM_INPUT);
     yt.open( LOGS_DIRECTORY + OUTPUT_STREAM_OUTPUT);
-    pH.open( LOGS_DIRECTORY + OUTPUT_STREAM_PHASE_RESPONSE);
-    Km.open( LOGS_DIRECTORY + OUTPUT_STREAM_AMPLITUDE_RESPONSE);
     dt.open( LOGS_DIRECTORY + OUTPUT_STREAM_TIME);
-    re .open(LOGS_DIRECTORY + OUTPUT_STREAM_REAL_COMPONENT);
-    im .open(LOGS_DIRECTORY + OUTPUT_STREAM_IMAG_COMPONENT);
-    am .open(LOGS_DIRECTORY + OUTPUT_STREAM_SIGNAL_AMPLITUDE);
 
     #endif
 
@@ -104,52 +99,48 @@ int fft_based_filter_example()
     digital_clock<double> time_provider;
     time_provider.init(Fs);
 
-    // filter
-    real_time_spectrum_analyzer rff;
-    rff.init(Fs, Fn, 5);
+    // interpolator
+    signal_lagrange_interpolator interpolator;
+    interpolator.init(1, 8);
+
+    // decimator
+    signal_decimator decimator;
+    decimator.init(5);
+
+    // auxiliary lambda
 
     for( int i = 0 ; i < cycles_num ; i++ )
     {
         for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick())
         {
-            __type signal = gen.sine( 1, 2 * 50, 30.0, time );
-            Complex<__type> output = rff.filt( &signal, 4 );
+            __type signal = gen.sine( 1, 45, 30.0, time );
+            interpolator.filt( &signal );
 
             // logginig
             #ifdef WRITE_LOGS
-            yt << signal << "\n";
-            re << __realf__(output) << "\n";
-            im << __imagf__(output) << "\n";
-            am << __cabsf__(output) << "\n";
-            dt << time << "\n";
+            xt << signal << "\n";
+
+            // write interpolation result
+            for( int k = 0 ; k < interpolator.get_rate_buffer().get_buff_size() ; k++ )
+            {
+                yt << interpolator.get_rate_buffer()[k] << "\n";
+
+                if( decimator.decimate() )
+                    dt << interpolator.get_rate_buffer()[k] << "\n";
+            }
+
             #endif
         }
-    }
-
-    for( int i = 0 ; i < Fs / 2 ; i++ )
-    {
-        Complex<__type> output = rff.frequency_response( (double)i );
-
-        #ifdef WRITE_LOGS
-        pH << __cargf__(output) << "\n";
-        Km << __cabsf__(output) << "\n";
-        #endif
     }
 
     // close files
     #ifdef WRITE_LOGS
     xt.close();
     yt.close();
-    re.close();
-    im.close();
-    am.close();
-    pH.close();
-    Km.close();
     dt.close();
     #endif
 
     return 0;
 }
-
 
 #endif // EXAMPLE_MATH_SPECIAL_FUNCTIONS_INTERPOLATION_H
