@@ -109,7 +109,7 @@ int filtes_fft_example()
     double Fs                = 4000;
     double Fn                = 50;
     double time              = 0;
-    double EmulationDuration = 0.08;
+    double EmulationDuration = 0.12;
     int    CycleWidth        = 5;
     int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
     int    frames_per_cycle  = CycleWidth * Fs / 1000;
@@ -153,7 +153,18 @@ int filtes_fft_example()
     {
         for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick() )
         {
-            buffer[j] = gen.sine( 1, Fn, 0.0, time );
+            if( time > 0.04 )
+            {
+                buffer[j] = gen.sine( 2, Fn, 0.0, time ) +
+                        2 * 0.2 * gen.sine( 1, 2 * Fn, 0.0, time ) +
+                        2 * 0.3 * gen.sine( 1, 3 * Fn, 0.0, time );
+            }
+            else
+            {
+                buffer[j] = gen.sine( 1, Fn, 0.0, time ) +
+                        0.2 * gen.sine( 1, 2 * Fn, 0.0, time ) +
+                        0.3 * gen.sine( 1, 3 * Fn, 0.0, time );
+            }
 
             /*
             // filtering
@@ -166,7 +177,7 @@ int filtes_fft_example()
         }
 
         // filtering
-        Complex<double> a = hmf.filt( buffer, 1);
+        Complex<double> a = hmf.filt( buffer, 3);
 
         re << __realf__(a) << "\n";
         im << __imagf__(a) << "\n";

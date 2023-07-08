@@ -49,7 +49,7 @@ public:
     }
 
     // public functions
-    void init( double _Fs, double _Fn, int _FramesPerCycle )
+    void init( double _Fs, double _Fn, int _FramesPerCycle, int _InterpolationOrder = 1 )
     {
         m_FramesPerCycle = _FramesPerCycle;
         m_Fn             = _Fn;
@@ -60,7 +60,7 @@ public:
         int interpolationRatio = __max__( m_FFTPeriod, framesPerPeriod ) / divider;
         int decimationRatio    = __min__( m_FFTPeriod, framesPerPeriod ) / divider;
 
-        m_Interpolator.init( 1, interpolationRatio);
+        m_Interpolator.init( (_InterpolationOrder > 0 ? _InterpolationOrder : 1), interpolationRatio);
         m_Decimator.init(decimationRatio);
 
         m_Delay.allocate(m_FFTPeriod);
@@ -72,6 +72,7 @@ public:
         {
             m_Spectrum[i]        = 0.0;
             m_ReferenceFrames[i] = Complex<double>( 1.0, 0.0 );
+
             m_UnitVectors[i] =
                     Complex<double>
                     (
@@ -97,7 +98,7 @@ public:
                     m_Delay.fill_buff( &data );
 
                     // reference frame update
-                    for( int k = 0 ; k < m_FFTPeriod ; k++ )
+                    for( int k = 1 ; k < m_FFTPeriod ; k++ )
                     {
                         m_ReferenceFrames[k] *= m_UnitVectors[k];
                     }
@@ -105,7 +106,7 @@ public:
             }
         }
 
-        // retrieve data vector
+        // retrieve data
         for( int k = 0 ; k < m_FFTPeriod ; k++ )
         {
             m_Spectrum[k] = m_Delay.get_data(k);
@@ -115,7 +116,7 @@ public:
         fft0<double>( m_Spectrum, m_FFTPeriod, 1);
 
         // convolution cycle
-        for( int k = 0 ; k < m_FFTPeriod ; k++ )
+        for( int k = 1 ; k < m_FFTPeriod ; k++ )
         {
             m_Spectrum[k] *= m_ReferenceFrames[k];
         }

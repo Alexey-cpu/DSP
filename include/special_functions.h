@@ -1729,25 +1729,25 @@ dft( Complex<__type>* _Input, Complex<__type>* _Spectrum, __ix32 _N, __ix32 _Dir
      *          It such case use dft() function.
 */
 template<typename __type> void
-fft0( Complex<__type>* _Spectrum, __ix32 _N, __ix32 _Direct )
+fft0( Complex<__type>* _Spectrum, int _N, int _Direct )
 {
     // check
     if( _Spectrum == nullptr || _N <= 0 || !check_power_of_two(_N) )
         return;
 
     // initialization
-    __fx64 G = _Direct ? 2.0 / ( __fx64 )_N : 0.5;
+    double G = _Direct ? 2.0 / ( double )_N : 0.5;
 
     // scale spectrum
-    for( __ix32 i = 0 ; i < _N ; i++ )
+    for( int i = 0 ; i < _N ; i++ )
     {
         _Spectrum[i] = _Spectrum[i] * G;
     }
 
     // compute FFT
-    for(__ix32 L = _N; L >= 2 ; L /= 2 )
+    for(int L = _N; L >= 2 ; L /= 2 )
     {
-        __fx64 angle = PI2/L * (_Direct ? -1.0 : +1.0);
+        double angle = PI2/L * (_Direct ? -1.0 : +1.0);
         Complex<__type> Wn( cos(angle), sin(angle) );
         for( __ix32 i = 0; i < _N; i += L )
         {
@@ -1765,9 +1765,9 @@ fft0( Complex<__type>* _Spectrum, __ix32 _N, __ix32 _Direct )
     }
 
     // spectrum reordering
-    for (__ix32 i = 1, j = 0 ; i < _N ; i++)
+    for (int i = 1, j = 0 ; i < _N ; i++)
     {
-        __ix32 bit = _N >> 1;
+        int bit = _N >> 1;
 
         for ( ; j >= bit; bit >>= 1 )
         {
@@ -1800,25 +1800,25 @@ fft0( Complex<__type>* _Spectrum, __ix32 _N, __ix32 _Direct )
      *          It such case use dft() function.
 */
 template<typename __type> void
-fft1( Complex<__type>* _Spectrum, __ix32 _N, __ix32 _Direct )
+fft1( Complex<__type>* _Spectrum, int _N, int _Direct )
 {
     // check
     if( _Spectrum == nullptr || _N <= 0 || !check_power_of_two(_N) )
         return;
 
     // initialization
-    __fx64 G = _Direct ? 2.0 / _N : 0.5;
+    double G = _Direct ? 2.0 / _N : 0.5;
 
     // scale spectrum
-    for( __ix32 i = 0 ; i < _N ; i++ )
+    for( int i = 0 ; i < _N ; i++ )
     {
         _Spectrum[i] = _Spectrum[i] * G;
     }
 
     // spectrum reordering
-    for (__ix32 i = 1, j = 0 ; i < _N ; i++)
+    for (int i = 1, j = 0 ; i < _N ; i++)
     {
-        __ix32 bit = _N >> 1;
+        int bit = _N >> 1;
 
         for ( ; j >= bit; bit >>= 1 )
         {
@@ -1834,9 +1834,9 @@ fft1( Complex<__type>* _Spectrum, __ix32 _N, __ix32 _Direct )
     }
 
     // compute FFT
-    for( __ix32 L = 2; L <= _N; L<<=1 )
+    for( int L = 2; L <= _N; L<<=1 )
     {
-        __fx64 angle = PI2/L * (_Direct ? -1.0 : +1.0);
+        double angle = PI2/L * (_Direct ? -1.0 : +1.0);
         Complex<__type> Wn ( cos(angle), sin(angle) );
         for ( __ix32 i = 0; i < _N; i+=L)
         {
