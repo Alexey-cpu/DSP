@@ -1,9 +1,9 @@
 #include "../../DSP/examples/examples.h"
 
+int space( int, int, int ){}
+
 int main()
 {
-    //cout << __euclide_algorithm__(80, 64) << "\n";
-
     // driver examples
     //filters_fir_example();
     //complex_numbers_example();
@@ -19,13 +19,10 @@ int main()
     //filters_leadlag_example();
     //filters_filter_2nd_order_example();
     //fft_example();
-
     //interpolation_example();
     //interpolator_example();
-
     //fft_based_filter_example();
-
-    filtes_fft_example();
+    //filtes_fft_example();
 
     return 0;
 }
