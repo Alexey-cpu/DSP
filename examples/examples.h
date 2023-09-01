@@ -13,6 +13,7 @@
 // some specific filters examples
 #include "example_custom_filters_hmf.h"
 #include "example_custom_filters_rff.h"
+#include "example_custom_filters_harmonic_extracter.h"
 
 // special functions and complex arithmetics examples
 #include "example_math_special_functions.h"

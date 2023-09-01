@@ -1,7 +1,7 @@
 #ifndef FILTERS_FAST_FOURIER_TRANSFORM_SPECTRUM_ANALYZER_H
 #define FILTERS_FAST_FOURIER_TRANSFORM_SPECTRUM_ANALYZER_H
 
-#include "filters_fir.h"
+#include "filters_interpolators.h"
 
 #ifndef PI0
 #define PI0 3.1415926535897932384626433832795
@@ -23,6 +23,7 @@ protected:
 
     delay<double>    m_Delay;
 
+    double           m_Gain            = 1.0 / sqrt(2.0);
     Complex<double>* m_Spectrum        = nullptr;
     Complex<double>* m_ReferenceFrames = nullptr;
     Complex<double>* m_UnitVectors     = nullptr;
@@ -121,7 +122,7 @@ public:
             m_Spectrum[k] *= m_ReferenceFrames[k];
         }
 
-        return _HarmonicNumber < m_FFTPeriod ? m_Spectrum[_HarmonicNumber] : Complex<double>::zero();
+        return _HarmonicNumber < m_FFTPeriod ? m_Spectrum[_HarmonicNumber] * m_Gain : Complex<double>::zero();
     }
 };
 

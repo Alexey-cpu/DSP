@@ -1,7 +1,5 @@
 #include "../../DSP/examples/examples.h"
 
-int space( int, int, int ){}
-
 int main()
 {
     // driver examples
@@ -23,6 +21,8 @@ int main()
     //interpolator_example();
     //fft_based_filter_example();
     //filtes_fft_example();
+
+    filters_harmonic_extracter_example();
 
     return 0;
 }

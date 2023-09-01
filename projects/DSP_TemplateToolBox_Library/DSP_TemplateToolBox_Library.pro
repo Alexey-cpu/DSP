@@ -22,6 +22,7 @@ HEADERS += \
     ../../examples/example_classic_iir_cheb1.h \
     ../../examples/example_classic_iir_cheb2.h \
     ../../examples/example_classic_iir_ellip.h \
+    ../../examples/example_custom_filters_harmonic_extracter.h \
     ../../examples/example_custom_filters_hmf.h \
     ../../examples/example_custom_filters_rff.h \
     ../../examples/example_math_complex_numbers.h \
@@ -39,6 +40,7 @@ HEADERS += \
     ../../include/filters_fir.h \
     ../../include/filters_harmonic_filter.h \
     ../../include/filters_iir.h \
+    ../../include/filters_interpolators.h \
     ../../include/filters_real_time_spectrum_analyzer.h \
     ../../include/filters_recursive_fourier_filter.h \
     ../../include/filters_transfer_functions.h \

@@ -1,12 +1,12 @@
-#ifndef EXAMPLE_CUSTOM_FILTERS_RFF_H
-#define EXAMPLE_CUSTOM_FILTERS_RFF_H
+#ifndef EXAMPLE_CUSTOM_FILTERS_HARMONIC_EXTRACTER_H
+#define EXAMPLE_CUSTOM_FILTERS_HARMONIC_EXTRACTER_H
 
 #include "config.h"
 #include "../../DSP/include/generators.h"
-#include "../../DSP/include/filters_recursive_fourier_filter.h"
+#include "../../DSP/include/filters_real_time_spectrum_analyzer.h"
 
 // Recursive Fourier filter
-int filters_rff_example()
+int filters_harmonic_extracter_example()
 {
     typedef double __type;
 
@@ -48,15 +48,16 @@ int filters_rff_example()
     digital_clock<double> time_provider;
     time_provider.init(Fs);
 
-    standalone_recursive_fourier<__type> rff;
-    rff.init(Fs, Fn, 2);
+    real_time_frequency_invariant_harmonic_extracter rff;
+    rff.init(Fs, Fn, 5);
 
     for( int i = 0 ; i < cycles_num ; i++ )
     {
         for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick())
         {
-            __type signal = gen.sine( 1, 2*Fn, 0, time ) + 0.2;
-            Complex<__type> output = rff( &signal );
+            double F = 45;
+            __type signal = gen.sine( 1, F, 30, time ); //gen.sine( 2, F, 30, time ) + gen.sine( 2, 2*F, 10, time ) + 0.2;
+            Complex<__type> output = rff.filt( &signal, 1 );
 
             // logginig
             #ifdef WRITE_LOGS
@@ -69,6 +70,7 @@ int filters_rff_example()
         }
     }
 
+    /*
     for( int i = 0 ; i < Fs / 2 ; i++ )
     {
         Complex<__type> output = rff.frequency_response( (double)i );
@@ -78,6 +80,7 @@ int filters_rff_example()
         Km << __cabsf__(output) << "\n";
         #endif
     }
+    */
 
     // close files
     #ifdef WRITE_LOGS
@@ -94,4 +97,5 @@ int filters_rff_example()
     return 0;
 }
 
-#endif // EXAMPLE_CUSTOM_FILTERS_RFF_H
+
+#endif // EXAMPLE_CUSTOM_FILTERS_HARMONIC_EXTRACTER_H

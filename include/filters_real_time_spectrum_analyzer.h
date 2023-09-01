@@ -11,14 +11,15 @@
 #define PI2 6.283185307179586476925286766559
 #endif
 
-class real_time_spectrum_analyzer : public transfer_function_model
+class real_time_spectrum_analyzer final : public transfer_function_model
 {
 protected:
 
     // info
     delay<double>             m_Buffer;
-    shared_recursive_fourier* m_Filters        = nullptr;
-    int                       m_SpectrumWidth  = 5;
+    shared_recursive_fourier* m_Filters       = nullptr;
+    int                       m_SpectrumWidth = 5;
+    double                    m_Gain          = 1.0 / sqrt(2.0);
 
 public:
 
@@ -64,7 +65,7 @@ public:
             m_Filters[i].filt<double,double>( _Input, &m_Buffer );
 
         return _HarmonicNumber < m_SpectrumWidth ?
-                    m_Filters[_HarmonicNumber].get_vector( true ) :
+                    m_Filters[_HarmonicNumber].get_vector( true ) * m_Gain:
                     Complex<double>::zero();
     }
 
@@ -84,7 +85,7 @@ public:
     }
 };
 
-class real_time_frequency_invariant_spectrum_analyzer : public transfer_function_model
+class real_time_frequency_invariant_spectrum_analyzer final : public transfer_function_model
 {
 protected:
 
@@ -181,7 +182,7 @@ public:
         m_N1   = N1;
         m_N2   = N2;
         m_N3   = N1 + N2;
-        m_Gain = 4.0 / (double)N1 / (double)N1;
+        m_Gain = 4.0 / (double)N1 / (double)N1 / sqrt(2.0);
     }
 
     Complex<double> filt( double* _Input, int _HarmonicNumber )
@@ -221,6 +222,208 @@ public:
     }
 
     // virtual functions override
+    virtual Complex<double> frequency_response( double _F ) override
+    {
+        (void)_F;
+        return Complex<double>::zero();
+    }
+};
+
+class real_time_frequency_invariant_harmonic_extracter final : public transfer_function_model
+{
+private:
+
+    // constants
+    const double m_Epsilon    = 1e-4;
+    const double m_UpperLimit = +sqrt( 3.4028235E+38 / 2 );
+    const double m_LowerLimit = -sqrt( 3.4028235E+38 / 2 );
+
+    // info
+    delay<double>                        m_InputBuffer;
+    standalone_recursive_fourier<double> m_RecursiveMeanRe;
+    standalone_recursive_fourier<double> m_RecursiveMeanIm;
+    shared_recursive_fourier            *m_RecursiveFourierFilters = nullptr;
+    Complex< double >*                   m_ReferenceFrames         = nullptr;
+    Complex< double >*                   m_UnitVectors             = nullptr;
+    double                               m_Fs                      = 4000;
+    double                               m_Fn                      = 50;
+    int64_t                              m_SpectrumWidth           = 5;
+    int64_t                              m_SamplesPerPeriod        = m_Fs / m_Fn;
+
+    // service methods
+    int64_t allocate()
+    {
+        #ifdef HMF_DEBUG
+        Debugger::Log("harmonic_filter","allocate()","Memory allocation");
+        #endif
+
+        if( m_SpectrumWidth <= 0 )
+            return false;
+
+        // allocate and initialize recursive Fourier filter
+        m_RecursiveFourierFilters = new shared_recursive_fourier[m_SpectrumWidth];
+        for( int64_t i = 0 ; i < m_SpectrumWidth ; i++ )
+            m_RecursiveFourierFilters[i].init( m_Fs, m_Fn, i );
+
+        // allocate and initialize reference frames and reference frames for each harmonic
+        m_ReferenceFrames = new Complex<double>[ m_SpectrumWidth ];
+        m_UnitVectors     = new Complex<double>[ m_SpectrumWidth ];
+
+        for( int64_t i = 0 ; i < m_SpectrumWidth ; i++ )
+        {
+            m_UnitVectors[i] =
+                    Complex<double>
+                    (
+                        +cos( PI2 * (double)i * m_Fn / m_Fs ),
+                        +sin( PI2 * (double)i * m_Fn / m_Fs )
+                    );
+
+            m_ReferenceFrames[i] = Complex<double>( 1.0, 0.0 );
+        }
+
+        // initialize and allocate recursive mean filters
+        m_RecursiveMeanRe.init( m_Fs, 2.0 * m_Fn, 0);
+        m_RecursiveMeanIm.init( m_Fs, 2.0 * m_Fn, 0);
+
+        // allocate buffers
+        m_InputBuffer.allocate( m_RecursiveFourierFilters[0].get_buffer_size() );
+
+        return true;
+    }
+
+    int64_t deallocate()
+    {
+        #ifdef HMF_DEBUG
+        Debugger::Log("harmonic_filter","deallocate()","Memory free");
+        #endif
+
+        // remove recursive Fourier filters
+        if( m_RecursiveFourierFilters != nullptr )
+        {
+            delete [] m_RecursiveFourierFilters; // delete operator calls object destructor which frees the object resources
+            m_RecursiveFourierFilters = nullptr;
+        }
+
+        // remove reference frames vector
+        if( m_ReferenceFrames != nullptr )
+        {
+            delete [] m_ReferenceFrames;
+            m_ReferenceFrames = nullptr;
+        }
+
+        // remove reference units vectors vector
+        if( m_UnitVectors != nullptr )
+        {
+            delete [] m_UnitVectors;
+            m_UnitVectors = nullptr;
+        }
+
+        return true;
+    }
+
+public:
+
+    // constructors
+    real_time_frequency_invariant_harmonic_extracter()
+    {
+        #ifdef HMF_DEBUG
+        Debugger::Log("harmonic_filter","harmonic_filter()","Filter constructor call");
+        #endif
+
+        m_Fs                      = 4000;
+        m_Fn                      = 50;
+        m_SpectrumWidth           = 5;
+        m_SamplesPerPeriod        = m_Fs / m_Fn;
+        m_RecursiveFourierFilters = nullptr;
+    }
+
+    // virtual destructors
+    virtual ~real_time_frequency_invariant_harmonic_extracter()
+    {
+        #ifdef HMF_DEBUG
+        Debugger::Log("harmonic_filter","~harmonic_filter()","Filter destructor call");
+        #endif
+
+        deallocate();
+    }
+
+    // public methods
+    void init(double _Fs, double _Fn, int64_t _SpectrumWidth)
+    {
+        // call base implementation
+        transfer_function_model::init( _Fn > 0 ? _Fs / _Fn : 1, _Fs );
+
+        // initialize system variables
+        m_Fs                      = _Fs;
+        m_Fn                      = _Fn;
+        m_SpectrumWidth           = _SpectrumWidth;
+        m_SamplesPerPeriod        = m_Fs / m_Fn;
+        m_RecursiveFourierFilters = nullptr;
+
+        // memory allocation
+        allocate();
+
+        #ifdef HMF_DEBUG
+        Debugger::Log("harmonic_filter","init()","Filter initialization");
+        Debugger::Log("Fs               = " + to_string(m_Fs));
+        Debugger::Log("Fn               = " + to_string(m_Fn));
+        Debugger::Log("SpectrumWidth    = " + to_string(m_SpectrumWidth));
+        Debugger::Log("SamplesPerPeriod = " + to_string(m_SamplesPerPeriod));
+        #endif
+    }
+
+    Complex<double> filt( double* _Input, int64_t _HarmonicNumber )
+    {
+        // check input
+        if( _Input == nullptr || _HarmonicNumber >= m_SpectrumWidth )
+            return Complex<double>::zero();
+
+        // bound signal between upper and lower limits
+        double boundedInput = __saturation__( *_Input, m_UpperLimit, m_LowerLimit);
+
+        // fill shared buffer
+        m_InputBuffer.fill_buff(&boundedInput);
+
+        // filter bounded signal
+        m_RecursiveFourierFilters[_HarmonicNumber].filt( &boundedInput, &m_InputBuffer );
+
+        // retrieve vector
+        Complex<double> signalVector = m_RecursiveFourierFilters[_HarmonicNumber].get_vector();
+
+        // compute vector amplitude
+        double a = __realf__(signalVector) * __realf__(signalVector);
+        double b = __imagf__(signalVector) * __imagf__(signalVector);
+        double c = 0.0;
+        m_RecursiveMeanRe(&a);
+        m_RecursiveMeanIm(&b);
+
+        if( _HarmonicNumber == 0 )
+        {
+            a = __abs__( __realf__( m_RecursiveMeanRe.get_vector() ) );
+            c = ( a < m_Epsilon ) ? (double)0 : sqrt( a );
+        }
+        else
+        {
+            a = __abs__( __realf__( m_RecursiveMeanRe.get_vector() ) );
+            b = __abs__( __realf__( m_RecursiveMeanIm.get_vector() ) );
+            c = ( ( a < m_Epsilon ) && ( b < m_Epsilon ) ) ? (double)0 : sqrt( ( a + b ) * (double)0.5 );
+        }
+
+        // compute input isgnal phase unit vector relatively to the reference frame
+        Complex<double> signalPhaseUnitVector = Complex<double>
+                (
+                    cos( __cargf__( signalVector ) ),
+                    sin( __cargf__( signalVector ) )
+                ) * __conjf__( m_ReferenceFrames[_HarmonicNumber] ) * Complex<double>( 0.0, +1.0 );
+
+        // update reference frame
+        m_ReferenceFrames[_HarmonicNumber] *= m_UnitVectors[_HarmonicNumber];
+
+        // compute vector
+        return signalPhaseUnitVector * c;
+    }
+
+    // virtual methods override
     virtual Complex<double> frequency_response( double _F ) override
     {
         (void)_F;
