@@ -12,6 +12,8 @@
 #include <chrono>
 #endif
 
+#include <bitset>
+#include <sstream>
 #include "QElapsedTimer"
 #include <fstream>
 #include <algorithm>
@@ -29,42 +31,6 @@ using namespace std;
 #endif
 
 // define custom types
-#ifndef __fx32
-#define __fx32 float
-#endif
-
-#ifndef __fx64
-#define __fx64 double
-#endif
-
-#ifndef __fxx64
-#define __fxx64 long double
-#endif
-
-#ifndef __ix16
-#define __ix16 short
-#endif
-
-#ifndef __ix32
-#define __ix32 int
-#endif
-
-#ifndef __ix64
-#define __ix64 long long
-#endif
-
-#ifndef __uix16
-#define __uix16 unsigned short
-#endif
-
-#ifndef __uix32
-#define __uix32 unsigned int
-#endif
-
-#ifndef __uix64
-#define __uix64 unsigned long long
-#endif
-
 #ifndef __TO_DEGREES_CONVERSION_MULTIPLYER__
 #define __TO_DEGREES_CONVERSION_MULTIPLYER__ 57.295779513082320876798154814105
 #endif
@@ -85,126 +51,327 @@ using namespace std;
  *  \brief the module collaborates all the utility classes and functions
     @{
 */
-
-/*!
-    \struct vector2D
- *  \brief 2D vector
-*/
-template< typename __type >
-struct vector2D
+namespace TUPLE_PACKAGE
 {
-    __type x; ///< x coordinate
-    __type y; ///< y coordinate
-};
+    // Tuple
+    template< typename ... T >
+    struct Tuple;
 
-/*!
-    \struct vector3D
- *  \brief 3D vector
-*/
-template< typename __type >
-struct vector3D
+    template< typename T1, typename ... T2 >
+    struct Tuple<T1, T2 ...> : public Tuple<T2...>
+    {
+    protected:
+
+        T1 m_Data;
+
+        template< uint64_t Index, typename Head, typename ... Tail >
+        friend struct TupleUnpacker;
+
+    public:
+
+        typedef T1 return_type;
+
+        // constructors
+        Tuple() : m_Data( T1() ){}
+
+        Tuple( T1 _Data, T2 ... _Tail ) : Tuple<T2...>(_Tail...), m_Data( _Data ){}
+
+        // virtual destructor
+        virtual ~Tuple(){}
+    };
+
+    // Tuple
+    template<>
+    class Tuple<>{};
+
+    // Tuple unpacker
+    template< uint64_t I, typename T1, typename ... T2 >
+    struct TupleUnpacker
+    {
+        typedef typename TupleUnpacker<I-1, T2...>::return_type return_type;
+        static return_type& get( Tuple< T1, T2... >& _Input )
+        {
+            return TupleUnpacker<I-1, T2...>::get(_Input);
+        }
+    };
+
+    template< typename T1, typename ... T2 >
+    struct TupleUnpacker< 0, T1, T2... >
+    {
+        typedef typename Tuple< T1, T2... >::return_type return_type;
+        static return_type& get( Tuple< T1, T2... >& _Input )
+        {
+            return _Input.m_Data;
+        }
+    };
+
+    template< uint64_t I, typename T1, typename ... T2 >
+    typename TupleUnpacker<I, T1, T2...>::return_type& get( Tuple< T1, T2... >& _Input )
+    {
+        return TupleUnpacker< I, T1, T2... >::get( _Input );
+    }
+}
+
+using namespace TUPLE_PACKAGE;
+
+namespace BIT_UTILS
 {
-    __type x; ///< x coordinate
-    __type y; ///< y coordinate
-    __type z; ///< z coordinate
-};
+    template<typename __type>
+    void __set_bit__(__type& _M, uint_fast32_t _N )
+    {
+        if( _N < sizeof (_M) * 8UL )
+        {
+            _M |= 1UL << _N;
+        }
+    }
 
-/*!
-    \struct tuple_x2
- *  \brief tuple of 2 elements
-*/
-template< typename a, typename b>
-struct tuple_x2
+    template<typename __type>
+    void __reset_bit__(__type& _M, uint_fast32_t _N )
+    {
+        if( _N < sizeof( _M ) * 8UL )
+        {
+            _M &= ~( 1UL << _N );
+        }
+    }
+
+    template<typename __type>
+    uint_fast32_t __get_bit__( const __type& _M, uint_fast32_t _N )
+    {
+        return _N < sizeof (_M) * 8UL ? ( _M >> _N ) & 1 : 0;
+    }
+
+    template<typename __type>
+    __type __bit_reverse__(__type M, uint_fast32_t MSB)
+    {
+        __type result = 0;
+        for ( uint_fast32_t i = 0 ; i < MSB ; ++i)
+        {
+            if ( M & ( 1 << i ) ) // look for the set bits
+            {
+                result |= 1 << ( MSB - 1 - i ); // set the bits at the end of the resulting bit mask
+            }
+        }
+
+        return result;
+    }
+
+    template< typename __type >
+    uint_fast32_t __get_msb__( const __type& _M )
+    {
+        uint_fast32_t MSB = 0;
+
+        while ( ( 1 << MSB ) < _M )
+        {
+            MSB++;
+        }
+
+        return MSB;
+    }
+
+    template<typename T1, typename T2>
+    T2 __retrieve_bits__( const T1& _Input, uint_fast32_t _S, uint_fast32_t _E )
+    {
+        // check
+        if( _E > sizeof(T1) * 8 )
+            return 0;
+
+        // main code
+        T2 output = 0;
+
+        for( uint_fast32_t i = _S, j = 0 ; i < _E ; i++, j++ )
+        {
+            T1 bit = BIT_UTILS::__get_bit__<T1>( _Input, i );
+
+            if( bit > 0 )
+            {
+                BIT_UTILS::__set_bit__( output, j );
+            }
+        }
+
+        return output;
+    }
+
+    inline uint_fast64_t __lfsr64__ ( uint_fast64_t _INPUT )
+    {
+        static uint_fast64_t S = _INPUT;
+        S = ((((S >> 63) ^ (S >> 62) ^ (S >> 61) ^ (S >> 59) ^ (S >> 57) ^ S ) & (uint64_t)1 ) << 63 ) | (S >> 1);
+        return S;
+    }
+
+#ifdef _STRINGFWD_H
+
+    template< typename __type >
+    std::string __to_hex_string__( const __type& _M, uint_fast32_t _N = 0 )
+    {
+        // initialize stream
+        std::stringstream stream;
+        stream << std::hex;
+
+        // generate hex string
+        uint_fast32_t N = _N < 4 ? sizeof(_M) * 8 : (uint_fast8_t)_N;
+
+        for( uint_fast8_t i = 0 ; i < N ; i += 4 )
+        {
+            stream << BIT_UTILS::__retrieve_bits__< __type, uint_fast64_t >( _M, i, i + 4 );
+        }
+
+        return stream.str();
+    }
+
+#endif
+}
+
+using namespace BIT_UTILS;
+
+#ifdef _GLIBCXX_BITSET
+
+namespace BITSET_UTILS
 {
-    a item0;
-    b item1;
-};
+    template< std::size_t N >
+    void __read_bits_from_uint__( std::bitset<N>& _Target, const uint_fast64_t& _Source, uint_fast64_t _Start, uint_fast64_t _End )
+    {
+        // check
+        if( N < _Start || N < _End )
+            return;
 
-/*!
-    \struct tuple_x3
- *  \brief tuple of 3 elements
-*/
+        // main code
+        for( uint_fast64_t i = _Start, j = 0 ; i < _End ; i++, j++ )
+        {
+            _Target[i] = BIT_UTILS::__get_bit__( _Source, j );
+        }
+    }
+
+    template< std::size_t N1, std::size_t N2 >
+    std::bitset<N2> __extract_bits__( std::bitset<N1>& _Source, uint_fast64_t _Start, uint_fast64_t _End )
+    {
+        // generate output
+        std::bitset<N2> output;
+
+        // check
+        if( N1 < _Start || N1 < _End )
+            return output;
+
+        // fill output
+        for( uint_fast64_t i = _Start, j = 0 ; i < _End ; i++, j++ )
+        {
+            output[j] = _Source[i];
+        }
+
+        return output;
+    }
+
+    template< std::size_t N >
+    uint_fast32_t __get_msb__( std::bitset<N>& _Source )
+    {
+        uint_fast32_t MSB = 0;
+
+        for( uint_fast32_t i = 0 ; i < N ; i++ )
+        {
+            if( _Source[i] > 0 )
+            {
+                MSB = i;
+            }
+        }
+
+        return MSB;
+    }
+
+    template< std::size_t N >
+    bool __big_unsigned_numbers_equal__( std::bitset<N> _A, std::bitset<N> _B )
+    {
+        return !( _A ^ _B ).any();
+    }
+
+    template< std::size_t N >
+    bool __big_unsigned_number_is_greater__( std::bitset<N> _A, std::bitset<N> _B )
+    {
+        std::bitset<N> reference;
+        reference[N-1] = 1;
+
+        if( __big_unsigned_numbers_equal__( _A, _B ) )
+            return false;
+
+        while ( !( (_A ^ _B) & reference).any() )
+        {
+            _A <<= 1;
+            _B <<= 1;
+        }
+
+        return (_A & reference).any();
+    }
+
+    template< std::size_t N >
+    bool __big_unsigned_number_is_less__( std::bitset<N> _A, std::bitset<N> _B )
+    {
+        std::bitset<N> reference;
+        reference[N-1] = 1;
+
+        if( __big_unsigned_numbers_equal__( _A, _B ) )
+            return false;
+
+        while ( !( (_A ^ _B) & reference).any() )
+        {
+            _A <<= 1;
+            _B <<= 1;
+        }
+
+        return !(_A & reference).any();
+    }
+
+    template< std::size_t N >
+    struct BitSetsComparator
+    {
+        using is_transparent = std::bitset<N>;
+
+    public:
+
+        bool operator()( const std::bitset<N>& _A, const std::bitset<N>& _B ) const
+        {
+            return __big_unsigned_number_is_less__( _A, _B );
+        }
+    };
+
+#ifdef _STRINGFWD_H
+
+    template< std::size_t N >
+    std::string __write_to_hex_string__( const std::bitset<N>& _Set )
+    {
+        // initialize stream
+        std::stringstream stream;
+        stream << std::hex;
+
+        // generate hex string
+        for( uint_fast64_t i = 0 ; i < N ; i += 4 )
+        {
+            uint_fast64_t hexNumber = 0;
+
+            for( uint_fast64_t j = 0 ; j < 4 ; j++ )
+            {
+                if( _Set[ i + j ] > 0 )
+                {
+                    BIT_UTILS::__set_bit__( hexNumber, j );
+                }
+            }
+
+            stream << hexNumber;
+        }
+
+        return stream.str();
+    }
+
+#endif
+}
+
+using namespace BITSET_UTILS;
+
+#endif
+
 template<typename a, typename b, typename c>
 struct tuple_x3
 {
     a item0;
     b item1;
     c item2;
-};
-
-/*!
- *  \struct tuple_x4
- *  \brief tuple of 4 elements
-*/
-template<typename a, typename b, typename c, typename d>
-struct tuple_x4
-{
-    a item0;
-    b item1;
-    c item2;
-    d item3;
-};
-
-/*!
- *  \struct tuple_x5
- *  \brief tuple of 5 elements
-*/
-template< typename a, typename b, typename c, typename d, typename e>
-struct tuple_x5
-{
-    a item0;
-    b item1;
-    c item2;
-    d item3;
-    e item4;
-};
-
-/*!
- *  \struct tuple_x6
- *  \brief tuple of 6 elements
-*/
-template< typename a, typename b, typename c, typename d, typename e, typename f>
-struct tuple_x6
-{
-    a item0;
-    b item1;
-    c item2;
-    d item3;
-    e item4;
-    f item5;
-};
-
-/*!
- *  \struct tuple_x7
- *  \brief tuple of 7 elements
-*/
-template< typename a, typename b, typename c, typename d, typename e, typename f, typename g>
-struct tuple_x7
-{
-    a item0;
-    b item1;
-    c item2;
-    d item3;
-    e item4;
-    f item5;
-    g item6;
-};
-
-/*!
- *  \struct tuple_x8
- *  \brief tuple of 8 elements
-*/
-template< typename a, typename b, typename c, typename d, typename e, typename f, typename g, typename h>
-struct tuple_x8
-{
-    a item0;
-    b item1;
-    c item2;
-    d item3;
-    e item4;
-    f item5;
-    g item6;
-    h item7;
 };
 
 #ifdef _GLIBCXX_NUMERIC_LIMITS
@@ -231,7 +398,6 @@ struct tuple_x8
 
     // tiny:
     template< typename __type > __type __tiny__() { return numeric_limits<__type>::min(); }
-
 
 #endif
 
@@ -330,13 +496,15 @@ template< typename __type > inline __type __max__ ( __type a , __type b , __type
  *  \param[input] input array
  *  \param[N] input array size
 */
-template< typename __type > inline __type __max__( __type *input , __ix32 N )
+template< typename __type > inline __type __max__( __type* input , int N )
 {
     __type vmax = input[0];
-    for( __ix32 i = 1 ; i < N; i++ )
+
+    for( int i = 1 ; i < N; i++ )
     {
         if( input[i] > vmax ) vmax = input[i];
     }
+
     return vmax;
 }
 
@@ -437,11 +605,11 @@ template< typename __type > inline __type __min__ ( __type a , __type b , __type
  *  \param[N] input array size
 */
 template< typename __type >
-inline __type __min__( const __type *input, __ix32 N )
+inline __type __min__( const __type *input, int N )
 {
-    __ix32 imin = 0;
+    int imin = 0;
     __type vmin = input[imin];
-    for( __ix32 i = 1 ; i < N; i++ )
+    for( int i = 1 ; i < N; i++ )
     {
         if( input[i] < vmin )
         {
@@ -458,13 +626,15 @@ inline __type __min__( const __type *input, __ix32 N )
  *  \param[input] input array
  *  \param[N] input array size
 */
-template< typename __type > inline tuple_x2<__type, __ix32>
-__min__( tuple_x2<__type*, __ix32> vector )
+/*
+template< typename __type > inline tuple_x2<__type, int>
+__min__( Tuple<__type*, int> vector )
 {
-    __type *input = vector.item0;
-    __ix32  imin = 0;
-    __type  vmin = input[imin];
-    for( __ix32 i = 1 ; i < vector.item1; i++ )
+    __type *input = get<0>( vector );
+    int     imin  = 0;
+    __type  vmin  = input[imin];
+
+    for( int i = 1 ; i < get<1>(vector); i++ )
     {
         if( input[i] < vmin )
         {
@@ -475,6 +645,7 @@ __min__( tuple_x2<__type*, __ix32> vector )
 
     return { vmin, imin };
 }
+*/
 
 /*!
  *  \brief returns an absolete value of an input
@@ -513,7 +684,7 @@ template< typename __type > inline void __swap__( __type &a , __type &b )
  *  \brief converts input angle to degrees
  *  \param[angle] input angle
 */
-inline __fx64 __to_degrees__(__fx64 angle)
+inline double __to_degrees__(double angle)
 {
     return angle * __TO_DEGREES_CONVERSION_MULTIPLYER__;
 }
@@ -522,27 +693,9 @@ inline __fx64 __to_degrees__(__fx64 angle)
  *  \brief converts input angle to radians
  *  \param[angle] input angle
 */
-inline __fx64 __to_radians__(__fx64 angle)
+inline double __to_radians__(double angle)
 {
     return angle * __TO_RADIANS_CONVERSION_MULTIPLYER__;
-}
-
-/*!
- *  \brief returns -(a+1) i.e flips the sign and value of a number
- *  \param[a] a values
-*/
-inline __ix32 __flip__(__ix32 a)
-{
-    return (a >= 0) ? ~a : a;
-}
-
-/*!
- *  \brief returns -(a+1) of the flipped value i.e. flops the number
- *  \param[a] a values
-*/
-inline __ix32 __flop__(__ix32 a)
-{
-    return a < 0 ? ~a : a;
 }
 
 /*!
@@ -570,96 +723,6 @@ __saturation__(__type input, __type UpperLimit, __type LowerLimit)
     return input;
 }
 
-template<typename __type> void
-__cumulative_summ__( __type *input, __ix32 size )
-{
-    for( __ix32 i = 0, j = 0, k = 0 ; i < size ; i++ )
-    {
-        k += input[i];
-        input[i] = j;
-        j = k;
-    }
-}
-
-/*!
- *  \brief bit set function
- *  \param[bitMask] input bit mask
- *  \param[bit] bit number
- *  \details The function sets the given bit of an input number
-*/
-template<typename __type>
-void __set_bit__(__type &_Mask, size_t _Bit )
-{
-    if( _Bit < sizeof (_Mask) * 8UL )
-        _Mask |= 1UL << _Bit;
-}
-
-/*!
- *  \brief bit reset function
- *  \param[bitMask] input bit mask
- *  \param[bit] bit number
- *  \details The function resets the given bit of an input number
-*/
-template<typename __type>
-void __reset_bit__(__type &_Mask, size_t _N )
-{
-    if( _N < sizeof( _Mask ) * 8UL )
-        _Mask &= ~(1UL << _N);
-}
-
-/*!
- *  \brief get bit function
- *  \param[bitMask] input bit mask
- *  \param[bit] bit number
- *  \details The function returns the given bit value of an input number
-*/
-inline char __get_bit__(size_t &_Mask, size_t _N )
-{
-    return _N < sizeof (_Mask) * 8UL ? ( _Mask >> _N ) & 1UL : 0UL;
-}
-
-/*!
- *  \brief bit mask revertion function
- *  \param[bitMask] input bit mask
- *  \param[MSB] input bit mask most significant bit
- *  \details The function returns the given bit value of an input number
-*/
-template<typename __type>
-__type __bit_reverse__(__type bitMask, __ix32 MSB)
-{
-    __type result = 0;
-    for ( __ix32 i = 0 ; i < MSB ; ++i)
-    {
-        if ( bitMask & ( 1 << i ) ) // look for the set bits
-        {
-            result |= 1 << ( MSB - 1 - i ); // set the bits at the end of the resulting bit mask
-        }
-    }
-
-    return result;
-}
-
-/*!
- *  \brief MSB number computation function
- *  \param[bitMask] input bit mask
- *  \details The function returns the number of the most sifnificant bit
-*/
-__ix32 __bit_get_MSB__( __ix32 bitMask )
-{
-    __ix32 MSB = 0;
-    while ( ( 1 << MSB ) < bitMask )
-    {
-        MSB++;
-    }
-
-    return MSB;
-}
-
-bool check_power_of_two( __ix32 _Number )
-{
-    return !(bool)( _Number & (_Number-1) );
-}
-
 /*!
  *  \brief memory allocation function
  *  \param[size] the output array size
@@ -668,7 +731,7 @@ bool check_power_of_two( __ix32 _Number )
  *           object. Use new operator instead.
 */
 template< typename __type > inline __type*
-__alloc__(__ix32 size)
+__alloc__(int size)
 {
     if(size <= 0) return nullptr;
     return (__type*)calloc( size, sizeof(__type) );
@@ -683,11 +746,11 @@ __alloc__(__ix32 size)
  *           object. Use new operator instead.
 */
 template< typename __type > inline __type*
-__alloc__(__ix32 size, __type value)
+__alloc__(int size, __type value)
 {
     if(size <= 0) return nullptr;
     __type *memory = (__type*)calloc( size, sizeof(__type) );
-    for(__ix32 i = 0 ; i < size; i++ ) memory[i] = value;
+    for(int i = 0 ; i < size; i++ ) memory[i] = value;
     return memory;
 }
 
@@ -700,7 +763,7 @@ __alloc__(__ix32 size, __type value)
  *           object. Use new operator instead.
 */
 template< typename __type > inline __type*
-__alloc__( __ix32 size, void (*__initializer__)(__type *memory, __ix32 size) )
+__alloc__( int size, void (*__initializer__)(__type *memory, int size) )
 {
     if(size <= 0) return nullptr;
     __type *memory = (__type*)calloc( size, sizeof(__type) );
@@ -717,7 +780,7 @@ __alloc__( __ix32 size, void (*__initializer__)(__type *memory, __ix32 size) )
  *           The function returbs nullptr if the new size is lower or equal to zero or the memory reallocation has failed.
 */
 template< typename __type > inline __type*
-__realloc__(__type *memory, __ix32 newsize)
+__realloc__(__type *memory, int newsize)
 {
     if(newsize <= 0 && memory)
     {
@@ -746,270 +809,20 @@ __mfree__(__type *memory)
     return memory;
 }
 
-/*!
- *  \brief tuple based 1D array model memory allocation function
- *  \param[tuple] input tuple
- *  \details The function takes by pointer an input tuple and allocates it's memory pointer.
- *           The function is not safe. Yout MUST guarantee that the input tuple
- *           is empty or you get memory leak otherwise !!!
-*/
+/*
 template< typename __type > void
-__alloc__( tuple_x2< __type*, __ix32 > *tuple, __ix32 n )
-{
-    tuple->item1 = n;
-    tuple->item0 = __alloc__<__type>( tuple->item1 );
-}
-
-/*!
- *  \brief tuple based 1D array model memory free function
- *  \param[tuple] input tuple
- *  \details The function frees input tuple based 1D array memory.
-*/
-template< typename __type > inline tuple_x2< __type*, __ix32 >
-__mfree__( tuple_x2< __type*, __ix32 > tuple )
-{
-    tuple.item0 = __mfree__(tuple.item0);
-    tuple.item1 = -1;
-    return tuple;
-}
-/*!
- *  \brief tuple based 2D array model memory allocation function
- *  \param[tuple] input tuple
- *  \details The function takes by pointer an input tuple and allocates it's memory pointer.
- *           The function is not safe. Yout MUST guarantee that the input tuple
- *           is empty or you get memory leak otherwise !!!
-*/
-template< typename __type > void
-__alloc__( tuple_x3< __type**, __ix32, __ix32 > *tuple, __ix32 m, __ix32 n )
+__alloc__( tuple_x3< __type**, int, int > *tuple, int m, int n )
 {
     tuple->item1 = m;
     tuple->item2 = n;
     tuple->item0 = __alloc__<__type*>(m);
 
-    for( __ix32 i = 0 ; i < tuple->item1 ; i++ )
+    for( int i = 0 ; i < tuple->item1 ; i++ )
     {
         tuple->item0[i] = __alloc__<__type>(n);
     }
 }
-
-/*!
- *  \brief tuple based 2D array model memory free function
- *  \param[tuple] input tuple
- *  \details The function frees input tuple based 2D array memory.
 */
-template< typename __type > inline tuple_x3< __type**, __ix32, __ix32 >
-__mfree__( tuple_x3< __type**, __ix32, __ix32 > tuple )
-{
-    for(__ix32 i = 0 ; i < tuple.item1 ; i++)
-    {
-        tuple.item0[i] = __mfree__( tuple.item0[i] );
-    }
-
-    tuple.item0 = __mfree__( tuple.item0 );
-    tuple.item1 = -1;
-    tuple.item2 = -1;
-    return tuple;
-}
-
-#ifndef __ALG_PLATFORM
-
-// radix sort with binary base 8 implementation for integer types
-template< typename __type > void
-__radix_sort__( __type *input, __type *output, __ix32 size, __ix32 descending = 1 )
-{
-    // chek the input type
-    if( !is_same<__type, __ix16 >::value &&
-        !is_same<__type, __ix32 >::value &&
-        !is_same<__type, __ix64 >::value &&
-        !is_same<__type, __uix16>::value &&
-        !is_same<__type, __uix32>::value &&
-        !is_same<__type, __uix64>::value)
-        return;
-
-      // check input:
-      if( !input || !output )
-          return;
-
-      // auxiliary variables:
-      __ix32 i = 0 , j = 0 , k = 0;
-      __ix32 bit_shift = 0;
-      __ix32 N = size - 1;
-
-      // auxiliary workspace:
-      __ix32 box[8];
-
-      // looking for the maximum element within the input
-      // and initialaling the elements mapping
-      __ix32 max = input[0];
-      for (i = 0; i < size; i++)
-      {
-          if ( input[i] > max)
-              max = input[i];
-      }
-
-      while ( (max >> bit_shift) > 0 )
-      {
-         // initializing workspace:
-         box[0] = 0;
-         box[1] = 0;
-         box[2] = 0;
-         box[3] = 0;
-         box[4] = 0;
-         box[5] = 0;
-         box[6] = 0;
-         box[7] = 0;
-
-         for (i = 0; i < size; i++)
-         {
-             j = ( input[i] >> bit_shift ) & 7;
-             box[j]++;
-         }
-
-         // cumulative sum calculation:
-         box[1] += box[0];
-         box[2] += box[1];
-         box[3] += box[2];
-         box[4] += box[3];
-         box[5] += box[4];
-         box[6] += box[5];
-         box[7] += box[6];
-
-         for (i = N ; i >= 0; i--)
-         {
-             j = ( input[i] >> bit_shift ) & 7;
-             k = --box[j];
-             output [k] = input[i];
-         }
-
-         // ovewrite the input:
-         for (i = 0; i < size; i++)
-         {
-             input[i] = output[i];
-         }
-
-         // incrementing the bitshift:
-         bit_shift += 3;
-     }
-
-      if( !descending )
-      {
-          i = 0;
-          j = size-1;
-          while ( i < j )
-              __swap__( input[i++], input[j--] );
-      }
-}
-
-template< typename __key, typename __value > void
-__radix_sort__( __key *keys, __value *values, void **workspace, __ix32 size, __ix32 descending = 1 )
-{
-    // chek the input type
-    if( !is_same<__value, __ix16 >::value &&
-        !is_same<__value, __ix32 >::value &&
-        !is_same<__value, __ix64 >::value &&
-        !is_same<__value, __uix16>::value &&
-        !is_same<__value, __uix32>::value &&
-        !is_same<__value, __uix64>::value)
-        return;
-
-      // check input:
-      if( !values || !workspace )
-          return;
-
-      __value *sorted_values = (__value*)workspace[0];
-      __key   *sorted_keys   = (__key*)workspace[1];
-
-      // auxiliary variables:
-      __ix32 i = 0 , j = 0 , k = 0;
-      __ix32 bit_shift = 0;
-      __ix32 N = size - 1;
-
-      // auxiliary workspace:
-      __ix32 box[8];
-
-      // looking for the maximum element within the input
-      // and initialaling the elements mapping
-      __ix32 max = values[0];
-      for (i = 0; i < size; i++)
-      {
-          if ( values[i] > max)
-              max = values[i];
-      }
-
-      while ( (max >> bit_shift) > 0 )
-      {
-         // initializing workspace:
-         box[0] = 0;
-         box[1] = 0;
-         box[2] = 0;
-         box[3] = 0;
-         box[4] = 0;
-         box[5] = 0;
-         box[6] = 0;
-         box[7] = 0;
-
-         for (i = 0; i < size; i++)
-         {
-             j = ( values[i] >> bit_shift ) & 7;
-             box[j]++;
-         }
-
-         // cumulative sum calculation:
-         box[1] += box[0];
-         box[2] += box[1];
-         box[3] += box[2];
-         box[4] += box[3];
-         box[5] += box[4];
-         box[6] += box[5];
-         box[7] += box[6];
-
-         for (i = N ; i >= 0; i--)
-         {
-             j = ( values[i] >> bit_shift ) & 7;
-             k = --box[j];
-             sorted_values [k] = values[i];
-             sorted_keys[k] = keys[i];
-         }
-
-         // ovewrite the input:
-         for (i = 0; i < size; i++)
-         {
-             keys[i] = sorted_keys[i];
-             values[i] = sorted_values[i];
-         }
-
-         // incrementing the bitshift:
-         bit_shift += 3;
-     }
-
-     if( !descending )
-     {
-         i = 0;
-         j = size-1;
-         while ( i < j )
-         {
-             __swap__( keys[i], keys[j] );
-             __swap__( values[i], values[j] );
-             i++;
-             j--;
-         }
-     }
-}
-
-inline __ix32 __generate_random_number__(__ix32 min, __ix32 max)
-{
-    return min + (rand() % max);
-}
-
-#endif
-
-// pseudo random number generator
-inline uint64_t __PRNG__ ( uint64_t _SEED = 1 )
-{
-  static uint64_t S = (uint64_t)&_SEED;
-  S = ((((S >> 63) ^ (S >> 62) ^ (S >> 61) ^ (S >> 59) ^ (S >> 57) ^ S ) & (uint64_t)1 ) << 63 ) | (S >> 1);
-  return S;
-}
 
 #ifdef _STRINGFWD_H
 
@@ -1017,20 +830,61 @@ inline uint64_t __PRNG__ ( uint64_t _SEED = 1 )
 
     namespace STRING_EXTENSION
     {
-        inline map< size_t, string > __split__(string input, string delimeter = " ")
+        inline string __remove_prefix__( string _Input, string _Prefix )
+        {
+            size_t j = 0;
+            for( size_t i = 0 ; i < _Prefix.size() ; i++ )
+            {
+                if( _Input[i] != _Prefix[i] )
+                {
+                    return _Input;
+                }
+
+                j++;
+            }
+
+            string output;
+            for( size_t i = j ; i < _Input.size() ; i++ )
+            {
+                output += _Input[i];
+            }
+
+            return output;
+        }
+
+        inline string __format_camel_style_string__( string _Input )
+        {
+            string output;
+            for( size_t i = 0 ; i < _Input.size() ; i++ )
+            {
+                output += _Input[i];
+
+                if( i + 1 < _Input.size() && std::isupper( _Input[i+1] ) )
+                    output += ' ';
+            }
+
+            return output;
+        }
+
+        inline string __class_field_to_string__( string _Input )
+        {
+            return __format_camel_style_string__( __remove_prefix__( _Input, "m_" ) );
+        }
+
+        inline std::vector< string > __split__(string input, string delimeter = " ")
         {
             if( input.empty() )
-                return map< size_t, string >();
+                return std::vector< string >();
 
             int start  = 0;
             int end    = 0;
             int size   = delimeter.size();
-            map< size_t, string > output;
+            std::vector< string > output;
 
             while ( end >= 0 )
             {
                 end = input.find(delimeter, start);
-                output[ output.size() ] = input.substr(start, end-start);
+                output.push_back( input.substr(start, end-start) );
                 start = end + size;
             }
 
@@ -1288,12 +1142,12 @@ inline uint64_t __PRNG__ ( uint64_t _SEED = 1 )
         // logging functions
         static void Log(string _Message)
         {
-            cout << MessageFormat(_Message);
+            std::cout << MessageFormat(_Message);
         }
 
         static void Log(string _Typename, string _OjectName, string _Message)
         {
-            cout << MessageFormat(_Typename, _OjectName,  _Message);
+            std::cout << MessageFormat(_Typename, _OjectName,  _Message);
         }
     };
 
@@ -1304,17 +1158,6 @@ inline uint64_t __PRNG__ ( uint64_t _SEED = 1 )
 //------------------------------------------------------------------------------------------------------------------------------
 // forget macro to avoid aliases
 //------------------------------------------------------------------------------------------------------------------------------
-#undef __fx32
-#undef __fx64
-#undef __fxx64
-#undef __ix16
-#undef __ix32
-#undef __ix64
-#undef __uix16
-#undef __uix32
-#undef __uix64
-
-// forget the custom constants
 #undef __TO_DEGREES_CONVERSION_MULTIPLYER__
 #undef __TO_RADIANS_CONVERSION_MULTIPLYER__
 //------------------------------------------------------------------------------------------------------------------------------

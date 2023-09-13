@@ -1500,7 +1500,7 @@ __convf__( const __type *_a, const __type *_b, __type *_c, __ix32 _Na,  __ix32 _
      * \returns The function returns the tuple_x2
      *          containing resulting convulution vector and it's size
 */
-template< typename __type > tuple_x2<__type*, __ix32>
+template< typename __type > Tuple<__type*, __ix32>
 __convf__( const __type *_a, const __type *_b, __ix32 _Na,  __ix32 _Nb )
 {
     __ix32 _Nc = _Na + _Nb - 1;
@@ -1521,6 +1521,30 @@ __convf__( const __type *_a, const __type *_b, __ix32 _Na,  __ix32 _Nb )
      * \returns The function returns the tuple_x3
      *          containing resulting fraction array and it's first and second dimention sizes
 */
+
+template< typename __type >
+struct fraction
+{
+    __type** data     = nullptr;
+    int      rows     = -1;
+    int      sections = -1;
+};
+
+template< typename __type > inline tuple_x3< __type**, int, int >
+__mfree__( tuple_x3< __type**, int, int > tuple )
+{
+    for(int i = 0 ; i < tuple.item1 ; i++)
+    {
+        tuple.item0[i] = __mfree__( tuple.item0[i] );
+    }
+
+    tuple.item0 = __mfree__( tuple.item0 );
+    tuple.item1 = -1;
+    tuple.item2 = -1;
+
+    return tuple;
+}
+
 template<typename __type> tuple_x3<__type**, int, int>
 __fraction_numeric_substitution__(__type *AN, __type *AD, __type *BN, __type *BD, int N, int P)
 {
@@ -1715,6 +1739,11 @@ dft( Complex<__type>* _Input, Complex<__type>* _Spectrum, __ix32 _N, __ix32 _Dir
 
     // scale zero component
     _Spectrum[0] /= 2.0;
+}
+
+inline bool check_power_of_two( __ix32 _Number )
+{
+    return !(bool)( _Number & (_Number-1) );
 }
 
 /*!
