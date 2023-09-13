@@ -25,14 +25,6 @@ using namespace DSP_KERNEL;
 #define __ix32 int
 #endif
 
-#ifndef PI0
-#define PI0 3.1415926535897932384626433832795
-#endif
-
-#ifndef PI2
-#define PI2 6.283185307179586476925286766559
-#endif
-
 /*!  \namespace IIR_KERNEL */
 namespace IIR_KERNEL
 {
@@ -1844,7 +1836,5 @@ namespace IIR_KERNEL
 #undef __fx64
 #undef __fxx64
 #undef __ix32
-#undef PI0
-#undef PI2
 
 #endif // KERNEL_IIR_H

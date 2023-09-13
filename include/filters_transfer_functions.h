@@ -10,14 +10,6 @@ using namespace DSP_KERNEL;
 #define TSF_FILTERS_DEBUG // debugging is not available if the algorithm is running on a device !!!
 #endif
 
-#ifndef PI0
-#define PI0 3.1415926535897932384626433832795
-#endif
-
-#ifndef PI2
-#define PI2 6.283185307179586476925286766559
-#endif
-
 /*! \defgroup <TRANSFER_FUNCTIONS> ( Transfer functions )
  *  \ingroup FILTERS
  *  \brief The module contains transfer function model and the range of the simple filters transfer functions
@@ -744,9 +736,5 @@ public:
 /*! @} */
 
 /*! @} */
-
-// undefining the custom macro to avoid aliases
-#undef PI0
-#undef PI2
 
 #endif // FILTERS_TRANSFER_FUNCTIONS_H

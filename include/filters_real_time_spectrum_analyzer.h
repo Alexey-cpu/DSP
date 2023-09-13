@@ -3,14 +3,6 @@
 
 #include "filters_recursive_fourier_filter.h"
 
-#ifndef PI0
-#define PI0 3.1415926535897932384626433832795
-#endif
-
-#ifndef PI2
-#define PI2 6.283185307179586476925286766559
-#endif
-
 class real_time_spectrum_analyzer final : public transfer_function_model
 {
 protected:
@@ -430,9 +422,5 @@ public:
         return Complex<double>::zero();
     }
 };
-
-// macro undefenition to avoid aliases
-#undef PI0
-#undef PI2
 
 #endif // FILTERS_REAL_TIME_SPECTRUM_ANALYZER_H

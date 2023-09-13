@@ -16,16 +16,6 @@
     @{
 */
 
-/*! \brief converts radians to degrees */
-#ifndef __TO_DEGREES
-#define __TO_DEGREES(x) ( (x) * 57.295779513082320876798154814105)
-#endif
-
-/*! \brief converts degrees to radians */
-#ifndef __TO_RADIANS
-#define __TO_RADIANS(x) ( (x) * 0.01745329251994329576923690768489)
-#endif
-
 /*! \brief sets maximum number of iteration for elliptic functions computation */
 #ifndef __ITERATIONS_NUMBER__
 #define __ITERATIONS_NUMBER__ 30
@@ -1942,15 +1932,6 @@ long __euclide_algorithm__(long a, long b)
 #undef __EPSILON_xx64__
 #undef __EPSILON_x64__
 #undef __EPSILON_x32__
-
-#undef __TO_DEGREES
-#undef __TO_RADIANS
-
-// customized pi undef:
-#undef PI0
-#undef PI2
-#undef PI_2
-#undef PI_4
 
 // customized variables exclusion to avloid aliasing during compilation:
 #undef __ITERATIONS_NUMBER__

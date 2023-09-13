@@ -6,22 +6,6 @@
 #include "math.h"
 #endif
 
-#ifndef PI0
-#define PI0 3.1415926535897932384626433832795
-#endif
-
-#ifndef PI2
-#define PI2 6.283185307179586476925286766559
-#endif
-
-#ifndef PI_2
-#define PI_2 1.5707963267948966192313216916398
-#endif
-
-#ifndef PI_4
-#define PI_4 0.78539816339744830961566084581988
-#endif
-
 /*! \defgroup <THREE_PHASE_TRANSFORMATIONS> ( Three phase ortohonal transformations )
  *  \brief the module describes complex numbers functions
     @{
@@ -637,11 +621,5 @@ public:
 };
 
 /*! @} */
-
-// customized types names exclusion to avoid aliases during compilation:
-#undef PI0
-#undef PI2
-#undef PI_2
-#undef PI_4
 
 #endif // СLARKE_FILTER_H

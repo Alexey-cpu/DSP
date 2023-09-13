@@ -1,6 +1,8 @@
 #ifndef GENERATORS_H
 #define GENERATORS_H
 
+#include "utils.h"
+
 // standart headers
 #ifndef __ALG_PLATFORM
 #include "cmath"
@@ -17,14 +19,6 @@
 
 #ifndef __fx64
 #define __fx64 double
-#endif
-
-#ifndef PI0 // PI
-#define PI0 3.1415926535897932384626433832795
-#endif
-
-#ifndef PI2 // 2*PI
-#define PI2 6.283185307179586476925286766559
 #endif
 
 #ifndef __TO_DEGREES
@@ -157,8 +151,6 @@ public:
 #undef __fx32
 #undef __fx64
 #undef __ix32
-#undef PI0
-#undef PI2
 #undef __TO_RADIANS
 #undef __TO_DEGREES
 

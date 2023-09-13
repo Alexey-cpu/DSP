@@ -39,6 +39,22 @@ using namespace std;
 #define __TO_RADIANS_CONVERSION_MULTIPLYER__ 0.01745329251994329576923690768489
 #endif
 
+#ifndef PI0
+#define PI0 3.1415926535897932384626433832795
+#endif
+
+#ifndef PI2
+#define PI2 6.283185307179586476925286766559
+#endif
+
+#ifndef PI_2
+#define PI_2 1.5707963267948966192313216916398
+#endif
+
+#ifndef PI_4
+#define PI_4 0.78539816339744830961566084581988
+#endif
+
 #ifndef STRINGIFY
 #define STRINGIFY(INPUT) #INPUT
 #endif
@@ -1131,12 +1147,5 @@ __mfree__(__type *memory)
 #endif
 
 /*! @} */
-
-//------------------------------------------------------------------------------------------------------------------------------
-// forget macro to avoid aliases
-//------------------------------------------------------------------------------------------------------------------------------
-#undef __TO_DEGREES_CONVERSION_MULTIPLYER__
-#undef __TO_RADIANS_CONVERSION_MULTIPLYER__
-//------------------------------------------------------------------------------------------------------------------------------
 
 #endif // UTILS_H

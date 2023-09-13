@@ -3,14 +3,6 @@
 
 #include "filters_interpolators.h"
 
-#ifndef PI0
-#define PI0 3.1415926535897932384626433832795
-#endif
-
-#ifndef PI2
-#define PI2 6.283185307179586476925286766559
-#endif
-
 class fast_fourier_transform_spectrum_analyzer
 {
 protected:
@@ -125,9 +117,5 @@ public:
         return _HarmonicNumber < m_FFTPeriod ? m_Spectrum[_HarmonicNumber] * m_Gain : Complex<double>::zero();
     }
 };
-
-// macro undefenition to avoid aliases
-#undef PI0
-#undef PI2
 
 #endif // FILTERS_FAST_FOURIER_TRANSFORM_SPECTRUM_ANALYZER_H

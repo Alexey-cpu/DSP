@@ -9,14 +9,6 @@ using namespace DSP_KERNEL;
 #define RFF_DEBUG // debugging is not available if the algorithm is running on a device !!!
 #endif
 
-#ifndef PI0
-#define PI0 3.1415926535897932384626433832795
-#endif
-
-#ifndef PI2
-#define PI2 6.283185307179586476925286766559
-#endif
-
 /*! \defgroup <RECURSIVE_FOURIER_FILTER> ( Recursive fourier filter )
  *  \ingroup SPECIAL_FILTERS
  *  \brief the module contains model implementation of recursive Fourier filter
@@ -213,9 +205,5 @@ public:
 /*! @} */
 
 /*! @} */
-
-// macro undefenition to avoid aliases
-#undef PI0
-#undef PI2
 
 #endif // FILTERS_RECURSIVE_FOURIER_FILTER_H
