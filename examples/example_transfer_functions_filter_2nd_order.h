@@ -45,7 +45,7 @@ int filters_filter_2nd_order_example()
 
     // filter initialization
     filter_2nd_order<__type> filter;
-    filter.init(Fs, 120, 0.7, filter_type::highpass);
+    filter.init(Fs, 120, 0.7, filter_type::bandstop);
     filter.show();
 
     // emulation

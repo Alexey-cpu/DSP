@@ -1525,27 +1525,27 @@ __convf__( const __type *_a, const __type *_b, __ix32 _Na,  __ix32 _Nb )
 template< typename __type >
 struct fraction
 {
-    __type** data     = nullptr;
-    int      rows     = -1;
-    int      sections = -1;
+    __type** data      = nullptr;
+    int      positions = -1;
+    int      sections  = -1;
 };
 
-template< typename __type > inline tuple_x3< __type**, int, int >
-__mfree__( tuple_x3< __type**, int, int > tuple )
+template< typename __type > fraction<__type>
+__mfree__( fraction<__type> tuple )
 {
-    for(int i = 0 ; i < tuple.item1 ; i++)
+    for(int i = 0 ; i < tuple.positions ; i++)
     {
-        tuple.item0[i] = __mfree__( tuple.item0[i] );
+        tuple.data[i] = __mfree__( tuple.data[i] );
     }
 
-    tuple.item0 = __mfree__( tuple.item0 );
-    tuple.item1 = -1;
-    tuple.item2 = -1;
+    tuple.data      = __mfree__( tuple.data );
+    tuple.positions = -1;
+    tuple.sections  = -1;
 
     return tuple;
 }
 
-template<typename __type> tuple_x3<__type**, int, int>
+template<typename __type> fraction<__type>
 __fraction_numeric_substitution__(__type *AN, __type *AD, __type *BN, __type *BD, int N, int P)
 {
     // decrement orders to omit zero power elements

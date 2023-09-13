@@ -366,14 +366,6 @@ using namespace BITSET_UTILS;
 
 #endif
 
-template<typename a, typename b, typename c>
-struct tuple_x3
-{
-    a item0;
-    b item1;
-    c item2;
-};
-
 #ifdef _GLIBCXX_NUMERIC_LIMITS
 
     // Fortran analogues functions:
@@ -808,21 +800,6 @@ __mfree__(__type *memory)
 
     return memory;
 }
-
-/*
-template< typename __type > void
-__alloc__( tuple_x3< __type**, int, int > *tuple, int m, int n )
-{
-    tuple->item1 = m;
-    tuple->item2 = n;
-    tuple->item0 = __alloc__<__type*>(m);
-
-    for( int i = 0 ; i < tuple->item1 ; i++ )
-    {
-        tuple->item0[i] = __alloc__<__type>(n);
-    }
-}
-*/
 
 #ifdef _STRINGFWD_H
 

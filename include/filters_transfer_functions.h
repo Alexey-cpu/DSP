@@ -35,19 +35,13 @@ class transfer_function : public transfer_function_model
     delay<__type> m_buff_sy;
 
     // transfer function fraction
-    tuple_x3<__type**,
-            int,
-            int > m_Wz;
+    fraction<__type> m_Wz;
 
     // input fraction to transform
-    tuple_x3<__type**,
-            int,
-            int > m_Ws;
+    fraction<__type> m_Ws;
 
     //
-    tuple_x3<__type**,
-            int,
-            int > m_Rz;
+    fraction<__type> m_Rz;
 
 
     // memory allocation function
@@ -58,17 +52,23 @@ class transfer_function : public transfer_function_model
         #endif
 
         // substitute billinear transform fraction into transfer function fraction
-        m_Wz = __fraction_numeric_substitution__( &m_Ws.item0[0][0], &m_Ws.item0[1][0], &m_Rz.item0[0][0], &m_Rz.item0[1][0], m_Ws.item2, m_Rz.item2);
+        m_Wz = __fraction_numeric_substitution__(
+                    &m_Ws.data[0][0],
+                &m_Ws.data[1][0],
+                &m_Rz.data[0][0],
+                &m_Rz.data[1][0],
+                m_Ws.sections,
+                m_Rz.sections);
 
         // compute Gain
-        m_Gain = (__type)1 / ((__type*)m_Wz.item0[1])[0];
-        for( int j = 0 ; j < m_Wz.item2; j++ )
+        m_Gain = (__type)1 / ((__type*)m_Wz.data[1])[0];
+        for( int j = 0 ; j < m_Wz.sections; j++ )
         {
-            ((__type*)m_Wz.item0[1])[j] *= m_Gain;
+            ((__type*)m_Wz.data[1])[j] *= m_Gain;
         }
 
-        m_buff_sx.allocate( m_Wz.item2 + 1 );
-        m_buff_sy.allocate( m_Wz.item2 + 1 );
+        m_buff_sx.allocate( m_Wz.sections + 1 );
+        m_buff_sy.allocate( m_Wz.sections + 1 );
 
         return 1;
     }
@@ -88,7 +88,15 @@ class transfer_function : public transfer_function_model
 
     template<typename T> T filt(T *_input)
     {
-        return __filt__(_input, &m_Wz.item0[0][0], &m_Wz.item0[1][0], &m_Gain, m_Wz.item2, m_Wz.item2, 1, &m_buff_sx, &m_buff_sy );
+        return __filt__(
+                _input,
+                &m_Wz.data[0][0],
+                &m_Wz.data[1][0],
+                &m_Gain, m_Wz.sections,
+                m_Wz.sections,
+                1,
+                &m_buff_sx,
+                &m_buff_sy );
     }
 
 public:
@@ -116,14 +124,14 @@ public:
      *  \param[Fs] sampling frequency, Hz
      *  \param[fraction] transfer function fraction
      *  \details Transfer function fraction is represented by the tuple_x4 that contains:
-     *           tuple_x3.item0 - pointer to the numerator/denominator of the transfer function
-     *           tuple_x3.item1 - number of fraction polynons - always equals 2 for fraction
-     *           tuple_x3.item2 - number of numerator/denominator elements ( numerator size always equals to denominator size )
+     *           tuple_x3.data - pointer to the numerator/denominator of the transfer function
+     *           tuple_x3.positions - number of fraction polynons - always equals 2 for fraction
+     *           tuple_x3.sections - number of numerator/denominator elements ( numerator size always equals to denominator size )
     */
-    void init(double Fs, tuple_x3< __type**, int, int > Ws, tuple_x3< __type**, int, int > Rz )
+    void init(double Fs, fraction<__type> Ws, fraction<__type> Rz )
     {
         // check the input
-        if( !Ws.item0 || Ws.item1 <= 0 || Ws.item2 <= 0 )
+        if( !Ws.data || Ws.positions <= 0 || Ws.sections <= 0 )
         {
             #ifdef TSF_FILTERS_DEBUG
             Debugger::Log("filters_tsf","init()","Wrong input");
@@ -132,9 +140,9 @@ public:
             return;
         }
 
-        for( int i = 0 ; i < Ws.item1; i++ )
+        for( int i = 0 ; i < Ws.positions; i++ )
         {
-            if( !Ws.item0[i] )
+            if( !Ws.data[i] )
             {
                 #ifdef TSF_FILTERS_DEBUG
                 Debugger::Log("filters_tsf","init()","The input fraction is empty");
@@ -146,7 +154,7 @@ public:
 
         m_Ws = Ws;
         m_Rz = Rz;
-        transfer_function_model::init(Ws.item2, Fs);
+        transfer_function_model::init(Ws.sections, Fs);
         allocate();
     }
 
@@ -157,13 +165,20 @@ public:
     */
     Complex<double> frequency_response( double F ) override
     {
-        return __freq_resp__( &((__type*)m_Wz.item0[0])[0], &((__type*)m_Wz.item0[1])[0], &m_Gain, m_Wz.item2, m_Wz.item2, 1, m_Fs, F );
+        return __freq_resp__(
+                    &((__type*)m_Wz.data[0])[0],
+                &((__type*)m_Wz.data[1])[0],
+                &m_Gain, m_Wz.sections,
+                m_Wz.sections,
+                1,
+                m_Fs,
+                F );
     }
 
     #ifdef TSF_FILTERS_DEBUG
     void show()
     {
-        if( !m_Ws.item0 || !m_Wz.item0 )
+        if( !m_Ws.data || !m_Wz.data )
         {
             #ifdef TSF_FILTERS_DEBUG
             Debugger::Log("filters_tsf","show()","Transfer function has not been instantiated yet");
@@ -171,22 +186,22 @@ public:
         }
 
         cout << "Ws = \n";
-        for( int i = 0 ; i < m_Ws.item1; i++ )
+        for( int i = 0 ; i < m_Ws.positions; i++ )
         {
-            for( int j = 0 ; j < m_Ws.item2; j++ )
+            for( int j = 0 ; j < m_Ws.sections; j++ )
             {
-                cout << ((__type*)m_Ws.item0[i])[j] << "\t";
+                cout << ((__type*)m_Ws.data[i])[j] << "\t";
             }
             cout << "\n";
         }
         cout << "Gain(Ws) = " << 1 << "\n\n";
 
         cout << "Wz = \n";
-        for( int i = 0 ; i < m_Wz.item1; i++ )
+        for( int i = 0 ; i < m_Wz.positions; i++ )
         {
-            for( int j = 0 ; j < m_Wz.item2; j++ )
+            for( int j = 0 ; j < m_Wz.sections; j++ )
             {
-                cout << ((__type*)m_Wz.item0[i])[j] << "\t";
+                cout << ((__type*)m_Wz.data[i])[j] << "\t";
             }
             cout << "\n";
         }
@@ -236,36 +251,36 @@ public:
     void init(double Fs, double T1, double T2)
     {
         // Ws
-        tuple_x3<__type**, int, int> Ws;
-        Ws.item1    = 2;
-        Ws.item2    = 2;
-        Ws.item0    = __alloc__<__type*>(Ws.item1);
-        Ws.item0[0] = __alloc__<__type>(Ws.item2);
-        Ws.item0[1] = __alloc__<__type>(Ws.item2);
+        fraction<__type> Ws;
+        Ws.positions    = 2;
+        Ws.sections    = 2;
+        Ws.data    = __alloc__<__type*>(Ws.positions);
+        Ws.data[0] = __alloc__<__type>(Ws.sections);
+        Ws.data[1] = __alloc__<__type>(Ws.sections);
 
         // initialize numerator
-        Ws.item0[0][0] = 1;
-        Ws.item0[0][1] = T1;
+        Ws.data[0][0] = 1;
+        Ws.data[0][1] = T1;
 
         // initialize denominator
-        Ws.item0[1][0] = 1;
-        Ws.item0[1][1] = T2;
+        Ws.data[1][0] = 1;
+        Ws.data[1][1] = T2;
 
         // Rz
-        tuple_x3<__type**, int, int> Rz;
-        Rz.item1    = 2;
-        Rz.item2    = 2;
-        Rz.item0    = __alloc__<__type*>(Rz.item1);
-        Rz.item0[0] = __alloc__<__type>(Rz.item2);
-        Rz.item0[1] = __alloc__<__type>(Rz.item2);
+        fraction<__type> Rz;
+        Rz.positions    = 2;
+        Rz.sections    = 2;
+        Rz.data    = __alloc__<__type*>(Rz.positions);
+        Rz.data[0] = __alloc__<__type>(Rz.sections);
+        Rz.data[1] = __alloc__<__type>(Rz.sections);
 
         // initialize numerator
-        Rz.item0[0][0] = +1;
-        Rz.item0[0][1] = -1;
+        Rz.data[0][0] = +1;
+        Rz.data[0][1] = -1;
 
         // initialize denominator
-        Rz.item0[1][0] = +1/Fs;
-        Rz.item0[1][1] = +1/Fs;
+        Rz.data[1][0] = +1/Fs;
+        Rz.data[1][1] = +1/Fs;
 
         m_transfer_function.init(Fs, Ws, Rz);
         transfer_function_model::init(2, Fs);
@@ -326,36 +341,36 @@ public:
     */
     void init(double Fs, double Ta)
     {
-        tuple_x3<__type**, int, int> Ws;
-        Ws.item1    = 2;
-        Ws.item2    = 2;
-        Ws.item0    = __alloc__<__type*>(Ws.item1);
-        Ws.item0[0] = __alloc__<__type>(Ws.item2);
-        Ws.item0[1] = __alloc__<__type>(Ws.item2);
+        fraction<__type> Ws;
+        Ws.positions    = 2;
+        Ws.sections    = 2;
+        Ws.data    = __alloc__<__type*>(Ws.positions);
+        Ws.data[0] = __alloc__<__type>(Ws.sections);
+        Ws.data[1] = __alloc__<__type>(Ws.sections);
 
         // initialize numerator
-        Ws.item0[0][0] = 1;
-        Ws.item0[0][1] = 0;
+        Ws.data[0][0] = 1;
+        Ws.data[0][1] = 0;
 
         // initialize denominator
-        Ws.item0[1][0] = 1;
-        Ws.item0[1][1] = Ta;
+        Ws.data[1][0] = 1;
+        Ws.data[1][1] = Ta;
 
         // Rz
-        tuple_x3<__type**, int, int> Rz;
-        Rz.item1    = 2;
-        Rz.item2    = 2;
-        Rz.item0    = __alloc__<__type*>(Rz.item1);
-        Rz.item0[0] = __alloc__<__type>(Rz.item2);
-        Rz.item0[1] = __alloc__<__type>(Rz.item2);
+        fraction<__type> Rz;
+        Rz.positions    = 2;
+        Rz.sections    = 2;
+        Rz.data    = __alloc__<__type*>(Rz.positions);
+        Rz.data[0] = __alloc__<__type>(Rz.sections);
+        Rz.data[1] = __alloc__<__type>(Rz.sections);
 
         // initialize numerator
-        Rz.item0[0][0] = +1;
-        Rz.item0[0][1] = -1;
+        Rz.data[0][0] = +1;
+        Rz.data[0][1] = -1;
 
         // initialize denominator
-        Rz.item0[1][0] = +1/Fs;
-        Rz.item0[1][1] = +1/Fs;
+        Rz.data[1][0] = +1/Fs;
+        Rz.data[1][1] = +1/Fs;
 
         m_transfer_function.init(Fs, Ws, Rz);
         transfer_function_model::init(2, Fs);
@@ -415,36 +430,36 @@ public:
     */
     void init(double Fs)
     {
-        tuple_x3<__type**, int, int> Ws;
-        Ws.item1    = 2;
-        Ws.item2    = 2;
-        Ws.item0    = __alloc__<__type*>(Ws.item1);
-        Ws.item0[0] = __alloc__<__type>(Ws.item2);
-        Ws.item0[1] = __alloc__<__type>(Ws.item2);
+        fraction<__type> Ws;
+        Ws.positions    = 2;
+        Ws.sections    = 2;
+        Ws.data    = __alloc__<__type*>(Ws.positions);
+        Ws.data[0] = __alloc__<__type>(Ws.sections);
+        Ws.data[1] = __alloc__<__type>(Ws.sections);
 
         // initialize numerator
-        Ws.item0[0][0] = 1;
-        Ws.item0[0][1] = 0;
+        Ws.data[0][0] = 1;
+        Ws.data[0][1] = 0;
 
         // initialize denominator
-        Ws.item0[1][0] = 0;
-        Ws.item0[1][1] = 1;
+        Ws.data[1][0] = 0;
+        Ws.data[1][1] = 1;
 
         // Rz
-        tuple_x3<__type**, int, int> Rz;
-        Rz.item1    = 2;
-        Rz.item2    = 2;
-        Rz.item0    = __alloc__<__type*>(Rz.item1);
-        Rz.item0[0] = __alloc__<__type>(Rz.item2);
-        Rz.item0[1] = __alloc__<__type>(Rz.item2);
+        fraction<__type> Rz;
+        Rz.positions    = 2;
+        Rz.sections    = 2;
+        Rz.data    = __alloc__<__type*>(Rz.positions);
+        Rz.data[0] = __alloc__<__type>(Rz.sections);
+        Rz.data[1] = __alloc__<__type>(Rz.sections);
 
         // initialize numerator
-        Rz.item0[0][0] = +1;
-        Rz.item0[0][1] = -1;
+        Rz.data[0][0] = +1;
+        Rz.data[0][1] = -1;
 
         // initialize denominator
-        Rz.item0[1][0] = +1/Fs;
-        Rz.item0[1][1] = +1/Fs;
+        Rz.data[1][0] = +1/Fs;
+        Rz.data[1][1] = +1/Fs;
 
         m_transfer_function.init(Fs, Ws, Rz);
         transfer_function_model::init(2, Fs);
@@ -505,36 +520,36 @@ public:
     */
     void init(double Fs, double Td)
     {
-        tuple_x3<__type**, int, int> Ws;
-        Ws.item1 = 2;
-        Ws.item2 = 2;
-        Ws.item0 = __alloc__<__type*>(Ws.item1);
-        Ws.item0[0] = __alloc__<__type>(Ws.item2);
-        Ws.item0[1] = __alloc__<__type>(Ws.item2);
+        fraction<__type> Ws;
+        Ws.positions = 2;
+        Ws.sections = 2;
+        Ws.data = __alloc__<__type*>(Ws.positions);
+        Ws.data[0] = __alloc__<__type>(Ws.sections);
+        Ws.data[1] = __alloc__<__type>(Ws.sections);
 
         // initialize numerator
-        Ws.item0[0][0] = 0;
-        Ws.item0[0][1] = 1;
+        Ws.data[0][0] = 0;
+        Ws.data[0][1] = 1;
 
         // initialize denominator
-        Ws.item0[1][0] = 1;
-        Ws.item0[1][1] = Td;
+        Ws.data[1][0] = 1;
+        Ws.data[1][1] = Td;
 
         // Rz
-        tuple_x3<__type**, int, int> Rz;
-        Rz.item1    = 2;
-        Rz.item2    = 2;
-        Rz.item0    = __alloc__<__type*>(Rz.item1);
-        Rz.item0[0] = __alloc__<__type>(Rz.item2);
-        Rz.item0[1] = __alloc__<__type>(Rz.item2);
+        fraction<__type> Rz;
+        Rz.positions    = 2;
+        Rz.sections    = 2;
+        Rz.data    = __alloc__<__type*>(Rz.positions);
+        Rz.data[0] = __alloc__<__type>(Rz.sections);
+        Rz.data[1] = __alloc__<__type>(Rz.sections);
 
         // initialize numerator
-        Rz.item0[0][0] = +1;
-        Rz.item0[0][1] = -1;
+        Rz.data[0][0] = +1;
+        Rz.data[0][1] = -1;
 
         // initialize denominator
-        Rz.item0[1][0] = +1/Fs;
-        Rz.item0[1][1] = +1/Fs;
+        Rz.data[1][0] = +1/Fs;
+        Rz.data[1][1] = +1/Fs;
 
         m_transfer_function.init(Fs, Ws, Rz);
         transfer_function_model::init(2, Fs);
@@ -594,12 +609,12 @@ public:
     */
     void init(double Fs, double Fc, double Kd, filter_type type)
     {
-        tuple_x3<__type**, int, int> Ws;
-        Ws.item1    = 2;
-        Ws.item2    = 3;
-        Ws.item0    = __alloc__<__type*>(Ws.item1);
-        Ws.item0[0] = __alloc__<__type>(Ws.item2);
-        Ws.item0[1] = __alloc__<__type>(Ws.item2);
+        fraction<__type> Ws;
+        Ws.positions    = 2;
+        Ws.sections    = 3;
+        Ws.data    = __alloc__<__type*>(Ws.positions);
+        Ws.data[0] = __alloc__<__type>(Ws.sections);
+        Ws.data[1] = __alloc__<__type>(Ws.sections);
 
         double omega = 2 * PI0 * Fc;
         omega = tan( omega / Fs / 2.0 );
@@ -609,89 +624,89 @@ public:
             case filter_type::lowpass:
 
                 // initialize numerator
-                Ws.item0[0][0] = omega * omega;
-                Ws.item0[0][1] = 0;
-                Ws.item0[0][2] = 0;
+                Ws.data[0][0] = omega * omega;
+                Ws.data[0][1] = 0;
+                Ws.data[0][2] = 0;
 
                 // initialize denominator
-                Ws.item0[1][0] = omega * omega;
-                Ws.item0[1][1] = 2 * omega * Kd;
-                Ws.item0[1][2] = 1;
+                Ws.data[1][0] = omega * omega;
+                Ws.data[1][1] = 2 * omega * Kd;
+                Ws.data[1][2] = 1;
 
             break;
 
             case filter_type::highpass:
 
                 // initialize numerator
-                Ws.item0[0][0] = 0;
-                Ws.item0[0][1] = 0;
-                Ws.item0[0][2] = 1;
+                Ws.data[0][0] = 0;
+                Ws.data[0][1] = 0;
+                Ws.data[0][2] = 1;
 
                 // initialize denominator
-                Ws.item0[1][0] = omega * omega;
-                Ws.item0[1][1] = 2 * omega * Kd;
-                Ws.item0[1][2] = 1;
+                Ws.data[1][0] = omega * omega;
+                Ws.data[1][1] = 2 * omega * Kd;
+                Ws.data[1][2] = 1;
 
             break;
 
             case filter_type::bandpass:
 
                 // initialize numerator
-                Ws.item0[0][0] = 0;
-                Ws.item0[0][1] = 2 * omega * Kd;
-                Ws.item0[0][2] = 0;
+                Ws.data[0][0] = 0;
+                Ws.data[0][1] = 2 * omega * Kd;
+                Ws.data[0][2] = 0;
 
                 // initialize denominator
-                Ws.item0[1][0] = omega * omega;
-                Ws.item0[1][1] = 2 * omega * Kd;
-                Ws.item0[1][2] = 1;
+                Ws.data[1][0] = omega * omega;
+                Ws.data[1][1] = 2 * omega * Kd;
+                Ws.data[1][2] = 1;
 
             break;
 
             case filter_type::bandstop:
 
                 // initialize numerator
-                Ws.item0[0][0] = omega * omega;
-                Ws.item0[0][1] = 0;
-                Ws.item0[0][2] = 1;
+                Ws.data[0][0] = omega * omega;
+                Ws.data[0][1] = 0;
+                Ws.data[0][2] = 1;
 
                 // initialize denominator
-                Ws.item0[1][0] = omega * omega;
-                Ws.item0[1][1] = 2 * omega * Kd;
-                Ws.item0[1][2] = 1;
+                Ws.data[1][0] = omega * omega;
+                Ws.data[1][1] = 2 * omega * Kd;
+                Ws.data[1][2] = 1;
 
             break;
 
             default:
 
                 // initialize numerator
-                Ws.item0[0][0] = omega * omega;
-                Ws.item0[0][1] = 0;
-                Ws.item0[0][2] = 0;
+                Ws.data[0][0] = omega * omega;
+                Ws.data[0][1] = 0;
+                Ws.data[0][2] = 0;
 
                 // initialize denominator
-                Ws.item0[1][0] = omega * omega;
-                Ws.item0[1][1] = 2 * omega * Kd;
-                Ws.item0[1][2] = 1;
+                Ws.data[1][0] = omega * omega;
+                Ws.data[1][1] = 2 * omega * Kd;
+                Ws.data[1][2] = 1;
 
             break;
         }
 
         // Rz
-        tuple_x3<__type**, int, int> Rz;
-        Rz.item1    = 2;
-        Rz.item2    = 2;
-        Rz.item0    = __alloc__<__type*>(Rz.item1);
-        Rz.item0[0] = __alloc__<__type>(Rz.item2);
-        Rz.item0[1] = __alloc__<__type>(Rz.item2);
+        fraction<__type> Rz;
+        Rz.positions    = 2;
+        Rz.sections    = 2;
+        Rz.data    = __alloc__<__type*>(Rz.positions);
+        Rz.data[0] = __alloc__<__type>(Rz.sections);
+        Rz.data[1] = __alloc__<__type>(Rz.sections);
 
         // initialize numerator
-        Rz.item0[0][0] = +1;
-        Rz.item0[0][1] = -1;
+        Rz.data[0][0] = +1;
+        Rz.data[0][1] = -1;
 
         // initialize denominator
-        Rz.item0[1][0] = +1;
-        Rz.item0[1][1] = +1;
+        Rz.data[1][0] = +1;
+        Rz.data[1][1] = +1;
 
         m_transfer_function.init(Fs, Ws, Rz);
         transfer_function_model::init(2, Fs);
