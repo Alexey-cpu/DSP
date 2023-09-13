@@ -12,21 +12,31 @@
 #include <chrono>
 #endif
 
+// STL
+#include <float.h>
 #include <bitset>
-#include <sstream>
-#include "QElapsedTimer"
-#include <fstream>
+#include <limits.h>
+
+// STL math and algorithms
 #include <algorithm>
 #include <random>
-#include "iostream"
-#include "cmath"
+#include <cmath>
+
+// STL containers
 #include "vector"
 #include "list"
 #include "map"
-#include <limits.h>
-#include <float.h>
 #include <set>
+
+// STL input/output streams
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
 using namespace std;
+
+// Qt includes
+#include <QElapsedTimer>
 
 #endif
 
@@ -384,244 +394,72 @@ using namespace BITSET_UTILS;
 
 #ifdef _GLIBCXX_NUMERIC_LIMITS
 
-    // Fortran analogues functions:
-
-    // digits:
+    // Fortran analogues functions
     template< typename __type > __type __digits__()  { return numeric_limits<__type>::digits; }
 
-    // epsilon:
     template< typename __type > __type __epsilon__() { return numeric_limits<__type>::epsilon(); }
 
-    // huge:
     template< typename __type > __type __huge__() { return numeric_limits<__type>::max(); }
 
-    // maxexponent:
     template< typename __type > __type __maxexponent__() { return numeric_limits<__type>::max_exponent; }
 
-    // minexponent:
     template< typename __type > __type __minexponent__() { return numeric_limits<__type>::min_exponent; }
 
-    // radix:
     template< typename __type > __type __radix__() { return numeric_limits<__type>::radix; }
 
-    // tiny:
     template< typename __type > __type __tiny__() { return numeric_limits<__type>::min(); }
 
 #endif
 
-/*!
- *  \brief looks the maximum among a, b
- *  \param[a] a value
- *  \param[b] b value
-*/
-template< typename __type > inline __type __max__ ( __type a , __type b )
+template< typename Head >
+Head __max__( Head _A, Head _B )
 {
-    return ( a > b ) ? a : b;
+    return _A > _B ? _A : _B;
 }
 
-/*!
- *  \brief looks the maximum among a, b, c
- *  \param[a] a value
- *  \param[b] b value
- *  \param[c] c value
-*/
-template< typename __type > inline __type __max__ ( __type a , __type b , __type c )
+template< typename Head, typename ... Args >
+Head __max__( Head _A, Head _B, Args... _Args )
 {
-    return __max__< __type >( a , __max__< __type >( b , c ) );
+    return __max__( __max__( _A, _B ), _Args... );
 }
 
-/*!
- *  \brief looks the maximum among a, b, c, d
- *  \param[a] a value
- *  \param[b] b value
- *  \param[c] c value
- *  \param[d] d value
-*/
-template< typename __type > inline __type __max__ ( __type a , __type b , __type c , __type d )
+template< typename __type > inline __type
+__max__( __type* _Input , uint64_t _Size )
 {
-    return __max__< __type >( a , __max__< __type >( b , c , d ) );
-}
+    __type vmax = _Input[0];
 
-/*!
- *  \brief looks the maximum among a, b, c, d
- *  \param[a] a value
- *  \param[b] b value
- *  \param[c] c value
- *  \param[d] d value
-*/
-template< typename __type > inline __type __max__ ( __type a , __type b , __type c , __type d , __type e )
-{
-    return __max__< __type >( a , __max__< __type >( b , c , d , e ) );
-}
-
-/*!
- *  \brief looks the maximum among a, b, c, d, e, f
- *  \param[a] a value
- *  \param[b] b value
- *  \param[c] c value
- *  \param[d] d value
- *  \param[e] e value
- *  \param[f] f value
-*/
-template< typename __type > inline __type __max__ ( __type a , __type b , __type c , __type d , __type e , __type f )
-{
-    return __max__< __type >( a , __max__< __type >( b , c , d , e , f ) );
-}
-
-/*!
- *  \brief looks the maximum among a, b, c, d, e, f, g
- *  \param[a] a value
- *  \param[b] b value
- *  \param[c] c value
- *  \param[d] d value
- *  \param[e] e value
- *  \param[f] f value
- *  \param[g] g value
-*/
-template< typename __type > inline __type __max__ ( __type a , __type b , __type c , __type d , __type e , __type f , __type g)
-{
-    return __max__< __type >( a , __max__< __type >( b , c , d , e , f , g ) );
-}
-
-/*!
- *  \brief looks the maximum among a, b, c, d, e, f, g, h
- *  \param[a] a value
- *  \param[b] b value
- *  \param[c] c value
- *  \param[d] d value
- *  \param[e] e value
- *  \param[f] f value
- *  \param[g] g value
- *  \param[h] h value
-*/
-template< typename __type > inline __type __max__ ( __type a , __type b , __type c , __type d , __type e , __type f , __type g , __type h)
-{
-    return __max__< __type >( a , __max__< __type >( b , c , d , e , f , g , h ) );
-}
-
-/*!
- *  \brief looks the maximum within the input array
- *  \param[input] input array
- *  \param[N] input array size
-*/
-template< typename __type > inline __type __max__( __type* input , int N )
-{
-    __type vmax = input[0];
-
-    for( int i = 1 ; i < N; i++ )
+    for( int i = 1 ; i < _Size; i++ )
     {
-        if( input[i] > vmax ) vmax = input[i];
+        if( _Input[i] > vmax )
+            vmax = _Input[i];
     }
 
     return vmax;
 }
 
-/*!
- *  \brief looks the minimum among a, b
- *  \param[a] a value
- *  \param[b] b value
-*/
-template< typename __type > inline __type __min__ ( __type a , __type b )
+template< typename Head >
+Head __min__( Head _A, Head _B )
 {
-    return ( a < b ) ? a : b;
+    return _A < _B ? _A : _B;
 }
 
-/*!
- *  \brief looks the minimum among a, b, c
- *  \param[a] a value
- *  \param[b] b value
- *  \param[c] c value
-*/
-template< typename __type > inline __type __min__ ( __type a , __type b , __type c )
+template< typename Head, typename ... Args >
+Head __min__( Head _A, Head _B, Args... _Args )
 {
-    return __min__< __type >( a , __min__< __type >( b , c ) );
+    return __min__( __min__( _A, _B ), _Args... );
 }
 
-/*!
- *  \brief looks the minimum among a, b, c, d
- *  \param[a] a value
- *  \param[b] b value
- *  \param[c] c value
- *  \param[d] d value
-*/
-template< typename __type > inline __type __min__ ( __type a , __type b , __type c , __type d )
-{
-    return __min__< __type >( a , __min__< __type >( b , c , d ) );
-}
-
-/*!
- *  \brief looks the minimum among a, b, c, d, e
- *  \param[a] a value
- *  \param[b] b value
- *  \param[c] c value
- *  \param[d] d value
- *  \param[e] e value
-*/
-template< typename __type > inline __type __min__ ( __type a , __type b , __type c , __type d , __type e )
-{
-    return __min__< __type >( a , __min__< __type >( b , c , d , e ) );
-}
-
-/*!
- *  \brief looks the minimum among a, b, c, d, e, f
- *  \param[a] a value
- *  \param[b] b value
- *  \param[c] c value
- *  \param[d] d value
- *  \param[e] e value
- *  \param[f] f value
-*/
-template< typename __type > inline __type __min__ ( __type a , __type b , __type c , __type d , __type e , __type f )
-{
-    return __min__< __type >( a , __min__< __type >( b , c , d , e , f ) );
-}
-
-/*!
- *  \brief looks the minimum among a, b, c, d, e, f, g
- *  \param[a] a value
- *  \param[b] b value
- *  \param[c] c value
- *  \param[d] d value
- *  \param[e] e value
- *  \param[f] f value
- *  \param[g] g value
-*/
-template< typename __type > inline __type __min__ ( __type a , __type b , __type c , __type d , __type e , __type f , __type g)
-{
-    return __min__< __type >( a , __min__< __type >( b , c , d , e , f , g ) );
-}
-
-/*!
- *  \brief looks the minimum among a, b, c, d, e, f, g, h
- *  \param[a] a value
- *  \param[b] b value
- *  \param[c] c value
- *  \param[d] d value
- *  \param[e] e value
- *  \param[f] f value
- *  \param[g] g value
- *  \param[h] h value
-*/
-template< typename __type > inline __type __min__ ( __type a , __type b , __type c , __type d , __type e , __type f , __type g , __type h)
-{
-    return __min__< __type >( a , __min__< __type >( b , c , d , e , f , g , h ) );
-}
-
-/*!
- *  \brief looks the minimum within the input array
- *  \param[input] input array
- *  \param[N] input array size
-*/
 template< typename __type >
-inline __type __min__( const __type *input, int N )
+inline __type __min__( const __type* _Input, int _Size )
 {
-    int imin = 0;
-    __type vmin = input[imin];
-    for( int i = 1 ; i < N; i++ )
+    int    imin = 0;
+    __type vmin = _Input[imin];
+
+    for( int i = 1 ; i < _Size; i++ )
     {
-        if( input[i] < vmin )
+        if( _Input[i] < vmin )
         {
-            vmin = input[i];
+            vmin = _Input[i];
             imin = i;
         }
     }
@@ -629,192 +467,112 @@ inline __type __min__( const __type *input, int N )
     return vmin;
 }
 
-/*!
- *  \brief looks the minimum within the input array
- *  \param[input] input array
- *  \param[N] input array size
-*/
-/*
-template< typename __type > inline tuple_x2<__type, int>
-__min__( Tuple<__type*, int> vector )
-{
-    __type *input = get<0>( vector );
-    int     imin  = 0;
-    __type  vmin  = input[imin];
-
-    for( int i = 1 ; i < get<1>(vector); i++ )
-    {
-        if( input[i] < vmin )
-        {
-            vmin = input[i];
-            imin = i;
-        }
-    }
-
-    return { vmin, imin };
-}
-*/
-
-/*!
- *  \brief returns an absolete value of an input
- *  \param[a] input
-*/
 template< typename __type >
-inline __type __abs__ ( __type a )
+inline __type __abs__ ( __type _A )
 {
-    return ( a < 0 ) ? -a : a;
+    return ( _A < 0 ) ? -_A : _A;
 }
 
-/*!
- *  \brief returns the number b with the sign of a number a
- *  \param[a] a value
- *  \param[b] b value
-*/
 template< typename __type >
-inline __type __sign__( __type a , __type b )
+inline __type __sign__( __type _A, __type _B )
 {
-    return a * ( ( b > 0 ) ? (__type)1 : -(__type)1 );
+    return _A * ( ( _B > 0 ) ? (__type)1 : -(__type)1 );
 }
 
-/*!
- *  \brief swaps a and b
- *  \param[a] a value
- *  \param[b] b value
-*/
-template< typename __type > inline void __swap__( __type &a , __type &b )
+template< typename __type >
+inline void __swap__( __type& _A, __type& _B )
 {
-    __type c = b;
-    b = a;
-    a = c;
+    __type c = _B;
+    _B = _A;
+    _A = c;
 }
 
-/*!
- *  \brief converts input angle to degrees
- *  \param[angle] input angle
-*/
-inline double __to_degrees__(double angle)
+inline double __to_degrees__(double _Angle)
 {
-    return angle * __TO_DEGREES_CONVERSION_MULTIPLYER__;
+    return _Angle * __TO_DEGREES_CONVERSION_MULTIPLYER__;
 }
 
-/*!
- *  \brief converts input angle to radians
- *  \param[angle] input angle
-*/
-inline double __to_radians__(double angle)
+inline double __to_radians__(double _Angle)
 {
-    return angle * __TO_RADIANS_CONVERSION_MULTIPLYER__;
+    return _Angle * __TO_RADIANS_CONVERSION_MULTIPLYER__;
 }
 
-/*!
- *  \brief saturation function
- *  \param[input] input
- *  \param[UpperLimit] input upper limit
- *  \param[LowerLimit] input lower limit
- *  \details The function returns the input if it's value is between lower and upper limit.
- *           If the input value is above upper limit - the upper limit is returned.
- *           If the input value is below lower limit - the lower limit is returned.
-*/
 template<typename __type> __type
-__saturation__(__type input, __type UpperLimit, __type LowerLimit)
+__saturation__(__type _Input, __type _UpperLimit, __type _LowerLimit)
 {
-    if( input > UpperLimit )
-    {
-        return UpperLimit;
-    }
+    if( _Input > _UpperLimit )
+        return _UpperLimit;
 
-    if( input < LowerLimit )
-    {
-        return LowerLimit;
-    }
+    if( _Input < _LowerLimit )
+        return _LowerLimit;
 
-    return input;
+    return _Input;
 }
 
-/*!
- *  \brief memory allocation function
- *  \param[size] the output array size
- *  \details The function allocates memory and returns the pointer pointing to the allocated memory segment.
- *           The function doesn't call the input type constructor. So don't use it to allocate customized
- *           object. Use new operator instead.
-*/
 template< typename __type > inline __type*
-__alloc__(int size)
+__alloc__(int _Size)
 {
-    if(size <= 0) return nullptr;
-    return (__type*)calloc( size, sizeof(__type) );
+    if(_Size <= 0)
+        return nullptr;
+
+    return (__type*)calloc( _Size, sizeof(__type) );
 }
 
-/*!
- *  \brief memory allocation function
- *  \param[size] the output array size
- *  \param[value] the value that initializes the output memory segment
- *  \details The function allocates memory and returns the pointer pointing to the allocated memory segment initialized by the given value.
- *           The function doesn't call the input type constructor. So don't use it to allocate customized
- *           object. Use new operator instead.
-*/
 template< typename __type > inline __type*
-__alloc__(int size, __type value)
+__alloc__(int _Size, __type _Value)
 {
-    if(size <= 0) return nullptr;
-    __type *memory = (__type*)calloc( size, sizeof(__type) );
-    for(int i = 0 ; i < size; i++ ) memory[i] = value;
+    if( _Size <= 0 )
+        return nullptr;
+
+    __type *memory = (__type*)calloc( _Size, sizeof(__type) );
+
+    for(int i = 0 ; i < _Size; i++ )
+        memory[i] = _Value;
+
     return memory;
 }
 
-/*!
- *  \brief memory allocation function
- *  \param[size] the output array size
- *  \param[initializer] pointer to the function that initializes the output memory segment
- *  \details The function allocates memory and returns the pointer pointing to the allocated memory segment initialized by initializer function.
- *           The function doesn't call the input type constructor. So don't use it to allocate customized
- *           object. Use new operator instead.
-*/
 template< typename __type > inline __type*
-__alloc__( int size, void (*__initializer__)(__type *memory, int size) )
+__alloc__( int _Size, void (*__initializer__)( __type* _Memory, int _Size ) )
 {
-    if(size <= 0) return nullptr;
-    __type *memory = (__type*)calloc( size, sizeof(__type) );
+    if(_Size <= 0)
+        return nullptr;
+
+    __type *memory = (__type*)calloc( _Size, sizeof(__type) );
+
     if(__initializer__ && memory)
-        __initializer__(memory, size);
+        __initializer__(memory, _Size);
+
     return memory;
 }
 
-/*!
- *  \brief memory reallocation function
- *  \param[memory] the input memory segment
- *  \param[newsize] the new size of the input memory segment
- *  \details The function reallocates memory and returns the pointer pointing to the reallocated memory segment.
- *           The function returbs nullptr if the new size is lower or equal to zero or the memory reallocation has failed.
-*/
 template< typename __type > inline __type*
-__realloc__(__type *memory, int newsize)
+__realloc__( __type* _Memory, int _Newsize )
 {
-    if(newsize <= 0 && memory)
+    if(_Newsize <= 0 && _Memory)
     {
-        free(memory);
+        free(_Memory);
         return nullptr;
     }
-    __type *data = (__type*)realloc(memory, sizeof (__type)*newsize );
-    if(!data && memory) free(memory);
+
+    __type *data = (__type*)realloc(_Memory, sizeof (__type)*_Newsize );
+
+    if(!data && _Memory)
+        free(_Memory);
+
     return data;
 }
 
-/*!
- *  \brief memory clean function
- *  \param[memory] the input memory segment
- *  \details The function frees memory and returns nullptr
-*/
 template< typename __type > inline __type*
-__mfree__(__type *memory)
+__mfree__( __type* _Memory )
 {
-    if(memory)
+    if(_Memory)
     {
-        free(memory);
-        memory = nullptr;
+        free(_Memory);
+        _Memory = nullptr;
     }
 
-    return memory;
+    return _Memory;
 }
 
 #ifdef _STRINGFWD_H
@@ -864,31 +622,31 @@ __mfree__(__type *memory)
             return __format_camel_style_string__( __remove_prefix__( _Input, "m_" ) );
         }
 
-        inline std::vector< string > __split__(string input, string delimeter = " ")
+        inline std::vector< string > __split__( string _Input, string _Delimeter = " " )
         {
-            if( input.empty() )
+            if( _Input.empty() )
                 return std::vector< string >();
 
             int start  = 0;
             int end    = 0;
-            int size   = delimeter.size();
+            int size   = _Delimeter.size();
             std::vector< string > output;
 
             while ( end >= 0 )
             {
-                end = input.find(delimeter, start);
-                output.push_back( input.substr(start, end-start) );
+                end = _Input.find(_Delimeter, start);
+                output.push_back( _Input.substr(start, end-start) );
                 start = end + size;
             }
 
             return output;
         }
 
-        inline bool __string_contains__(string input, char delimeter = ' ')
+        inline bool __string_contains__(string _Input, char _Delimeter = ' ')
         {
-            for( size_t i = 0 ; i < input.size() ; i++ )
+            for( size_t i = 0 ; i < _Input.size() ; i++ )
             {
-                if( input[i] == delimeter )
+                if( _Input[i] == _Delimeter )
                     return true;
             }
 
@@ -1108,7 +866,7 @@ __mfree__(__type *memory)
 
     class Debugger
     {
-        public:
+    protected:
 
         static string GetCurrentTime()
         {
@@ -1116,6 +874,8 @@ __mfree__(__type *memory)
             string output = ctime(&_time);
             return output.substr(0, output.length()-1);
         }
+
+    public:
 
         static string MessageFormat(string _Typename, string _OjectName, string _Message)
         {
