@@ -2,5 +2,4 @@ GitHub_access_token.txt
 doc/html
 doc/latex
 logs/
-project/debug
-project/release
+project/

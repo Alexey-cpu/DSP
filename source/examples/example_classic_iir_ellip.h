@@ -21,9 +21,6 @@ int filters_ellip_example()
 
     #ifdef WRITE_LOGS
 
-    // logs directory:
-    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
-
     // log files
     std::ofstream xt;
     std::ofstream yt;
@@ -47,7 +44,7 @@ int filters_ellip_example()
 
     // filter initialization
     elliptic<__type> filter;
-    filter.init(Fs, 11, filter_type::bandstop, {100 , 400}, 80, 1 );
+    filter.init(Fs, 10, filter_type::bandpass, {100 , 400}, 80, 1 );
     filter.show();
 
     // emulation
@@ -55,7 +52,7 @@ int filters_ellip_example()
     {
         for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick() )
         {
-            __type signal = gen.sine( 1, Fn, 0, Fs );
+            __type signal = gen.sine( 1, Fn, 0, time );
             __type output = filter(&signal);
 
             #ifdef WRITE_LOGS

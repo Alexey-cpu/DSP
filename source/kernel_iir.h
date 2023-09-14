@@ -1246,7 +1246,6 @@ namespace IIR_KERNEL
             cfden[ 3 * (N - 1) + 0 ] = 1;
             cfden[ 3 * (N - 1) + 1 ] = -__realf__(plp[ N - 1 ]);
             cfden[ 3 * (N - 1) + 2 ] = 0;
-
         }
 
         gains[N] = __realf__(glp[N]);
@@ -1566,7 +1565,7 @@ namespace IIR_KERNEL
 
         // generate output
         data.poles   = pbp;
-        data.zeros   = pbp;
+        data.zeros   = zbp;
         data.ratio   = gbp;
         data.cfnum = cfnum;
         data.cfden = cfden;
@@ -1759,7 +1758,7 @@ namespace IIR_KERNEL
 
         // generate output
         data.poles = pbs;
-        data.zeros = pbs;
+        data.zeros = zbs;
         data.ratio = gbs;
         data.cfnum = cfnum;
         data.cfden = cfden;

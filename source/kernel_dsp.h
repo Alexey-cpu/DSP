@@ -207,9 +207,9 @@ namespace DSP_KERNEL
          *   \brief coefficients computation function
          *   \param[type] filter type
         */
-        filter_data<double> compute_filter_data(filter_type type)
+        filter_data<double> compute_filter_data(filter_type _Type)
         {
-            switch (type)
+            switch (_Type)
             {
                 case filter_type::lowpass :
                     return compute_lowpass();
@@ -286,7 +286,7 @@ namespace DSP_KERNEL
                     matrix.gains[j] = data.gains[j];
                 }
 
-                matrix.gains[data.N] = data.gains[data.N];
+                //matrix.gains[data.N] = data.gains[data.N];
             }
 
             // overwrite zeros
@@ -360,10 +360,10 @@ namespace DSP_KERNEL
          *  \param[Fs] filter sampling frequency
         */
 
-        void init(int64_t order, double Fs)
+        void init( int64_t _Order, double _Fs )
         {
-            m_Order = order;
-            m_Fs    = Fs;
+            m_Order = _Order;
+            m_Fs    = _Fs;
             m_Ts    = 1.0 / m_Fs;
         }
 
@@ -381,190 +381,39 @@ namespace DSP_KERNEL
     /*!
      *  \brief delay model
      *  \details Defines delay model
-     *           The class models delay for DSP
     */
     template< typename __type >
-    class delay
+    class delay final
     {
     protected:
-        __type *m_upper;   ///< delay buffer upper part pointer
-        __type *m_lower;   ///< delay buffer lower part pointer
-        __type *m_data;    ///< delay buffer data samples buffer
-        int     m_nelem;   ///< delay buffer single ( upper/lower ) part size
-        int     m_buffpos; ///< delay buffer current upper/lower part pointer position
+
+        __type *m_CurrentSamplePointer;
+        __type *m_data;
+        int     m_SamplesNumber;
+        int     m_BuffPos;
 
     public:
 
         /*! \brief default constructor */
         delay()
         {
-            #ifdef BUFFER_DEBUG
-            Debugger::Log("delay_base","delay_base()","Constructor call");
-            #endif
-
-            m_upper   = nullptr;
-            m_lower   = nullptr;
-            m_data    = nullptr;
-            m_nelem   = 0;
-            m_buffpos = 0;
-        }
-
-        /*!
-         *  \brief default constructor
-         *  \details The functions clears delay resources at the end of it's lifetime
-        */
-        virtual ~delay()
-        {
-            #ifdef BUFFER_DEBUG
-            Debugger::Log("delay_base","~delay_base()","Destructor call");
-            #endif
-
-            deallocate();
-        }
-
-        /*!
-         *  \brief The function allocates delay buffer
-         *  \param[nelem] delay buffer upper/lower part size
-         *  \details The function is supposed to be called explicitly by the user
-        */
-        int allocate( int nelem )
-        {
-
-            #ifdef BUFFER_DEBUG
-            Debugger::Log("delay_base","allocate()","Memory allocation");
-            #endif
-
-            if( m_data != nullptr )
-                deallocate();
-
-            if( ( nelem > 0 ) && !m_data )
-            {
-                m_nelem = nelem;
-                m_data = __alloc__<__type>( 2 * m_nelem );
-
-                if( m_data )
-                {
-                   m_lower = &m_data[0];
-                   m_upper = &m_data[m_nelem];
-                }
-
-                return ( m_data != 0 );
-            }
-
-            return 0;
-        }
-
-        /*! \brief The function frees delay resources */
-        void deallocate()
-        {
-            #ifdef BUFFER_DEBUG
-            Debugger::Log("delay_base","deallocate()","Memory deallocation");
-            #endif
-
-            m_data    = __mfree__(m_data);
-            m_upper   = nullptr;
-            m_lower   = nullptr;
-            m_data    = nullptr;
-            m_nelem   = 0;
-            m_buffpos = 0;
-        }
-
-        /*! \brief the function returns current lower/upper part pointer position */
-        inline int get_buff_pos()
-        {
-            return m_buffpos;
-        }
-
-        /*! \brief the function returns lower/upper part delay buffer size */
-        inline int get_buff_size()
-        {
-            return m_nelem;
-        }
-
-        /*!
-         *  \brief The function fills delay buffer
-         *  \param[input] input sample pointer
-        */
-        template< typename T > inline void fill_buff( T* _Input )
-        {
-            if( _Input == nullptr )
-                return;
-
-            *m_lower = *_Input;
-            *m_upper = *_Input;
-            if( ++m_buffpos >= m_nelem )
-            {
-                m_lower = &m_data[0];
-                m_upper = &m_data[m_nelem];
-                m_buffpos = 0;
-            }
-            else
-            {
-                m_lower++;
-                m_upper++;
-            }
-        }
-
-        inline __type get_data( int n )
-        {
-            return *( m_upper - n - 1 );
-        }
-
-        /*!
-         *  \brief the operator invokation results in return of an n-th sample from the past values
-         *  \param[n] sample number
-        */
-        inline __type operator [] ( int n )
-        {
-            return get_data(n);
-        }
-
-        /*! \brief The operator invokation supposes to result in delay buffer fill */
-        template< typename T > inline void operator () ( T *input )
-        {
-            this->fill_buff<T>(input);
-        }
-    };
-
-    /*! @} */
-
-    /*!
-     *  \brief buffer model
-     *  \details Defines buffer model
-     *           The class models circular buffer
-    */
-    template< typename __type >
-    class buffer
-    {
-    protected:
-
-        __type *m_lower;   ///< buffer pointer
-        __type *m_data;    ///< data samples buffer
-        int     m_nelem;   ///< buffer size
-        int     m_buffpos; ///< current buffer pointer position
-
-    public:
-
-        /*! \brief default constructor */
-        buffer()
-        {
-            #ifdef BUFFER_DEBUG
-            Debugger::Log("buffer_base","buffer_base()","Constructor call");
+            #ifdef DEBUG
+            Debugger::Log("delay","delay()","Constructor call");
             #endif
 
             m_data    = nullptr;
-            m_nelem   = 0;
-            m_buffpos = 0;
+            m_SamplesNumber   = 0;
+            m_BuffPos = 0;
         }
 
         /*!
          *  \brief default destructor
          *  \details The function clears buffer resources
         */
-        virtual ~buffer()
+        virtual ~delay()
         {
-            #ifdef BUFFER_DEBUG
-            Debugger::Log("buffer_base","~buffer_base()","Destructor call");
+            #ifdef DEBUG
+            Debugger::Log("delay","~delay()","Destructor call");
             #endif
 
             deallocate();
@@ -575,19 +424,19 @@ namespace DSP_KERNEL
          *  \param[nelem] delay buffer upper/lower part size
          *  \details The function is supposed to be called explicitly by the user
         */
-        int allocate( int nelem )
+        int allocate( int _Nelem )
         {
-            #ifdef BUFFER_DEBUG
-            Debugger::Log("buffer_base","allocate()","Memory allocation");
+            #ifdef DEBUG
+            Debugger::Log("delay","allocate()","Memory allocation");
             #endif
 
             if( m_data != nullptr )
                 deallocate();
 
-            if( ( nelem > 0 ) && !m_data )
+            if( ( _Nelem > 0 ) && !m_data )
             {
-                m_nelem = nelem;
-                m_data  = __alloc__<__type>( m_nelem );
+                m_SamplesNumber = _Nelem;
+                m_data  = __alloc__<__type>( m_SamplesNumber );
                 return ( m_data != nullptr );
             }
 
@@ -597,32 +446,37 @@ namespace DSP_KERNEL
         /*! \brief The function frees delay resources */
         void deallocate()
         {
-            #ifdef BUFFER_DEBUG
-            Debugger::Log("buffer_base","deallocate()","Memory deallocation");
+            #ifdef DEBUG
+            Debugger::Log("delay","deallocate()","Memory deallocation");
             #endif
 
             m_data    = __mfree__(m_data);
-            m_lower   = nullptr;
-            m_nelem   = 0;
-            m_buffpos = 0;
+            m_CurrentSamplePointer   = nullptr;
+            m_SamplesNumber   = 0;
+            m_BuffPos = 0;
         }
 
         /*! \brief the function returns current lower/upper part pointer position */
         inline int get_buff_pos()
         {
-            return m_buffpos;
+            return m_BuffPos;
         }
 
         /*! \brief the function returns lower/upper part delay buffer size */
         inline int get_buff_size()
         {
-            return m_nelem;
+            return m_SamplesNumber;
         }
 
         /*! \brief the function returns pointer to local buffer */
-        inline __type get_data( int n ) const
+        inline __type get_data( int _N ) const
         {
-            return m_data[n];
+            int index = m_BuffPos - 1 - _N;
+
+            if( index < 0 )
+                index += m_SamplesNumber;
+
+            return m_data[ index ];
         }
 
         /*!
@@ -634,19 +488,19 @@ namespace DSP_KERNEL
             if( _Input == nullptr )
                 return;
 
-            m_data[m_buffpos] = *_Input;
+            m_data[m_BuffPos] = *_Input;
 
-            if( ++m_buffpos >= m_nelem )
-                m_buffpos = 0;
+            if( ++m_BuffPos >= m_SamplesNumber )
+                m_BuffPos = 0;
         }
 
         /*!
          *  \brief the operator invokation results in return of an n-th sample from the past values
          *  \param[n] sample number
         */
-        inline __type operator [] ( int n )
+        inline __type operator [] ( int _N )
         {
-            return get_data( n );
+            return get_data( _N );
         }
 
         /*! \brief The operator invokation supposes to result in delay buffer fill */
@@ -655,6 +509,8 @@ namespace DSP_KERNEL
             this->fill_buff<T>(input);
         }
     };
+
+    /*! @} */
 
     /*! @} */
 }
