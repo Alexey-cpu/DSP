@@ -73,7 +73,6 @@ int interpolator_example()
 
     // emulation parameters:
     double Fs                = 4000;
-    double Fn                = 50;
     double time              = 0;
     double EmulationDuration = 0.02;
     int    CycleWidth        = 5;

@@ -108,7 +108,7 @@ namespace TUPLE_PACKAGE
 
     // Tuple
     template<>
-    class Tuple<>{};
+    struct Tuple<>{};
 
     // Tuple unpacker
     template< uint64_t I, typename T1, typename ... T2 >
@@ -139,6 +139,8 @@ namespace TUPLE_PACKAGE
 }
 
 using namespace TUPLE_PACKAGE;
+
+#ifdef _STDINT_H
 
 namespace BIT_UTILS
 {
@@ -389,6 +391,8 @@ namespace BITSET_UTILS
 }
 
 using namespace BITSET_UTILS;
+
+#endif
 
 #endif
 
