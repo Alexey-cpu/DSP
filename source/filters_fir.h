@@ -56,7 +56,7 @@ public:
 
     /*!
      *  \brief copy constructor
-     *  \param[window] input window function
+     *  \param[_Window] input window function
     */
     window_function(const window_function& _Window)
     {

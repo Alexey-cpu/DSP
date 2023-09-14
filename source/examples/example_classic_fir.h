@@ -1,12 +1,12 @@
-#ifndef EXAMPLE_TRANSFER_FUNCTIONS_INTEGRATOR_H
-#define EXAMPLE_TRANSFER_FUNCTIONS_INTEGRATOR_H
+#ifndef EXAMPLE_CLASSIC_FIR_H
+#define EXAMPLE_CLASSIC_FIR_H
 
 #include "config.h"
-#include "../../DSP/include/generators.h"
-#include "../../DSP/include/filters_transfer_functions.h"
+#include "../../DSP/source/generators.h"
+#include "../../DSP/source/filters_fir.h"
 
-// Butterworth filter
-int filters_integrator_example()
+// classic FIR filter example
+int filters_fir_example()
 {
     typedef float __type;
 
@@ -35,7 +35,6 @@ int filters_integrator_example()
     Km.open( LOGS_DIRECTORY + OUTPUT_STREAM_AMPLITUDE_RESPONSE);
     dt.open( LOGS_DIRECTORY + OUTPUT_STREAM_TIME);
 
-
     #endif
 
     // generator initialization
@@ -44,15 +43,20 @@ int filters_integrator_example()
     time_provider.init(Fs);
 
     // filter initialization
-    integrator<__type> filter;
-    filter.init(Fs);
+    window_function window;
+    window.Hamming(80);
+
+    // filter initialization
+    fir<__type> filter;
+    filter.init(Fs, filter_type::lowpass, {50, 500}, window, 1);
 
     // emulation
     for( int i = 0 ; i < cycles_num ; i++ )
     {
         for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick() )
         {
-            __type signal = gen.sine( 1, Fn, 0, time );
+            __type signal = gen.distortion( 1, Fn, 30, 0.4, 5, time );
+            //__type signal = gen.sine( 1, Fn, 0, time );
             __type output = filter(&signal);
 
             #ifdef WRITE_LOGS
@@ -86,4 +90,5 @@ int filters_integrator_example()
     return 0;
 }
 
-#endif // EXAMPLE_TRANSFER_FUNCTIONS_INTEGRATOR_H
+
+#endif // EXAMPLE_CLASSIC_FIR_H

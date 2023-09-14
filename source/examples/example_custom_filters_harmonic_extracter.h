@@ -2,8 +2,8 @@
 #define EXAMPLE_CUSTOM_FILTERS_HARMONIC_EXTRACTER_H
 
 #include "config.h"
-#include "../../DSP/include/generators.h"
-#include "../../DSP/include/filters_real_time_spectrum_analyzer.h"
+#include "../../DSP/source/generators.h"
+#include "../../DSP/source/filters_real_time_spectrum_analyzer.h"
 
 // Recursive Fourier filter
 int filters_harmonic_extracter_example()

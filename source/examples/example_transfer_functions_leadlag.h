@@ -1,9 +1,10 @@
 #ifndef EXAMPLE_TRANSFER_FUNCTIONS_LEADLAG_H
 #define EXAMPLE_TRANSFER_FUNCTIONS_LEADLAG_H
 
+#include "../../DSP/source/generators.h"
+#include "../../DSP/source/filters_transfer_functions.h"
+
 #include "config.h"
-#include "../../DSP/include/generators.h"
-#include "../../DSP/include/filters_transfer_functions.h"
 
 // Butterworth filter
 int filters_leadlag_example()

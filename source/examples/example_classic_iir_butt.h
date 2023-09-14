@@ -1,18 +1,18 @@
-#ifndef EXAMPLE_TRANSFER_FUNCTIONS_DIFFERENTIATOR_H
-#define EXAMPLE_TRANSFER_FUNCTIONS_DIFFERENTIATOR_H
+#ifndef EXAMPLE_CLASSIC_IIR_BUTT_H
+#define EXAMPLE_CLASSIC_IIR_BUTT_H
+
 
 #include "config.h"
-#include "../../DSP/include/generators.h"
-#include "../../DSP/include/filters_transfer_functions.h"
+#include "../../DSP/source/generators.h"
+#include "../../DSP/source/filters_iir.h"
 
 // Butterworth filter
-int filters_differentiator_example()
+int filters_butt_example()
 {
     typedef float __type;
 
     // emulation parameters:
     double Fs                = 4000;
-    double Ts                = (double)1 / Fs;
     double Fn                = 50;
     double time              = 0;
     double EmulationDuration = 0.08;
@@ -43,9 +43,11 @@ int filters_differentiator_example()
     digital_clock<double> time_provider;
     time_provider.init(Fs);
 
+
     // filter initialization
-    differentiator<__type> filter;
-    filter.init(Fs, Ts);
+    butterworth<__type> filter;
+    filter.init(Fs, 10, filter_type::lowpass, {100 , 400} );
+    filter.show();
 
     // emulation
     for( int i = 0 ; i < cycles_num ; i++ )
@@ -86,4 +88,5 @@ int filters_differentiator_example()
     return 0;
 }
 
-#endif // EXAMPLE_TRANSFER_FUNCTIONS_DIFFERENTIATOR_H
+
+#endif // EXAMPLE_CLASSIC_IIR_BUTT_H

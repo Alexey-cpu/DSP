@@ -1,12 +1,13 @@
-#ifndef EXAMPLE_CLASSIC_IIR_ELLIP_H
-#define EXAMPLE_CLASSIC_IIR_ELLIP_H
+#ifndef EXAMPLE_TRANSFER_FUNCTIONS_APERIODIC_H
+#define EXAMPLE_TRANSFER_FUNCTIONS_APERIODIC_H
+
+#include "../../DSP/source/generators.h"
+#include "../../DSP/source/filters_transfer_functions.h"
 
 #include "config.h"
-#include "../../DSP/include/generators.h"
-#include "../../DSP/include/filters_iir.h"
 
-// Checbyshev type II filter
-int filters_ellip_example()
+// Butterworth filter
+int filters_aperiodic_example()
 {
     typedef float __type;
 
@@ -20,9 +21,6 @@ int filters_ellip_example()
     int    frames_per_cycle  = CycleWidth * Fs / 1000;
 
     #ifdef WRITE_LOGS
-
-    // logs directory:
-    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
 
     // log files
     std::ofstream xt;
@@ -46,16 +44,15 @@ int filters_ellip_example()
     time_provider.init(Fs);
 
     // filter initialization
-    elliptic<__type> filter;
-    filter.init(Fs, 11, filter_type::bandstop, {100 , 400}, 80, 1 );
-    filter.show();
+    aperiodic<__type> filter;
+    filter.init(Fs, 0.01);
 
     // emulation
     for( int i = 0 ; i < cycles_num ; i++ )
     {
         for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick() )
         {
-            __type signal = gen.sine( 1, Fn, 0, Fs );
+            __type signal = gen.sine( 1, Fn, 0, time );
             __type output = filter(&signal);
 
             #ifdef WRITE_LOGS
@@ -77,6 +74,7 @@ int filters_ellip_example()
     }
 
     // close files
+
     #ifdef WRITE_LOGS
     xt.close();
     yt.close();
@@ -88,5 +86,4 @@ int filters_ellip_example()
     return 0;
 }
 
-
-#endif // EXAMPLE_CLASSIC_IIR_ELLIP_H
+#endif // EXAMPLE_TRANSFER_FUNCTIONS_APERIODIC_H

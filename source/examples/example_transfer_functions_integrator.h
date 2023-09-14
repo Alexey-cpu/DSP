@@ -1,13 +1,12 @@
-#ifndef EXAMPLE_TRANSFER_FUNCTIONS_FILTER_2ND_ORDER_H
-#define EXAMPLE_TRANSFER_FUNCTIONS_FILTER_2ND_ORDER_H
-
+#ifndef EXAMPLE_TRANSFER_FUNCTIONS_INTEGRATOR_H
+#define EXAMPLE_TRANSFER_FUNCTIONS_INTEGRATOR_H
 
 #include "config.h"
-#include "../../DSP/include/generators.h"
-#include "../../DSP/include/filters_transfer_functions.h"
+#include "../../DSP/source/generators.h"
+#include "../../DSP/source/filters_transfer_functions.h"
 
 // Butterworth filter
-int filters_filter_2nd_order_example()
+int filters_integrator_example()
 {
     typedef float __type;
 
@@ -36,6 +35,7 @@ int filters_filter_2nd_order_example()
     Km.open( LOGS_DIRECTORY + OUTPUT_STREAM_AMPLITUDE_RESPONSE);
     dt.open( LOGS_DIRECTORY + OUTPUT_STREAM_TIME);
 
+
     #endif
 
     // generator initialization
@@ -44,9 +44,8 @@ int filters_filter_2nd_order_example()
     time_provider.init(Fs);
 
     // filter initialization
-    filter_2nd_order<__type> filter;
-    filter.init(Fs, 120, 0.7, filter_type::bandstop);
-    filter.show();
+    integrator<__type> filter;
+    filter.init(Fs);
 
     // emulation
     for( int i = 0 ; i < cycles_num ; i++ )
@@ -87,4 +86,4 @@ int filters_filter_2nd_order_example()
     return 0;
 }
 
-#endif // EXAMPLE_TRANSFER_FUNCTIONS_FILTER_2ND_ORDER_H
+#endif // EXAMPLE_TRANSFER_FUNCTIONS_INTEGRATOR_H

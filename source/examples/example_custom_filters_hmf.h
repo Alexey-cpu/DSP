@@ -6,9 +6,9 @@
 #endif
 
 #include "config.h"
-#include "../../DSP/include/generators.h"
-#include "../../DSP/include/filters_harmonic_filter.h"
-#include "../../DSP/include/filters_fast_fourier_transform_spectrum_analyzer.h"
+#include "../../DSP/source/generators.h"
+#include "../../DSP/source/filters_harmonic_filter.h"
+#include "../../DSP/source/filters_fast_fourier_transform_spectrum_analyzer.h"
 
 // Recursive Fourier filter based harmonic filter
 int filtes_hmf_example()

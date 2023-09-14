@@ -3,6 +3,20 @@
 
 #include "filters_recursive_fourier_filter.h"
 
+/*! \defgroup <REAL_TIME_SPECTRUM_ANALYZERS> ( real time spectrum analyzers )
+ *  \ingroup SPECIAL_FILTERS
+ *  \brief The module contains implementation of different sort real time spectrum analyzers
+    @{
+*/
+
+/*! \defgroup <REAL_TIME_SPECTRUM_ANALYZER_FILTER> ( real time specrum analyzer )
+ *  \ingroup SPECIAL_FILTERS
+ *  \brief The module contains implementation of real time spectrum analyzer.
+ *  \details Real time spectrum analyzer contains range of recursive Fourier filters which
+ *  compute every it's own harmonic.
+    @{
+*/
+
 class real_time_spectrum_analyzer final : public transfer_function_model
 {
 protected:
@@ -15,7 +29,6 @@ protected:
 
 public:
 
-    // constructors
     real_time_spectrum_analyzer(){}
 
     // virtual destructor
@@ -25,7 +38,15 @@ public:
             delete [] m_Filters;
     }
 
-    // public methods
+    /*!
+     *  \brief initializes real_time_spectrum_analyzer
+     *  \param[_Fs] sampling frequency, Hz
+     *  \param[_Fn] reference signal frequency, Hz
+     *  \param[_SpectrumWidth] number of harmonics to be computed in real time
+     *  \details The function is supposed to be called
+     *           explecitly by the user by compute filter coefficients and
+     *           allocate memory
+    */
     void init( double _Fs, double _Fn, int _SpectrumWidth = 5 )
     {
         // call base initializer
@@ -44,6 +65,15 @@ public:
         m_Buffer.allocate( m_Filters[0].get_buffer_size() );
     }
 
+    /*!
+     *  \brief filtering function of real_time_spectrum_analyzer
+     *  \param[_Input] pointer to the input signal sample
+     *  \param[_HarmonicNumber] harmonic to be computed
+     *  \details The function is supposed to be called
+     *           explecitly by the user by get the result of the input signal filtering.
+     *           if _HarmonicNumber is greater than spectrum withd passed into initialization function than
+     *           filter will return zero
+    */
     Complex<double> filt( double* _Input, int _HarmonicNumber )
     {
         if( _Input == nullptr )
@@ -61,7 +91,13 @@ public:
                     Complex<double>::zero();
     }
 
-    // virtual functions override
+    /*!
+     *  \brief frequency responce computation function of real_time_spectrum_analyzer
+     *  \param[_F] input signal frequency
+     *  \details The function is supposed to be called
+     *           explecitly by the user to compute frequency responce of the first recursive Fourier filter
+     *           in the range of filters used to compute spectrum
+    */
     virtual Complex<double> frequency_response( double _F ) override
     {
         return m_Filters != nullptr && m_SpectrumWidth > 0 ?
@@ -69,6 +105,14 @@ public:
                 Complex<double>::zero();
     }
 
+    /*!
+     *  \brief frequency responce computation function of real_time_spectrum_analyzer
+     *  \param[_F] input signal frequency
+     *  \param[_HarmonicNumber] harmonic to be computed
+     *  \details The function is supposed to be called
+     *           explecitly by the user to compute frequency responce of the recursive Fourier filter
+     *           in the range of filters which number is defined as _HarmonicNumber
+    */
     virtual Complex<double> frequency_response( double _F, int _HarmonicNumber )
     {
         return m_Filters != nullptr && m_SpectrumWidth > 0 && _HarmonicNumber < m_SpectrumWidth ?
@@ -76,6 +120,19 @@ public:
                 Complex<double>::zero();
     }
 };
+
+/*! @} */
+
+/*! \defgroup <REAL_TIME_FREQUENCY_INVARIANT_SPECTRUM_ANALYZER_FILTER> ( real time frequency invariant specrum analyzer )
+ *  \ingroup SPECIAL_FILTERS
+ *  \brief The module contains implementation of real time frequency invariant spectrum analyzer.
+ *  \image html real_time_frequency_invariant_spectrum_analyzer.png
+ *  \details Real time frequency invariant spectrum analyzer contains range of quadrature democulation filters which
+ *  compute every it's own harmonic. Every quadrature demodulation filter uses two moving average filters to extract low
+ *  frequency component. First moving average filter has order equal to the samples number per period of reference frame signal.
+ *  The second moving average filter has order equal to the half of samples number per period of reference frame signal
+    @{
+*/
 
 class real_time_frequency_invariant_spectrum_analyzer final : public transfer_function_model
 {
@@ -122,7 +179,15 @@ public:
             delete [] m_ReferenceFrames;
     }
 
-    // public methods
+    /*!
+     *  \brief initializes real_time_frequency_invariant_spectrum_analyzer
+     *  \param[_Fs] sampling frequency, Hz
+     *  \param[_Fn] reference signal frequency, Hz
+     *  \param[_SpectrumWidth] number of harmonics to be computed in real time
+     *  \details The function is supposed to be called
+     *           explecitly by the user by compute filter coefficients and
+     *           allocate memory
+    */
     void init( double _Fs, double _Fn, int _SpectrumWidth = 5 )
     {
         // initialize filter info
@@ -177,6 +242,15 @@ public:
         m_Gain = 4.0 / (double)N1 / (double)N1 / sqrt(2.0);
     }
 
+    /*!
+     *  \brief filtering function of real_time_frequency_invariant_spectrum_analyzer
+     *  \param[_Input] pointer to the input signal sample
+     *  \param[_HarmonicNumber] harmonic to be computed
+     *  \details The function is supposed to be called
+     *           explecitly by the user by get the result of the input signal filtering.
+     *           if _HarmonicNumber is greater than spectrum withd passed into initialization function than
+     *           filter will return zero
+    */
     Complex<double> filt( double* _Input, int _HarmonicNumber )
     {
         if( _Input == nullptr )
@@ -213,13 +287,33 @@ public:
                     Complex<double>::zero();
     }
 
-    // virtual functions override
+    /*!
+     *  \brief frequency responce computation function of real_time_frequency_invariant_spectrum_analyzer
+     *  \param[_F] input signal frequency
+     *  \details The function is not supported, it does nothing
+     *  and is placed here for interface consistency
+    */
     virtual Complex<double> frequency_response( double _F ) override
     {
         (void)_F;
         return Complex<double>::zero();
     }
 };
+
+/*! @} */
+
+/*! \defgroup <REAL_TIME_FREQUENCY_INVARIANT_HARMONIC_EXTRACTER_FILTER> ( real time frequency invariant harmonic extracter )
+ *  \ingroup SPECIAL_FILTERS
+ *  \brief The module contains implementation of real time frequency invariant harmonic extracter.
+ *  \image html real_time_frequency_invariant_harmonic_extracter.png
+ *  \details Real time frequency invariant harmonic extracter uses recursive Fourier filter to decompose input signal into
+ *  sine and cosine components and compute a saw-tooth like input signal phase without convolution with a reference frame signal.
+ *  To compute signal root-mean-square value filter computes root-mean-square value of sine and cosine components and than computes
+ *  average between them. This kind of a "hack" minimizes amplitude fluctualtion when input signal frequency deviates from reference frame
+ *  frequency. To compute quadrature components filter computes sin() and cos() of saw-tooth like phase and multiplies them by the computed
+ *  root-mean-square value.
+    @{
+*/
 
 class real_time_frequency_invariant_harmonic_extracter final : public transfer_function_model
 {
@@ -245,10 +339,6 @@ private:
     // service methods
     int64_t allocate()
     {
-        #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter","allocate()","Memory allocation");
-        #endif
-
         if( m_SpectrumWidth <= 0 )
             return false;
 
@@ -285,10 +375,6 @@ private:
 
     int64_t deallocate()
     {
-        #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter","deallocate()","Memory free");
-        #endif
-
         // remove recursive Fourier filters
         if( m_RecursiveFourierFilters != nullptr )
         {
@@ -318,10 +404,6 @@ public:
     // constructors
     real_time_frequency_invariant_harmonic_extracter()
     {
-        #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter","harmonic_filter()","Filter constructor call");
-        #endif
-
         m_Fs                      = 4000;
         m_Fn                      = 50;
         m_SpectrumWidth           = 5;
@@ -332,14 +414,18 @@ public:
     // virtual destructors
     virtual ~real_time_frequency_invariant_harmonic_extracter()
     {
-        #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter","~harmonic_filter()","Filter destructor call");
-        #endif
-
         deallocate();
     }
 
-    // public methods
+    /*!
+     *  \brief initializes real_time_frequency_invariant_spectrum_analyzer
+     *  \param[_Fs] sampling frequency, Hz
+     *  \param[_Fn] reference signal frequency, Hz
+     *  \param[_SpectrumWidth] number of harmonics to be computed in real time
+     *  \details The function is supposed to be called
+     *           explecitly by the user by compute filter coefficients and
+     *           allocate memory
+    */
     void init(double _Fs, double _Fn, int64_t _SpectrumWidth)
     {
         // call base implementation
@@ -354,16 +440,17 @@ public:
 
         // memory allocation
         allocate();
-
-        #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter","init()","Filter initialization");
-        Debugger::Log("Fs               = " + to_string(m_Fs));
-        Debugger::Log("Fn               = " + to_string(m_Fn));
-        Debugger::Log("SpectrumWidth    = " + to_string(m_SpectrumWidth));
-        Debugger::Log("SamplesPerPeriod = " + to_string(m_SamplesPerPeriod));
-        #endif
     }
 
+    /*!
+     *  \brief filtering function of real_time_frequency_invariant_spectrum_analyzer
+     *  \param[_Input] pointer to the input signal sample
+     *  \param[_HarmonicNumber] harmonic to be computed
+     *  \details The function is supposed to be called
+     *           explecitly by the user by get the result of the input signal filtering.
+     *           if _HarmonicNumber is greater than spectrum withd passed into initialization function than
+     *           filter will return zero
+    */
     Complex<double> filt( double* _Input, int64_t _HarmonicNumber )
     {
         // check input
@@ -415,12 +502,20 @@ public:
         return signalPhaseUnitVector * c;
     }
 
-    // virtual methods override
+    /*!
+     *  \brief frequency responce computation function of real_time_frequency_invariant_spectrum_analyzer
+     *  \param[_F] input signal frequency
+     *  \details The function is not supported, it does nothing and is placed here for interface consistency
+    */
     virtual Complex<double> frequency_response( double _F ) override
     {
         (void)_F;
         return Complex<double>::zero();
     }
 };
+
+/*! @} */
+
+/*! @} */
 
 #endif // FILTERS_REAL_TIME_SPECTRUM_ANALYZER_H

@@ -5,7 +5,7 @@
 #define WRITE_LOGS
 #endif
 
-#include "../../DSP/include/special_functions.h"
+#include "../../DSP/source/special_functions.h"
 
 // special functions examples
 int special_functions_example()

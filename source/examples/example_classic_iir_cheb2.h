@@ -3,8 +3,8 @@
 
 
 #include "config.h"
-#include "../../DSP/include/generators.h"
-#include "../../DSP/include/filters_iir.h"
+#include "../../DSP/source/generators.h"
+#include "../../DSP/source/filters_iir.h"
 
 // Checbyshev type II filter
 int filters_cheb2_example()

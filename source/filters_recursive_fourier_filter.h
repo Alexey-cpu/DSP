@@ -9,9 +9,9 @@ using namespace DSP_KERNEL;
 #define RFF_DEBUG // debugging is not available if the algorithm is running on a device !!!
 #endif
 
-/*! \defgroup <RECURSIVE_FOURIER_FILTER> ( Recursive fourier filter )
+/*! \defgroup <RECURSIVE_FOURIER_FILTER> ( recursive fourier filter )
  *  \ingroup SPECIAL_FILTERS
- *  \brief the module contains model implementation of recursive Fourier filter
+ *  \brief the module contains implementation of recursive Fourier filter
     @{
 */
 
@@ -23,7 +23,7 @@ using namespace DSP_KERNEL;
  *      W(z) = \frac{1}{N} * \frac{ 1 - z^{-N} }{ 1 - z^{-1} * e^{-2*\pi * T_s} }
  *  \f]
  *
- *  The filter implements Fourier transform using delay buffer prvided by the user.
+ *  The filter implements Fourier transform using delay buffer provided by the user.
  *  The delay buffer size may be retrived using get_buffer_size() function after
  *  filter initialization.
 */
@@ -61,12 +61,22 @@ public:
         #endif
     }
 
-    /*!  \brief returns the filter output */
+    /*!
+     *   \brief returns the filter output
+     *   \param[_ConvolutedOutput] if the value is true filter returns vector
+     *   which phase is computed relatively to the reference frame of the nominal frequency if the value is false
+     *   filter returns phase computed without convolution
+    */
     Complex<double> get_vector( bool _ConvolutedOutput = false )
     {
         return _ConvolutedOutput ? m_ConvolutedVector : m_PureVector;
     }
 
+    /*!
+     *   \brief returns the minimum buffer size needed by the filter
+     *   which phase is computed relatively to the reference frame of the nominal frequency if the value is false
+     *   filter returns phase computed without convolution
+    */
     int get_buffer_size()
     {
         return this->m_Order + 2;
@@ -74,9 +84,9 @@ public:
 
     /*!
      *  \brief initializes the revursive Fourier filter
-     *  \param[Fs] filter sampling frequency, Hz
-     *  \param[Fn] filter reference signal frequency, Hz
-     *  \param[hnum] harmonic number
+     *  \param[_Fs] filter sampling frequency, Hz
+     *  \param[_Fn] filter reference signal frequency, Hz
+     *  \param[_HarmonicNumber] harmonic number
      *  \details The function is supposed to be called explicitly by the user
     */
     void init( double _Fs, double _Fn, int64_t _HarmonicNumber )
@@ -118,7 +128,8 @@ public:
 
     /*!
      *  \brief Filtering function
-     *  \param[input] input signal sample pointer
+     *  \param[_Input] input signal sample pointer
+     *  \param[_Buffer] the delay buffer used for computations
     */
     template< typename T1, typename T2 > inline void
     filt ( T1* _Input, delay<T2>* _Buffer )
@@ -142,15 +153,22 @@ public:
       *  \param[F] input frequency, Hz
       *  \returns The function returns the fiter transfer function complex value for the given frequency
     */
-    Complex<double> frequency_response( double F ) override
+    Complex<double> frequency_response( double _F ) override
     {
-        Complex<double> num = Complex<double>(1,0) - Complex<double>( cos( -PI2 * F * m_Order * m_Ts ) , sin( -PI2 * F * m_Order * m_Ts ) );
-        Complex<double> den = Complex<double>(1,0) - Complex<double>( cos( -PI2 * F * m_Ts ) , sin( -PI2 * F * m_Ts ) ) * m_RotationFactor;
+        Complex<double> num = Complex<double>(1,0) - Complex<double>( cos( -PI2 * _F * m_Order * m_Ts ) , sin( -PI2 * _F * m_Order * m_Ts ) );
+        Complex<double> den = Complex<double>(1,0) - Complex<double>( cos( -PI2 * _F * m_Ts ) , sin( -PI2 * _F * m_Ts ) ) * m_RotationFactor;
         Complex<double> Wz = num / den / (double)m_Order;
         return Wz;
     }
 };
 
+/*! @} */
+
+/*!
+ *  \class shared_recursive_fourier
+ *  \brief defines recursive Fourier filter
+ *  \details The filter implements Fourier transform using it's own delay buffer.
+*/
 template< typename __type >
 class standalone_recursive_fourier : public shared_recursive_fourier
 {
@@ -197,10 +215,6 @@ public:
         return this->filt( _Input, _ConvolutedOutput );
     }
 };
-
-/*!
- *  \example example_custom_filters_rff.h
-*/
 
 /*! @} */
 

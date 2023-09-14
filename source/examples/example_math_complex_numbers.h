@@ -5,7 +5,7 @@
 //#define WRITE_LOGS
 #endif
 
-#include "../../DSP/include/Complex.h"
+#include "../../DSP/source/Complex.h"
 
 // complex numbers example
 int complex_numbers_example()

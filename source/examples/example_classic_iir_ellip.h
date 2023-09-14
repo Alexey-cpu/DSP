@@ -1,12 +1,12 @@
-#ifndef EXAMPLE_CLASSIC_IIR_CHEB1_H
-#define EXAMPLE_CLASSIC_IIR_CHEB1_H
+#ifndef EXAMPLE_CLASSIC_IIR_ELLIP_H
+#define EXAMPLE_CLASSIC_IIR_ELLIP_H
 
 #include "config.h"
-#include "../../DSP/include/generators.h"
-#include "../../DSP/include/filters_iir.h"
+#include "../../DSP/source/generators.h"
+#include "../../DSP/source/filters_iir.h"
 
-// Checbyshev type I filter
-int filters_cheb1_example()
+// Checbyshev type II filter
+int filters_ellip_example()
 {
     typedef float __type;
 
@@ -20,6 +20,9 @@ int filters_cheb1_example()
     int    frames_per_cycle  = CycleWidth * Fs / 1000;
 
     #ifdef WRITE_LOGS
+
+    // logs directory:
+    std::string directory = "C:\\Qt_projects\\DigitalFilters_x32\\logs";
 
     // log files
     std::ofstream xt;
@@ -43,8 +46,8 @@ int filters_cheb1_example()
     time_provider.init(Fs);
 
     // filter initialization
-    chebyshev_1<__type> filter;
-    filter.init(Fs, 12, filter_type::bandpass, {100 , 400}, 1 );
+    elliptic<__type> filter;
+    filter.init(Fs, 11, filter_type::bandstop, {100 , 400}, 80, 1 );
     filter.show();
 
     // emulation
@@ -86,4 +89,4 @@ int filters_cheb1_example()
 }
 
 
-#endif // EXAMPLE_CLASSIC_IIR_CHEB1_H
+#endif // EXAMPLE_CLASSIC_IIR_ELLIP_H

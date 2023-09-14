@@ -1,9 +1,9 @@
 #ifndef EXAMPLE_MATH_SPECIAL_FUNCTIONS_FFT_H
 #define EXAMPLE_MATH_SPECIAL_FUNCTIONS_FFT_H
 
-#include "../../DSP/include/special_functions.h"
+#include "../../DSP/source/special_functions.h"
+#include "../source/filters_real_time_spectrum_analyzer.h"
 #include "config.h"
-#include "../include/filters_real_time_spectrum_analyzer.h"
 
 // Fast Fourier transform example
 int fft_example()

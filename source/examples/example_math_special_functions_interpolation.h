@@ -1,13 +1,13 @@
 #ifndef EXAMPLE_MATH_SPECIAL_FUNCTIONS_INTERPOLATION_H
 #define EXAMPLE_MATH_SPECIAL_FUNCTIONS_INTERPOLATION_H
 
-#include "../include/special_functions.h"
-#include "../include/filters_transfer_functions.h"
-#include "../include/filters_real_time_spectrum_analyzer.h"
-#include "config.h"
+#include "../source/special_functions.h"
+#include "../source/filters_transfer_functions.h"
+#include "../source/filters_real_time_spectrum_analyzer.h"
+#include "../source/filters_iir.h"
+#include "../source/filters_fir.h"
 
-#include "../include/filters_iir.h"
-#include "../include/filters_fir.h"
+#include "config.h"
 
 int interpolation_example()
 {

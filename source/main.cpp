@@ -1,10 +1,7 @@
-#include "../../DSP/examples/examples.h"
+#include "examples/examples.h"
 
 int main()
 {
-    //std::cout << "MAX: " << MAX( 10, 1, 3, 4, 132 ) << "\n";
-    //std::cout << "MAX: " << MIN( 10, 1, 3, 4, 132 ) << "\n";
-
     // driver examples
     //filters_fir_example();
     //complex_numbers_example();
@@ -24,7 +21,7 @@ int main()
     //interpolator_example();
     //fft_based_filter_example();
     //filtes_fft_example();
-    //filters_harmonic_extracter_example();
+    filters_harmonic_extracter_example();
 
     return 0;
 }

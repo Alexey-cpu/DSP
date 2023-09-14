@@ -1,12 +1,12 @@
-#ifndef EXAMPLE_CLASSIC_FIR_H
-#define EXAMPLE_CLASSIC_FIR_H
+#ifndef EXAMPLE_CLASSIC_IIR_CHEB1_H
+#define EXAMPLE_CLASSIC_IIR_CHEB1_H
 
 #include "config.h"
-#include "../../DSP/include/generators.h"
-#include "../../DSP/include/filters_fir.h"
+#include "../../DSP/source/generators.h"
+#include "../../DSP/source/filters_iir.h"
 
-// classic FIR filter example
-int filters_fir_example()
+// Checbyshev type I filter
+int filters_cheb1_example()
 {
     typedef float __type;
 
@@ -43,20 +43,16 @@ int filters_fir_example()
     time_provider.init(Fs);
 
     // filter initialization
-    window_function window;
-    window.Hamming(80);
-
-    // filter initialization
-    fir<__type> filter;
-    filter.init(Fs, filter_type::lowpass, {50, 500}, window, 1);
+    chebyshev_1<__type> filter;
+    filter.init(Fs, 12, filter_type::bandpass, {100 , 400}, 1 );
+    filter.show();
 
     // emulation
     for( int i = 0 ; i < cycles_num ; i++ )
     {
         for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick() )
         {
-            __type signal = gen.distortion( 1, Fn, 30, 0.4, 5, time );
-            //__type signal = gen.sine( 1, Fn, 0, time );
+            __type signal = gen.sine( 1, Fn, 0, Fs );
             __type output = filter(&signal);
 
             #ifdef WRITE_LOGS
@@ -78,7 +74,6 @@ int filters_fir_example()
     }
 
     // close files
-
     #ifdef WRITE_LOGS
     xt.close();
     yt.close();
@@ -91,4 +86,4 @@ int filters_fir_example()
 }
 
 
-#endif // EXAMPLE_CLASSIC_FIR_H
+#endif // EXAMPLE_CLASSIC_IIR_CHEB1_H
