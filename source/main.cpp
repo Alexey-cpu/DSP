@@ -1,4 +1,4 @@
-#include "../../DSP/examples/examples.h"
+#include "examples/examples.h"
 
 int main()
 {
@@ -17,7 +17,11 @@ int main()
     //filters_leadlag_example();
     //filters_filter_2nd_order_example();
     //fft_example();
-    //interpolation_example()
+    //interpolation_example();
+    //interpolator_example();
+    //fft_based_filter_example();
+    //filtes_fft_example();
+    filters_harmonic_extracter_example();
 
     return 0;
 }
