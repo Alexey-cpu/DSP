@@ -32,5 +32,6 @@
 #include "example_math_special_functions_fft.h"
 #include "example_math_special_functions_interpolation.h"
 
+#include "example_comtrade_emulation.h"
 
 #endif // EXAMPLES_H

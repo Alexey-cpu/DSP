@@ -13,6 +13,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    ../../ComtradeFileParser/ComtradeFileParser.h \
     ../source/Complex.h \
     ../source/examples/config.h \
     ../source/examples/example_classic_fir.h \
@@ -20,6 +21,7 @@ HEADERS += \
     ../source/examples/example_classic_iir_cheb1.h \
     ../source/examples/example_classic_iir_cheb2.h \
     ../source/examples/example_classic_iir_ellip.h \
+    ../source/examples/example_comtrade_emulation.h \
     ../source/examples/example_custom_filters_harmonic_extracter.h \
     ../source/examples/example_custom_filters_hmf.h \
     ../source/examples/example_custom_filters_rff.h \

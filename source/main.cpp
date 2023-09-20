@@ -21,7 +21,9 @@ int main()
     //interpolator_example();
     //fft_based_filter_example();
     //filtes_fft_example();
-    filters_harmonic_extracter_example();
+    //filters_harmonic_extracter_example();
+
+    filters_comtrade_emulation_example();
 
     return 0;
 }

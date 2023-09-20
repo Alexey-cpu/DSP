@@ -4,6 +4,8 @@
 // some special target platform features
 #ifndef __ALG_PLATFORM
 
+#define DEBUG
+
 #ifdef _MALLOC_H
 #include "malloc.h"
 #endif

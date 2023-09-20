@@ -12,8 +12,6 @@
 #include "utils.h"
 #include "Complex.h"
 
-#define DEBUG
-
 /*! \defgroup <FILTERS> ( Filters )
  *  \brief The module contains different filters implementations description
     @{
