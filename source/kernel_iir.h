@@ -978,7 +978,7 @@ namespace IIR_KERNEL
      *           and returned.
     */
     template<typename __type>
-    filter_data<__type> __butt_cheb1_digital_bs__( __fx64 _Fs, __fx64 _Fc, __fx64 _BandWidth, __ix32 _order, __fx32 _type   = 0, __fx64 _g_stop = 1 ) // refactored
+    filter_data<__type> __butt_cheb1_digital_bs__( __fx64 _Fs, __fx64 _Fc, __fx64 _BandWidth, __ix32 _order, __fx32 _type = 0, __fx64 _g_stop = 1 ) // refactored
     {
        // INITIALIZATION:
        if( _order % 2 > 0 ) _order++;

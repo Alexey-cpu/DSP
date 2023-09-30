@@ -434,7 +434,7 @@ __max__( __type* _Input , uint64_t _Size )
 {
     __type vmax = _Input[0];
 
-    for( int i = 1 ; i < _Size; i++ )
+    for( uint64_t i = 1 ; i < _Size; i++ )
     {
         if( _Input[i] > vmax )
             vmax = _Input[i];
@@ -819,6 +819,11 @@ __mfree__( __type* _Memory )
         template<> inline string __from_string__<string>( string _Input )
         {
             return _Input;
+        }
+
+        template<> inline char __from_string__<char>( string _Input )
+        {
+            return _Input.empty() ? ' ' : _Input[0];
         }
 
         template< typename __type >

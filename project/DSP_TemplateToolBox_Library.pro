@@ -13,7 +13,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    ../../ComtradeFileParser/ComtradeFileParser.h \
+    ../../ComtradeFileParser/AbstractComtradeFormatChannel.h \
+    ../../ComtradeFileParser/ComtradeFormat.h \
+    ../../ComtradeFileParser/ComtradeFormatAnalogChannel.h \
+    ../../ComtradeFileParser/ComtradeFormatDiscreteChannel.h \
+    ../../ComtradeFileParser/utils.h \
     ../source/Complex.h \
     ../source/examples/config.h \
     ../source/examples/example_classic_fir.h \
@@ -53,4 +57,5 @@ HEADERS += \
     ../source/utils.h
 
 SOURCES += \
+    ../../ComtradeFileParser/ComtradeFormat.cpp \
     ../source/main.cpp
