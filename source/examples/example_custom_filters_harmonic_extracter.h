@@ -2,6 +2,7 @@
 #define EXAMPLE_CUSTOM_FILTERS_HARMONIC_EXTRACTER_H
 
 #include "config.h"
+#include "../../COMTRADE/Comtrade.h"
 #include "../../DSP/source/generators.h"
 #include "../../DSP/source/filters_real_time_spectrum_analyzer.h"
 
@@ -19,29 +20,27 @@ int filters_harmonic_extracter_example()
     int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
     int    frames_per_cycle  = CycleWidth * Fs / 1000;
 
-    #ifdef WRITE_LOGS
+    // create COMTARDE registrator
+    Comtrade registrator
+            (
+                "filters_ellip_example",
+                Fn,
+                Fs,
+                {
+                    new ComtradeFormatAnalogChannel("xt"),
+                    new ComtradeFormatAnalogChannel("re"),
+                    new ComtradeFormatAnalogChannel("im"),
+                    new ComtradeFormatAnalogChannel("am")
+                }
+            );
 
-    // log files
-    std::ofstream xt;
-    std::ofstream yt;
-    std::ofstream re;
-    std::ofstream im;
-    std::ofstream am;
-    std::ofstream pH;
-    std::ofstream Km;
-    std::ofstream dt;
+    registrator.set_samples_number( frames_per_cycle * cycles_num );
 
-    // open files
-    xt.open( LOGS_DIRECTORY + OUTPUT_STREAM_INPUT);
-    yt.open( LOGS_DIRECTORY + OUTPUT_STREAM_OUTPUT);
-    pH.open( LOGS_DIRECTORY + OUTPUT_STREAM_PHASE_RESPONSE);
-    Km.open( LOGS_DIRECTORY + OUTPUT_STREAM_AMPLITUDE_RESPONSE);
-    dt.open( LOGS_DIRECTORY + OUTPUT_STREAM_TIME);
-    re .open(LOGS_DIRECTORY + OUTPUT_STREAM_REAL_COMPONENT);
-    im .open(LOGS_DIRECTORY + OUTPUT_STREAM_IMAG_COMPONENT);
-    am .open(LOGS_DIRECTORY + OUTPUT_STREAM_SIGNAL_AMPLITUDE);
-
-    #endif
+    // retrieve channels
+    ComtradeFormatAnalogChannel* xt = registrator.find_analog_channel("xt");
+    ComtradeFormatAnalogChannel* re = registrator.find_analog_channel("re");
+    ComtradeFormatAnalogChannel* im = registrator.find_analog_channel("im");
+    ComtradeFormatAnalogChannel* am = registrator.find_analog_channel("am");
 
     // main driver code
     generator<__type> gen;
@@ -51,48 +50,23 @@ int filters_harmonic_extracter_example()
     real_time_frequency_invariant_harmonic_extracter rff;
     rff.init(Fs, Fn, 5);
 
+    int k = 0;
     for( int i = 0 ; i < cycles_num ; i++ )
     {
-        for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick())
+        for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick(), k++)
         {
             double F = 45;
-            __type signal = gen.sine( 1, F, 30, time ); //gen.sine( 2, F, 30, time ) + gen.sine( 2, 2*F, 10, time ) + 0.2;
+            __type signal = gen.sine( 1, F, 30, time );
             Complex<__type> output = rff.filt( &signal, 1 );
 
-            // logginig
-            #ifdef WRITE_LOGS
-            yt << signal << "\n";
-            re << __realf__(output) << "\n";
-            im << __imagf__(output) << "\n";
-            am << __cabsf__(output) << "\n";
-            dt << time << "\n";
-            #endif
+            xt->set_sample(k, signal);
+            re->set_sample(k, __realf__(output) );
+            im->set_sample(k, __imagf__(output) );
+            am->set_sample(k, __cabsf__(output) );
         }
     }
 
-    /*
-    for( int i = 0 ; i < Fs / 2 ; i++ )
-    {
-        Complex<__type> output = rff.frequency_response( (double)i );
-
-        #ifdef WRITE_LOGS
-        pH << __cargf__(output) << "\n";
-        Km << __cabsf__(output) << "\n";
-        #endif
-    }
-    */
-
-    // close files
-    #ifdef WRITE_LOGS
-    xt.close();
-    yt.close();
-    re.close();
-    im.close();
-    am.close();
-    pH.close();
-    Km.close();
-    dt.close();
-    #endif
+    registrator.to_file( LOGS_DIRECTORY, STRINGIFY(filters_harmonic_extracter_example) );
 
     return 0;
 }

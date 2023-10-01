@@ -2,7 +2,6 @@
 #define FILTERS_IIR_H
 
 // custom includes
-#include "Complex.h"
 #include "kernel_iir.h"
 using namespace IIR_KERNEL;
 

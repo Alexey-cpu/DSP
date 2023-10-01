@@ -9,8 +9,8 @@
 #include <stdlib.h>
 #endif
 
-#include "utils.h"
-#include "Complex.h"
+#include <Utils.h>
+#include <Complex.h>
 
 /*! \defgroup <FILTERS> ( Filters )
  *  \brief The module contains different filters implementations description
@@ -284,7 +284,7 @@ namespace DSP_KERNEL
                     matrix.gains[j] = data.gains[j];
                 }
 
-                //matrix.gains[data.N] = data.gains[data.N];
+                matrix.gains[data.N] = data.gains[data.N];
             }
 
             // overwrite zeros

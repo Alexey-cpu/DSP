@@ -1556,7 +1556,7 @@ namespace IIR_KERNEL
         }
 
         // setting filter output gain:
-        gains[ 2*L+R ] = __realf__(glp[N]);
+        gains[ 2*L+R ] = __realf__( glp[N] );
 
         // memory free:
         plp = __mfree__(plp);
@@ -1817,6 +1817,7 @@ namespace IIR_KERNEL
                 fgain *= gains[i];
             }
             fgain *= gains[N];
+
             printf( "output gain = : %.12f \n " , gains[N] );
             printf( "filter gain = : %.12f \n " , fgain    );
         }

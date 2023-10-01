@@ -2,6 +2,7 @@
 #define EXAMPLE_CLASSIC_FIR_H
 
 #include "config.h"
+#include "../../COMTRADE/Comtrade.h"
 #include "../../DSP/source/generators.h"
 #include "../../DSP/source/filters_fir.h"
 
@@ -19,23 +20,23 @@ int filters_fir_example()
     int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
     int    frames_per_cycle  = CycleWidth * Fs / 1000;
 
-    #ifdef WRITE_LOGS
+    // create COMTARDE registrator
+    Comtrade registrator
+            (
+                "filters_ellip_example",
+                Fn,
+                Fs,
+                {
+                    new ComtradeFormatAnalogChannel("xt"),
+                    new ComtradeFormatAnalogChannel("yt")
+                }
+            );
 
-    // log files
-    std::ofstream xt;
-    std::ofstream yt;
-    std::ofstream pH;
-    std::ofstream Km;
-    std::ofstream dt;
+    registrator.set_samples_number( frames_per_cycle * cycles_num );
 
-    // open files
-    xt.open( LOGS_DIRECTORY + OUTPUT_STREAM_INPUT);
-    yt.open( LOGS_DIRECTORY + OUTPUT_STREAM_OUTPUT);
-    pH.open( LOGS_DIRECTORY + OUTPUT_STREAM_PHASE_RESPONSE);
-    Km.open( LOGS_DIRECTORY + OUTPUT_STREAM_AMPLITUDE_RESPONSE);
-    dt.open( LOGS_DIRECTORY + OUTPUT_STREAM_TIME);
-
-    #endif
+    // retrieve channels
+    ComtradeFormatAnalogChannel* xt = registrator.find_analog_channel("xt");
+    ComtradeFormatAnalogChannel* yt = registrator.find_analog_channel("yt");
 
     // generator initialization
     generator<__type> gen;
@@ -48,44 +49,23 @@ int filters_fir_example()
 
     // filter initialization
     fir<__type> filter;
-    filter.init(Fs, filter_type::lowpass, {50, 500}, window, 1);
+    filter.init(Fs, filter_type::bandstop, {50, 500}, window, 1);
 
     // emulation
+    int k = 0;
     for( int i = 0 ; i < cycles_num ; i++ )
     {
-        for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick() )
+        for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick(), k++ )
         {
             __type signal = gen.distortion( 1, Fn, 30, 0.4, 5, time );
-            //__type signal = gen.sine( 1, Fn, 0, time );
             __type output = filter(&signal);
 
-            #ifdef WRITE_LOGS
-            xt << signal << "\n";
-            yt << output << "\n";
-            dt << time   << "\n";
-            #endif
+            xt->set_sample( k, signal );
+            yt->set_sample( k, output );
         }
     }
 
-    for( int i = 0 ; i < Fs / 2 ; i++ )
-    {
-        Complex<__type> output = filter.frequency_response( (double)i );
-
-        #ifdef WRITE_LOGS
-        pH << __cargf__(output) << "\n";
-        Km << __cabsf__(output) << "\n";
-        #endif
-    }
-
-    // close files
-
-    #ifdef WRITE_LOGS
-    xt.close();
-    yt.close();
-    Km.close();
-    pH.close();
-    dt.close();
-    #endif
+    registrator.to_file( LOGS_DIRECTORY, STRINGIFY(filters_fir_example) );
 
     return 0;
 }

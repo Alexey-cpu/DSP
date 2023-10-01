@@ -8,8 +8,8 @@
 #include "cstring"
 #endif
 
-#include "Complex.h"
-#include "utils.h"
+#include <Complex.h>
+#include <Utils.h>
 
 /*! \defgroup <SPECIAL_MATH_FUNCTIONS> ( Special functions )
  *  \brief the module collaborates all special math functions
@@ -19,166 +19,6 @@
 /*! \brief sets maximum number of iteration for elliptic functions computation */
 #ifndef __ITERATIONS_NUMBER__
 #define __ITERATIONS_NUMBER__ 30
-#endif
-
-/*! \brief defines 16-bit integer type */
-#ifndef __ix16
-#define __ix16 short
-#endif
-
-/*! \brief defines 32-bit integer type */
-#ifndef __ix32
-#define __ix32 int
-#endif
-
-/*! \brief defines 64-bit integer type */
-#ifndef __ix64
-#define __ix64 long long
-#endif
-
-/*! \brief defines unsigned 16-bit integer type */
-#ifndef __uix16
-#define __uix16 unsigned short
-#endif
-
-/*! \brief defines unsigned 32-bit integer type */
-#ifndef __uix32
-#define __uix32 unsigned int
-#endif
-
-/*! \brief defines unsigned 64-bit integer type */
-#ifndef __uix64
-#define __uix64 unsigned long long
-#endif
-
-/*! \brief defines 32-bit floating point type */
-#ifndef __fx32
-#define __fx32 float
-#endif
-
-/*! \brief defines 64-bit floating point type */
-#ifndef __fx64
-#define __fx64 double
-#endif
-
-/*! \brief defines extended 64-bit floating point type */
-#ifndef __fxx64
-#define __fxx64 long double
-#endif
-
-/*! \brief defines 32-bit floating point type upper limit */
-#ifndef __max_fx32
-#define __max_fx32 3.402823466e+38
-#endif
-
-/*! \brief defines 64-bit floating point type upper limit */
-#ifndef __max_fx64
-#define __max_fx64 1.7976931348623158e+308
-#endif
-
-/*! \brief defines 16-bit integer type upper limit */
-#ifndef __max_ix16
-#define __max_ix16 32767
-#endif
-
-/*! \brief defines 32-bit integer type upper limit */
-#ifndef __max_ix32
-#define __max_ix32 2147483647
-#endif
-
-/*! \brief defines 64-bit integer type upper limit */
-#ifndef __max_ix64
-#define __max_ix64 9223372036854775807
-#endif
-
-/*! \brief defines unsigned 16-bit integer type upper limit */
-#ifndef __max_uix16
-#define __max_uix16 65535
-#endif
-
-/*! \brief defines unsigned 32-bit integer type upper limit */
-#ifndef __max_uix32
-#define __max_uix32 4294967295
-#endif
-
-/*! \brief defines unsigned 64-bit integer type upper limit */
-#ifndef __max_uix64
-#define __max_uix64 18446744073709551615
-#endif
-
-/*! \brief defines 32-bit floating point type lower limit */
-#ifndef __min_fx32
-#define __min_fx32 1.175494351e-38
-#endif
-
-/*! \brief defines 64-bit floating point type lower limit */
-#ifndef __min_fx64
-#define __min_fx64 2.22507e-308
-#endif
-
-/*! \brief defines 16-bit integer type lower limit */
-#ifndef __min_ix16
-#define __min_ix16 -32767
-#endif
-
-/*! \brief defines 32-bit integer type lower limit */
-#ifndef __min_ix32
-#define __min_ix32 -2147483647
-#endif
-
-/*! \brief defines 64-bit integer type lower limit */
-#ifndef __min_ix64
-#define __min_ix64 -9223372036854775807
-#endif
-
-/*! \brief defines unsigned 16-bit integer type lower limit */
-#ifndef __min_uix16
-#define __min_uix16 0
-#endif
-
-/*! \brief defines unsigned 32-bit integer type lower limit */
-#ifndef __min_uix32
-#define __min_uix32 0
-#endif
-
-/*! \brief defines unsigned 64-bit integer type lower limit */
-#ifndef __min_uix64
-#define __min_uix64 0
-#endif
-
-/*! \brief defines 32-bit floating point computer epsilon */
-#ifndef __EPSILON_x32__
-#define __EPSILON_x32__ 1.19209e-007
-#endif
-
-/*! \brief defines 64-bit floating point computer epsilon */
-#ifndef __EPSILON_x64__
-#define __EPSILON_x64__ 2.22045e-016
-#endif
-
-/*! \brief defines extended 64-bit floating point computer epsilon */
-#ifndef __EPSILON_xx64__
-#define __EPSILON_xx64__ 1.0842e-019
-#endif
-
-/*! \brief defines pi */
-#ifndef PI0
-#define PI0 3.1415926535897932384626433832795
-#endif
-
-/*! \brief defines 2*pi */
-#ifndef PI2
-#define PI2 6.283185307179586476925286766559
-#endif
-
-/*! \brief defines pi / 2 */
-#ifndef PI_2
-#define PI_2 1.5707963267948966192313216916398
-#endif
-
-/*! \brief defines pi / 4 */
-#ifndef PI_4
-#define PI_4 0.78539816339744830961566084581988
 #endif
 
 /*! \defgroup <ELLIPTIC_FUNCTIONS> ( Elliptic functons )
@@ -193,16 +33,16 @@
     \param[k] elliptic modulus
     \return  returns Jacobi amplitude computed using the method of the arithmetic-geometric mean.
 */
-extern __fx64 __am__( __fx64 u , __fx64 k )
+extern double __am__( double u , double k )
 {
-    __fxx64 a[__ITERATIONS_NUMBER__ + 1];
-    __fxx64 g[__ITERATIONS_NUMBER__ + 1];
-    __fxx64 c[__ITERATIONS_NUMBER__ + 1];
-    __fxx64 two_n;
-    __fxx64 phi;
-    __ix32  n;
+    long double a[__ITERATIONS_NUMBER__ + 1];
+    long double g[__ITERATIONS_NUMBER__ + 1];
+    long double c[__ITERATIONS_NUMBER__ + 1];
+    long double two_n;
+    long double phi;
+    int  n;
 
-    k = fabsl((__fxx64)k);
+    k = fabsl((long double)k);
 
     // if k is out of range [-1 ; +1] we should set an edge value...
     if     ( k < -1 ) k = -1;
@@ -224,7 +64,7 @@ extern __fx64 __am__( __fx64 u , __fx64 k )
 
     for (n = 0; n < __ITERATIONS_NUMBER__; n++)
     {
-        if (fabsl(a[n] - g[n]) < (a[n] * __EPSILON_xx64__)) break;
+        if (fabsl(a[n] - g[n]) < (a[n] * __minexponent__<long double>() )) break;
         two_n += two_n;
         a[n + 1] = 0.5L * (a[n] + g[n]);
         g[n + 1] = sqrtl(a[n] * g[n]);
@@ -234,7 +74,7 @@ extern __fx64 __am__( __fx64 u , __fx64 k )
     // backward substitution implementation:
     phi = two_n * a[n] * u;
     for (; n > 0; n--) phi = 0.5L * (phi + asinl(c[n] * sinl(phi) / a[n]));
-    return ( __fx64 )phi;
+    return ( double )phi;
 }
 
 /*!
@@ -243,7 +83,7 @@ extern __fx64 __am__( __fx64 u , __fx64 k )
     \param[x] elliptic modulus
     \returs  returns Ellptic Jacobi SN( u , x ) = sin( am( u , x ) ) function
 */
-extern __fx64 __sn__( __fx64 u , __fx64 x ) { return sin( __am__( u , x ) ); }
+extern double __sn__( double u , double x ) { return sin( __am__( u , x ) ); }
 
 /*!  \example example_math_special_functions.h */
 
@@ -254,7 +94,7 @@ extern __fx64 __sn__( __fx64 u , __fx64 x ) { return sin( __am__( u , x ) ); }
     \param[x] elliptic modulus
     \return  returns Ellptic Jacobi CN( u , x ) = cos( am( u , x ) ) function
 */
-extern __fx64 __cn__( __fx64 u , __fx64 x ) { return cos( __am__( u , x ) ); }
+extern double __cn__( double u , double x ) { return cos( __am__( u , x ) ); }
 
 /*!  \example example_math_special_functions.h */
 
@@ -264,7 +104,7 @@ extern __fx64 __cn__( __fx64 u , __fx64 x ) { return cos( __am__( u , x ) ); }
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi DN( u , x ) = sqrt( 1 - x * x * SN( u , x ) * SN( u , x ) ) function
 */
-extern __fx64 __dn__( __fx64 u , __fx64 x ) { __fx64 SN = __sn__( u , x ); return sqrt(1.0 - x * x * SN * SN); }
+extern double __dn__( double u , double x ) { double SN = __sn__( u , x ); return sqrt(1.0 - x * x * SN * SN); }
 
 /*!  \example example_math_special_functions.h */
 
@@ -274,7 +114,7 @@ extern __fx64 __dn__( __fx64 u , __fx64 x ) { __fx64 SN = __sn__( u , x ); retur
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi CD( u , x ) = CN( u , x ) / DN( u , x ) function
 */
-extern __fx64 __cd__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __dn__( u , x ); }
+extern double __cd__( double u , double x ) { return __cn__( u , x ) / __dn__( u , x ); }
 
 /*!  \example example_math_special_functions.h */
 
@@ -284,7 +124,7 @@ extern __fx64 __cd__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __dn__( u
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi SD( u , x ) = SN( u , x ) / DN( u , x ) function
 */
-extern __fx64 __sd__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __dn__( u , x ); }
+extern double __sd__( double u , double x ) { return __sn__( u , x ) / __dn__( u , x ); }
 
 /*!  \example example_math_special_functions.h */
 
@@ -294,7 +134,7 @@ extern __fx64 __sd__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __dn__( u
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi ND( u , x ) = SN( u , x ) / DN( u , x ) function
 */
-extern __fx64 __nd__( __fx64 u , __fx64 x ) { return 1 / __dn__( u , x ); }
+extern double __nd__( double u , double x ) { return 1 / __dn__( u , x ); }
 
 /*!  \example example_math_special_functions.h */
 
@@ -304,7 +144,7 @@ extern __fx64 __nd__( __fx64 u , __fx64 x ) { return 1 / __dn__( u , x ); }
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi DC( u , x ) = 1 / ND( u , x ) function
 */
-extern __fx64 __dc__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __cn__( u , x ); }
+extern double __dc__( double u , double x ) { return __dn__( u , x ) / __cn__( u , x ); }
 
 /*!  \example example_math_special_functions.h */
 
@@ -314,7 +154,7 @@ extern __fx64 __dc__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __cn__( u
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi NC( u , x ) = 1 / CN( u , x ) function
 */
-extern __fx64 __nc__( __fx64 u , __fx64 x ) { return 1 / __cn__(u, x); }
+extern double __nc__( double u , double x ) { return 1 / __cn__(u, x); }
 
 /*!  \example example_math_special_functions.h */
 
@@ -324,7 +164,7 @@ extern __fx64 __nc__( __fx64 u , __fx64 x ) { return 1 / __cn__(u, x); }
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi SC( u , x ) = SN( u , x ) / CN( u , x ) function
 */
-extern __fx64 __sc__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __cn__( u , x ); }
+extern double __sc__( double u , double x ) { return __sn__( u , x ) / __cn__( u , x ); }
 
 /*!  \example example_math_special_functions.h */
 
@@ -334,7 +174,7 @@ extern __fx64 __sc__( __fx64 u , __fx64 x ) { return __sn__( u , x ) / __cn__( u
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi NS( u , x ) = 1 / SN( u , x ) function
 */
-extern __fx64 __ns__( __fx64 u , __fx64 x ) { return 1 / __sn__( u , x ); }
+extern double __ns__( double u , double x ) { return 1 / __sn__( u , x ); }
 
 /*!  \example example_math_special_functions.h */
 
@@ -344,7 +184,7 @@ extern __fx64 __ns__( __fx64 u , __fx64 x ) { return 1 / __sn__( u , x ); }
     \param[x] elliptical modulus
     \return  returns Ellptic Jacobi DS( u , x ) = DN( u , x ) / SN( u , x ) function
 */
-extern __fx64 __ds__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __sn__( u , x ); }
+extern double __ds__( double u , double x ) { return __dn__( u , x ) / __sn__( u , x ); }
 
 /*!  \example example_math_special_functions.h */
 
@@ -354,7 +194,7 @@ extern __fx64 __ds__( __fx64 u , __fx64 x ) { return __dn__( u , x ) / __sn__( u
  * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi CS( u , x ) = CN( u , x ) / SN( u , x ) function
 */
-extern __fx64 __cs__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __sn__( u , x ); }
+extern double __cs__( double u , double x ) { return __cn__( u , x ) / __sn__( u , x ); }
 
 /*!  \example example_math_special_functions.h */
 
@@ -364,12 +204,12 @@ extern __fx64 __cs__( __fx64 u , __fx64 x ) { return __cn__( u , x ) / __sn__( u
  * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi inverse SN function
 */
-extern __fx64 __isn__( __fx64 sn , __fx64 x )
+extern double __isn__( double sn , double x )
 {
     // auxiliary variables and arrays:
-    __fx64 a[__ITERATIONS_NUMBER__ + 1] ,  g[__ITERATIONS_NUMBER__ + 1] , s[__ITERATIONS_NUMBER__ + 1];
-    __fx64 two_n , phi , phi_old , k;
-    __ix32 n = 0;
+    double a[__ITERATIONS_NUMBER__ + 1] ,  g[__ITERATIONS_NUMBER__ + 1] , s[__ITERATIONS_NUMBER__ + 1];
+    double two_n , phi , phi_old , k;
+    int n = 0;
 
     // initialization:
     k = fabs(x);
@@ -414,11 +254,11 @@ extern __fx64 __isn__( __fx64 sn , __fx64 x )
  * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi inverse CN function
 */
-extern __fx64 __icn__( __fx64 cn , __fx64 x )
+extern double __icn__( double cn , double x )
 {
-    __fx64 a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ] , s[ __ITERATIONS_NUMBER__ + 1 ];
-    __fx64 two_n , phi , phi_old , k;
-    __ix32 n = 0;
+    double a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ] , s[ __ITERATIONS_NUMBER__ + 1 ];
+    double two_n , phi , phi_old , k;
+    int n = 0;
 
     // initialization:
     k    = fabs(x);
@@ -460,11 +300,11 @@ extern __fx64 __icn__( __fx64 cn , __fx64 x )
  * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi inverse DN function
 */
-extern __fx64 __idn__( __fx64 dn , __fx64 x )
+extern double __idn__( double dn , double x )
 {
-    __fx64 a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ] , s[ __ITERATIONS_NUMBER__ + 1 ];
-    __fx64 two_n , phi , phi_old , k;
-    __ix32 n = 0;
+    double a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ] , s[ __ITERATIONS_NUMBER__ + 1 ];
+    double two_n , phi , phi_old , k;
+    int n = 0;
 
     // initialization:
     k = fabs(x);
@@ -507,11 +347,11 @@ extern __fx64 __idn__( __fx64 dn , __fx64 x )
  * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi inverse CD function
 */
-extern __fx64 __icd__( __fx64 cd , __fx64 x )
+extern double __icd__( double cd , double x )
 {
-    __fx64 a[ __ITERATIONS_NUMBER__ + 1] , g[ __ITERATIONS_NUMBER__ + 1] , s[ __ITERATIONS_NUMBER__ + 1];
-    __fx64 two_n , phi , phi_old , k;
-    __ix32 n = 0;
+    double a[ __ITERATIONS_NUMBER__ + 1] , g[ __ITERATIONS_NUMBER__ + 1] , s[ __ITERATIONS_NUMBER__ + 1];
+    double two_n , phi , phi_old , k;
+    int n = 0;
 
     // initialization:
     k = fabs(x);
@@ -553,11 +393,11 @@ extern __fx64 __icd__( __fx64 cd , __fx64 x )
  * \param[x] elliptical modulus
  * \return  returns Ellptic Jacobi inverse SD function
 */
-extern __fx64 __isd__( __fx64 sd , __fx64 x )
+extern double __isd__( double sd , double x )
 {
-    __fx64 a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ] , s[ __ITERATIONS_NUMBER__ + 1 ];
-    __fx64 two_n , phi , phi_old , k;
-    __ix32 n = 0;
+    double a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ] , s[ __ITERATIONS_NUMBER__ + 1 ];
+    double two_n , phi , phi_old , k;
+    int n = 0;
 
     // initialization:
     k = fabs(x);
@@ -599,7 +439,7 @@ extern __fx64 __isd__( __fx64 sd , __fx64 x )
 * \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse ND function
 */
-extern __fx64 __ind__( __fx64 nd , __fx64 x ) { return __idn__( 1 / nd , x ); }
+extern double __ind__( double nd , double x ) { return __idn__( 1 / nd , x ); }
 
 /*!
 * \brief Elliptic Jacobi inverse DC function
@@ -607,11 +447,11 @@ extern __fx64 __ind__( __fx64 nd , __fx64 x ) { return __idn__( 1 / nd , x ); }
 * \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse DC function
 */
-extern __fx64 __idc__( __fx64 dc , __fx64 x )
+extern double __idc__( double dc , double x )
 {
-    __fx64 a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ] , s[ __ITERATIONS_NUMBER__ + 1 ];
-    __fx64 two_n , phi , phi_old , k;
-    __ix32 n = 0;
+    double a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ] , s[ __ITERATIONS_NUMBER__ + 1 ];
+    double two_n , phi , phi_old , k;
+    int n = 0;
 
     // initialization:
     k = fabs(x);
@@ -654,7 +494,7 @@ extern __fx64 __idc__( __fx64 dc , __fx64 x )
 * \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse NC function
 */
-extern __fx64 __inc__( __fx64 nc , __fx64 x ) { return  __icn__( 1 / nc , x ); }
+extern double __inc__( double nc , double x ) { return  __icn__( 1 / nc , x ); }
 
 /*!
 * \brief Elliptic Jacobi inverse SC function
@@ -662,11 +502,11 @@ extern __fx64 __inc__( __fx64 nc , __fx64 x ) { return  __icn__( 1 / nc , x ); }
 * \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse SC function
 */
-extern __fx64 __isc__( __fx64 sc , __fx64 x )
+extern double __isc__( double sc , double x )
 {
-    __fx64 a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ] , s[ __ITERATIONS_NUMBER__ + 1 ];
-    __fx64 two_n , phi , phi_old , k;
-    __ix32 n = 0;
+    double a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ] , s[ __ITERATIONS_NUMBER__ + 1 ];
+    double two_n , phi , phi_old , k;
+    int n = 0;
 
     // initialization:
     k = fabs(x);
@@ -708,7 +548,7 @@ extern __fx64 __isc__( __fx64 sc , __fx64 x )
 * \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse NS function
 */
-extern __fx64 __ins__( __fx64 ns , __fx64 x ) { return  __isn__( 1 / ns , x ); }
+extern double __ins__( double ns , double x ) { return  __isn__( 1 / ns , x ); }
 
 /*!
 * \brief Elliptic Jacobi inverse DS function
@@ -716,7 +556,7 @@ extern __fx64 __ins__( __fx64 ns , __fx64 x ) { return  __isn__( 1 / ns , x ); }
 * \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse DS function
 */
-extern __fx64 __ids__( __fx64 ds , __fx64 x ) { return  __isd__( 1 / ds , x ); }
+extern double __ids__( double ds , double x ) { return  __isd__( 1 / ds , x ); }
 
 /*!
 * \brief Elliptic Jacobi inverse CS function
@@ -724,20 +564,20 @@ extern __fx64 __ids__( __fx64 ds , __fx64 x ) { return  __isd__( 1 / ds , x ); }
 * \param[x] elliptical modulus
 * \return  returns Ellptic Jacobi inverse CS function
 */
-extern __fx64 __ics__( __fx64 cs , __fx64 x ) { return  __isc__( 1 / cs , x ); }
+extern double __ics__( double cs , double x ) { return  __isc__( 1 / cs , x ); }
 
 /*!
 * \brief Elliptic integral of the first kind
 * \param[k] elliptical modulus
 * \return  returns Ellptic integral of the first kind
 */
-extern __fx64 __ellip_k__( __fx64 k )
+extern double __ellip_k__( double k )
 {
-    __fxx64 a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ];
-    __fxx64 two_n;
-    __ix32  n;
+    long double a[ __ITERATIONS_NUMBER__ + 1 ] , g[ __ITERATIONS_NUMBER__ + 1 ];
+    long double two_n;
+    int  n;
 
-    k = fabsl( ( __fxx64 )k);
+    k = fabsl( ( long double )k);
 
     // if k is out of range [-1 ; +1] then the edge value is set:
     if      ( k < -1 ) k = -1;
@@ -755,7 +595,7 @@ extern __fx64 __ellip_k__( __fx64 k )
     two_n = 1.0L;
     for (n = 0; n < __ITERATIONS_NUMBER__ ; n++)
     {
-        if (fabsl(a[n] - g[n]) < (a[n] * __EPSILON_xx64__ )) break;
+        if (fabsl(a[n] - g[n]) < (a[n] * __minexponent__<long double>() )) break;
         two_n += two_n;
         a[n + 1] = 0.5L * (a[n] + g[n]);
         g[n + 1] = sqrtl(a[n] * g[n]);
@@ -769,13 +609,13 @@ extern __fx64 __ellip_k__( __fx64 k )
 * \param[k] elliptical modulus
 * \return  returns Ellptic integral of the second kind
 */
-extern __fx64 __ellip_e__( __fx64 k )
+extern double __ellip_e__( double k )
 {
-    __fxx64 a[ __ITERATIONS_NUMBER__ + 1 ] ,  g[ __ITERATIONS_NUMBER__ + 1 ] , c[ __ITERATIONS_NUMBER__ + 1 ];
-    __fxx64 two_n = 1.0L , sum = 0;
-    __ix32  n;
+    long double a[ __ITERATIONS_NUMBER__ + 1 ] ,  g[ __ITERATIONS_NUMBER__ + 1 ] , c[ __ITERATIONS_NUMBER__ + 1 ];
+    long double two_n = 1.0L , sum = 0;
+    int  n;
 
-    k = fabsl( ( __fxx64 ) k );
+    k = fabsl( ( long double ) k );
 
     // if k is out of range [-1 ; +1] then the edge value is set:
     if      ( k < -1 ) k = -1;
@@ -793,7 +633,7 @@ extern __fx64 __ellip_e__( __fx64 k )
 
     for (n = 0; n < __ITERATIONS_NUMBER__ ; n++)
     {
-        if (fabsl(a[n] - g[n]) < (a[n] * __EPSILON_xx64__ ) ) break;
+        if (fabsl(a[n] - g[n]) < (a[n] * __minexponent__<long double>() ) ) break;
         two_n += two_n;
         a[n + 1] = 0.5L * (a[n] + g[n]);
         g[n + 1] = sqrtl(a[n] * g[n]);
@@ -819,10 +659,10 @@ extern __fx64 __ellip_e__( __fx64 k )
 * \return  returns n!
 */
 
-extern __fxx64 __factorial__( __ix64 n )
+extern long double __factorial__( long long n )
 {
-    __fxx64 out = 1;
-    for( __ix64 i = 1 ; i <= n ; i++ ) out *= i;
+    long double out = 1;
+    for( long long i = 1 ; i <= n ; i++ ) out *= i;
     return out;
 }
 
@@ -831,17 +671,17 @@ extern __fxx64 __factorial__( __ix64 n )
 * \param[n] input n
 * \return  returns ( n - 1 )!
 */
-extern __uix64 __gamma_integer__( __uix64 n ) { return __factorial__(n-1); }
+extern unsigned long long __gamma_integer__( unsigned long long n ) { return __factorial__(n-1); }
 
 /*!
 * \brief Zero order Bessel function
 * \param[x] input x
 * \return  returns zero order Bessel function value
 */
-extern __fxx64 __bessel_i0__( __fxx64 x )
+extern long double __bessel_i0__( long double x )
 {
-    __fxx64 sum = 0 , fact_n = 0;
-    for ( __ix32 n = 0 ; n < __ITERATIONS_NUMBER__ ; n++)
+    long double sum = 0 , fact_n = 0;
+    for ( int n = 0 ; n < __ITERATIONS_NUMBER__ ; n++)
     {
         fact_n = powl( __factorial__( n ), 2);
         if ( fact_n == 0 ) break;
@@ -856,10 +696,10 @@ extern __fxx64 __bessel_i0__( __fxx64 x )
 * \param[x] input x
 * \return  returns first order Bessel function value
 */
-extern __fxx64 __bessel_i1__( __fxx64 x )
+extern long double __bessel_i1__( long double x )
 {
-    __fxx64 sum = 0 , fact_n = 0 , fact_n_1 = 0;
-    for (__ix32 n = 0; n < __ITERATIONS_NUMBER__ ; n++)
+    long double sum = 0 , fact_n = 0 , fact_n_1 = 0;
+    for (int n = 0; n < __ITERATIONS_NUMBER__ ; n++)
     {
         fact_n   = __factorial__(n);
         fact_n_1 = __factorial__(n + 1);
@@ -875,10 +715,10 @@ extern __fxx64 __bessel_i1__( __fxx64 x )
 * \param[order] Bessel function order
 * \return  returns N-th order Bessel function value
 */
-extern __fxx64 __bessel_in__( __fxx64 x  , __ix32 order )
+extern long double __bessel_in__( long double x  , int order )
 {
-    __fxx64 sum = 0 , fact_n = 0 , fact_n_order = 0;
-    for ( __ix32 n = 0; n < __ITERATIONS_NUMBER__ ; n++)
+    long double sum = 0 , fact_n = 0 , fact_n_order = 0;
+    for ( int n = 0; n < __ITERATIONS_NUMBER__ ; n++)
     {
         fact_n       = __factorial__(n);
         fact_n_order = __factorial__(n + order);
@@ -894,12 +734,12 @@ extern __fxx64 __bessel_in__( __fxx64 x  , __ix32 order )
 * \param[order] Modified Bessel function order
 * \return  returns N-th order modified Bessel function value
 */
-extern __fxx64 __modified_bessel_in__( __fxx64 x  , __ix32 order )
+extern long double __modified_bessel_in__( long double x  , int order )
 {
-    __fxx64  sum = 0 , gamma1 = 0 , gamma2    = 0;
+    long double  sum = 0 , gamma1 = 0 , gamma2    = 0;
     for (int n = 0; n < 16; n++)
     {
-        if ( ( __fxx64 )gamma2 / (__fxx64)__max_fx64 > 0.9 )
+        if ( ( long double )gamma2 / __maxexponent__<long double>() > 0.9 )
             break;
 
         gamma1    = __gamma_integer__(n + 1);
@@ -933,13 +773,13 @@ extern __fxx64 __modified_bessel_in__( __fxx64 x  , __ix32 order )
  *      \end{equation}
  *  \f]
 */
-__fx64* __Bartlett__( __ix32 _order )
+double* __Bartlett__( int _order )
 {
     // memory allocation:
-    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    double *buff = (double*)calloc( _order, sizeof(double) );
     // window function coefficients computation:
-    __fx64 Ns = ( __fx64 ) _order;
-    for ( __ix32 n = 0; n < Ns ; n++) { buff[n] = ( n <= ( Ns-1 ) / 2 ) ? ( 2*n / (Ns-1) ) : ( 2 - 2 * n / (Ns-1) ); }
+    double Ns = ( double ) _order;
+    for ( int n = 0; n < Ns ; n++) { buff[n] = ( n <= ( Ns-1 ) / 2 ) ? ( 2*n / (Ns-1) ) : ( 2 - 2 * n / (Ns-1) ); }
     return buff;
 }
 
@@ -953,13 +793,13 @@ __fx64* __Bartlett__( __ix32 _order )
  *      y( n ) = 0.62 - 0.48 * \left|  \frac{ n }{ Ns - 1 } - 0.5 \right| + 0.38 * cos \left[ \ 2 * \pi * \left( \frac{ n }{ Ns - 1 } - 0.5 \right) \right]
  *  \f]
 */
-__fx64* __BartlettHanning__( __ix32 _order )
+double* __BartlettHanning__( int _order )
 {
     // memory allocation:
-    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    double *buff = (double*)calloc( _order, sizeof(double) );
     // window function coefficients computation:
-    __fx64 Ns = (__fx64)_order;
-    for (__ix32 n = 0; n < Ns ; n++) { buff[n] = 0.62 - 0.48 * fabs( n / (Ns-1)-0.5) + 0.38 * cos(PI2 * (n / (Ns - 1) - 0.5)); }
+    double Ns = (double)_order;
+    for (int n = 0; n < Ns ; n++) { buff[n] = 0.62 - 0.48 * fabs( n / (Ns-1)-0.5) + 0.38 * cos(PI2 * (n / (Ns - 1) - 0.5)); }
     // window is ready to use:
     return buff;
 }
@@ -975,13 +815,13 @@ __fx64* __BartlettHanning__( __ix32 _order )
      *      y( n ) = 0.42 - 0.50 * cos \left( 2 * \pi * \frac { n } { Ns - 1 } \right ) + 0.08 * cos \left( 4 * \pi * \frac{ n } { Ns - 1 } \right )
      *  \f]
 */
-__fx64* __Blackman__(__ix32 _order)
+double* __Blackman__(int _order)
 {
     // memory allocation:
-    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    double *buff = (double*)calloc( _order, sizeof(double) );
     // window function coefficients computation:
-    __fx64 Ns = (__fx64)_order;
-    for (__ix32 n = 0; n < Ns ; n++) { buff[n] = 0.42 - 0.50 * cos(2 * PI0 * n / (Ns - 1) ) + 0.08 * cos(4 * PI0 * n / (Ns - 1)); }
+    double Ns = (double)_order;
+    for (int n = 0; n < Ns ; n++) { buff[n] = 0.42 - 0.50 * cos(2 * PI0 * n / (Ns - 1) ) + 0.08 * cos(4 * PI0 * n / (Ns - 1)); }
     // window is ready to use:
     return buff;
 }
@@ -996,13 +836,13 @@ __fx64* __Blackman__(__ix32 _order)
      *      y( n ) = 0.35875 - 0.48829 * cos \left( 2 * \pi * \frac{ n } { Ns - 1 } \right ) + 0.14128 * cos\left( 4 * \pi * \frac{ n } { Ns - 1 } \right ) - 0.01168 * cos \left( 6 * \pi * \frac{ n } { Ns - 1 } \right )
      *  \f]
     */
-__fx64* __BlackmanHarris__(__ix32 _order)
+double* __BlackmanHarris__(int _order)
 {
     // memory allocation:
-    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    double *buff = (double*)calloc( _order, sizeof(double) );
     // window function coefficients computation:
-    __fx64 Ns = (__fx64)_order;
-    for (__ix32 n = 0; n < Ns; n++) { buff[n] = 0.35875 - 0.48829 * cos(2 * PI0 * n / (Ns - 1)) + 0.14128 * cos(4 * PI0 * n / (Ns - 1)) - 0.01168 * cos(6 * PI0 * n / (Ns - 1)); }
+    double Ns = (double)_order;
+    for (int n = 0; n < Ns; n++) { buff[n] = 0.35875 - 0.48829 * cos(2 * PI0 * n / (Ns - 1)) + 0.14128 * cos(4 * PI0 * n / (Ns - 1)) - 0.01168 * cos(6 * PI0 * n / (Ns - 1)); }
     // window is ready to use:
     return buff;
 }
@@ -1022,14 +862,14 @@ __fx64* __BlackmanHarris__(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64* __Bohman__(__ix32 _order)
+double* __Bohman__(int _order)
 {
     // memory allocation:
-    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    double *buff = (double*)calloc( _order, sizeof(double) );
 
     // window function coefficients computation:
-    __fx64 Ns = ceil( (__fx64)_order / 2) , n = 0;
-    for (__ix32 k = 0; k < _order; k++)
+    double Ns = ceil( (double)_order / 2) , n = 0;
+    for (int k = 0; k < _order; k++)
     {
         n = k - Ns;
         if ( n >= 0 )  n = k - Ns + 1;
@@ -1053,9 +893,9 @@ __fx64* __Bohman__(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64 __Chebyshev_poly__(__ix32 n, __fx64 x)
+double __Chebyshev_poly__(int n, double x)
 {
-    __fx64 res;
+    double res;
     if (fabs(x) <= 1) res = cos(n*acos(x));
     else              res = cosh(n*acosh(x));
     return res;
@@ -1067,16 +907,16 @@ __fx64 __Chebyshev_poly__(__ix32 n, __fx64 x)
      * \param[_order] window function size
      * \return The function allocates memory, sets m_wind_ready = 1 and computes Chebyshev window coefficients
     */
-__fx64* __Chebyshev__( __fx64 _atten , __ix32 _order )
+double* __Chebyshev__( double _atten , int _order )
 {
     // memory allocation:
-    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    double *buff = (double*)calloc( _order, sizeof(double) );
 
     // window function coefficients computation:
-    __ix32 Ns = _order , nn, kk;
-    __fx64 M, n, sum = 0, max = 0;
-    __fx64 tg = pow(10, _atten / 20);
-    __fx64 x0 = cosh((1.0 / (Ns - 1))*acosh(tg));
+    int Ns = _order , nn, kk;
+    double M, n, sum = 0, max = 0;
+    double tg = pow(10, _atten / 20);
+    double x0 = cosh((1.0 / (Ns - 1))*acosh(tg));
     M = (Ns - 1) / 2;
 
     if (Ns % 2 == 0) M = M + 0.5;
@@ -1086,7 +926,7 @@ __fx64* __Chebyshev__( __fx64 _atten , __ix32 _order )
         sum = 0;
         for (kk = 1; kk <= M; kk++)  { sum += __Chebyshev_poly__(Ns - 1, x0*cos(PI0*kk / Ns))*cos(2.0*n*PI0*kk / Ns); }
         buff[nn] = tg + 2 * sum;
-        buff[(__ix32)Ns - nn - 1] = buff[nn];
+        buff[(int)Ns - nn - 1] = buff[nn];
         if (buff[nn] > max)max = buff[nn];
     }
     for (nn = 0; nn < Ns; nn++) buff[nn] /= max;
@@ -1109,14 +949,14 @@ __fx64* __Chebyshev__( __fx64 _atten , __ix32 _order )
      *      + 0.006947368 * cos \left( 8 * \pi * \frac{ n } { Ns - 1 } \right)
      *  \f]
     */
-__fx64* __FlatTop__(__ix32 _order)
+double* __FlatTop__(int _order)
 {
     // memory allocation:
-    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    double *buff = (double*)calloc( _order, sizeof(double) );
 
     // window coefficients computation:
-    __fx64 Ns = (__fx64)_order;
-    for (__ix32 n = 0 ; n < Ns; n++)
+    double Ns = (double)_order;
+    for (int n = 0 ; n < Ns; n++)
     {
         buff[n] = 0.21557895 - 0.41663158 * cos(PI2 * n / (Ns - 1) ) +
                 0.277263158 * cos(4 * PI0 * n / (Ns - 1) ) -
@@ -1148,22 +988,22 @@ __fx64* __FlatTop__(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64* __Gaussian__( __fx64 _alpha, __ix32 _order )
+double* __Gaussian__( double _alpha, int _order )
 {
     // memory allocation:
-    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    double *buff = (double*)calloc( _order, sizeof(double) );
 
     // window function coefficients computation:
-    __ix32 Ns     = _order;
-    __ix32 n      = 0;
-    __fx64 sigma  = 0;
+    int Ns     = _order;
+    int n      = 0;
+    double sigma  = 0;
 
-    for (__ix32 k = 0 ; k < Ns; k++)
+    for (int k = 0 ; k < Ns; k++)
     {
         n = k - Ns/2;
         if (n >= 0)  n = k - Ns/2 + 1;
-        sigma = ((__fx64)Ns-1) / 2 / _alpha;
-        buff[k] = exp(-(__fx64)n * (__fx64)n / 2 / sigma / sigma);
+        sigma = ((double)Ns-1) / 2 / _alpha;
+        buff[k] = exp(-(double)n * (double)n / 2 / sigma / sigma);
     }
 
     // wind is ready to use:
@@ -1180,14 +1020,14 @@ __fx64* __Gaussian__( __fx64 _alpha, __ix32 _order )
      *      y( n ) = 0.54 - 0.46 * cos \left( 2 * \pi * \frac{ n } { Ns-1 } \right)
      *  \f]
     */
-__fx64* __Hamming__(__ix32 _order )
+double* __Hamming__(int _order )
 {
     // memory allocation:
-    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    double *buff = (double*)calloc( _order, sizeof(double) );
 
     // window function coefficients computation:
-    __ix32 Ns = _order;
-    for (__ix32 n = 0 ; n < Ns ; n++) buff[n] = 0.54 - 0.46 * cos(PI2 * n / (Ns-1));
+    int Ns = _order;
+    for (int n = 0 ; n < Ns ; n++) buff[n] = 0.54 - 0.46 * cos(PI2 * n / (Ns-1));
 
     // window is ready to use:
     return buff;
@@ -1203,14 +1043,14 @@ __fx64* __Hamming__(__ix32 _order )
      *      y( n ) = 0.5 - 0.5 * cos \left( 2 * \pi * \frac{ n } { Ns-1 } \right)
      *  \f]
     */
-__fx64* __Hann__(__ix32 _order)
+double* __Hann__(int _order)
 {
     // memory allocation:
-    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    double *buff = (double*)calloc( _order, sizeof(double) );
 
     // window function coefficients computation:
-    __ix32 Ns = _order;
-    for (__ix32 n = 0; n < Ns; n++) buff[n] = 0.5 - 0.5 * cos( PI2 * n / (Ns-1) );
+    int Ns = _order;
+    for (int n = 0; n < Ns; n++) buff[n] = 0.5 - 0.5 * cos( PI2 * n / (Ns-1) );
 
     // window is ready to use:
     return buff;
@@ -1231,19 +1071,19 @@ __fx64* __Hann__(__ix32 _order)
      *      y(n) = \frac{ ModifiedBessel( B , 0 ) }{ ModifiedBessel( C , 0 ) }
      *  \f]
     */
-__fx64* __Kaiser__(__fx64 _betta, __ix32 _order )
+double* __Kaiser__(double _betta, int _order )
 {
     // memory allocation:
-    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    double *buff = (double*)calloc( _order, sizeof(double) );
 
     // winfow function coefficients computation:
-    __ix32 Ns = _order;
-    __fx64 A  = 0;
-    __fx64 B  = 0;
-    __fx64 C  = 0;
-    for (__ix32 n = 0; n < Ns; n++)
+    int Ns = _order;
+    double A  = 0;
+    double B  = 0;
+    double C  = 0;
+    for (int n = 0; n < Ns; n++)
     {
-        A = ((__fx64)n - ( (__fx64)Ns - 1 ) / 2) / ( ((__fx64)Ns - 1 ) / 2);
+        A = ((double)n - ( (double)Ns - 1 ) / 2) / ( ((double)Ns - 1 ) / 2);
         B = _betta * sqrt(1 - A * A);
         C = _betta;
         buff[n] = __modified_bessel_in__( B , 0 ) / __modified_bessel_in__( C , 0 );
@@ -1266,14 +1106,14 @@ __fx64* __Kaiser__(__fx64 _betta, __ix32 _order )
      *      - 0.0106411 * cos \left( 6 * \pi * \frac{ n }{ Ns - 1 } \right)
      *  \f]
     */
-__fx64* __Nutall__(__ix32 _order)
+double* __Nutall__(int _order)
 {
     // memory allocation:
-    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    double *buff = (double*)calloc( _order, sizeof(double) );
 
     // window function coefficients computation:
-    __ix32 Ns = _order;
-    for (__ix32 n = 0; n < Ns; n++)
+    int Ns = _order;
+    for (int n = 0; n < Ns; n++)
     {
         buff[n] = 0.3635819 -
                 0.4891775 * cos(2 * PI0 * n / (Ns - 1) ) +
@@ -1304,27 +1144,27 @@ __fx64* __Nutall__(__ix32 _order)
      *
      *  \f]
     */
-__fx64* __Parzen__(__ix32 _order)
+double* __Parzen__(int _order)
 {
     // memory allocation:
-    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    double *buff = (double*)calloc( _order, sizeof(double) );
 
     // window function coefficients computation:
-    __ix32    Ns = _order;
-    __ix32    n = 0;
-    for (__ix32 k = 0; k < Ns; k++)
+    int    Ns = _order;
+    int    n = 0;
+    for (int k = 0; k < Ns; k++)
     {
         n = k - Ns / 2;
         if (n >= 0)  n = k - Ns / 2 + 1;
 
         if ( abs(n)>=0 && abs(n) <= (Ns-1)/4 )
         {
-            buff[k] = 1 - 6 * fabs((__fx64)n)*fabs((__fx64)n) / ((__fx64)Ns*(__fx64)Ns / 4) +
-                    6 * fabs((__fx64)n)*fabs((__fx64)n)*fabs((__fx64)n) / ((__fx64)Ns*(__fx64)Ns*(__fx64)Ns / 8);
+            buff[k] = 1 - 6 * fabs((double)n)*fabs((double)n) / ((double)Ns*(double)Ns / 4) +
+                    6 * fabs((double)n)*fabs((double)n)*fabs((double)n) / ((double)Ns*(double)Ns*(double)Ns / 8);
         }
         else if( abs(n) < Ns/2 && abs(n) > (Ns - 1) / 4 )
         {
-            buff[k] = 2 * pow( 1 - fabs((__fx64)n)/((__fx64)Ns/2) , 3);
+            buff[k] = 2 * pow( 1 - fabs((double)n)/((double)Ns/2) , 3);
         }
     }
 
@@ -1342,13 +1182,13 @@ __fx64* __Parzen__(__ix32 _order)
      *      y(n) = 1
      *  \f]
     */
-__fx64* __Rectangular__(__ix32 _order)
+double* __Rectangular__(int _order)
 {
     // memory allocation:
-    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    double *buff = (double*)calloc( _order, sizeof(double) );
 
     // window coefficients vomputation:
-    for (__ix32 n = 0; n < _order; n++) buff[n] = 1;
+    for (int n = 0; n < _order; n++) buff[n] = 1;
 
     // window is ready to use:
     return buff;
@@ -1369,25 +1209,25 @@ __fx64* __Rectangular__(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64* __Triangular__(__ix32 _order)
+double* __Triangular__(int _order)
 {
     // memory allocation:
-    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    double *buff = (double*)calloc( _order, sizeof(double) );
 
     // window function coefficients computation:
-    __ix32 Ns = _order;
+    int Ns = _order;
     if ( Ns % 2 == 0)
     {
-        for (__ix32 n = 0; n < Ns; n++)
+        for (int n = 0; n < Ns; n++)
         {
-            buff[n] = (1.0 - fabs(((__fx64)n - ((__fx64)Ns - 1) / 2) / ((((__fx64)Ns - 1) + 1) / 2)));
+            buff[n] = (1.0 - fabs(((double)n - ((double)Ns - 1) / 2) / ((((double)Ns - 1) + 1) / 2)));
         }
     }
     else
     {
-        for (__ix32 n = 0; n < Ns; n++)
+        for (int n = 0; n < Ns; n++)
         {
-            buff[n] = (1.0 - fabs(((__fx64)n - ((__fx64)Ns - 1) / 2) / ((((__fx64)Ns - 1) + 2) / 2)));
+            buff[n] = (1.0 - fabs(((double)n - ((double)Ns - 1) / 2) / ((((double)Ns - 1) + 2) / 2)));
         }
     }
 
@@ -1418,17 +1258,17 @@ __fx64* __Triangular__(__ix32 _order)
      *      \end{cases}
      *  \f]
     */
-__fx64* __Tukey__(__fx64 _R, __ix32 _order )
+double* __Tukey__(double _R, int _order )
 {
     // memory allocation:
-    __fx64 *buff = (__fx64*)calloc( _order, sizeof(__fx64) );
+    double *buff = (double*)calloc( _order, sizeof(double) );
 
     // window function coefficients computation:
-    __ix32 Ns = _order;
-    __fx64 x  = 0;
-    for(__ix32 n = 0 ; n < Ns ; n++)
+    int Ns = _order;
+    double x  = 0;
+    for(int n = 0 ; n < Ns ; n++)
     {
-        x = (__fx64)n / ((__fx64)Ns - 1);
+        x = (double)n / ((double)Ns - 1);
         if ( x >=0 && x < _R / 2 )
         {
             buff[n] = 0.5 + 0.5 * cos( PI2 / _R * ( x - 0.5*_R ) );
@@ -1452,7 +1292,7 @@ __fx64* __Tukey__(__fx64 _R, __ix32 _order )
      * \param[_Na] size of the first input polynom of a linear convolution function
      * \param[_Nb] size of the second input polynom of a linear convolution function
 */
-__ix32 __conv_size__(__ix32 _Na,  __ix32 _Nb)
+int __conv_size__(int _Na,  int _Nb)
 {
     return _Na + _Nb - 1;
 }
@@ -1467,13 +1307,13 @@ __ix32 __conv_size__(__ix32 _Na,  __ix32 _Nb)
      * \param[_Nc] size of poly c array
 */
 template< typename __type > void
-__convf__( const __type *_a, const __type *_b, __type *_c, __ix32 _Na,  __ix32 _Nb, __ix32 _Nc )
+__convf__( const __type *_a, const __type *_b, __type *_c, int _Na,  int _Nb, int _Nc )
 {
     if( ( _Nc >= _Na + _Nb - 1 ) && ( _a && _b && _c ) )
     {
-        for( __ix32 i = 0 ; i < ( _Na + _Nb ) ; i++ )
+        for( int i = 0 ; i < ( _Na + _Nb ) ; i++ )
         {
-            for( __ix32 j = ( i - _Na < 0 ) ? 0 : i-_Na+1 , k = ( i < _Na ) ? i : _Na-1 ; ( j < _Nb ) && ( k >= 0 ) ; j++ , k-- )
+            for( int j = ( i - _Na < 0 ) ? 0 : i-_Na+1 , k = ( i < _Na ) ? i : _Na-1 ; ( j < _Nb ) && ( k >= 0 ) ; j++ , k-- )
             {
                 _c[i] += _a[k] * _b[j];
             }
@@ -1490,10 +1330,10 @@ __convf__( const __type *_a, const __type *_b, __type *_c, __ix32 _Na,  __ix32 _
      * \returns The function returns the tuple_x2
      *          containing resulting convulution vector and it's size
 */
-template< typename __type > Tuple<__type*, __ix32>
-__convf__( const __type *_a, const __type *_b, __ix32 _Na,  __ix32 _Nb )
+template< typename __type > Tuple<__type*, int>
+__convf__( const __type *_a, const __type *_b, int _Na,  int _Nb )
 {
-    __ix32 _Nc = _Na + _Nb - 1;
+    int _Nc = _Na + _Nb - 1;
     __type *_c = __alloc__<__type>(_Nc);
     __convf__( _a, _b, _c , _Na, _Nb, _Nc );
 
@@ -1543,12 +1383,12 @@ __fraction_numeric_substitution__(__type *AN, __type *AD, __type *BN, __type *BD
     P--;
 
     // identify martix dimensions
-    __ix32 nrows = N+1;
-    __ix32 ncols = N*P+1;
+    int nrows = N+1;
+    int ncols = N*P+1;
 
     // allocate memory
-    __ix32 *Ap = __alloc__<__ix32>( ncols );
-    __ix32 *Bp = __alloc__<__ix32>( ncols );
+    int *Ap = __alloc__<int>( ncols );
+    int *Bp = __alloc__<int>( ncols );
     __type *Ax = __alloc__<__type>( nrows * ncols );
     __type *Bx = __alloc__<__type>( nrows * ncols );
     __type *Cx = __alloc__<__type>( nrows * ncols );
@@ -1560,7 +1400,7 @@ __fraction_numeric_substitution__(__type *AN, __type *AD, __type *BN, __type *BD
     Bx[0] = 1;
     Ap[0] = 1;
     Bp[0] = 1;
-    for(__ix32 i = 1, Na = 1, Nb = (P+1), Nc = ncols ; i < nrows ; i++ )
+    for(int i = 1, Na = 1, Nb = (P+1), Nc = ncols ; i < nrows ; i++ )
     {
         __convf__( &Ax[(i-1)*ncols], BN, &Ax[i*ncols], Na, Nb, Nc );
         __convf__( &Bx[(i-1)*ncols], BD, &Bx[i*ncols], Na, Nb, Nc );
@@ -1570,15 +1410,15 @@ __fraction_numeric_substitution__(__type *AN, __type *AD, __type *BN, __type *BD
     }
 
     // convolve
-    for(__ix32 i = 0; i < nrows ; i++)
+    for(int i = 0; i < nrows ; i++)
     {
         __convf__( &Bx[(N-i)*ncols], &Ax[i*ncols], &Cx[i*ncols], Ap[N-i], Bp[i], ncols );
     }
 
     // compute the resulting poly coefficients
-    for( __ix32 j = 0 ; j < ncols ; j++ )
+    for( int j = 0 ; j < ncols ; j++ )
     {
-        for( __ix32 i = 0 ; i < nrows ; i++ )
+        for( int i = 0 ; i < nrows ; i++ )
         {
             Nx[j] += Cx[i*ncols+j] * AN[i];
             Dx[j] += Cx[i*ncols+j] * AD[i];
@@ -1611,7 +1451,7 @@ __fraction_numeric_substitution__(__type *AN, __type *AD, __type *BN, __type *BD
      *          The function supports linear, quad and cubic interpolation.
 */
 template< typename __type >
-__type get_data( __type* _Data, int _Size, __ix32 _Index )
+__type get_data( __type* _Data, int _Size, int _Index )
 {
     if( _Data == nullptr || _Size <= 0 )
         return 0.0;
@@ -1675,7 +1515,7 @@ samples_range_interpolation(T1 _Input, T2 _Output, T3 _Gain, int _M, int _N, int
         {
             for( int j = 0 ; j < _K ; j++, k++ )
             {
-                _Output[k] = lagrange_polynom_interpolation( X, Y, ( X[m] + (__fx64)j * dN ), _Order + 1 ) * _Gain;
+                _Output[k] = lagrange_polynom_interpolation( X, Y, ( X[m] + (double)j * dN ), _Order + 1 ) * _Gain;
             }
 
             if( i != _M-1 )
@@ -1707,7 +1547,7 @@ samples_range_decimation(__InputType _Input, __OutputType _Output, int _M, int _
      * \details The function computes discrete Fourier transform
 */
 template<typename __type> void
-dft( Complex<__type>* _Input, Complex<__type>* _Spectrum, __ix32 _N, __ix32 _Direct )
+dft( Complex<__type>* _Input, Complex<__type>* _Spectrum, int _N, int _Direct )
 {
     // check
     if( _Input == nullptr || _Spectrum == nullptr || _N <= 0 )
@@ -1716,7 +1556,7 @@ dft( Complex<__type>* _Input, Complex<__type>* _Spectrum, __ix32 _N, __ix32 _Dir
     // compute
     for( int i = 0 ; i < _N ; i++ )
     {
-        __fx64 angle = PI2 * (__fx32)i / (__fx32)_N * (_Direct ? -1.0 : +1.0);
+        double angle = PI2 * (float)i / (float)_N * (_Direct ? -1.0 : +1.0);
         Complex<__type> Wn = Complex<__type>( cos( angle ), sin( angle ) );
         Complex<__type> W1(1,0);
 
@@ -1731,7 +1571,7 @@ dft( Complex<__type>* _Input, Complex<__type>* _Spectrum, __ix32 _N, __ix32 _Dir
     _Spectrum[0] /= 2.0;
 }
 
-inline bool check_power_of_two( __ix32 _Number )
+inline bool check_power_of_two( int _Number )
 {
     return !(bool)( _Number & (_Number-1) );
 }
@@ -1768,11 +1608,11 @@ fft0( Complex<__type>* _Spectrum, int _N, int _Direct )
     {
         double angle = PI2/L * (_Direct ? -1.0 : +1.0);
         Complex<__type> Wn( cos(angle), sin(angle) );
-        for( __ix32 i = 0; i < _N; i += L )
+        for( int i = 0; i < _N; i += L )
         {
             Complex<__type> *pointer = &_Spectrum[i];
             Complex<__type> W1(1,0);
-            for( __ix32 j = 0, k = L / 2 ; j < L / 2 ; j++, k++ )
+            for( int j = 0, k = L / 2 ; j < L / 2 ; j++, k++ )
             {
                 Complex<__type> S0 = pointer[j] + pointer[k];
                 Complex<__type> S1 = pointer[j] - pointer[k];
@@ -1857,11 +1697,11 @@ fft1( Complex<__type>* _Spectrum, int _N, int _Direct )
     {
         double angle = PI2/L * (_Direct ? -1.0 : +1.0);
         Complex<__type> Wn ( cos(angle), sin(angle) );
-        for ( __ix32 i = 0; i < _N; i+=L)
+        for ( int i = 0; i < _N; i+=L)
         {
             Complex<__type> W1(1,0);
 
-            for ( __ix32 j=0 ; j < L / 2 ; j++ )
+            for ( int j=0 ; j < L / 2 ; j++ )
             {
                 Complex<__type> S0 = _Spectrum[i+j];
                 Complex<__type> S1 = _Spectrum[i+j+L/2] * W1;
@@ -1877,8 +1717,7 @@ fft1( Complex<__type>* _Spectrum, int _N, int _Direct )
 }
 
 /*!  \example example_math_special_functions_fft.h */
-
-long __euclide_algorithm__(long a, long b)
+extern long __euclide_algorithm__(long a, long b)
 {
     while (a && b)
     {
@@ -1896,42 +1735,6 @@ long __euclide_algorithm__(long a, long b)
 }
 
 /*! @} */
-
-// customized types names exclusion to avloid aliasing during compilation:
-#undef __ix16
-#undef __ix32
-#undef __ix64
-#undef __uix16
-#undef __uix32
-#undef __uix64
-#undef __fx32
-#undef __fx64
-#undef __fxx64
-
-// customized upper limits exclusion to avloid aliasing during compilation:
-#undef __max_fx32
-#undef __max_fx64
-#undef __max_ix16
-#undef __max_ix32
-#undef __max_ix64
-#undef __max_uix16
-#undef __max_uix32
-#undef __max_uix64
-
-// customized lower limits exclusion to avloid aliasing during compilation:
-#undef __min_fx32
-#undef __min_fx64
-#undef __min_ix16
-#undef __min_ix32
-#undef __min_ix64
-#undef __min_uix16
-#undef __min_uix32
-#undef __min_uix64
-
-// customized epsilon exclusion to avloid aliasing during compilation:
-#undef __EPSILON_xx64__
-#undef __EPSILON_x64__
-#undef __EPSILON_x32__
 
 // customized variables exclusion to avloid aliasing during compilation:
 #undef __ITERATIONS_NUMBER__

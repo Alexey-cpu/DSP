@@ -386,6 +386,8 @@ public:
         m_WindowFunction = WindowFunction;
         transfer_function_model::init(WindowFunction.get_order(), Fs);
 
+        m_buff_sx.allocate( m_WindowFunction.get_order() );
+
         // allocation
         #ifdef FIR_FILTERS_DEBUG
         Debugger::Log("classic_fir_base","allocate()", "fir filter memory allocation");

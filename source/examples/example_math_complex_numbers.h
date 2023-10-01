@@ -1,11 +1,7 @@
 #ifndef EXAMPLE_MATH_COMPLEX_NUMBERS_H
 #define EXAMPLE_MATH_COMPLEX_NUMBERS_H
 
-#ifndef WRITE_LOGS
-//#define WRITE_LOGS
-#endif
-
-#include "../../DSP/source/Complex.h"
+#include <Complex.h>
 
 // complex numbers example
 int complex_numbers_example()
