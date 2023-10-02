@@ -2,7 +2,7 @@
 #define EXAMPLE_CLASSIC_IIR_ELLIP_H
 
 #include "config.h"
-#include "../../COMTRADE/Comtrade.h"
+#include <Comtrade.h>
 #include "../../DSP/source/generators.h"
 #include "../../DSP/source/filters_iir.h"
 

@@ -4,7 +4,7 @@
 #include "config.h"
 #include "../../DSP/source/generators.h"
 #include "../../DSP/source/filters_recursive_fourier_filter.h"
-#include "../../COMTRADE/Comtrade.h"
+#include <Comtrade.h>
 
 // Recursive Fourier filter
 int filters_comtrade_emulation_example()

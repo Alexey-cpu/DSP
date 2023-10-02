@@ -2,7 +2,7 @@
 #define EXAMPLE_TRANSFER_FUNCTIONS_LEADLAG_H
 
 #include "../../DSP/source/generators.h"
-#include "../../COMTRADE/Comtrade.h"
+#include <Comtrade.h>
 #include "../../DSP/source/filters_transfer_functions.h"
 
 #include "config.h"

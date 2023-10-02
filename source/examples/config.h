@@ -8,7 +8,7 @@
 */
 
 // write logs
-#define WRITE_LOGS
+#include <QElapsedTimer>
 
 // define names of logs directory and output signals
 #define LOGS_DIRECTORY (string)"C:\\Qt_projects\\DSP\\logs"

@@ -2,7 +2,7 @@
 #define EXAMPLE_CLASSIC_FIR_H
 
 #include "config.h"
-#include "../../COMTRADE/Comtrade.h"
+#include <Comtrade.h>
 #include "../../DSP/source/generators.h"
 #include "../../DSP/source/filters_fir.h"
 

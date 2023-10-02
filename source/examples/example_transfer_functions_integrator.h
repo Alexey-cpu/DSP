@@ -3,7 +3,7 @@
 
 #include "config.h"
 #include "../../DSP/source/generators.h"
-#include "../../COMTRADE/Comtrade.h"
+#include <Comtrade.h>
 #include "../../DSP/source/filters_transfer_functions.h"
 
 // Butterworth filter

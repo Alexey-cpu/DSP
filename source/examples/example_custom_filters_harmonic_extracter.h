@@ -2,7 +2,7 @@
 #define EXAMPLE_CUSTOM_FILTERS_HARMONIC_EXTRACTER_H
 
 #include "config.h"
-#include "../../COMTRADE/Comtrade.h"
+#include <Comtrade.h>
 #include "../../DSP/source/generators.h"
 #include "../../DSP/source/filters_real_time_spectrum_analyzer.h"
 
