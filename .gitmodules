@@ -1,8 +1,12 @@
-[submodule "libs/COMTRADE"]
-	path = libs/COMTRADE
-	url = https://Alexey-cpu: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@github.com/Alexey-cpu/COMTRADE.git
-	branch = v1/release
-[submodule "libs/UTILS"]
-	path = libs/UTILS
+[submodule "tools/UTILS"]
+	path = tools/UTILS
 	url = https://Alexey-cpu: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@github.com/Alexey-cpu/UTILS.git
+	branch = v1/release
+[submodule "tools/MATH"]
+	path = tools/MATH
+	url = https://Alexey-cpu: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@github.com/Alexey-cpu/MATH.git
+	branch = v1/release
+[submodule "tools/COMTRADE"]
+	path = tools/COMTRADE
+	url = https://Alexey-cpu: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@github.com/Alexey-cpu/COMTRADE.git
 	branch = v1/release
