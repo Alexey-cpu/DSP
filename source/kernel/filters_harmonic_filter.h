@@ -181,17 +181,7 @@ public:
         m_Re               = nullptr;
         m_Im               = nullptr;
 
-        #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter","init()","Filter initialization");
-        Debugger::Log("Fs               = " + to_string(m_Fs));
-        Debugger::Log("Fn               = " + to_string(m_Fn));
-        Debugger::Log("HBuffSize        = " + to_string(m_HBuffSize));
-        Debugger::Log("SpectrumWidth    = " + to_string(m_SpectrumWidth));
-        Debugger::Log("SamplesPerPeriod = " + to_string(m_SamplesPerPeriod));
-        Debugger::Log("CycleWidth       = " + to_string(m_CycleWidth));
-        #endif
-
-        //
+        // allocate memory
         allocate();
 
     }

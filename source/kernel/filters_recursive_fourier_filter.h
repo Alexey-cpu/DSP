@@ -108,16 +108,6 @@ public:
 
         m_ReferenceFrame = Complex<double>( 0.0, -1.0 );
 
-        #ifdef RFF_DEBUG
-        Debugger::Log("shared_recursive_fourier","init()","Filter initialization");
-        Debugger::Log("Fn    = " + to_string(m_Fn) );
-        Debugger::Log("Fs    = " + to_string(m_Fs) );
-        Debugger::Log("Ts    = " + to_string(m_Ts) );
-        Debugger::Log("order = " + to_string(m_Order));
-        Debugger::Log("Gain  = " + to_string(m_Gain));
-        Debugger::Log("hnum  = " + to_string(m_HarmonicNumber) + "\n");
-        #endif
-
         // memory allocation
         #ifdef RFF_DEBUG
         Debugger::Log("shared_recursive_fourier","allocate()","Filter memory allocation");

@@ -131,7 +131,7 @@ namespace IIR_KERNEL
         }
 
         // multiply by an output gain:
-        if( _N > 1) Wz *= (__fx64)_gains[_N];
+        if( _N > 1) Wz *= ( Complex< __fx64 > )_gains[_N];
         return Wz;
     }
 
@@ -1823,7 +1823,9 @@ namespace IIR_KERNEL
         }
         else
         {
-            Debugger::Log("The filter has been destryed or it's coeffcients have not been computed yet...\n");
+            Debugger::LogError( STRINGIFY(IIR_KERNEL),
+                                STRINGIFY(__show__),
+                                "Filter data has been removed or it has not been allocated. Check the input.");
         }
     }
 

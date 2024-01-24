@@ -23,10 +23,10 @@ private:
     double m_Time;
     double m_Fs;
     double m_Ts;
-    int64_t m_FramesPerCycle;
-    bool m_Q;
-    bool m_CC;
-    bool m_QQ;
+    int    m_FramesPerCycle;
+    bool   m_Q;
+    bool   m_CC;
+    bool   m_QQ;
 
 public:
 

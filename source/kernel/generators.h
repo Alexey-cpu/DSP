@@ -1,7 +1,7 @@
 #ifndef GENERATORS_H
 #define GENERATORS_H
 
-#include "utils.h"
+#include "Utils.h"
 
 // standart headers
 #ifndef __ALG_PLATFORM

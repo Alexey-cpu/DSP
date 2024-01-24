@@ -1,6 +1,8 @@
 #ifndef TRANSFORMATIONS_H
 #define TRANSFORMATIONS_H
 
+#include "Utils.h"
+
 #ifndef __ALG_PLATFORM
 #include "cmath"
 #include "math.h"
@@ -202,7 +204,7 @@ public:
       *\param[C]    pointer to the phase C signal or to 0 component
       *\param[type] Clarke's transformation type flag ( 0 - toward , 1 - backward )
     */
-    inline void operator () ( __type *A , __type *B , __type *C , int64_t type )
+    inline void operator () ( __type *A , __type *B , __type *C , int type )
     {
         if( !type ) toward_transformation  ( A , B , C );
         else        backward_transformation( A , B , C );
@@ -215,7 +217,7 @@ public:
       *\param[C]    pointer to the phase C signal or to 0 component
       *\param[type] Clarke's transformation type flag ( 0 - toward , 1 - backward )
     */
-    inline void operator () ( double *A , double *B , double *C  , int64_t type )
+    inline void operator () ( double *A , double *B , double *C  , int type )
     {
         if( !type ) toward_transformation  ( A , B , C );
         else        backward_transformation( A , B , C );

@@ -442,15 +442,6 @@ template< typename __type > class butterworth final : public IIRFactory< __type 
     // initialization function
     void init( double _Fs, int _order, filter_type _type, bandwidth _bandwidth )
     {
-        #ifdef IIR_FILTERS_DEBUG
-        Debugger::Log("butterworth","init()", "filter initialization");
-        Debugger::Log("Fs           = " + to_string(_Fs));
-        Debugger::Log("order        = " + to_string(_order));
-        Debugger::Log("type         = " + to_string(_type));
-        Debugger::Log("bandwidth.Fc = " + to_string(_bandwidth.Fc));
-        Debugger::Log("bandwidth.BW = " + to_string(_bandwidth.BW));
-        #endif
-
         IIRFactory< __type >::init(_Fs, _order,  _type, _bandwidth, {1, -1} );
     }
 
@@ -491,16 +482,6 @@ template< typename __type > class chebyshev_1 final : public IIRFactory< __type 
     // initialization function
     void init( double _Fs , int64_t _order , filter_type _type, bandwidth _bandwidth , double _Gs )
     {
-        #ifdef IIR_FILTERS_DEBUG
-        Debugger::Log("chebyshev_1","init()", "filter initialization");
-        Debugger::Log("Fs           = " + to_string(_Fs));
-        Debugger::Log("order        = " + to_string(_order));
-        Debugger::Log("type         = " + to_string(_type));
-        Debugger::Log("bandwidth.Fc = " + to_string(_bandwidth.Fc));
-        Debugger::Log("bandwidth.BW = " + to_string(_bandwidth.BW));
-        Debugger::Log("Gs           = " + to_string(_Gs));
-        #endif
-
         IIRFactory< __type > :: init(_Fs, _order,  _type, _bandwidth, { _Gs, -1 } );
     }
 
@@ -541,16 +522,6 @@ public:
     // initializing function
     void init( double _Fs, int64_t _order, filter_type _type, bandwidth _bandwidth, double _Gp )
     {
-        #ifdef IIR_FILTERS_DEBUG
-        Debugger::Log("chebyshev_2","init()", "filter initialization");
-        Debugger::Log("Fs           = " + to_string(_Fs));
-        Debugger::Log("order        = " + to_string(_order));
-        Debugger::Log("type         = " + to_string(_type));
-        Debugger::Log("bandwidth.Fc = " + to_string(_bandwidth.Fc));
-        Debugger::Log("bandwidth.BW = " + to_string(_bandwidth.BW));
-        Debugger::Log("Gp           = " + to_string(_Gp));
-        #endif
-
         IIRFactory< __type >::init(_Fs, _order,  _type, _bandwidth, { _Gp, -1 } );
     }
 
@@ -591,17 +562,6 @@ public:
     // initialization
     void init( double _Fs, int _order, filter_type _type, bandwidth _bandwidth, double _Gs, double _Gp )
     {
-        #ifdef IIR_FILTERS_DEBUG
-        Debugger::Log("elliptic","init()", "filter initialization");
-        Debugger::Log("Fs           = " + to_string(_Fs));
-        Debugger::Log("order        = " + to_string(_order));
-        Debugger::Log("type         = " + to_string(_type));
-        Debugger::Log("bandwidth.Fc = " + to_string(_bandwidth.Fc));
-        Debugger::Log("bandwidth.BW = " + to_string(_bandwidth.BW));
-        Debugger::Log("Gs           = " + to_string(_Gs));
-        Debugger::Log("Gp           = " + to_string(_Gp));
-        #endif
-
         IIRFactory< __type >::init(_Fs, _order,  _type, _bandwidth, { _Gs, _Gp } );
     }
 
