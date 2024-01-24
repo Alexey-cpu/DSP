@@ -71,5 +71,4 @@ int filters_fir_example()
     return 0;
 }
 
-
 #endif // EXAMPLE_CLASSIC_FIR_H

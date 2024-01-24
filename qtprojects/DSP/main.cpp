@@ -1,6 +1,14 @@
-#include "examples.h"
-
-#include <chrono>
+#include "example_classic_iir.h"
+#include "example_classic_fir.h"
+#include "example_custom_filters_hmf.h"
+#include "example_custom_filters_rff.h"
+#include "example_custom_filters_harmonic_extracter.h"
+#include "example_math_special_functions.h"
+#include "example_math_complex_numbers.h"
+#include "example_transfer_functions.h"
+#include "example_math_special_functions_fft.h"
+#include "example_math_special_functions_interpolation.h"
+#include "example_comtrade_emulation.h"
 
 int main()
 {
