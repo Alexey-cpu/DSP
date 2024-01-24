@@ -5,10 +5,6 @@
 #include "kernel_dsp.h"
 using namespace DSP_KERNEL;
 
-#ifndef __ALG_PLATFORM
-//#define IIR_KERNEL_DEBUG // debugging is not available if the algorithm is running on a device !!!
-#endif
-
 #ifndef __fx32
 #define __fx32 float
 #endif
@@ -105,8 +101,8 @@ namespace IIR_KERNEL
         if( !_cfnum || !_cfden || !_gains )
         {
 
-            #ifdef IIR_KERNEL_DEBUG
-            Debugger::Log("kernel_iir.h", "__freq_resp__", "filter coefficients { cfnum, cfden, gains } are null !!!");
+            #ifdef DEBUGGER
+            Debugger::LogError(STRINGIFY(IIR_KERNEL), STRINGIFY(__freq_resp__), "filter coefficients { cfnum, cfden, gains } are null !!!");
             #endif
 
             return { -1 , -1 };
@@ -166,8 +162,8 @@ namespace IIR_KERNEL
 
         if( !plp || !zlp || !glp )
         {
-            #ifdef IIR_KERNEL_DEBUG
-            Debugger::Log("kernel_iir.h", "__butt_zeros_poles_plain__", "memory allocation has failed !!!");
+            #ifdef DEBUGGER
+            Debugger::LogError(STRINGIFY(IIR_KERNEL), STRINGIFY(__butt_zeros_poles_plain__), "memory allocation has failed !!!");
             #endif
 
             plp = __mfree__(plp);
@@ -240,8 +236,8 @@ namespace IIR_KERNEL
 
         if( !plp || !zlp || !glp )
         {
-            #ifdef IIR_KERNEL_DEBUG
-            Debugger::Log("kernel_iir.h", "__cheb1_zeros_poles_plain__", "memory allocation has failed !!!");
+            #ifdef DEBUGGER
+            Debugger::LogError(STRINGIFY(IIR_KERNEL), STRINGIFY(__cheb1_zeros_poles_plain__), "memory allocation has failed !!!");
             #endif
 
             plp = __mfree__(plp);
@@ -314,8 +310,8 @@ namespace IIR_KERNEL
 
         if( !plp || !zlp || !glp )
         {
-            #ifdef IIR_KERNEL_DEBUG
-            Debugger::Log("kernel_iir.h", "__cheb2_zeros_poles_plain__", "memory allocation has failed !!!");
+            #ifdef DEBUGGER
+            Debugger::LogError(STRINGIFY(IIR_KERNEL), STRINGIFY(__cheb2_zeros_poles_plain__), "memory allocation has failed !!!");
             #endif
 
             plp = __mfree__(plp);
@@ -409,8 +405,8 @@ namespace IIR_KERNEL
 
         if( !plp || !zlp || !glp )
         {
-            #ifdef IIR_KERNEL_DEBUG
-            Debugger::Log("kernel_iir.h", "__ellip_zeros_poles_plain__", "memory allocation has failed !!!");
+            #ifdef DEBUGGER
+            Debugger::LogError(STRINGIFY(IIR_KERNEL), STRINGIFY(__ellip_zeros_poles_plain__), "memory allocation has failed !!!");
             #endif
 
             plp = __mfree__(plp);
@@ -585,8 +581,8 @@ namespace IIR_KERNEL
 
         if( !cfnum || !cfden || !gains || !plp || !zlp || !glp )
         {
-            #ifdef IIR_KERNEL_DEBUG
-            Debugger::Log("kernel_iir.h", "__butt_cheb1_digital_lp__", "memory allocation has failed !!!");
+            #ifdef DEBUGGER
+            Debugger::LogError(STRINGIFY(IIR_KERNEL), STRINGIFY(__butt_cheb1_digital_lp__), "memory allocation has failed !!!");
             #endif
 
             cfnum = __mfree__(cfnum);
@@ -703,8 +699,8 @@ namespace IIR_KERNEL
 
         if( !cfnum || !cfden || !gains || !plp || !zlp || !glp )
         {
-            #ifdef IIR_KERNEL_DEBUG
-            Debugger::Log("kernel_iir.h", "__butt_cheb1_digital_hp__", "memory allocation has failed !!!");
+            #ifdef DEBUGGER
+            Debugger::LogError(STRINGIFY(IIR_KERNEL), STRINGIFY(__butt_cheb1_digital_hp__), "memory allocation has failed !!!");
             #endif
 
             cfnum = __mfree__(cfnum);
@@ -833,8 +829,8 @@ namespace IIR_KERNEL
 
         if( !cfnum || !cfden || !gains || !plp || !zlp || !glp || !pbp || !zbp || !gbp )
         {
-            #ifdef IIR_KERNEL_DEBUG
-            Debugger::Log("kernel_iir.h", "__butt_cheb1_digital_bp__", "memory allocation has failed !!!");
+            #ifdef DEBUGGER
+            Debugger::LogError(STRINGIFY(IIR_KERNEL), STRINGIFY(__butt_cheb1_digital_bp__), "memory allocation has failed !!!");
             #endif
 
             cfnum = __mfree__(cfnum);
@@ -1011,8 +1007,8 @@ namespace IIR_KERNEL
 
         if( !cfnum || !cfden || !gains || !plp || !zlp || !glp || !pbs || !zbs || !gbs)
         {
-            #ifdef IIR_KERNEL_DEBUG
-            Debugger::Log("kernel_iir.h", "__butt_cheb1_digital_bs__", "memory allocation has failed !!!");
+            #ifdef DEBUGGER
+            Debugger::LogError(STRINGIFY(IIR_KERNEL), STRINGIFY(__butt_cheb1_digital_bs__), "memory allocation has failed !!!");
             #endif
 
             cfnum = __mfree__(cfnum);
@@ -1182,8 +1178,8 @@ namespace IIR_KERNEL
 
         if( !cfnum || !cfden || !gains || !plp || !zlp || !glp )
         {
-            #ifdef IIR_KERNEL_DEBUG
-            Debugger::Log("kernel_iir.h", "__cheb2_ellip_digital_lp__", "memory allocation has failed !!!");
+            #ifdef DEBUGGER
+            Debugger::LogError(STRINGIFY(IIR_KERNEL), STRINGIFY(__cheb2_ellip_digital_lp__), "memory allocation has failed !!!");
             #endif
 
             cfnum = __mfree__(cfnum);
@@ -1300,8 +1296,8 @@ namespace IIR_KERNEL
 
          if( !cfnum || !cfden || !gains || !plp || !zlp || !glp )
          {
-            #ifdef IIR_KERNEL_DEBUG
-            Debugger::Log("kernel_iir.h", "__cheb2_ellip_digital_hp__", "memory allocation has failed !!!");
+            #ifdef DEBUGGER
+            Debugger::LogError(STRINGIFY(IIR_KERNEL), STRINGIFY(__cheb2_ellip_digital_hp__), "memory allocation has failed !!!");
             #endif
 
             cfnum = __mfree__(cfnum);
@@ -1430,8 +1426,8 @@ namespace IIR_KERNEL
 
         if( !cfnum || !cfden || !gains || !plp || !zlp || !glp || !pbp || !zbp || !gbp)
         {
-            #ifdef IIR_KERNEL_DEBUG
-            Debugger::Log("kernel_iir.h", "__cheb2_ellip_digital_bp__", "memory allocation has failed !!!");
+            #ifdef DEBUGGER
+            Debugger::LogError(STRINGIFY(IIR_KERNEL), STRINGIFY(__cheb2_ellip_digital_bp__), "memory allocation has failed !!!");
             #endif
 
             cfnum = __mfree__(cfnum);
@@ -1624,8 +1620,8 @@ namespace IIR_KERNEL
 
          if( !cfnum || !cfden || !gains || !plp || !zlp || !glp || !pbs || !zbs || !gbs)
          {
-            #ifdef IIR_KERNEL_DEBUG
-            Debugger::Log("kernel_iir.h", "__cheb2_ellip_digital_bs__", "memory allocation has failed !!!");
+            #ifdef DEBUGGER
+            Debugger::LogError(STRINGIFY(IIR_KERNEL), STRINGIFY(__cheb2_ellip_digital_bs__), "memory allocation has failed !!!");
             #endif
 
              cfnum = __mfree__(cfnum);

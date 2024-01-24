@@ -5,10 +5,6 @@
 #include "kernel_iir.h"
 using namespace IIR_KERNEL;
 
-#ifndef __ALG_PLATFORM
-#define IIR_FILTERS_DEBUG // debugging is not available if the algorithm is running on a device !!!
-#endif
-
 /*! \defgroup <CLASSIC_IIR_FILTERS> ( classic IIR filters)
  *  \ingroup FILTERS
  *  \brief The module contains abstract model and implementation of the classic IIR filters
@@ -339,8 +335,8 @@ public:
 
         if( m_buff_sx == nullptr || m_buff_sy == nullptr )
         {
-            #ifdef IIR_FILTERS_DEBUG
-            Debugger::Log("iir_abstract","allocate()", "memory allocation failed");
+            #ifdef DEBUGGER
+            Debugger::LogError( STRINGIFY(IIRFactory), STRINGIFY( init ), "memory allocation failed");
             #endif
         }
     }
@@ -348,10 +344,6 @@ public:
     /*! \brief default constructor */
     IIRFactory( IIRCreator<__type>* _IIRCreator ) : transfer_function_model(), m_IIRCreator( _IIRCreator )
     {
-        #ifdef IIR_FILTERS_DEBUG
-        Debugger::Log("iir_base","iir_abstract()", "constructor call");
-        #endif
-
         m_buff_sx = nullptr;
         m_buff_sy = nullptr;
     }
@@ -359,15 +351,6 @@ public:
     /*! \brief virtual destructor */
     virtual ~IIRFactory()
     {
-        #ifdef IIR_FILTERS_DEBUG
-        Debugger::Log("iir_base","~iir_abstract()", "destructor call");
-        #endif
-
-        // memory deallocation
-        #ifdef IIR_FILTERS_DEBUG
-        Debugger::Log("iir_abstract","deallocate()", "memory deallocation");
-        #endif
-
         // delete creator
         delete m_IIRCreator;
         m_IIRCreator = nullptr;
@@ -446,20 +429,10 @@ template< typename __type > class butterworth final : public IIRFactory< __type 
     }
 
      // constructors
-    butterworth() : IIRFactory< __type >( new ButterworthCreator<__type>() )
-    {
-        #ifdef IIR_FILTERS_DEBUG
-        Debugger::Log("butterworth","butterworth()", "constructor call");
-        #endif
-    }
+    butterworth() : IIRFactory< __type >( new ButterworthCreator<__type>() ){}
 
      // destructor
-    virtual ~butterworth()
-    {
-        #ifdef IIR_FILTERS_DEBUG
-        Debugger::Log("butterworth","~butterworth()", "destructor call");
-        #endif
-    }
+    virtual ~butterworth(){}
 };
 
 /*!
@@ -486,20 +459,10 @@ template< typename __type > class chebyshev_1 final : public IIRFactory< __type 
     }
 
     // constructors
-     chebyshev_1() : IIRFactory< __type >( new Chebyshev1Creator<__type>() )
-     {
-        #ifdef IIR_FILTERS_DEBUG
-        Debugger::Log("chebyshev_1","chebyshev_1()", "constructor call");
-        #endif
-     }
+     chebyshev_1() : IIRFactory< __type >( new Chebyshev1Creator<__type>() ){}
 
      // destructor
-    virtual ~chebyshev_1()
-    {
-        #ifdef IIR_FILTERS_DEBUG
-        Debugger::Log("chebyshev_1","~chebyshev_1()", "destructor call");
-        #endif
-    }
+    virtual ~chebyshev_1(){}
 };
 
 /*!
@@ -526,20 +489,10 @@ public:
     }
 
     // constructors
-    chebyshev_2() : IIRFactory< __type >( new Chebyshev2Creator<__type>() )
-    {
-        #ifdef IIR_FILTERS_DEBUG
-        Debugger::Log("chebyshev_2","chebyshev_2()", "constructor call");
-        #endif
-    }
+    chebyshev_2() : IIRFactory< __type >( new Chebyshev2Creator<__type>() ){}
 
     // destructor
-    virtual ~chebyshev_2()
-    {
-        #ifdef IIR_FILTERS_DEBUG
-        Debugger::Log("chebyshev_2","chebyshev_2()", "destructor call");
-        #endif
-    }
+    virtual ~chebyshev_2(){}
 };
 
 /*!
@@ -566,21 +519,11 @@ public:
     }
 
     // constructors
-    elliptic() : IIRFactory< __type >( new EllipticCreator<__type>() )
-    {
-        #ifdef IIR_FILTERS_DEBUG
-        Debugger::Log("elliptic","elliptic()", "constructor call");
-        #endif
-    }
+    elliptic() : IIRFactory< __type >( new EllipticCreator<__type>() ){}
 
 
     // destructor
-    virtual ~elliptic()
-    {
-        #ifdef IIR_FILTERS_DEBUG
-        Debugger::Log("elliptic","~elliptic()", "destructor call");
-        #endif
-    }
+    virtual ~elliptic(){}
 };
 
 /*!

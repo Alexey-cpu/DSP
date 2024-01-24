@@ -395,10 +395,6 @@ namespace DSP_KERNEL
         /*! \brief default constructor */
         delay()
         {
-            #ifdef DEBUG
-            Debugger::Log("delay","delay()","Constructor call");
-            #endif
-
             m_data    = nullptr;
             m_SamplesNumber   = 0;
             m_BuffPos = 0;
@@ -410,10 +406,6 @@ namespace DSP_KERNEL
         */
         virtual ~delay()
         {
-            #ifdef DEBUG
-            Debugger::Log("delay","~delay()","Destructor call");
-            #endif
-
             deallocate();
         }
 
@@ -424,10 +416,6 @@ namespace DSP_KERNEL
         */
         int allocate( int _Nelem )
         {
-            #ifdef DEBUG
-            Debugger::Log("delay","allocate()","Memory allocation");
-            #endif
-
             if( m_data != nullptr )
                 deallocate();
 
@@ -444,10 +432,6 @@ namespace DSP_KERNEL
         /*! \brief The function frees delay resources */
         void deallocate()
         {
-            #ifdef DEBUG
-            Debugger::Log("delay","deallocate()","Memory deallocation");
-            #endif
-
             m_data    = __mfree__(m_data);
             m_CurrentSamplePointer   = nullptr;
             m_SamplesNumber   = 0;

@@ -1495,7 +1495,8 @@ template<typename T1, typename T2, typename T3> void
 __samples_range_interpolation__(T1 _Input, T2 _Output, T3 _Gain, int _M, int _N, int _K, int _Order)
 {
     // check
-    //if( _N < _M * _K || _K == 1 ) return;
+    if( _N < _M * _K || _K == 1 )
+        return;
 
     // time step
     double dN = (double)_M / (double)_N;

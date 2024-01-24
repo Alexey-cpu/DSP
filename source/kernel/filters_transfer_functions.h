@@ -6,10 +6,6 @@
 #include "kernel_dsp.h"
 using namespace DSP_KERNEL;
 
-#ifndef __ALG_PLATFORM
-#define TSF_FILTERS_DEBUG // debugging is not available if the algorithm is running on a device !!!
-#endif
-
 /*! \defgroup <TRANSFER_FUNCTIONS> ( Transfer functions )
  *  \ingroup FILTERS
  *  \brief The module contains transfer function model and the range of the simple filters transfer functions
@@ -39,10 +35,6 @@ class transfer_function : public transfer_function_model
     // memory allocation function
     int allocate()
     {
-        #ifdef TSF_FILTERS_DEBUG
-        Debugger::Log("filters_tsf","allocate()","Transfer function memory allocation");
-        #endif
-
         // substitute billinear transform fraction into transfer function fraction
         m_Wz = __fraction_numeric_substitution__(
                     &m_Ws.data[0][0],
@@ -68,10 +60,6 @@ class transfer_function : public transfer_function_model
 
     int deallocate()
     {
-        #ifdef TSF_FILTERS_DEBUG
-        Debugger::Log("filters_tsf","deallocate()","Transfer function memory deallocation");
-        #endif
-
         m_Wz = __mfree__(m_Wz);
         m_Ws = __mfree__(m_Ws);
         m_Rz = __mfree__(m_Rz);
@@ -94,20 +82,11 @@ class transfer_function : public transfer_function_model
 public:
 
     /*!  \class default constructor */
-    transfer_function()
-    {
-        #ifdef TSF_FILTERS_DEBUG
-        Debugger::Log("filters_tsf","transfer_function()","Constructor call");
-        #endif
-    }
+    transfer_function(){}
 
     /*!  \class default destructor */
     virtual ~transfer_function()
     {
-        #ifdef TSF_FILTERS_DEBUG
-        Debugger::Log("filters_tsf","~transfer_function()","Destructor call");
-        #endif
-
         deallocate();
     }
 
@@ -125,8 +104,8 @@ public:
         // check the input
         if( !Ws.data || Ws.positions <= 0 || Ws.sections <= 0 )
         {
-            #ifdef TSF_FILTERS_DEBUG
-            Debugger::Log("filters_tsf","init()","Wrong input");
+            #ifdef DEBUGGER
+            Debugger::LogError( STRINGIFY(transfer_function), STRINGIFY(init), "Input is not correct. Check that input is allocated and number of sections is not null." );
             #endif
 
             return;
@@ -136,8 +115,8 @@ public:
         {
             if( !Ws.data[i] )
             {
-                #ifdef TSF_FILTERS_DEBUG
-                Debugger::Log("filters_tsf","init()","The input fraction is empty");
+                #ifdef DEBUGGER
+                Debugger::LogError( STRINGIFY(transfer_function), STRINGIFY(init), "One of the sections is not allocated." );
                 #endif
 
                 return;
@@ -167,7 +146,7 @@ public:
                 F );
     }
 
-    #ifdef TSF_FILTERS_DEBUG
+    #ifdef DEBUGGER
     void show()
     {
         if( !m_Ws.data || !m_Wz.data )

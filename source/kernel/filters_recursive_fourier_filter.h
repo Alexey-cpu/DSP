@@ -5,10 +5,6 @@
 #include "kernel_dsp.h"
 using namespace DSP_KERNEL;
 
-#ifndef __ALG_PLATFORM
-#define RFF_DEBUG // debugging is not available if the algorithm is running on a device !!!
-#endif
-
 /*! \defgroup <RECURSIVE_FOURIER_FILTER> ( recursive fourier filter )
  *  \ingroup SPECIAL_FILTERS
  *  \brief the module contains implementation of recursive Fourier filter
@@ -46,20 +42,10 @@ protected:
 public:
 
     /*!  \brief default constructor */
-    shared_recursive_fourier() : transfer_function_model()
-    {
-        #ifdef RFF_DEBUG
-        Debugger::Log("shared_recursive_fourier","shared_recursive_fourier()","Filter constructor call");
-        #endif
-    }
+    shared_recursive_fourier() : transfer_function_model(){}
 
     /*!  \brief destructor */
-    virtual ~shared_recursive_fourier()
-    {
-        #ifdef RFF_DEBUG
-        Debugger::Log("shared_recursive_fourier","~shared_recursive_fourier()","Filter destructor call");
-        #endif
-    }
+    virtual ~shared_recursive_fourier(){}
 
     /*!
      *   \brief returns the filter output
@@ -107,11 +93,6 @@ public:
                 );
 
         m_ReferenceFrame = Complex<double>( 0.0, -1.0 );
-
-        // memory allocation
-        #ifdef RFF_DEBUG
-        Debugger::Log("shared_recursive_fourier","allocate()","Filter memory allocation");
-        #endif
 
         allocate();
     }
@@ -169,19 +150,9 @@ protected:
 
 public:
 
-    standalone_recursive_fourier() : shared_recursive_fourier()
-    {
-        #ifdef RFF_DEBUG
-        Debugger::Log("standalone_recursive_fourier","standalone_recursive_fourier()","Filter constructor call");
-        #endif
-    }
+    standalone_recursive_fourier() : shared_recursive_fourier(){}
 
-    virtual ~standalone_recursive_fourier()
-    {
-        #ifdef RFF_DEBUG
-        Debugger::Log("standalone_recursive_fourier","~standalone_recursive_fourier()","Filter destructor call");
-        #endif
-    }
+    virtual ~standalone_recursive_fourier(){}
 
     virtual void allocate() override
     {

@@ -49,7 +49,7 @@ public:
      *  \param[Fs] - sampling frequency , Hz
      *  \param[FramesPerCycle] - number frames per IDE cycle
     */
-    void init( double Fs, int64_t FramesPerCycle )
+    void init( double Fs, int FramesPerCycle )
     {
         m_Fs             = Fs;
         m_Ts             = 1 / m_Fs;
@@ -72,7 +72,7 @@ public:
     {
         if ( ( S == 1 ) && ( m_Q == 0 ) )
         {
-            for ( int64_t n = 0 ; n < m_FramesPerCycle; n++)
+            for ( int n = 0 ; n < m_FramesPerCycle; n++)
             {
                 m_Time = m_Time + m_Ts;
 
@@ -118,7 +118,7 @@ public:
 
         if( (m_Q == 1) && (S == 0) )
         {
-            for ( int64_t n = 0; n < m_FramesPerCycle; n++ )
+            for ( int n = 0; n < m_FramesPerCycle; n++ )
             {
                 m_Time = m_Time + 1 / m_Fs;
 
@@ -156,7 +156,7 @@ public:
         }
         else if( m_Q == 1 )
         {
-            for ( int64_t n = 0; n < m_FramesPerCycle; n++)
+            for ( int n = 0; n < m_FramesPerCycle; n++)
             {
                 m_Time += m_Ts;
 

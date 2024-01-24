@@ -5,10 +5,6 @@
 #include "special_functions.h"
 using namespace FIR_KERNEL;
 
-#ifndef __ALG_PLATFORM
-#define FIR_FILTERS_DEBUG // debugging is not available if the algorithm is running on a device !!!
-#endif
-
 /*! \defgroup <CLASSIC_FIR_FILTERS> ( classic FIR filters)
  *  \ingroup FILTERS
  *  \brief The module contains abstract model and implementation of the classic FIR filter
@@ -81,10 +77,6 @@ public:
     */
     void Bartlett( int64_t _Order )
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("window_function","Bartlett()", "Bartlett window function generation");
-        #endif
-
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __Bartlett__(_Order);
@@ -96,10 +88,6 @@ public:
     */
     void BartlettHanning( int64_t _Order )
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("window_function","BartlettHanning()", "Bartlett-Hanning window function generation");
-        #endif
-
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __BartlettHanning__(_Order);
@@ -111,10 +99,6 @@ public:
     */
     void Blackman( int64_t _Order)
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("window_function","Blackman()", "Blackman window function generation");
-        #endif
-
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __Blackman__(_Order);
@@ -126,10 +110,6 @@ public:
     */
     void BlackmanHarris( int64_t _Order)
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("window_function","BlackmanHarris()", "Blackman-Harris window function generation");
-        #endif
-
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __BlackmanHarris__(_Order);
@@ -141,10 +121,6 @@ public:
     */
     void Bohman(int64_t _Order)
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("window_function","Bohman()", "Bohman window function generation");
-        #endif
-
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __Bohman__(_Order);
@@ -156,10 +132,6 @@ public:
     */
     void FlatTop( int64_t _Order)
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("window_function","FlatTop()", "FlatTop window function generation");
-        #endif
-
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __FlatTop__(_Order);
@@ -171,10 +143,6 @@ public:
     */
     void Hamming( int64_t _Order )
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("window_function","Hamming()", "Hamming window function generation");
-        #endif
-
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __Hamming__(_Order);
@@ -186,10 +154,6 @@ public:
     */
     void Hann( int64_t _Order)
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("window_function","Hann()", "Hann window function generation");
-        #endif
-
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __Hann__(_Order);
@@ -201,10 +165,6 @@ public:
     */
     void Nutall( int64_t _Order)
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("window_function","Nutall()", "Nutall window function generation");
-        #endif
-
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __Nutall__(_Order);
@@ -216,10 +176,6 @@ public:
     */
     void Parzen( int64_t _Order)
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("window_function","Parzen()", "Parzen window function generation");
-        #endif
-
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __Parzen__(_Order);
@@ -231,10 +187,6 @@ public:
     */
     void Rectangular( int64_t _Order)
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("window_function","Rectangular()", "Rectangular window function generation");
-        #endif
-
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __Rectangular__(_Order);
@@ -246,10 +198,6 @@ public:
     */
     void Triangular( int64_t _Order)
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("window_function","Triangular()", "Triangular window function generation");
-        #endif
-
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __Triangular__(_Order);
@@ -262,10 +210,6 @@ public:
     */
     void Chebyshev( double _Attenuation, int64_t _Order )
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("window_function","Chebyshev()", "Chebyshev window function generation");
-        #endif
-
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __Chebyshev__(_Attenuation, _Order);
@@ -278,10 +222,6 @@ public:
     */
     void Gaussian( double _Alpha, int64_t _Order )
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("window_function","Gaussian()", "Gaussian window function generation");
-        #endif
-
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __Gaussian__(_Alpha, _Order);
@@ -294,10 +234,6 @@ public:
     */
     void Kaiser( double _Beta, int64_t _Order )
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("window_function","Kaiser()", "Kaiser window function generation");
-        #endif
-
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __Kaiser__(_Beta, _Order);
@@ -310,10 +246,6 @@ public:
     */
     void Tukey( double _R, int64_t _Order )
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("window_function","Tukey()", "Tukey window function generation");
-        #endif
-
         m_Order  = _Order;
         m_Window = __mfree__(m_Window);
         m_Window = __Tukey__(_R, _Order);
@@ -362,10 +294,6 @@ public:
     /*! \brief default destructor */
     virtual ~fir()
     {
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("classic_fir_base","deallocate()", "fir filter memory deallocation");
-        #endif
-
         m_FilterData = __dsp_clear_filter__(m_FilterData);
     }
 
@@ -387,11 +315,6 @@ public:
         transfer_function_model::init(WindowFunction.get_order(), Fs);
 
         m_buff_sx.allocate( m_WindowFunction.get_order() );
-
-        // allocation
-        #ifdef FIR_FILTERS_DEBUG
-        Debugger::Log("classic_fir_base","allocate()", "fir filter memory allocation");
-        #endif
 
         m_FilterData = round_coefficients<__type>(m_FilterType);
     }

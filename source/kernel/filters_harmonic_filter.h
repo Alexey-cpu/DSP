@@ -4,10 +4,6 @@
 // include recursive Fourier filter
 #include "filters_recursive_fourier_filter.h"
 
-#ifndef __ALG_PLATFORM
-#define HMF_DEBUG // debugging is not available if the algorithm is running on a device !!!
-#endif
-
 /*! \defgroup <HARMONIC_FILTER> ( harmonic filter )
  *  \ingroup SPECIAL_FILTERS
  *  \brief The module contains implementation of the harmonic filter
@@ -58,10 +54,6 @@ private:
     /*! \brief allocates filter resources */
     int64_t allocate()
     {
-        #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter","allocate()","Memory allocation");
-        #endif
-
         // allocate debugging output
         m_Re = __alloc__<__type>(m_HBuffSize);
         m_Im = __alloc__<__type>(m_HBuffSize);
@@ -83,11 +75,6 @@ private:
     /*! \brief allocates filter resources */
     int64_t deallocate()
     {
-
-        #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter","deallocate()","Memory free");
-        #endif
-
         // free debugging outputs
         m_Re = __mfree__(m_Re);
         m_Im = __mfree__(m_Im);
@@ -109,10 +96,6 @@ public:
     */
     harmonic_filter()
     {
-        #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter","harmonic_filter()","Filter constructor call");
-        #endif
-
         m_Fs               = 4000;
         m_Fn               = 50;
         m_HBuffSize        = 20;
@@ -129,10 +112,6 @@ public:
     */
     virtual ~harmonic_filter()
     {
-        #ifdef HMF_DEBUG
-        Debugger::Log("harmonic_filter","~harmonic_filter()","Filter destructor call");
-        #endif
-
         deallocate();
     }
 
