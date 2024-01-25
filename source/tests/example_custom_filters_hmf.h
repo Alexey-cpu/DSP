@@ -11,6 +11,7 @@
 #include "filters_harmonic_filter.h"
 #include "filters_fast_fourier_transform_spectrum_analyzer.h"
 
+/*
 // Recursive Fourier filter based harmonic filter
 int filtes_hmf_example()
 {
@@ -167,14 +168,14 @@ int filtes_fft_example()
                         0.3 * gen.sine( 1, 3 * Fn, 0.0, time );
             }
 
-            /*
-            // filtering
-            Complex<double> a = hmf.filt( &buffer[j], 1);
 
-            re << __realf__(a) << "\n";
-            im << __imagf__(a) << "\n";
-            am << __cabsf__( Complex<__type>( __realf__(a), __imagf__(a) ) ) << "\n";
-            */
+            // filtering
+            //Complex<double> a = hmf.filt( &buffer[j], 1);
+
+            //re << __realf__(a) << "\n";
+            //im << __imagf__(a) << "\n";
+            //am << __cabsf__( Complex<__type>( __realf__(a), __imagf__(a) ) ) << "\n";
+
         }
 
         // filtering
@@ -211,6 +212,6 @@ int filtes_fft_example()
 
     return 0;
 }
-
+*/
 
 #endif // EXAMPLE_CUSTOM_FILTERS_HMF_H

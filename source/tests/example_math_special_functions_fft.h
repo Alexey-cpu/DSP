@@ -7,6 +7,7 @@
 #include "special_functions.h"
 #include "filters_real_time_spectrum_analyzer.h"
 
+/*
 // Fast Fourier transform example
 int fft_example()
 {
@@ -30,12 +31,12 @@ int fft_example()
 
         xt << __realf__( spectrum0[i] ) << "\n";
 
-        /*
-        sine[i] = 0.5 +
-                  sin( 2.0 * 3.14 * 1 * 50.0 * (double)i / (M*50) ) +
-                  sin( 2.0 * 3.14 * 2 * 50.0 * (double)i / (M*50) ) +
-                  sin( 2.0 * 3.14 * 3 * 50.0 * (double)i / (M*50) );
-                  */
+
+        //sine[i] = 0.5 +
+        //          sin( 2.0 * 3.14 * 1 * 50.0 * (double)i / (M*50) ) +
+        //          sin( 2.0 * 3.14 * 2 * 50.0 * (double)i / (M*50) ) +
+        //          sin( 2.0 * 3.14 * 3 * 50.0 * (double)i / (M*50) );
+
     }
 
     // fft
@@ -158,6 +159,6 @@ int fft_based_filter_example()
 
     return 0;
 }
-
+*/
 
 #endif // EXAMPLE_MATH_SPECIAL_FUNCTIONS_FFT_H

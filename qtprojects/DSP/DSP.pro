@@ -54,3 +54,6 @@ CONFIG(release, debug|release): shared.path = $${BIN_DIR}/release/shared
 CONFIG(debug, debug|release): shared.path = $${BIN_DIR}/debug/shared
 shared.files = $${DIST_DIR}/*.xml
 INSTALLS += shared
+
+HEADERS += \
+    ../../source/tests/example_current_transformer_model.h

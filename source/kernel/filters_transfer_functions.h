@@ -382,6 +382,7 @@ template<typename __type>
 class integrator final : public transfer_function_model
 {
     transfer_function<__type> m_transfer_function;
+
 public:
 
     /*! \brief default constructor */
@@ -402,11 +403,11 @@ public:
     void init(double Fs)
     {
         fraction<__type> Ws;
-        Ws.positions    = 2;
-        Ws.sections    = 2;
-        Ws.data    = __alloc__<__type*>(Ws.positions);
-        Ws.data[0] = __alloc__<__type>(Ws.sections);
-        Ws.data[1] = __alloc__<__type>(Ws.sections);
+        Ws.positions = 2;
+        Ws.sections  = 2;
+        Ws.data      = __alloc__<__type*>(Ws.positions);
+        Ws.data[0]   = __alloc__<__type>(Ws.sections);
+        Ws.data[1]   = __alloc__<__type>(Ws.sections);
 
         // initialize numerator
         Ws.data[0][0] = 1;
@@ -419,14 +420,14 @@ public:
         // Rz
         fraction<__type> Rz;
         Rz.positions    = 2;
-        Rz.sections    = 2;
-        Rz.data    = __alloc__<__type*>(Rz.positions);
-        Rz.data[0] = __alloc__<__type>(Rz.sections);
-        Rz.data[1] = __alloc__<__type>(Rz.sections);
+        Rz.sections     = 2;
+        Rz.data         = __alloc__<__type*>(Rz.positions);
+        Rz.data[0]      = __alloc__<__type>(Rz.sections);
+        Rz.data[1]      = __alloc__<__type>(Rz.sections);
 
         // initialize numerator
-        Rz.data[0][0] = +1;
-        Rz.data[0][1] = -1;
+        Rz.data[0][0] = +2;
+        Rz.data[0][1] = -2;
 
         // initialize denominator
         Rz.data[1][0] = +1/Fs;
@@ -493,10 +494,10 @@ public:
     {
         fraction<__type> Ws;
         Ws.positions = 2;
-        Ws.sections = 2;
-        Ws.data = __alloc__<__type*>(Ws.positions);
-        Ws.data[0] = __alloc__<__type>(Ws.sections);
-        Ws.data[1] = __alloc__<__type>(Ws.sections);
+        Ws.sections  = 2;
+        Ws.data      = __alloc__<__type*>(Ws.positions);
+        Ws.data[0]   = __alloc__<__type>(Ws.sections);
+        Ws.data[1]   = __alloc__<__type>(Ws.sections);
 
         // initialize numerator
         Ws.data[0][0] = 0;
@@ -508,15 +509,15 @@ public:
 
         // Rz
         fraction<__type> Rz;
-        Rz.positions    = 2;
-        Rz.sections    = 2;
-        Rz.data    = __alloc__<__type*>(Rz.positions);
-        Rz.data[0] = __alloc__<__type>(Rz.sections);
-        Rz.data[1] = __alloc__<__type>(Rz.sections);
+        Rz.positions  = 2;
+        Rz.sections   = 2;
+        Rz.data       = __alloc__<__type*>(Rz.positions);
+        Rz.data[0]    = __alloc__<__type>(Rz.sections);
+        Rz.data[1]    = __alloc__<__type>(Rz.sections);
 
         // initialize numerator
-        Rz.data[0][0] = +1;
-        Rz.data[0][1] = -1;
+        Rz.data[0][0] = +2;
+        Rz.data[0][1] = -2;
 
         // initialize denominator
         Rz.data[1][0] = +1/Fs;

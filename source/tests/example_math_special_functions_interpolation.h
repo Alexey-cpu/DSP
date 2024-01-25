@@ -10,6 +10,7 @@
 #include "filters_iir.h"
 #include "filters_fir.h"
 
+/*
 int interpolation_example()
 {
     // logs directory:
@@ -142,5 +143,6 @@ int interpolator_example()
 
     return 0;
 }
+*/
 
 #endif // EXAMPLE_MATH_SPECIAL_FUNCTIONS_INTERPOLATION_H
