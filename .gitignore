@@ -1,5 +1,6 @@
-GitHub_access_token.txt
+bin/
 doc/html
 doc/latex
 logs/
 project/
+*.pro.user
