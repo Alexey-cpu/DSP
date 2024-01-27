@@ -1,4 +1,5 @@
-CONFIG += c++17
+QT -= gui
+CONFIG += c++14
 QMAKE_CXXFLAGS += -O2
 
 # Default rules for deployment.
@@ -11,21 +12,33 @@ unix {
 }
 
 # main project paths paths
-SOURCE_PATH = \
+HEADERS_PATH = \
     ../../source/dsp \
     ../../source/comtrade \
     ../../source/utils \
 
-# retrieve project header files
-for(path,SOURCE_PATH):SOURCES += $$files($${path}/*.cpp,true)
-for(path,TOOLS_PATH):SOURCES += $$files($${path}/*.cpp,true)
+SOURCE_PATH = \
+    ../../source/dsp \
+    ../../source/utils \
 
 # retrieve project sorce code files
-for(path,SOURCE_PATH):HEADERS += $$files($${path}/*.h,true)
-for(path,TOOLS_PATH):HEADERS += $$files($${path}/*.h,true)
+for(path,HEADERS_PATH):HEADERS += $$files($${path}/*.h,true)
+
+# retrieve project header files
+for(path,SOURCE_PATH):SOURCES += $$files($${path}/*.cpp,true)
 
 # attach main.cpp
 SOURCES += main.cpp
 
 # attach external/internal resources
 for(path,HEADERS):INCLUDEPATH += $$dirname(path)
+
+# attach libraries
+
+#COMTRADELIB
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../libs/ -lCOMTRADELIB
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../libs/ -lCOMTRADELIB
+else:unix: LIBS += -L$$PWD/../../libs/ -lCOMTRADELIB
+
+#collect dependecies for libraries
+for(path,HEADERS):DEPENDPATH += $$dirname(path)
