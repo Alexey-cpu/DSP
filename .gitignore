@@ -4,3 +4,4 @@ bin/
 doc/latex
 logs/
 project/
+*.pro.user

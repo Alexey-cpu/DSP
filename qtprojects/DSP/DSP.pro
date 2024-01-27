@@ -23,7 +23,6 @@ TOOLS_PATH = \
            ../../tools/UTILS/source \
            ../../tools/COMTRADE/source \
 
-PROJECT_PATH = ../../qtprojects
 SOURCE_PATH = \
     ../../source/gui \
     ../../source/kernel \
@@ -33,23 +32,11 @@ SOURCE_PATH = \
 for(path,SOURCE_PATH):SOURCES += $$files($${path}/*.cpp,true)
 for(path,TOOLS_PATH):SOURCES += $$files($${path}/*.cpp,true)
 
-# translations file
-for(path,PROJECT_PATH):TRANSLATIONS += $$files($${path}/*.ts,true)
-
 # retrieve project sorce code files
 for(path,SOURCE_PATH):HEADERS += $$files($${path}/*.h,true)
 for(path,TOOLS_PATH):HEADERS += $$files($${path}/*.h,true)
-
-# retrieve project resource files
-for(path,PROJECT_PATH):RESOURCES += $$files($${path}/*.qrc,true)
 
 SOURCES += main.cpp
 
 # attach external/internal resources
 for(path,HEADERS):INCLUDEPATH += $$dirname(path)
-
-# install guide
-CONFIG(release, debug|release): shared.path = $${BIN_DIR}/release/shared
-CONFIG(debug, debug|release): shared.path = $${BIN_DIR}/debug/shared
-shared.files = $${DIST_DIR}/*.xml
-INSTALLS += shared

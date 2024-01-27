@@ -30,11 +30,17 @@ int main()
     //filters_filter_2nd_order_example(logsDirectory);
     //filters_rff_example(logsDirectory);
     //filters_harmonic_extracter_example(logsDirectory);
+
+    // current transformer modelling
     //magnetization_curve_hyperbolic_approximator_test(logsDirectory);
     //magnetization_curve_piecewise_approximator_test(logsDirectory);
     //magnetization_curve_smart_approximator_test(logsDirectory);
     //current_transformer_model_test(logsDirectory);
-    current_transformer_model_oscillogram_test(logsDirectory, oscDirectory, oscName);
+
+    current_transformer_model_oscillogram_test(
+                logsDirectory,
+                oscDirectory,
+                oscName);
 
     return 0;
 }

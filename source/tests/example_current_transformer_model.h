@@ -610,5 +610,4 @@ void current_transformer_model_oscillogram_test(string _LogsDirectory, string _O
                 STRINGIFY(current_transformer_model_oscillogram_test) );
 }
 
-
 #endif // EXAMPLE_CURRENT_TRANSFORMER_MODEL_H
