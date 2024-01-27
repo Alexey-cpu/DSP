@@ -409,6 +409,8 @@ namespace FIR_KERNEL
 
 }
 
+using namespace FIR_KERNEL;
+
 #undef __fx32
 #undef __fx64
 #undef __fxx64

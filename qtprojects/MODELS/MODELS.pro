@@ -11,9 +11,13 @@ unix {
 }
 
 # main project paths paths
+TOOLS_PATH = \
+           ../../tools/UTILS/source \
+
 SOURCE_PATH = \
     ../../source/dsp \
     ../../source/comtrade \
+    ../../source/models \
     ../../source/utils \
 
 # retrieve project header files
@@ -29,3 +33,6 @@ SOURCES += main.cpp
 
 # attach external/internal resources
 for(path,HEADERS):INCLUDEPATH += $$dirname(path)
+
+HEADERS += \
+    ../../source/models/tests/current_transformer.h

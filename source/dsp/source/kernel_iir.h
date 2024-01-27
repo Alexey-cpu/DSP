@@ -1830,6 +1830,8 @@ namespace IIR_KERNEL
     /*! @} */
 }
 
+using namespace IIR_KERNEL;
+
 #undef __fx32
 #undef __fx64
 #undef __fxx64

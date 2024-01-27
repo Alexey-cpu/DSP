@@ -4,7 +4,6 @@
 // custom includes
 #include "kernel_iir.h"
 #include "kernel_dsp.h"
-using namespace DSP_KERNEL;
 
 /*! \defgroup <TRANSFER_FUNCTIONS> ( Transfer functions )
  *  \ingroup FILTERS
