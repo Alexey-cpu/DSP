@@ -395,9 +395,9 @@ namespace DSP_KERNEL
         /*! \brief default constructor */
         delay()
         {
-            m_data    = nullptr;
-            m_SamplesNumber   = 0;
-            m_BuffPos = 0;
+            m_data          = nullptr;
+            m_SamplesNumber = 0;
+            m_BuffPos       = 0;
         }
 
         /*!

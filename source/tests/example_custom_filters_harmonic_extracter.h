@@ -27,6 +27,7 @@ int filters_harmonic_extracter_example()
                 "filters_ellip_example",
                 Fn,
                 Fs,
+                EmulationDuration,
                 {
                     new ComtradeAnalogChannel("xt"),
                     new ComtradeAnalogChannel("re"),
@@ -34,8 +35,6 @@ int filters_harmonic_extracter_example()
                     new ComtradeAnalogChannel("am")
                 }
             );
-
-    registrator.set_samples_number( frames_per_cycle * cycles_num );
 
     // retrieve channels
     ComtradeAnalogChannel* xt = registrator.find_analog_channel("xt");

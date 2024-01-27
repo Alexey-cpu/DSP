@@ -26,13 +26,12 @@ int filters_aperiodic_example()
                 "filters_ellip_example",
                 Fn,
                 Fs,
+                EmulationDuration,
                 {
                     new ComtradeAnalogChannel("xt"),
                     new ComtradeAnalogChannel("yt")
                 }
             );
-
-    registrator.set_samples_number( frames_per_cycle * cycles_num );
 
     // retrieve channels
     ComtradeAnalogChannel* xt = registrator.find_analog_channel("xt");
@@ -85,13 +84,12 @@ int filters_filter_2nd_order_example()
                 "filters_ellip_example",
                 Fn,
                 Fs,
+                EmulationDuration,
                 {
                     new ComtradeAnalogChannel("xt"),
                     new ComtradeAnalogChannel("yt")
                 }
             );
-
-    registrator.set_samples_number( frames_per_cycle * cycles_num );
 
     // retrieve channels
     ComtradeAnalogChannel* xt = registrator.find_analog_channel("xt");
@@ -145,14 +143,13 @@ int filters_integrator_differentiator_example()
                 "filters_ellip_example",
                 Fn,
                 Fs,
+                EmulationDuration,
                 {
                     new ComtradeAnalogChannel("xt"),
                     new ComtradeAnalogChannel("dx(t)/dt"),
                     new ComtradeAnalogChannel("itegral( dx(t)/dt )")
                 }
             );
-
-    registrator.set_samples_number( frames_per_cycle * cycles_num );
 
     // retrieve channels
     ComtradeAnalogChannel* xt = registrator.find_analog_channel("xt");
@@ -210,13 +207,12 @@ int filters_leadlag_example()
                 "filters_ellip_example",
                 Fn,
                 Fs,
+                EmulationDuration,
                 {
                     new ComtradeAnalogChannel("xt"),
                     new ComtradeAnalogChannel("yt")
                 }
             );
-
-    registrator.set_samples_number( frames_per_cycle * cycles_num );
 
     // retrieve channels
     ComtradeAnalogChannel* xt = registrator.find_analog_channel("xt");

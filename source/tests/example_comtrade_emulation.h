@@ -40,13 +40,13 @@ int filters_comtrade_emulation_example()
                 "filters_ellip_example",
                 Fn,
                 Fs,
+                Ns * Fs,
                 {
                     new ComtradeAnalogChannel("xt"),
                     new ComtradeAnalogChannel("yt")
                 }
             );
 
-    registrationStation.set_samples_number( Ns );
     ComtradeAnalogChannel* xt = registrationStation.find_analog_channel("xt");
     ComtradeAnalogChannel* yt = registrationStation.find_analog_channel("yt");
 

@@ -27,13 +27,12 @@ int filters_fir_example()
                 "filters_ellip_example",
                 Fn,
                 Fs,
+                EmulationDuration,
                 {
                     new ComtradeAnalogChannel("xt"),
                     new ComtradeAnalogChannel("yt")
                 }
             );
-
-    registrator.set_samples_number( frames_per_cycle * cycles_num );
 
     // retrieve channels
     ComtradeAnalogChannel* xt = registrator.find_analog_channel("xt");
