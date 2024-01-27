@@ -707,8 +707,8 @@ void Comtrade::print_station_info()
     printf("%s %s \n", this->get_station_name().c_str(), this->get_station_id().c_str() );
     printf("ADC rate frequency       : %f Hz\n", this->get_rate_frequency() );
     printf("Network frequency        : %f Hz\n", this->get_nominal_frequency() );
-    printf("analog channels number   : %i \n", this->get_number_of_analog_channels() );
-    printf("discrete channels number : %i \n\n", this->get_number_of_discrete_channels() );
+    printf("analog channels number   : %i \n", (int)this->get_number_of_analog_channels() );
+    printf("discrete channels number : %i \n\n", (int)this->get_number_of_discrete_channels() );
 }
 
 std::vector< ComtradeAnalogChannel* > Comtrade::get_analog_channels() const
