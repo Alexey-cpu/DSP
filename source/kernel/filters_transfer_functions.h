@@ -151,9 +151,7 @@ public:
     {
         if( !m_Ws.data || !m_Wz.data )
         {
-            #ifdef TSF_FILTERS_DEBUG
-            Debugger::Log("filters_tsf","show()","Transfer function has not been instantiated yet");
-            #endif
+            return;
         }
 
         cout << "Ws = \n";
@@ -200,6 +198,7 @@ template<typename __type>
 class leadlag final : public transfer_function_model
 {
     transfer_function<__type> m_transfer_function;
+
 public:
 
     /*! \brief default constructor */
@@ -268,13 +267,29 @@ public:
     }
 
     /*!
+     *  \brief filtering function
+     *  \param[_input] input pointer
+    */
+    inline __type filt(__type* _Input)
+    {
+        return m_transfer_function(_Input);
+    }
+
+    /*!
      *  \brief filtering operator
      *  \param[_input] input pointer
     */
-    inline __type operator()(__type *input)
+    inline __type operator()(__type* _Input)
     {
-        return m_transfer_function(input);
+        return filt(_Input);
     }
+
+#ifdef DEBUGGER
+    void show()
+    {
+        m_transfer_function.show();
+    }
+#endif
 };
 
 /*!
@@ -358,13 +373,29 @@ public:
     }
 
     /*!
+     *  \brief filtering function
+     *  \param[_input] input pointer
+    */
+    inline __type filt(__type* _Input)
+    {
+        return m_transfer_function(_Input);
+    }
+
+    /*!
      *  \brief filtering operator
      *  \param[_input] input pointer
     */
-    inline __type operator()(__type *input)
+    inline __type operator()(__type* _Input)
     {
-        return m_transfer_function(input);
+        return filt(_Input);
     }
+
+#ifdef DEBUGGER
+    void show()
+    {
+        m_transfer_function.show();
+    }
+#endif
 };
 
 /*!
@@ -448,13 +479,29 @@ public:
     }
 
     /*!
+     *  \brief filtering function
+     *  \param[_input] input pointer
+    */
+    inline __type filt(__type* _Input)
+    {
+        return m_transfer_function(_Input);
+    }
+
+    /*!
      *  \brief filtering operator
      *  \param[_input] input pointer
     */
-    inline __type operator()(__type *input)
+    inline __type operator()(__type* _Input)
     {
-        return m_transfer_function(input);
+        return filt(_Input);
     }
+
+#ifdef DEBUGGER
+    void show()
+    {
+        m_transfer_function.show();
+    }
+#endif
 };
 
 /*!
@@ -538,13 +585,29 @@ public:
     }
 
     /*!
+     *  \brief filtering function
+     *  \param[_input] input pointer
+    */
+    inline __type filt(__type* _Input)
+    {
+        return m_transfer_function(_Input);
+    }
+
+    /*!
      *  \brief filtering operator
      *  \param[_input] input pointer
     */
-    inline __type operator()(__type *input)
+    inline __type operator()(__type* _Input)
     {
-        return m_transfer_function(input);
+        return filt(_Input);
     }
+
+#ifdef DEBUGGER
+    void show()
+    {
+        m_transfer_function.show();
+    }
+#endif
 };
 
 /*!
@@ -695,18 +758,29 @@ public:
     }
 
     /*!
+     *  \brief filtering function
+     *  \param[_input] input pointer
+    */
+    inline __type filt(__type* _Input)
+    {
+        return m_transfer_function(_Input);
+    }
+
+    /*!
      *  \brief filtering operator
      *  \param[_input] input pointer
     */
-    inline __type operator()(__type *input)
+    inline __type operator()(__type* _Input)
     {
-        return m_transfer_function(input);
+        return filt(_Input);
     }
 
-    void show()
-    {
-        m_transfer_function.show();
-    }
+    #ifdef DEBUGGER
+        void show()
+        {
+            m_transfer_function.show();
+        }
+    #endif
 };
 
 /*!

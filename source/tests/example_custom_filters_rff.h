@@ -1,14 +1,12 @@
 #ifndef EXAMPLE_CUSTOM_FILTERS_RFF_H
 #define EXAMPLE_CUSTOM_FILTERS_RFF_H
 
-#include "config.h"
 #include <Comtrade.h>
-
 #include "generators.h"
 #include "filters_recursive_fourier_filter.h"
 
 // Recursive Fourier filter
-int filters_rff_example()
+int filters_rff_example(string _LogsDirectory)
 {
     typedef double __type;
 
@@ -65,7 +63,7 @@ int filters_rff_example()
         }
     }
 
-    registrator.to_file(LOGS_DIRECTORY, STRINGIFY(filters_rff_example));
+    registrator.to_file(_LogsDirectory, STRINGIFY(filters_rff_example));
 
     return 0;
 }

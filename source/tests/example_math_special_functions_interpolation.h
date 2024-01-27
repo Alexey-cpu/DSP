@@ -1,8 +1,6 @@
 #ifndef EXAMPLE_MATH_SPECIAL_FUNCTIONS_INTERPOLATION_H
 #define EXAMPLE_MATH_SPECIAL_FUNCTIONS_INTERPOLATION_H
 
-#include "config.h"
-
 #include "generators.h"
 #include "special_functions.h"
 #include "filters_transfer_functions.h"

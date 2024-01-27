@@ -1,14 +1,13 @@
 #ifndef EXAMPLE_COMTRADE_EMULATION_H
 #define EXAMPLE_COMTRADE_EMULATION_H
 
-#include "config.h"
-#include "Comtrade.h"
 
+#include "Comtrade.h"
 #include "generators.h"
 #include "filters_recursive_fourier_filter.h"
 
 // Recursive Fourier filter
-int filters_comtrade_emulation_example()
+int filters_comtrade_emulation_example(string _LogsDirectory)
 {
     typedef double __type;
 
@@ -67,7 +66,7 @@ int filters_comtrade_emulation_example()
         }
     }
 
-    registrationStation.to_file( LOGS_DIRECTORY, STRINGIFY(filters_comtrade_emulation_example) );
+    registrationStation.to_file( _LogsDirectory, STRINGIFY(filters_comtrade_emulation_example) );
 
     return 0;
 }

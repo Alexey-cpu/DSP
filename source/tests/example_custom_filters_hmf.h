@@ -5,8 +5,6 @@
 #define WRITE_LOGS
 #endif
 
-#include "config.h"
-
 #include "generators.h"
 #include "filters_harmonic_filter.h"
 #include "filters_fast_fourier_transform_spectrum_analyzer.h"

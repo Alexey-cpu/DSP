@@ -1,14 +1,12 @@
 #ifndef EXAMPLE_CLASSIC_FIR_H
 #define EXAMPLE_CLASSIC_FIR_H
 
-#include "config.h"
 #include "Comtrade.h"
-
 #include "generators.h"
 #include "filters_fir.h"
 
 // classic FIR filter example
-int filters_fir_example()
+int filters_fir_example( string _LogsDirectory )
 {
     typedef float __type;
 
@@ -65,7 +63,7 @@ int filters_fir_example()
         }
     }
 
-    registrator.to_file( LOGS_DIRECTORY, STRINGIFY(filters_fir_example) );
+    registrator.to_file( _LogsDirectory, STRINGIFY(filters_fir_example) );
 
     return 0;
 }

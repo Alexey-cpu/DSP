@@ -17,7 +17,6 @@ unix {
 # main project paths paths
 BIN_DIR = ../../bin
 DIST_DIR = ../../shared
-LIB_DIR = ../../libs
 
 TOOLS_PATH = \
            ../../tools/MATH/source \
@@ -54,6 +53,3 @@ CONFIG(release, debug|release): shared.path = $${BIN_DIR}/release/shared
 CONFIG(debug, debug|release): shared.path = $${BIN_DIR}/debug/shared
 shared.files = $${DIST_DIR}/*.xml
 INSTALLS += shared
-
-HEADERS += \
-    ../../source/tests/example_current_transformer_model.h

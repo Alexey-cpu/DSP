@@ -1,13 +1,12 @@
 #ifndef EXAMPLE_TRANSFER_FUNCTIONS_APERIODIC_H
 #define EXAMPLE_TRANSFER_FUNCTIONS_APERIODIC_H
 
-#include "config.h"
-#include "Comtrade.h"
 
+#include "Comtrade.h"
 #include "generators.h"
 #include "filters_transfer_functions.h"
 
-int filters_aperiodic_example()
+int filters_aperiodic_example(string _LogsDirectory)
 {
     typedef float __type;
 
@@ -60,12 +59,12 @@ int filters_aperiodic_example()
         }
     }
 
-    registrator.to_file( LOGS_DIRECTORY, STRINGIFY(filters_aperiodic_example) );
+    registrator.to_file( _LogsDirectory, STRINGIFY(filters_aperiodic_example) );
 
     return 0;
 }
 
-int filters_filter_2nd_order_example()
+int filters_filter_2nd_order_example(string _LogsDirectory)
 {
     typedef float __type;
 
@@ -119,12 +118,12 @@ int filters_filter_2nd_order_example()
         }
     }
 
-    registrator.to_file( LOGS_DIRECTORY, STRINGIFY(filters_filter_2nd_order_example) );
+    registrator.to_file( _LogsDirectory, STRINGIFY(filters_filter_2nd_order_example) );
 
     return 0;
 }
 
-int filters_integrator_differentiator_example()
+int filters_integrator_differentiator_example(string _LogsDirectory)
 {
     typedef float __type;
 
@@ -183,12 +182,12 @@ int filters_integrator_differentiator_example()
         }
     }
 
-    registrator.to_file( LOGS_DIRECTORY, STRINGIFY( filters_integrator_differentiator_example ) );
+    registrator.to_file( _LogsDirectory, STRINGIFY( filters_integrator_differentiator_example ) );
 
     return 0;
 }
 
-int filters_leadlag_example()
+int filters_leadlag_example(string _LogsDirectory)
 {
     typedef float __type;
 
@@ -241,7 +240,7 @@ int filters_leadlag_example()
         }
     }
 
-    registrator.to_file( LOGS_DIRECTORY, STRINGIFY(filters_leadlag_example) );
+    registrator.to_file( _LogsDirectory, STRINGIFY(filters_leadlag_example) );
 
     return 0;
 }

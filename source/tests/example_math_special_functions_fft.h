@@ -1,8 +1,6 @@
 #ifndef EXAMPLE_MATH_SPECIAL_FUNCTIONS_FFT_H
 #define EXAMPLE_MATH_SPECIAL_FUNCTIONS_FFT_H
 
-#include "config.h"
-
 #include "generators.h"
 #include "special_functions.h"
 #include "filters_real_time_spectrum_analyzer.h"

@@ -1,13 +1,11 @@
-#ifndef EXAMPLE_CLASSIC_IIR_BUTT_H
-#define EXAMPLE_CLASSIC_IIR_BUTT_H
+#ifndef EXAMPLE_CLASSIC_IIR_H
+#define EXAMPLE_CLASSIC_IIR_H
 
-#include "config.h"
 #include "Comtrade.h"
-
 #include "generators.h"
 #include "filters_iir.h"
 
-int filters_butt_example()
+int filters_butt_example(string _LogsDirectory)
 {
     typedef float __type;
 
@@ -62,12 +60,12 @@ int filters_butt_example()
         }
     }
 
-    registrator.to_file( LOGS_DIRECTORY, STRINGIFY(filters_butt_example) );
+    registrator.to_file( _LogsDirectory, STRINGIFY(filters_butt_example) );
 
     return 0;
 }
 
-int filters_cheb1_example()
+int filters_cheb1_example(string _LogsDirectory)
 {
     typedef float __type;
 
@@ -121,12 +119,12 @@ int filters_cheb1_example()
         }
     }
 
-    registrator.to_file( LOGS_DIRECTORY, STRINGIFY(filters_cheb1_example) );
+    registrator.to_file( _LogsDirectory, STRINGIFY(filters_cheb1_example) );
 
     return 0;
 }
 
-int filters_cheb2_example()
+int filters_cheb2_example(string _LogsDirectory)
 {
     typedef float __type;
 
@@ -180,12 +178,12 @@ int filters_cheb2_example()
         }
     }
 
-    registrator.to_file( LOGS_DIRECTORY, STRINGIFY( filters_cheb2_example ) );
+    registrator.to_file( _LogsDirectory, STRINGIFY( filters_cheb2_example ) );
 
     return 0;
 }
 
-int filters_ellip_example()
+int filters_ellip_example(string _LogsDirectory)
 {
     typedef float __type;
 
@@ -240,7 +238,7 @@ int filters_ellip_example()
     }
 
     // write COMTRADE file
-    registrator.to_file( LOGS_DIRECTORY, registrator.get_station_name() );
+    registrator.to_file( _LogsDirectory, registrator.get_station_name() );
 
     return 0;
 }
