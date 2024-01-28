@@ -230,7 +230,7 @@ void current_transformer_model_test(string _LogsDirectory)
 
             double primaryCurrent = time < faultTime ?
                         1e3 * sin( PI2 * Fn * time ) :
-                        8e3 * ( sin( PI2 * Fn * time ) + exp( -( time - faultTime ) / 0.08 ) );
+                        10e3 * ( sin( PI2 * Fn * time ) + exp( -( time - faultTime ) / 0.08 ) );
 
 
             currentTransformer.process_primary_current( &primaryCurrent );
@@ -272,22 +272,71 @@ void current_transformer_model_oscillogram_test(string _LogsDirectory, string _O
                 Fs,
                 Comtrade::compute_oscillogram_duration( Ns, Fs ),
                 {
-                    new ComtradeAnalogChannel("yt")
+                    new ComtradeAnalogChannel("I2"),
+                    new ComtradeAnalogChannel("Im"),
+                    new ComtradeAnalogChannel("B"),
+                    new ComtradeAnalogChannel("H")
                 }
             );
 
-    ComtradeAnalogChannel* yt = registrationStation.find_analog_channel("yt");
+    ComtradeAnalogChannel* I2 = registrationStation.find_analog_channel("I2");
+    ComtradeAnalogChannel* Im = registrationStation.find_analog_channel("Im");
+    ComtradeAnalogChannel* B  = registrationStation.find_analog_channel("B");
+    ComtradeAnalogChannel* H  = registrationStation.find_analog_channel("H");
+
+    // current transformer model initialization
+    double primaryWindingTurns   = 1;
+    double secondaryWindingTurns = 1000;
+    double crossSectionArea      = 0.00945;
+    double pathLength            = 2.5;
+    double resistance            = 60 + 8.8;
+    double inductance            = 2.58 / PI2 / Fn;
+
+    Vector2D<double> magnetizationCurve[11]
+    {
+        { 0.00, 0.0 },
+        { 0.50, 10  },
+        { 1.00, 25  },
+        { 1.20, 30  },
+        { 1.40, 45  },
+        { 1.60, 100 },
+        { 1.65, 150 },
+        { 1.70, 250 },
+        { 1.75, 400 },
+        { 1.76, 500 },
+        { 1.77, 600 }
+    };
+
+    CurrentTransformer currentTransformer
+            (
+                primaryWindingTurns,
+                secondaryWindingTurns,
+                crossSectionArea,
+                pathLength,
+                resistance,
+                inductance,
+                10,
+                Fn,
+                Fs,
+                new MagnetizationCurveSmartApproximator(
+                    magnetizationCurve,
+                    11 )
+            );
 
     // emulation
     if( channel != nullptr )
     {
         for( size_t i = 0 ; i < Ns ; i++ )
         {
-            double sample     = channel->get_sample( i );
-            double multiplier = channel->get_calibration_multiplier_coefficient();
-            double addition   = channel->get_calibration_addition_coefficient();
+            double sample = channel->get_sample( i ) * channel->get_calibration_multiplier_coefficient() +
+                    channel->get_calibration_addition_coefficient();
 
-            yt->set_sample( i, sample * multiplier + addition ); // y' = kx + b
+            currentTransformer.process_secondary_current( &sample );
+
+            I2->set_sample( i, sample );
+            Im->set_sample( i, currentTransformer.get_magnetizing_current() );
+            B->set_sample( i, currentTransformer.get_magnetic_induction() );
+            H->set_sample( i, currentTransformer.get_magnetic_induction_flux_density() );
         }
     }
     else

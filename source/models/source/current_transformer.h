@@ -317,10 +317,18 @@ public:
         return m_SecondaryCurrent;
     }
 
-    double process_secondary_current( double* )
+    double process_secondary_current( double* _SecondaryCurrentSample )
     {
-        // Type here your amazing code =)
-        return 0.0;
+        m_SecondaryCurrent = *_SecondaryCurrentSample;
+
+        double magneticInductionDerivative =
+                m_SecondaryCurrent * m_K3 + m_Differentiator(&m_SecondaryCurrent) * m_K4 - m_MagneticInduction * m_K5;
+
+        m_MagneticInduction            = m_Integrator(&magneticInductionDerivative);
+        m_MagneticInductionFluxDensity = m_MagneticInductionFluxDensityComputer->compute(m_MagneticInduction);
+        m_MagnetizingCurrent           = m_MagneticInductionFluxDensity * m_K2;
+
+        return m_SecondaryCurrent;
     }
 };
 

@@ -2,5 +2,4 @@ bin/
 doc/html
 doc/latex
 logs/
-project/
 *.pro.user
