@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <random>
 #include <cmath>
+#include <iomanip>
 
 // STL containers
 #include "vector"
@@ -35,8 +36,6 @@
 #include <sstream>
 #include <fstream>
 #include <functional>
-
-using namespace std;
 
 #endif
 
@@ -102,6 +101,10 @@ namespace TUPLE_PACKAGE
 
         T1 m_Data;
 
+        const Tuple<T2...>* m_Parent = static_cast< Tuple<T2...>* >( this );
+
+        const uint64_t m_Index;
+
         template< uint64_t Index, typename Head, typename ... Tail >
         friend struct TupleUnpacker;
 
@@ -110,17 +113,35 @@ namespace TUPLE_PACKAGE
         typedef T1 return_type;
 
         // constructors
-        Tuple() : m_Data( T1() ){}
+        Tuple() : m_Data( T1() ), m_Index( m_Parent->count() + 1 ){}
 
-        Tuple( T1 _Data, T2 ... _Tail ) : Tuple<T2...>(_Tail...), m_Data( _Data ){}
+        Tuple( T1 _Data, T2 ... _Tail ) : Tuple<T2...>(_Tail...), m_Data( _Data ), m_Index( m_Parent->count() + 1 ){}
 
         // virtual destructor
         virtual ~Tuple(){}
+
+        // public methods
+        uint64_t count() const
+        {
+            return m_Index;
+        }
     };
 
     // Tuple
     template<>
-    struct Tuple<>{};
+    struct Tuple<>
+    {
+    protected:
+        const uint64_t m_Index = 0;
+
+    public:
+
+        // public methods
+        uint64_t count() const
+        {
+            return m_Index;
+        }
+    };
 
     // Tuple unpacker
     template< uint64_t I, typename T1, typename ... T2 >
@@ -411,19 +432,19 @@ using namespace BITSET_UTILS;
 #if defined(_GLIBCXX_NUMERIC_LIMITS) || defined(_LIBCPP_LIMITS)
 
     // Fortran analogues functions
-    template< typename __type > __type __digits__()  { return numeric_limits<__type>::digits; }
+    template< typename __type > __type __digits__()  { return std::numeric_limits<__type>::digits; }
 
-    template< typename __type > __type __epsilon__() { return numeric_limits<__type>::epsilon(); }
+    template< typename __type > __type __epsilon__() { return std::numeric_limits<__type>::epsilon(); }
 
-    template< typename __type > __type __huge__() { return numeric_limits<__type>::max(); }
+    template< typename __type > __type __huge__() { return std::numeric_limits<__type>::max(); }
 
-    template< typename __type > __type __maxexponent__() { return numeric_limits<__type>::max_exponent; }
+    template< typename __type > __type __maxexponent__() { return std::numeric_limits<__type>::max_exponent; }
 
-    template< typename __type > __type __minexponent__() { return numeric_limits<__type>::min_exponent; }
+    template< typename __type > __type __minexponent__() { return std::numeric_limits<__type>::min_exponent; }
 
-    template< typename __type > __type __radix__() { return numeric_limits<__type>::radix; }
+    template< typename __type > __type __radix__() { return std::numeric_limits<__type>::radix; }
 
-    template< typename __type > __type __tiny__() { return numeric_limits<__type>::min(); }
+    template< typename __type > __type __tiny__() { return std::numeric_limits<__type>::min(); }
 
     template< typename __type >
     class PseudoRandomNumberGenerator
@@ -461,7 +482,7 @@ using namespace BITSET_UTILS;
 #endif
 
 template< typename Head >
-Head __max__( Head _A, Head _B )
+inline __attribute__((always_inline)) Head __max__( Head _A, Head _B )
 {
     return _A > _B ? _A : _B;
 }
@@ -487,7 +508,7 @@ __max__( __type* _Input , uint64_t _Size )
 }
 
 template< typename Head >
-Head __min__( Head _A, Head _B )
+inline __attribute__((always_inline)) Head __min__( Head _A, Head _B )
 {
     return _A < _B ? _A : _B;
 }
@@ -517,19 +538,25 @@ inline __type __min__( const __type* _Input, int _Size )
 }
 
 template< typename __type >
-inline __type __abs__ ( __type _A )
+inline __attribute__((always_inline)) __type __abs__ ( __type _A )
 {
     return ( _A < 0 ) ? -_A : _A;
 }
 
 template< typename __type >
-inline __type __sign__( __type _A, __type _B )
+inline __attribute__((always_inline)) __type __sign__( __type _A, __type _B )
 {
     return _A * ( ( _B > 0 ) ? (__type)1 : -(__type)1 );
 }
 
 template< typename __type >
-inline void __swap__( __type& _A, __type& _B )
+inline __attribute__((always_inline)) __type __sign__( __type _A )
+{
+    return _A >= 0 ? (__type)1.0 : -(__type)1.0;
+}
+
+template< typename __type >
+inline __attribute__((always_inline)) void __swap__( __type& _A, __type& _B )
 {
     __type c = _B;
     _B = _A;
@@ -624,6 +651,17 @@ __mfree__( __type* _Memory )
     return _Memory;
 }
 
+inline std::chrono::high_resolution_clock::time_point tic()
+{
+    return std::chrono::high_resolution_clock::now();
+}
+
+template< typename __type = std::chrono::nanoseconds >
+double elapsed( std::chrono::high_resolution_clock::time_point _Then, std::chrono::high_resolution_clock::time_point _Now )
+{
+    return (double)std::chrono::duration_cast<__type>(_Now - _Then).count();
+}
+
 #if defined(_STRINGFWD_H) || defined(_LIBCPP_IOSFWD)
 
 #define DEBUGGER
@@ -631,20 +669,21 @@ __mfree__( __type* _Memory )
     namespace STRING_EXTENSION
     {
         // utility functions
-        inline string __remove_prefix__( string _Input, string _Prefix )
+        inline std::string __remove_prefix__( std::string _Input, std::string _Prefix )
         {
             size_t j = 0;
             for( size_t i = 0 ; i < _Prefix.size() ; i++ )
             {
                 if( _Input[i] != _Prefix[i] )
                 {
-                    return _Input;
+                    break;
                 }
 
                 j++;
             }
 
-            string output;
+            std::string output;
+
             for( size_t i = j ; i < _Input.size() ; i++ )
             {
                 output += _Input[i];
@@ -653,9 +692,9 @@ __mfree__( __type* _Memory )
             return output;
         }
 
-        inline string __format_camel_style_string__( string _Input )
+        inline std::string __format_camel_style_string__( std::string _Input )
         {
-            string output;
+            std::string output;
             for( size_t i = 0 ; i < _Input.size() ; i++ )
             {
                 output += _Input[i];
@@ -667,20 +706,20 @@ __mfree__( __type* _Memory )
             return output;
         }
 
-        inline string __class_field_to_string__( string _Input )
+        inline std::string __class_field_to_string__( std::string _Input )
         {
             return __format_camel_style_string__( __remove_prefix__( _Input, "m_" ) );
         }
 
-        inline std::vector< string > __split__( string _Input, string _Delimeter = " " )
+        inline std::vector< std::string > __split__( std::string _Input, std::string _Delimeter = " " )
         {
             if( _Input.empty() )
-                return std::vector< string >();
+                return std::vector< std::string >();
 
             int start  = 0;
             int end    = 0;
             int size   = _Delimeter.size();
-            std::vector< string > output;
+            std::vector< std::string > output;
 
             while ( end >= 0 )
             {
@@ -692,7 +731,7 @@ __mfree__( __type* _Memory )
             return output;
         }
 
-        inline bool __string_contains__(string _Input, char _Delimeter = ' ')
+        inline bool __string_contains__( std::string _Input, char _Delimeter = ' ')
         {
             for( size_t i = 0 ; i < _Input.size() ; i++ )
             {
@@ -703,21 +742,21 @@ __mfree__( __type* _Memory )
             return false;
         }
 
-        inline string __to_upper__( string _String )
+        inline std::string __to_upper__( std::string _String )
         {
-            transform(_String.begin(), _String.end(), _String.begin(), ::toupper);
+            std::transform(_String.begin(), _String.end(), _String.begin(), ::toupper);
             return _String;
         }
 
-        inline string __to_lower__( string _String )
+        inline std::string __to_lower__( std::string _String )
         {
-            transform(_String.begin(), _String.end(), _String.begin(), ::tolower);
+            std::transform(_String.begin(), _String.end(), _String.begin(), ::tolower);
             return _String;
         }
 
-        inline string __remove_symbol__( string _String, char _Symbol )
+        inline std::string __remove_symbol__( std::string _String, char _Symbol )
         {
-            string output;
+            std::string output;
 
             // compute output string size
             size_t size = 0;
@@ -738,9 +777,9 @@ __mfree__( __type* _Memory )
             return output;
         }
 
-        inline string __remove_symbols__( string _String, std::set< char > _Symbols )
+        inline std::string __remove_symbols__( std::string _String, std::set< char > _Symbols )
         {
-            string output;
+            std::string output;
 
             // compute output string size
             size_t size = 0;
@@ -809,9 +848,9 @@ __mfree__( __type* _Memory )
 
         // from string conversion
         template< typename __type >
-        __type __from_string__( string _Input );
+        __type __from_string__( std::string _Input );
 
-        template<> inline float __from_string__< float >( string _Input )
+        template<> inline float __from_string__< float >( std::string _Input )
         {
             try
             {
@@ -823,7 +862,7 @@ __mfree__( __type* _Memory )
             }
         }
 
-        template<> inline double __from_string__<double>( string _Input )
+        template<> inline double __from_string__<double>( std::string _Input )
         {
             try
             {
@@ -835,7 +874,7 @@ __mfree__( __type* _Memory )
             }
         }
 
-        template<> inline long double __from_string__<long double>( string _Input )
+        template<> inline long double __from_string__<long double>( std::string _Input )
         {
             try
             {
@@ -847,7 +886,7 @@ __mfree__( __type* _Memory )
             }
         }
 
-        template<> inline int __from_string__<int>( string _Input )
+        template<> inline int __from_string__<int>( std::string _Input )
         {
             try
             {
@@ -859,7 +898,7 @@ __mfree__( __type* _Memory )
             }
         }
 
-        template<> inline long long __from_string__<long long>( string _Input )
+        template<> inline long long __from_string__<long long>( std::string _Input )
         {
             try
             {
@@ -871,7 +910,7 @@ __mfree__( __type* _Memory )
             }
         }
 
-        template<> inline unsigned long __from_string__<unsigned long>( string _Input )
+        template<> inline unsigned long __from_string__<unsigned long>( std::string _Input )
         {
             try
             {
@@ -883,7 +922,7 @@ __mfree__( __type* _Memory )
             }
         }
 
-        template<> inline unsigned int __from_string__<unsigned int>( string _Input )
+        template<> inline unsigned int __from_string__<unsigned int>( std::string _Input )
         {
             try
             {
@@ -895,7 +934,7 @@ __mfree__( __type* _Memory )
             }
         }
 
-        template<> inline bool __from_string__<bool>( string _Input )
+        template<> inline bool __from_string__<bool>( std::string _Input )
         {
             try
             {
@@ -907,7 +946,7 @@ __mfree__( __type* _Memory )
             }
         }
 
-        template<> inline unsigned long long __from_string__<unsigned long long>( string _Input )
+        template<> inline unsigned long long __from_string__<unsigned long long>( std::string _Input )
         {
             try
             {
@@ -919,61 +958,61 @@ __mfree__( __type* _Memory )
             }            
         }
 
-        template<> inline string __from_string__<string>( string _Input )
+        template<> inline std::string __from_string__< std::string >( std::string _Input )
         {
             return _Input;
         }
 
-        template<> inline char __from_string__<char>( string _Input )
+        template<> inline char __from_string__<char>( std::string _Input )
         {
             return _Input.empty() ? ' ' : _Input[0];
         }
 
         // to string conversion
         template< typename __type >
-        string __to_string__( __type _Input );
+        std::string __to_string__( __type _Input );
 
-        template<> inline string __to_string__<bool>( bool _Input )
+        template<> inline std::string __to_string__<bool>( bool _Input )
         {
             return std::to_string( _Input );
         }
 
-        template<> inline string __to_string__< float >( float _Input )
+        template<> inline std::string __to_string__< float >( float _Input )
         {
             return std::to_string( _Input );
         }
 
-        template<> inline string __to_string__<double>( double _Input )
+        template<> inline std::string __to_string__<double>( double _Input )
         {
             return std::to_string( _Input );
         }
 
-        template<> inline string __to_string__<long double>( long double _Input )
+        template<> inline std::string __to_string__<long double>( long double _Input )
         {
             return std::to_string( _Input );
         }
 
-        template<> inline string __to_string__<int>( int _Input )
+        template<> inline std::string __to_string__<int>( int _Input )
         {
             return std::to_string( _Input );
         }
 
-        template<> inline string __to_string__<long long>( long long _Input )
+        template<> inline std::string __to_string__<long long>( long long _Input )
         {
             return std::to_string( _Input );
         }
 
-        template<> inline string __to_string__<unsigned long>( unsigned long _Input )
+        template<> inline std::string __to_string__<unsigned long>( unsigned long _Input )
         {
             return std::to_string( _Input );
         }
 
-        template<> inline string __to_string__<unsigned long long>( unsigned long long _Input )
+        template<> inline std::string __to_string__<unsigned long long>( unsigned long long _Input )
         {
             return std::to_string( _Input );
         }
 
-        template<> inline string __to_string__<string>( string _Input )
+        template<> inline std::string __to_string__< std::string >( std::string _Input )
         {
             return _Input;
         }
@@ -983,37 +1022,37 @@ __mfree__( __type* _Memory )
     {
     protected:
 
-        static string GetCurrentTime()
+        static std::string GetCurrentTime()
         {
-            time_t _time = chrono::system_clock::to_time_t(chrono::system_clock::now());
-            string output = ctime(&_time);
+            time_t _time = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
+            std::string output = ctime(&_time);
             return output.substr(0, output.length()-1);
         }
 
     public:
 
-        static string MessageFormat(string _Typename, string _OjectName, string _Message)
+        static std::string MessageFormat( std::string _Typename, std::string _OjectName, std::string _Message)
         {
             return "[ " + GetCurrentTime() + " ] " + "[ " + _Typename + " ] " + "[ " + _OjectName + " ] " + _Message;
         }
 
-        static string MessageFormat( string _OjectName, string _Message)
+        static std::string MessageFormat( std::string _OjectName, std::string _Message)
         {
             return "[ " + GetCurrentTime() + " ] " + "[ " + _OjectName + " ] " + _Message;
         }
 
-        static string MessageFormat(string _Message)
+        static std::string MessageFormat( std::string _Message)
         {
             return "[ " + GetCurrentTime() + " ] " + _Message;
         }
 
         // logging functions
-        static void Log( string _Typename, string _OjectName, string _Message )
+        static void Log( std::string _Typename, std::string _OjectName, std::string _Message )
         {
             std::cout << MessageFormat(_Typename, _OjectName,  _Message) + "\n";
         }
 
-        static void LogError( string _Typename, string _OjectName, string _Message )
+        static void LogError( std::string _Typename, std::string _OjectName, std::string _Message )
         {
             std::cerr << MessageFormat(_Typename, _OjectName,  _Message) + "\n";
         }

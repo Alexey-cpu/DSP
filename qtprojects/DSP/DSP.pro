@@ -19,6 +19,7 @@ HEADERS_PATH = \
 
 SOURCE_PATH = \
     ../../source/dsp \
+    ../../source/comtrade \
     ../../source/utils \
 
 # retrieve project sorce code files
@@ -36,9 +37,9 @@ for(path,HEADERS):INCLUDEPATH += $$dirname(path)
 # attach libraries
 
 #COMTRADELIB
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../libs/ -lCOMTRADELIB
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../libs/ -lCOMTRADELIB
-else:unix: LIBS += -L$$PWD/../../libs/ -lCOMTRADELIB
+#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../libs/ -lCOMTRADELIB
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../libs/ -lCOMTRADELIB
+#else:unix: LIBS += -L$$PWD/../../libs/ -lCOMTRADELIB
 
 #collect dependecies for libraries
 for(path,HEADERS):DEPENDPATH += $$dirname(path)

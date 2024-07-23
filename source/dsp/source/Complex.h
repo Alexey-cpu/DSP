@@ -5,7 +5,7 @@
 #include "math.h"
 #include "stdlib.h"
 #include "string"
-using namespace std;
+#include <iomanip>
 #endif
 
 //------------------------------------------------------------------------------------------------------------------------------------------------
@@ -33,114 +33,113 @@ using namespace std;
 */
 template<typename __type = float> class Complex
 {
-private:
+public:
 
     // service types
     /*!
     * \enum complex_plain
     * \brief defines the complex plain
     */
-    enum complex_plain
+    struct complex_plain
     {
-        REAL, ///< complex number real part
-        IMAG  ///< complex number imaginary part
+        __type REAL = __type(); ///< complex number real part
+        __type IMAG = __type();  ///< complex number imaginary part
     };
 
     // service methods
 
     // complex numbers addtion function
-    static void __cadd__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
+    static complex_plain __cadd__(const complex_plain _c1, const  complex_plain _c2)
     {
-        _c3[REAL] = _c1[REAL] + _c2[REAL];
-        _c3[IMAG] = _c1[IMAG] + _c2[IMAG];
+        return
+        {
+            _c1.REAL + _c2.REAL,
+            _c1.IMAG + _c2.IMAG
+        };
     }
 
     // complex numbers substraction function
-    static void __csub__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
+    static complex_plain __csub__(const complex_plain _c1, const  complex_plain _c2)
     {
-        _c3[REAL] = _c1[REAL] - _c2[REAL];
-        _c3[IMAG] = _c1[IMAG] - _c2[IMAG];
+        return
+        {
+            _c1.REAL - _c2.REAL,
+            _c1.IMAG - _c2.IMAG
+        };
     }
 
     // complex numbers multiplication function
-    static void __cmul__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
+    static complex_plain __cmul__(const complex_plain _c1, const  complex_plain _c2)
     {
-        _c3[REAL] = _c1[REAL] * _c2[REAL] - _c1[IMAG] * _c2[IMAG];
-        _c3[IMAG] = _c1[REAL] * _c2[IMAG] + _c1[IMAG] * _c2[REAL];
+        return
+        {
+            _c1.REAL * _c2.REAL - _c1.IMAG * _c2.IMAG,
+            _c1.REAL * _c2.IMAG + _c1.IMAG * _c2.REAL
+        };
     }
 
     // complex numbers division function
-    static void __cdiv__(const __type _c1[2], const  __type _c2[2], __type _c3[2] )
+    static complex_plain __cdiv__(const complex_plain _c1, const  complex_plain _c2)
     {
-        __type scal =  _c2[REAL] * _c2[REAL] + _c2[IMAG] * _c2[IMAG];
-        _c3[REAL]   =  _c1[REAL] * _c2[REAL] + _c1[IMAG] * _c2[IMAG];
-        _c3[IMAG]   = -_c1[REAL] * _c2[IMAG] + _c1[IMAG] * _c2[REAL];
-        _c3[REAL]  /= scal;
-        _c3[IMAG]  /= scal;
+        __type scal =  _c2.REAL * _c2.REAL + _c2.IMAG * _c2.IMAG;
+
+        return
+        {
+            ( +_c1.REAL * _c2.REAL + _c1.IMAG * _c2.IMAG ) / scal,
+            ( -_c1.REAL * _c2.IMAG + _c1.IMAG * _c2.REAL ) / scal
+        };
     }
 
     // complex numbers modulus computation function
-    static __type __cabs__(const __type _c1[2] )
+    static __type __cabs__(const complex_plain _c1 )
     {
-        return _c1[REAL] == 0.0 && _c1[IMAG] == 0.0 ? 0.0 : sqrt( _c1[REAL] * _c1[REAL] + _c1[IMAG] * _c1[IMAG] );
+        return _c1.REAL == 0.0 && _c1.IMAG == 0.0 ? 0.0 : sqrt( _c1.REAL * _c1.REAL + _c1.IMAG * _c1.IMAG );
     }
 
     // complex numbers angle computation function
-    static __type __carg__(const __type _c1[2] )
+    static __type __carg__(const complex_plain _c1 )
     {
-        return atan2( _c1[IMAG], _c1[REAL] );
+        return atan2( _c1.IMAG, _c1.REAL );
     }
 
     // complex numbers greater function
-    static bool __cgt__(const __type _c1[2], const  __type _c2[2] )
+    static bool __cgt__(const complex_plain _c1, const  complex_plain _c2 )
     {
         return __cabs__(_c1) > __cabs__(_c2);
     }
 
     // complex numbers lower function
-    static bool __clt__(const __type _c1[2], const  __type _c2[2] )
+    static bool __clt__(const complex_plain _c1, const  complex_plain _c2 )
     {
         return __cabs__(_c1) < __cabs__(_c2);
     }
 
     // complex numbers equality function
-    static bool __ceq__(const __type _c1[2], const  __type _c2[2] )
+    static bool __ceq__(const complex_plain _c1, const  complex_plain _c2 )
     {
         return __cabs__(_c1) == __cabs__(_c2);
     }
 
     // complex numbers greater/equal function
-    static bool __cge__(const __type _c1[2], const  __type _c2[2] )
+    static bool __cge__(const complex_plain _c1, const  complex_plain _c2 )
     {
         return __cabs__(_c1) >= __cabs__(_c2);
     }
 
     // complex numbers lower/equal function
-    static bool __cle__(const __type _c1[2], const  __type _c2[2] )
+    static bool __cle__(const complex_plain _c1, const  complex_plain _c2 )
     {
         return __cabs__(_c1) <= __cabs__(_c2);
     }
 
     /*! \brief complex number real and imaginary part buffer */
-    mutable __type m_data[2];
-
-public:
+    mutable complex_plain m_data;
 
     /*! \brief default constructor */
     Complex()
     {
-        m_data[REAL] = 0;
-        m_data[IMAG] = 0;
-    }
-
-    /*!
-     *  \brief copy constructor
-     *  \param[_c] input complex number
-    */
-    Complex(const Complex& _c)
-    {
-        m_data[REAL] = _c.m_data[REAL];
-        m_data[IMAG] = _c.m_data[IMAG];
+        m_data.REAL = 0;
+        m_data.IMAG = 0;
     }
 
     /*!
@@ -149,8 +148,8 @@ public:
     */
     Complex( __type _n )
     {
-        m_data[REAL] = _n;
-        m_data[IMAG] = 0;
+        m_data.REAL = _n;
+        m_data.IMAG = 0;
     }
 
     /*!
@@ -160,8 +159,8 @@ public:
     */
     Complex( __type _re , __type _im )
     {
-        m_data[REAL] = _re;
-        m_data[IMAG] = _im;
+        m_data.REAL = _re;
+        m_data.IMAG = _im;
     }
 
     /*!
@@ -170,65 +169,44 @@ public:
     */
     Complex( __type _c[2] )
     {
-        m_data[REAL] = _c[REAL];
-        m_data[IMAG] = _c[IMAG];
-    }
-
-    // properties
-    __type get_real()
-    {
-        return m_data[REAL];
-    }
-
-    __type get_imag()
-    {
-        return m_data[IMAG];
-    }
-
-    void set_real( __type _Value )
-    {
-        m_data[REAL] = _Value;
-    }
-
-    void set_imag( __type _Value )
-    {
-        m_data[IMAG] = _Value;
+        m_data.REAL = _c[0];
+        m_data.IMAG = _c[1];
     }
 
     /*! \brief operator to convert fcomplex<__type>() -> fcomplex<float>() */
-    operator Complex<float>() const
+    inline operator Complex<float>() const
     {
-        return Complex<float>( m_data[REAL], m_data[IMAG] );
+        return Complex<float>( m_data.REAL, m_data.IMAG );
     }
 
     /*! \brief operator to convert fcomplex<__type>() -> fcomplex<double>() */
-    operator Complex<double>() const
+    inline operator Complex<double>() const
     {
-        return Complex<double>( m_data[REAL], m_data[IMAG] );
+        return Complex<double>( m_data.REAL, m_data.IMAG );
     }
 
     /*! \brief operator to convert fcomplex<__type>() -> fcomplex<long double>() */
-    operator Complex<long double>() const
+    inline operator Complex<long double>() const
     {
-        return Complex<long double>( m_data[REAL], m_data[IMAG] );
+        return Complex<long double>( m_data.REAL, m_data.IMAG );
     }
 
     /*! \brief operator to convert fcomplex<__type>() -> float it must be used explicitly !!! */
-    explicit operator float() const
+    inline explicit operator float() const
     {
-        return m_data[REAL];
+        return m_data.REAL;
     }
 
     /*! \brief operator to convert fcomplex<__type>() -> float it must be used explicitly !!! */
-    explicit operator double() const
+    inline explicit operator double() const
     {
-        return m_data[REAL];
+        return m_data.REAL;
     }
 
     /*! \brief operator to convert fcomplex<__type>() -> float it must be used explicitly !!! */
-    explicit operator long double() const
+    inline explicit operator long double() const
     {
-        return m_data[REAL];
+        return m_data.REAL;
     }
 
     /*!
@@ -238,8 +216,8 @@ public:
     */
     inline void operator()( __type _re, __type _im )
     {
-        m_data[REAL] = _re;
-        m_data[IMAG] = _im;
+        m_data.REAL = _re;
+        m_data.IMAG = _im;
     }
 
     /*!
@@ -248,19 +226,8 @@ public:
     */
     inline void operator()( Complex<__type> _c )
     {
-        m_data[REAL] = _c.m_data[REAL];
-        m_data[IMAG] = _c.m_data[IMAG];
-    }
-
-    /*!
-     *  \brief assigning operator
-     *  \param[_c] input complex number
-    */
-    inline Complex<__type> operator = ( Complex<__type> _c )
-    {
-        m_data[REAL] = _c.m_data[REAL];
-        m_data[IMAG] = _c.m_data[IMAG];
-        return *this;
+        m_data.REAL = _c.m_data.REAL;
+        m_data.IMAG = _c.m_data.IMAG;
     }
 
     /*!
@@ -269,9 +236,8 @@ public:
     */
     inline Complex<__type> operator + (Complex<__type> _c2 ) const
     {
-        Complex<__type> _c3;
-        __cadd__( this->m_data , _c2.m_data , _c3.m_data );
-        return _c3;
+        complex_plain _c3 = __cadd__( this->m_data , _c2.m_data );
+        return Complex<__type>( _c3.REAL, _c3.IMAG );
     }
 
     /*!
@@ -280,10 +246,9 @@ public:
     */
     inline Complex<__type> operator += (Complex<__type> _c2 )
     {
-        Complex<__type> _c3;
-        __cadd__( this->m_data, _c2.m_data , _c3.m_data );
-        this->m_data[REAL] = _c3.m_data[REAL];
-        this->m_data[IMAG] = _c3.m_data[IMAG];
+        complex_plain _c3 = __cadd__( this->m_data, _c2.m_data );
+        this->m_data.REAL = _c3.REAL;
+        this->m_data.IMAG = _c3.IMAG;
         return *this;
     }
 
@@ -293,9 +258,8 @@ public:
     */
     inline Complex<__type> operator - (Complex<__type> _c2 ) const
     {
-        Complex<__type> _c3;
-        __csub__( this->m_data , _c2.m_data , _c3.m_data ) ;
-        return _c3;
+        complex_plain _c3 = __csub__( this->m_data , _c2.m_data ) ;
+        return Complex<__type>( _c3.REAL, _c3.IMAG );
     }
 
     /*!
@@ -304,10 +268,9 @@ public:
     */
     inline Complex<__type> operator -= ( Complex<__type> _c2 )
     {
-        Complex<__type> _c3;
-        __csub__( this->m_data , _c2.m_data , _c3.m_data );
-        this->m_data[REAL] = _c3.m_data[REAL];
-        this->m_data[IMAG] = _c3.m_data[IMAG];
+        complex_plain _c3 = __csub__( this->m_data , _c2.m_data );
+        this->m_data.REAL = _c3.REAL;
+        this->m_data.IMAG = _c3.IMAG;
         return *this;
     }
 
@@ -317,9 +280,8 @@ public:
     */
     inline Complex<__type> operator * (Complex<__type> _c2 ) const
     {
-        Complex<__type> _c3;
-        __cmul__( this->m_data , _c2.m_data , _c3.m_data );
-        return _c3;
+        complex_plain _c3 = __cmul__( this->m_data , _c2.m_data );
+        return Complex<__type>( _c3.REAL, _c3.IMAG );
     }
 
     /*!
@@ -328,8 +290,7 @@ public:
     */
     inline Complex<__type> operator * ( __type _c2 ) const
     {
-        Complex<__type> _c3( this->m_data[REAL] * _c2 , this->m_data[IMAG] * _c2 );
-        return _c3;
+        return Complex<__type>( this->m_data.REAL * _c2 , this->m_data.IMAG * _c2 );
     }
 
     /*!
@@ -338,10 +299,9 @@ public:
     */
     inline Complex<__type> operator *= (Complex<__type> _c2 )
     {
-        Complex<__type> _c3;
-        __cmul__( this->m_data , _c2.m_data , _c3.m_data );
-        this->m_data[REAL] = _c3.m_data[REAL];
-        this->m_data[IMAG] = _c3.m_data[IMAG];
+        complex_plain _c3 = __cmul__( this->m_data , _c2.m_data );
+        this->m_data.REAL = _c3.REAL;
+        this->m_data.IMAG = _c3.IMAG;
         return *this;
     }
 
@@ -351,8 +311,8 @@ public:
     */
     inline Complex<__type> operator *= (__type _c2 ) const
     {
-        this->m_data[REAL] *=_c2;
-        this->m_data[IMAG] *=_c2;
+        this->m_data.REAL *=_c2;
+        this->m_data.IMAG *=_c2;
         return *this;
     }
 
@@ -362,9 +322,8 @@ public:
     */
     inline Complex<__type> operator / (Complex<__type> _c2 ) const
     {
-        Complex<__type> _c3;
-        __cdiv__( this->m_data , _c2.m_data , _c3.m_data );
-        return _c3;
+        complex_plain _c3 = __cdiv__( this->m_data , _c2.m_data );
+        return Complex<__type>( _c3.REAL, _c3.IMAG );
     }
 
     /*!
@@ -373,8 +332,7 @@ public:
     */
     inline Complex<__type> operator / ( __type _c2 ) const
     {
-        Complex<__type> _c3( this->m_data[REAL] / _c2 ,this->m_data[IMAG] / _c2 );
-        return _c3;
+        return Complex<__type>( this->m_data.REAL / _c2 ,this->m_data.IMAG / _c2 );
     }
 
     /*!
@@ -383,10 +341,9 @@ public:
     */
     inline Complex<__type> operator /= (Complex<__type> _c2 ) const
     {
-        Complex<__type> _c3;
-        __cdiv__( this->m_data , _c2.m_data , _c3.m_data );
-        this->m_data[REAL] = _c3.m_data[REAL];
-        this->m_data[IMAG] = _c3.m_data[IMAG];
+        complex_plain _c3 = __cdiv__( this->m_data , _c2.m_data );
+        this->m_data.REAL = _c3.REAL;
+        this->m_data.IMAG = _c3.IMAG;
         return *this;
     }
 
@@ -396,8 +353,8 @@ public:
     */
     inline Complex<__type> operator /= (__type _c2 ) const
     {
-        this->m_data[REAL] /= _c2;
-        this->m_data[IMAG] /= _c2;
+        this->m_data.REAL /= _c2;
+        this->m_data.IMAG /= _c2;
         return *this;
     }
 
@@ -457,19 +414,26 @@ public:
 
     static Complex<__type> zero()
     {
-        return Complex<__type>(0,0);
+        return Complex<__type>(0.0, 0.0);
+    }
+
+    static Complex<__type> one()
+    {
+        return Complex<__type>(1.0, 0.0);
     }
 
     #if defined(_STRINGFWD_H) || defined(_LIBCPP_IOSFWD)
 
-        string to_string() const
+        std::string to_string(int _Precision = 3) const
         {
-            return std::to_string( m_data[REAL] ) +
-                   ( m_data[IMAG] > 0 ? "+j" : "-j" ) +
-                   std::to_string( std::abs( m_data[IMAG] ) );
+            std::stringstream stream;
+            stream << std::fixed << std::setprecision(_Precision) << m_data.REAL
+                   << ( m_data.IMAG > 0 ? "+j" : "-j" ) << std::fixed << std::setprecision(_Precision) << ( m_data.IMAG < 0 ? -m_data.IMAG : m_data.IMAG );
+
+            return stream.str();
         }
 
-        explicit operator string() const
+        explicit operator std::string() const
         {
             return this->to_string();
         }
@@ -514,6 +478,11 @@ public:
     @{
 */
 
+template<typename __type> inline std::string __to_string__( Complex<__type> _Input )
+{
+    return _Input.to_string();
+}
+
 /*!
  *  \brief complex number angle computation function
  *  \param[_complex] input complex number
@@ -522,7 +491,13 @@ public:
 template<typename __type> __type
 __realf__(Complex<__type> _complex )
 {
-    return _complex.m_data[ Complex<__type>::complex_plain::REAL ];
+    return _complex.m_data.REAL;
+}
+
+template<typename __type> __type
+__realf__(__type _complex )
+{
+    return _complex;
 }
 
 /*!
@@ -533,7 +508,14 @@ __realf__(Complex<__type> _complex )
 template<typename __type> __type
 __imagf__(Complex<__type> _complex )
 {
-    return _complex.m_data[ Complex<__type>::complex_plain::IMAG ];
+    return _complex.m_data.IMAG;
+}
+
+template<typename __type> __type
+__imagf__(__type _complex )
+{
+    (void)_complex;
+    return 0.0;
 }
 
 /*!
@@ -551,7 +533,7 @@ __type __cabsf__(Complex<__type> _complex )
 }
 
 template<typename __type>
-__type __abs__(Complex<__type> _complex )
+inline __attribute__((always_inline)) __type __abs__(Complex<__type> _complex )
 {
     return __cabsf__(_complex);
 }
@@ -579,11 +561,19 @@ __type __cargf__( Complex<__type> _complex )
 * \f]
 */
 template<typename __type> Complex<__type>
-__csqrtf__(Complex<__type> _complex )
+__csqrtf__( Complex<__type> _complex )
 {
     __type abs = __cabsf__(_complex );
     __type arg = __cargf__(_complex );
-    return Complex<__type>( sqrt( abs ) * cos( arg / 2) , sqrt( abs ) * sin( arg / 2) );
+    return Complex<__type>( cos( arg * 0.5 ), sin( arg * 0.5 ) ) * sqrt( abs );
+}
+
+template<typename __type> Complex<__type>
+__cpowf__( Complex<__type> _complex, __type _power )
+{
+    __type abs = __cabsf__(_complex );
+    __type arg = __cargf__(_complex );
+    return Complex<__type>( cos( arg * _power ), sin( arg * _power ) ) * pow( abs, _power );
 }
 
 /*!
@@ -612,7 +602,9 @@ __conjf__( Complex<__type> _complex )
 template<typename __type> Complex<__type>
 __cnormf__( Complex<__type> _complex )
 {
-    return Complex<__type>( _complex / __cabsf__( _complex ) );
+    __type abs = __cabsf__( _complex );
+
+    return Complex<__type>( _complex / ( abs < 1e-12 ? 1.0 : abs ) );
 }
 
 /*!
