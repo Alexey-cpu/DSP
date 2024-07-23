@@ -34,12 +34,5 @@ SOURCES += main.cpp
 # attach external/internal resources
 for(path,HEADERS):INCLUDEPATH += $$dirname(path)
 
-# attach libraries
-
-#COMTRADELIB
-#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../libs/ -lCOMTRADELIB
-#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../libs/ -lCOMTRADELIB
-#else:unix: LIBS += -L$$PWD/../../libs/ -lCOMTRADELIB
-
 #collect dependecies for libraries
 for(path,HEADERS):DEPENDPATH += $$dirname(path)
