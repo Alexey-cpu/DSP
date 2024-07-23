@@ -4,7 +4,13 @@
 
 **DSP** is a low level C++ digital signal processing (DSP) toolbox aimed at intellegent electronic devices (IDE) interaction.
 
-The library is self contained and stand-alone, all you need is to simply copy the needed .h files into your project to get started.
+The library is self contained and stand-alone, all you need is to simply copy the needed **.h** files into your project to get started.
+
+## Content
+
+The library provides basic DSP components: IIR and FIR filters, Fourier transforms etc.
+Also, the library provides C++ classes to manipulate with COMTRADE files which allows read, write COMTRADE files and emulate DSP componentns opoeration
+on the signals provided by your COMTRADE files. At this version the COMTRADE C++ classes work only with textual COMTRADEs only.
 
 ## Availability
 
@@ -51,4 +57,80 @@ As the library is header-only you don't need to compile anything, just copy file
 
 ## Example
 
-The following example shows how to solve sparse linear system A * x = b using SparseKernel library:
+The following example function how to use Butterworth filter to manipulate with a signal and how to write COMTRADE file with appropriate signals:
+
+```
+int filters_butt_example(string _LogsDirectory)
+{
+    typedef float __type;
+
+    // emulation parameters:
+    double Fs                = 4000;
+    double Fn                = 50;
+    double time              = 0;
+    double EmulationDuration = 0.08;
+    int    CycleWidth        = 5;
+    int    cycles_num        = 1000 * EmulationDuration / CycleWidth;
+    int    frames_per_cycle  = CycleWidth * Fs / 1000;
+
+    // create COMTARDE registrator
+    Comtrade registrator
+            (
+                "filters_ellip_example",
+                Fn,
+                Fs,
+                EmulationDuration,
+                {
+                    new ComtradeAnalogChannel("xt"),
+                    new ComtradeAnalogChannel("yt")
+                }
+            );
+
+    // retrieve channels
+    ComtradeAnalogChannel* xt = registrator.find_analog_channel("xt");
+    ComtradeAnalogChannel* yt = registrator.find_analog_channel("yt");
+
+    // generator initialization
+    generator<__type> gen;
+    digital_clock<double> time_provider;
+    time_provider.init(Fs);
+
+
+    // filter initialization
+    butterworth<__type> filter;
+    filter.init(Fs, 10, filter_type::bandpass, {100 , 400} );
+    filter.show();
+
+    // emulation
+    int k = 0;
+    for( int i = 0 ; i < cycles_num ; i++ )
+    {
+        for( int j = 0 ; j < frames_per_cycle ; j++, time = time_provider.tick(), k++ )
+        {
+            __type signal = gen.sine( 1, Fn, 0, time );
+            __type output = filter(&signal);
+
+            xt->set_sample( k, signal );
+            yt->set_sample( k, output );
+        }
+    }
+
+    registrator.to_file( _LogsDirectory, STRINGIFY(filters_butt_example) );
+
+    return 0;
+}
+
+int main()
+{
+    // setup directories
+    std::string logsDirectory = "C:/Qt_projects/DSP/logs";
+
+    // run tests / examples
+    filters_butt_example(logsDirectory);
+
+    return 0;
+}
+
+```
+
+More examples are located in **DSP/source/dsp/tests** folder.
