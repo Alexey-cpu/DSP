@@ -9,7 +9,7 @@ The library is self contained and stand-alone, all you need is to simply copy th
 ## Content
 
 The library provides basic DSP components: IIR and FIR filters, Fourier transforms etc.
-Also, the library provides C++ classes to manipulate with COMTRADE files which allows read, write COMTRADE files and emulate DSP components opoeration
+Also, the library provides C++ classes to manipulate with COMTRADE files which allows read, write COMTRADE files and emulate DSP components operation
 on the signals provided by your COMTRADE files. At this version the COMTRADE C++ classes work only with textual COMTRADEs only.
 
 ## Availability
