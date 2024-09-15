@@ -4,7 +4,17 @@
 
 **DSP** is a low level C++ digital signal processing (DSP) toolbox aimed at intellegent electronic devices (IDE) interaction.
 
+<<<<<<< HEAD
 The library is self contained and stand-alone, all you need is to simply copy the needed **.h** files into your project to get started. The library provides basic DSP components: IIR and FIR filters, Fourier transforms etc. Also, the library provides C++ classes to manipulate with COMTRADE files which allows read, write COMTRADE files and emulate DSP components opoeration on the signals provided by your COMTRADE files. At this version the COMTRADE C++ classes work only with textual COMTRADEs only.
+=======
+The library is self contained and stand-alone, all you need is to simply copy the needed **.h** files into your project to get started.
+
+## Content
+
+The library provides basic DSP components: IIR and FIR filters, Fourier transforms etc.
+Also, the library provides C++ classes to manipulate with COMTRADE files which allows read, write COMTRADE files and emulate DSP components operation
+on the signals provided by your COMTRADE files. At this version the COMTRADE C++ classes work only with textual COMTRADEs only.
+>>>>>>> a84ae4a87a241ecd9b06ca89affeebae78fd19e2
 
 ## Availability
 
