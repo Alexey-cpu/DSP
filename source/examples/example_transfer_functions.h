@@ -6,7 +6,7 @@
 #include "generators.h"
 #include "filters_transfer_functions.h"
 
-int filters_aperiodic_example(string _LogsDirectory)
+int filters_aperiodic_example(std::string _LogsDirectory)
 {
     typedef float __type;
 
@@ -64,7 +64,7 @@ int filters_aperiodic_example(string _LogsDirectory)
     return 0;
 }
 
-int filters_filter_2nd_order_example(string _LogsDirectory)
+int filters_filter_2nd_order_example(std::string _LogsDirectory)
 {
     typedef float __type;
 
@@ -123,7 +123,7 @@ int filters_filter_2nd_order_example(string _LogsDirectory)
     return 0;
 }
 
-int filters_integrator_differentiator_example(string _LogsDirectory)
+int filters_integrator_differentiator_example(std::string _LogsDirectory)
 {
     typedef float __type;
 
@@ -187,7 +187,7 @@ int filters_integrator_differentiator_example(string _LogsDirectory)
     return 0;
 }
 
-int filters_leadlag_example(string _LogsDirectory)
+int filters_leadlag_example(std::string _LogsDirectory)
 {
     typedef float __type;
 

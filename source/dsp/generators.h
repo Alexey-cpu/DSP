@@ -1,7 +1,7 @@
 #ifndef GENERATORS_H
 #define GENERATORS_H
 
-#include "Utils.h"
+#include "kernel_dsp_utils.h"
 
 // standart headers
 #ifndef __ALG_PLATFORM

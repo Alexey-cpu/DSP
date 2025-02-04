@@ -28,7 +28,6 @@ list(APPEND LIBRARY
     "source/comtrade/"
     "source/dsp/"
     "source/models/"
-    "source/utils/"
 )
 
 set(PATHS "")

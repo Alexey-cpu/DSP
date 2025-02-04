@@ -6,7 +6,7 @@
 #include "filters_fir.h"
 
 // classic FIR filter example
-int filters_fir_example( string _LogsDirectory )
+int filters_fir_example( std::string _LogsDirectory )
 {
     typedef float __type;
 

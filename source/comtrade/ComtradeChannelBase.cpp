@@ -23,12 +23,12 @@ size_t ComtradeChannelBase::get_number() const
     return m_Number;
 }
 
-string ComtradeChannelBase::get_phase_id() const
+std::string ComtradeChannelBase::get_phase_id() const
 {
     return m_PhaseID;
 }
 
-string ComtradeChannelBase::get_controlled_object_id() const
+std::string ComtradeChannelBase::get_controlled_object_id() const
 {
     return m_ControlledObjectID;
 }
@@ -39,7 +39,7 @@ double ComtradeChannelBase::get_sample( size_t _N ) const
 }
 
 // setters
-void ComtradeChannelBase::set_name( std::string _Name )
+void ComtradeChannelBase::set_name(std::string _Name )
 {
     m_Name = _Name;
 }
@@ -49,12 +49,12 @@ void ComtradeChannelBase::set_number(size_t newChannelNumber)
     m_Number = newChannelNumber;
 }
 
-void ComtradeChannelBase::set_phase_id(const string &newChannelPhaseID)
+void ComtradeChannelBase::set_phase_id(const std::string &newChannelPhaseID)
 {
     m_PhaseID = newChannelPhaseID;
 }
 
-void ComtradeChannelBase::set_controlled_object_id(const string &newControlledObjectID)
+void ComtradeChannelBase::set_controlled_object_id(const std::string &newControlledObjectID)
 {
     m_ControlledObjectID = newControlledObjectID;
 }

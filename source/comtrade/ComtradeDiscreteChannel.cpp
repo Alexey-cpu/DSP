@@ -31,28 +31,28 @@ void ComtradeDiscreteChannel::from_string( std::string _Input )
         return;
 
     // retrieve data separated by comma
-    std::vector< string > vector = __split__( _Input, "," );
+    std::vector<std::string > vector = STRING_EXTENSION::__split__( _Input, "," );
 
     // retrive parameters
     size_t number = 0;
     if( vector.size() > number )
-        m_Number = __from_string__<size_t>( vector[number] );
+        m_Number = STRING_EXTENSION::__from_string__<size_t>( vector[number] );
     number++;
 
     if( vector.size() > number )
-        m_Name = __from_string__<std::string>( vector[number] );
+        m_Name = STRING_EXTENSION::__from_string__<std::string>( vector[number] );
     number++;
 
     if( vector.size() > number )
-        m_PhaseID = __from_string__<std::string>( vector[number] );
+        m_PhaseID = STRING_EXTENSION::__from_string__<std::string>( vector[number] );
     number++;
 
     if( vector.size() > number )
-        m_ControlledObjectID = __from_string__<std::string>( vector[number] );
+        m_ControlledObjectID = STRING_EXTENSION::__from_string__<std::string>( vector[number] );
     number++;
 
     if( vector.size() > number )
-        m_NormalState = __from_string__<double>( vector[number] );
+        m_NormalState = STRING_EXTENSION::__from_string__<double>( vector[number] );
     number++;
 }
 

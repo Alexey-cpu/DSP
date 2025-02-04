@@ -10,20 +10,20 @@ class Comtrade
     std::vector< ComtradeChannelBase* > m_Channels;
 
     // info
-    string         m_StationName             = std::string();
-    string         m_StationID               = std::string();
+    std::string    m_StationName             = std::string();
+    std::string    m_StationID               = std::string();
     double         m_NominalFrequency        = 50.0;
     size_t         m_NumberOfRateFrequencies = 1;
     double         m_RateFrequency           = 4000.0;
     size_t         m_SamplesNumber           = 0;
 
     // service methods
-    void   write_cfg( std::string _Path );
-    void   write_dat( std::string _Path );
-    bool   parse_cfg( std::string _Data );
-    bool   parse_dat( std::string _Data );
-    string read_file( std::string _Path );
-    void   clear();
+    void        write_cfg(std::string _Path);
+    void        write_dat(std::string _Path);
+    bool        parse_cfg(std::string _Data);
+    bool        parse_dat(std::string _Data);
+    std::string read_file(std::string _Path);
+    void        clear();
 
 public:
 

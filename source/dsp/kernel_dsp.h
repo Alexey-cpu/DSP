@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #endif
 
-#include <Utils.h>
+#include <kernel_dsp_utils.h>
 #include <Complex.h>
 
 /*! \defgroup <FILTERS> ( Filters )

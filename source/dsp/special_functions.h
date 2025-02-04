@@ -9,7 +9,7 @@
 #endif
 
 #include <Complex.h>
-#include <Utils.h>
+#include <kernel_dsp_utils.h>
 
 /*! \defgroup <SPECIAL_MATH_FUNCTIONS> ( Special functions )
  *  \brief the module collaborates all special math functions
@@ -1638,7 +1638,7 @@ __fft0__( Complex<__type>* _Spectrum, int _N, int _Direct )
 
         if ( i < j )
         {
-            swap ( _Spectrum[i], _Spectrum[j] );
+            std::swap( _Spectrum[i], _Spectrum[j] );
         }
     }
 

@@ -25,7 +25,7 @@ ComtradeAnalogChannel::ComtradeAnalogChannel(
 ComtradeAnalogChannel::~ComtradeAnalogChannel(){}
 
 // getters
-string ComtradeAnalogChannel::get_measurement_units() const
+std::string ComtradeAnalogChannel::get_measurement_units() const
 {
     return m_MeasurementUnits;
 }
@@ -71,7 +71,7 @@ char ComtradeAnalogChannel::get_primary_secondary_id() const
 }
 
 // setters
-void ComtradeAnalogChannel::set_measurement_units(const string& _Value)
+void ComtradeAnalogChannel::set_measurement_units(const std::string& _Value)
 {
     m_MeasurementUnits = _Value;
 }
@@ -113,60 +113,60 @@ void ComtradeAnalogChannel::from_string( std::string _Input )
         return;
 
     // retrieve data separated by comma
-    std::vector< string > vector = __split__( _Input, "," );
+    std::vector< std::string > vector = STRING_EXTENSION::__split__( _Input, "," );
 
     // retrive parameters
     size_t number = 0;
     if( vector.size() > number )
-        m_Number = __from_string__<size_t>( vector[number] );
+        m_Number = STRING_EXTENSION::__from_string__<size_t>( vector[number] );
     number++;
 
     if( vector.size() > number )
-        m_Name = __from_string__<std::string>( vector[number] );
+        m_Name = STRING_EXTENSION::__from_string__<std::string>( vector[number] );
     number++;
 
     if( vector.size() > number )
-        m_PhaseID = __from_string__<std::string>( vector[number] );
+        m_PhaseID = STRING_EXTENSION::__from_string__<std::string>( vector[number] );
     number++;
 
     if( vector.size() > number )
-        m_ControlledObjectID = __from_string__<std::string>( vector[number] );
+        m_ControlledObjectID = STRING_EXTENSION::__from_string__<std::string>( vector[number] );
     number++;
 
     if( vector.size() > number )
-        m_MeasurementUnits = __from_string__<std::string>( vector[number] );
+        m_MeasurementUnits = STRING_EXTENSION::__from_string__<std::string>( vector[number] );
     number++;
 
     if( vector.size() > number )
-        m_CalibrationMultiplierCoefficient = __from_string__<double>( vector[number] );
+        m_CalibrationMultiplierCoefficient = STRING_EXTENSION::__from_string__<double>( vector[number] );
     number++;
 
     if( vector.size() > number )
-        m_CalibrationAdditionCoefficient = __from_string__<double>( vector[number] );
+        m_CalibrationAdditionCoefficient = STRING_EXTENSION::__from_string__<double>( vector[number] );
     number++;
 
     if( vector.size() > number )
-        m_Skew = __from_string__<double>( vector[number] );
+        m_Skew = STRING_EXTENSION::__from_string__<double>( vector[number] );
     number++;
 
     if( vector.size() > number )
-        m_MinimumLevel = __from_string__<double>( vector[number] );
+        m_MinimumLevel = STRING_EXTENSION::__from_string__<double>( vector[number] );
     number++;
 
     if( vector.size() > number )
-        m_MaximumLevel = __from_string__<double>( vector[number] );
+        m_MaximumLevel = STRING_EXTENSION::__from_string__<double>( vector[number] );
     number++;
 
     if( vector.size() > number )
-        m_PrimaryMultiplierCoefficient = __from_string__<double>( vector[number] );
+        m_PrimaryMultiplierCoefficient = STRING_EXTENSION::__from_string__<double>( vector[number] );
     number++;
 
     if( vector.size() > number )
-        m_SecondaryMultiplierCoefficient = __from_string__<double>( vector[number] );
+        m_SecondaryMultiplierCoefficient = STRING_EXTENSION::__from_string__<double>( vector[number] );
     number++;
 
     if( vector.size() > number )
-        m_PrimarySecondaryID = __from_string__<char>( vector[number] );
+        m_PrimarySecondaryID = STRING_EXTENSION::__from_string__<char>( vector[number] );
     number++;
 }
 

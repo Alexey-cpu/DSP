@@ -7,7 +7,7 @@
 #include "filters_real_time_spectrum_analyzer.h"
 
 // Recursive Fourier filter
-int filters_harmonic_extracter_example(string _LogsDirectory)
+int filters_harmonic_extracter_example(std::string _LogsDirectory)
 {
     typedef double __type;
 

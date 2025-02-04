@@ -5,7 +5,7 @@
 #include "generators.h"
 #include "filters_iir.h"
 
-int filters_butt_example(string _LogsDirectory)
+int filters_butt_example(std::string _LogsDirectory)
 {
     typedef float __type;
 
@@ -65,7 +65,7 @@ int filters_butt_example(string _LogsDirectory)
     return 0;
 }
 
-int filters_cheb1_example(string _LogsDirectory)
+int filters_cheb1_example(std::string _LogsDirectory)
 {
     typedef float __type;
 
@@ -124,7 +124,7 @@ int filters_cheb1_example(string _LogsDirectory)
     return 0;
 }
 
-int filters_cheb2_example(string _LogsDirectory)
+int filters_cheb2_example(std::string _LogsDirectory)
 {
     typedef float __type;
 
@@ -183,7 +183,7 @@ int filters_cheb2_example(string _LogsDirectory)
     return 0;
 }
 
-int filters_ellip_example(string _LogsDirectory)
+int filters_ellip_example(std::string _LogsDirectory)
 {
     typedef float __type;
 

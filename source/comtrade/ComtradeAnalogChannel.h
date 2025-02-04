@@ -37,7 +37,7 @@ public:
     virtual ~ComtradeAnalogChannel();
 
     // getters
-    string get_measurement_units() const;
+    std::string get_measurement_units() const;
     double get_calibration_addition_coefficient() const;
     double get_calibration_multiplier_coefficient() const;
     double get_channel_skew() const;
@@ -48,7 +48,7 @@ public:
     char   get_primary_secondary_id() const;
 
     // setters
-    void set_measurement_units(const string& _Value);
+    void set_measurement_units(const std::string& _Value);
     void set_calibration_addition_coefficient(double _Value);
     void set_calibration_multiplier_coefficient(double _Value);
     void set_time_delay(double _Value);

@@ -6,7 +6,7 @@
 #include "filters_recursive_fourier_filter.h"
 
 // Recursive Fourier filter
-int filters_rff_example(string _LogsDirectory)
+int filters_rff_example(std::string _LogsDirectory)
 {
     typedef double __type;
 

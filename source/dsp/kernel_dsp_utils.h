@@ -1,5 +1,5 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef KERNEL_DSP_UTILS_H
+#define KERNEL_DSP_UTILS_H
 
 // some special target platform features
 #ifndef __ALG_PLATFORM
@@ -1123,4 +1123,4 @@ double elapsed( std::chrono::high_resolution_clock::time_point _Then, std::chron
 
 /*! @} */
 
-#endif // UTILS_H
+#endif // KERNEL_DSP_UTILS_H

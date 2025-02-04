@@ -50,8 +50,8 @@ void Comtrade::write_cfg( std::string _Path )
     // get current time
     double oscDuration                      = this->get_oscillogram_duration();
     double oscDurationFloatingPointPart     = oscDuration - (time_t)oscDuration;
-    time_t registratorTriggerTime           = chrono::system_clock::to_time_t( chrono::system_clock::now() );
-    time_t registratorRecordFinishTime      = chrono::system_clock::to_time_t( chrono::system_clock::now() + chrono::microseconds( (size_t)(oscDuration*1e6) ) );
+    time_t registratorTriggerTime           = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
+    time_t registratorRecordFinishTime      = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() + std::chrono::microseconds( (size_t)(oscDuration*1e6) ) );
     tm*    registratorTriggerTimeStamp      = std::localtime(&registratorTriggerTime);
     tm*    registratorRecordFinishTimeStamp = std::localtime(&registratorRecordFinishTime);
 
@@ -170,7 +170,7 @@ bool Comtrade::parse_cfg( std::string _Data )
     }
 
     // split file string
-    std::vector<string> vector = __split__( _Data, "\n" );
+    std::vector<std::string> vector = STRING_EXTENSION::__split__( _Data, "\n" );
 
     if( vector.size() <= 0 )
     {
@@ -193,15 +193,15 @@ bool Comtrade::parse_cfg( std::string _Data )
     // parse station ID and station unique number
     if( vector.size() > number )
     {
-        std::vector<string> data = __split__( vector[number], "," );
+        std::vector<std::string> data = STRING_EXTENSION::__split__( vector[number], "," );
 
         size_t localNumber = 0;
         if( data.size() > localNumber )
-            m_StationName = __from_string__< std::string >( data[localNumber] );
+            m_StationName = STRING_EXTENSION::__from_string__< std::string >( data[localNumber] );
         localNumber++;
 
         if( data.size() > localNumber )
-            m_StationID = __from_string__< std::string >( data[localNumber] );
+            m_StationID = STRING_EXTENSION::__from_string__< std::string >( data[localNumber] );
         localNumber++;
     }
     number++;
@@ -209,29 +209,29 @@ bool Comtrade::parse_cfg( std::string _Data )
     // parse the number of channels, number of analogue and discrete channels
     if( vector.size() > number )
     {
-        std::vector<string> data = __split__( vector[number], "," );
+        std::vector<std::string> data = STRING_EXTENSION::__split__( vector[number], "," );
 
         // skip parsing total channels number
         size_t localNumber = 0;
         if( data.size() > localNumber )
-            m_NumberOfChannels = __from_string__< size_t >( data[localNumber] );
+            m_NumberOfChannels = STRING_EXTENSION::__from_string__< size_t >( data[localNumber] );
         localNumber++;
 
         // parses analogue channels number
         if( data.size() > localNumber )
-            m_AnalogChannelsNumber = __from_string__<size_t>( __remove_symbol__( data[localNumber], 'A' ) );
+            m_AnalogChannelsNumber = STRING_EXTENSION::__from_string__<size_t>( STRING_EXTENSION::__remove_symbol__( data[localNumber], 'A' ) );
         localNumber++;
 
         // parse logical channels number
         if( data.size() > localNumber )
-            m_DiscreteChannelsNumber = __from_string__<size_t>( __remove_symbol__( data[localNumber], 'D' ) );
+            m_DiscreteChannelsNumber = STRING_EXTENSION::__from_string__<size_t>( STRING_EXTENSION::__remove_symbol__( data[localNumber], 'D' ) );
         localNumber++;
 
         // check retrieved data
         if( m_AnalogChannelsNumber + m_DiscreteChannelsNumber < m_NumberOfChannels )
         {
             #ifdef DEBUGGER
-            string message = "Input .cfg file format error: number of analog/discrete signals mismatch: \n";
+            std::string message = "Input .cfg file format error: number of analog/discrete signals mismatch: \n";
             message += std::to_string(m_NumberOfChannels) + "\n";
             message += std::to_string(m_AnalogChannelsNumber) + "\n";
             message += std::to_string(m_DiscreteChannelsNumber) + "\n";
@@ -275,7 +275,7 @@ bool Comtrade::parse_cfg( std::string _Data )
     // parse reference frame frequency
     if( vector.size() > number )
     {
-        m_NominalFrequency = __from_string__< double >( vector[number] );
+        m_NominalFrequency = STRING_EXTENSION::__from_string__< double >( vector[number] );
     }
     else
     {
@@ -293,7 +293,7 @@ bool Comtrade::parse_cfg( std::string _Data )
     // read number of rate frequencies in file
     if( vector.size() > number )
     {
-        m_NumberOfRateFrequencies = __from_string__< size_t >( vector[number] );
+        m_NumberOfRateFrequencies = STRING_EXTENSION::__from_string__< size_t >( vector[number] );
     }
     else
     {
@@ -311,15 +311,15 @@ bool Comtrade::parse_cfg( std::string _Data )
     // read
     if( vector.size() > number )
     {
-        std::vector<string> data = __split__( vector[number], "," );
+        std::vector<std::string> data = STRING_EXTENSION::__split__( vector[number], "," );
 
         size_t localNumber = 0;
         if( data.size() > localNumber )
-            m_RateFrequency = __from_string__< double >( data[localNumber] );
+            m_RateFrequency = STRING_EXTENSION::__from_string__< double >( data[localNumber] );
         localNumber++;
 
         if( data.size() > localNumber )
-            this->set_samples_number( __from_string__< size_t >( data[localNumber] ) + 1 );
+            this->set_samples_number( STRING_EXTENSION::__from_string__< size_t >( data[localNumber] ) + 1 );
         localNumber++;
     }
     else
@@ -347,11 +347,11 @@ bool Comtrade::parse_dat( std::string _Data )
     }
 
     // allocate COMTRADE file row string buffer
-    string row;
+    std::string row;
     row.reserve(256);
 
     // allocate COMTRADE file column string buffer
-    string column;
+    std::string column;
     column.reserve(256);
 
     int rowNumber = 0;
@@ -384,7 +384,7 @@ bool Comtrade::parse_dat( std::string _Data )
 
                     if( columnNumber >= 0 )
                     {
-                        m_Channels[columnNumber]->set_sample( rowNumber, __from_string__<double>( column ) );
+                        m_Channels[columnNumber]->set_sample( rowNumber, STRING_EXTENSION::__from_string__<double>( column ) );
                     }
 
                     columnNumber++;
@@ -406,21 +406,21 @@ bool Comtrade::parse_dat( std::string _Data )
     return true;
 }
 
-string Comtrade::read_file( std::string _Path )
+std::string Comtrade::read_file( std::string _Path )
 {
     if( _Path.empty() )
     {
-        return string();
+        return std::string();
     }
 
-    string output;
+    std::string output;
 
-    ifstream file;
+    std::ifstream file;
     file.open( _Path );
 
     if( !file.is_open() )
     {
-        return string();
+        return std::string();
     }
 
     while( true )
@@ -440,7 +440,7 @@ string Comtrade::read_file( std::string _Path )
 }
 
 // getters
-string Comtrade::get_station_name() const
+std::string Comtrade::get_station_name() const
 {
     return m_StationName;
 }
