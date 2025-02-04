@@ -4,13 +4,12 @@
 
 **DSP** is a low level C++ digital signal processing (DSP) toolbox aimed at intellegent electronic devices (IDE) interaction.
 
-The library is self contained and stand-alone, all you need is to simply copy the needed **.h** files into your project to get started. The library provides basic DSP components: IIR and FIR filters, Fourier transforms etc. Also, the library provides C++ classes to manipulate with COMTRADE files which allows read, write COMTRADE files and emulate DSP components opoeration on the signals provided by your COMTRADE files. At this version the COMTRADE C++ classes work only with textual COMTRADEs only. The library is self contained and stand-alone, all you need is to simply copy the needed **.h** files into your project to get started.
+The library is self contained and stand-alone, all you need is to simply copy the needed **.h** files into your project to get started. The library provides basic DSP components: IIR and FIR filters, Fourier transforms etc. Also, the library provides C++ classes to manipulate with COMTRADE files which allows read, write COMTRADE files and emulate DSP components operation on the signals provided by your COMTRADE files. At this version the COMTRADE C++ classes work with textual COMTRADEs only.
 
 ## Content
 
 The library provides basic DSP components: IIR and FIR filters, Fourier transforms etc.
-Also, the library provides C++ classes to manipulate with COMTRADE files which allows read, write COMTRADE files and emulate DSP components operation
-on the signals provided by your COMTRADE files. At this version the COMTRADE C++ classes work only with textual COMTRADEs only.
+Also, the library provides C++ classes to manipulate with COMTRADE files which allows read, write COMTRADE files and emulate DSP components operation on the signals provided by your COMTRADE files. At this version the COMTRADE C++ classes work with textual COMTRADEs only.
 
 ## Availability
 
@@ -52,8 +51,11 @@ and a notice that the code was modified is included.
 
 ## Quick start in Qt
 
-The library is provided with pre-configured Qt projects located inside **qtprojects** folder and aimed at testing the library.
-As the library is header-only you don't need to compile anything, just copy files you need into your project.
+You may just integrate the library **h** files into your project and use it. Also, the library provides **CMakeLists.txt**, so you can add DSP library into your project by adding the following line into your CMake file:
+
+```
+add_subdirectory({PATH_TO_DSP_LIBRARY})
+```
 
 ## Example
 
