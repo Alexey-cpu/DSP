@@ -12,8 +12,8 @@
 int main()
 {
     // setup directories
-    std::string logsDirectory = "C:/Qt_projects/DSP/logs";
-    std::string oscDirectory  = "C:/Qt_projects/DSP/osc";
+    std::string logsDirectory = DSP_EXAMPLES_LOGS_DIRECTORY;
+    std::string oscDirectory  = DSP_EXAMPLES_OSCS_DIRECTORY;
     std::string oscName       = "test";
 
     // run tests / examples

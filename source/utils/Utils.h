@@ -36,6 +36,7 @@
 #include <sstream>
 #include <fstream>
 #include <functional>
+#include <codecvt>
 
 #endif
 
@@ -103,8 +104,6 @@ namespace TUPLE_PACKAGE
 
         const Tuple<T2...>* m_Parent = static_cast< Tuple<T2...>* >( this );
 
-        const uint64_t m_Index;
-
         template< uint64_t Index, typename Head, typename ... Tail >
         friend struct TupleUnpacker;
 
@@ -113,35 +112,17 @@ namespace TUPLE_PACKAGE
         typedef T1 return_type;
 
         // constructors
-        Tuple() : m_Data( T1() ), m_Index( m_Parent->count() + 1 ){}
+        Tuple() : m_Data( T1() ){}
 
-        Tuple( T1 _Data, T2 ... _Tail ) : Tuple<T2...>(_Tail...), m_Data( _Data ), m_Index( m_Parent->count() + 1 ){}
+        Tuple( T1 _Data, T2 ... _Tail ) : Tuple<T2...>(_Tail...), m_Data( _Data ){}
 
         // virtual destructor
         virtual ~Tuple(){}
-
-        // public methods
-        uint64_t count() const
-        {
-            return m_Index;
-        }
     };
 
     // Tuple
     template<>
-    struct Tuple<>
-    {
-    protected:
-        const uint64_t m_Index = 0;
-
-    public:
-
-        // public methods
-        uint64_t count() const
-        {
-            return m_Index;
-        }
-    };
+    struct Tuple<>{};
 
     // Tuple unpacker
     template< uint64_t I, typename T1, typename ... T2 >
@@ -173,7 +154,7 @@ namespace TUPLE_PACKAGE
 
 using namespace TUPLE_PACKAGE;
 
-#if defined(_STDINT_H) || defined(_STDINT_H_)
+#if defined(_STDINT_H) || defined(_STDINT_H_) || defined(_STDINT)
 
 namespace BIT_UTILS
 {
@@ -198,7 +179,7 @@ namespace BIT_UTILS
     template<typename __type>
     uint_fast32_t __get_bit__( const __type& _M, uint_fast8_t _N )
     {
-        return _N < sizeof (_M) * 8UL ? ( _M >> _N ) & 1 : 0;
+        return _N < sizeof (_M) * 8UL ? (uint_fast32_t)(( _M >> _N ) & 1) : 0;
     }
 
     template<typename __type>
@@ -259,7 +240,7 @@ namespace BIT_UTILS
         return S;
     }
 
-#if defined(_STRINGFWD_H) || defined(_LIBCPP_IOSFWD)
+#if defined(_STRINGFWD_H) || defined(_LIBCPP_IOSFWD) || defined(_IOSFWD_)
 
     template< typename __type >
     std::string __to_hex_string__( const __type& _M, uint_fast8_t _N = 0 )
@@ -284,7 +265,7 @@ namespace BIT_UTILS
 
 using namespace BIT_UTILS;
 
-#if defined(_GLIBCXX_BITSET) || defined(_LIBCPP_BITSET)
+#if defined(_GLIBCXX_BITSET) || defined(_LIBCPP_BITSET) || defined(_BITSET_)
 
 namespace BITSET_UTILS
 {
@@ -392,7 +373,7 @@ namespace BITSET_UTILS
         }
     };
 
-#if defined(_STRINGFWD_H) || defined(_LIBCPP_IOSFWD)
+#if defined(_STRINGFWD_H) || defined(_LIBCPP_IOSFWD) || defined(_IOSFWD_)
 
     template< std::size_t N >
     std::string __write_to_hex_string__( const std::bitset<N>& _Set )
@@ -408,9 +389,9 @@ namespace BITSET_UTILS
 
             for( uint_fast64_t j = 0 ; j < 4 ; j++ )
             {
-                if( _Set[ i + j ] > 0 )
+                if( _Set[ i + j ] )
                 {
-                    BIT_UTILS::__set_bit__( hexNumber, j );
+                    BIT_UTILS::__set_bit__<uint_fast64_t>( hexNumber, j );
                 }
             }
 
@@ -429,14 +410,17 @@ using namespace BITSET_UTILS;
 
 #endif
 
-#if defined(_GLIBCXX_NUMERIC_LIMITS) || defined(_LIBCPP_LIMITS)
+#if defined(_GLIBCXX_NUMERIC_LIMITS) || defined(_LIBCPP_LIMITS) || defined(_LIMITS_)
+
+#undef max
+#undef min
 
     // Fortran analogues functions
     template< typename __type > __type __digits__()  { return std::numeric_limits<__type>::digits; }
 
     template< typename __type > __type __epsilon__() { return std::numeric_limits<__type>::epsilon(); }
 
-    template< typename __type > __type __huge__() { return std::numeric_limits<__type>::max(); }
+    template< typename __type > __type __huge__() { return std::numeric_limits<__type>::max(); };
 
     template< typename __type > __type __maxexponent__() { return std::numeric_limits<__type>::max_exponent; }
 
@@ -482,7 +466,7 @@ using namespace BITSET_UTILS;
 #endif
 
 template< typename Head >
-inline __attribute__((always_inline)) Head __max__( Head _A, Head _B )
+inline  Head __max__( Head _A, Head _B )
 {
     return _A > _B ? _A : _B;
 }
@@ -508,7 +492,7 @@ __max__( __type* _Input , uint64_t _Size )
 }
 
 template< typename Head >
-inline __attribute__((always_inline)) Head __min__( Head _A, Head _B )
+inline  Head __min__( Head _A, Head _B )
 {
     return _A < _B ? _A : _B;
 }
@@ -538,25 +522,25 @@ inline __type __min__( const __type* _Input, int _Size )
 }
 
 template< typename __type >
-inline __attribute__((always_inline)) __type __abs__ ( __type _A )
+inline  __type __abs__ ( __type _A )
 {
     return ( _A < 0 ) ? -_A : _A;
 }
 
 template< typename __type >
-inline __attribute__((always_inline)) __type __sign__( __type _A, __type _B )
+inline  __type __sign__( __type _A, __type _B )
 {
     return _A * ( ( _B > 0 ) ? (__type)1 : -(__type)1 );
 }
 
 template< typename __type >
-inline __attribute__((always_inline)) __type __sign__( __type _A )
+inline  __type __sign__( __type _A )
 {
     return _A >= 0 ? (__type)1.0 : -(__type)1.0;
 }
 
 template< typename __type >
-inline __attribute__((always_inline)) void __swap__( __type& _A, __type& _B )
+inline  void __swap__( __type& _A, __type& _B )
 {
     __type c = _B;
     _B = _A;
@@ -583,6 +567,24 @@ __saturation__(__type _Input, __type _UpperLimit, __type _LowerLimit)
         return _LowerLimit;
 
     return _Input;
+}
+
+inline std::wstring __to_wstring__(const std::string _Value)
+{
+    return std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(_Value);
+}
+
+inline FILE* __open_file__(std::string _Path, std::string _Mode)
+{
+    FILE* file = std::fopen(_Path.c_str(), _Mode.c_str() );
+
+#if defined(_WIN32) || defined(WIN32) // try to do something on Windows
+    if(file == nullptr)
+        file = _wfopen(&__to_wstring__(_Path)[0], &__to_wstring__(_Mode)[0] );
+#else
+#endif
+
+    return file;
 }
 
 template< typename __type > inline __type*
@@ -662,7 +664,7 @@ double elapsed( std::chrono::high_resolution_clock::time_point _Then, std::chron
     return (double)std::chrono::duration_cast<__type>(_Now - _Then).count();
 }
 
-#if defined(_STRINGFWD_H) || defined(_LIBCPP_IOSFWD)
+#if defined(_STRINGFWD_H) || defined(_LIBCPP_IOSFWD) || defined(_IOSFWD_)
 
 #define DEBUGGER
 
@@ -886,11 +888,35 @@ double elapsed( std::chrono::high_resolution_clock::time_point _Then, std::chron
             }
         }
 
+        template<> inline short __from_string__<short>( std::string _Input )
+        {
+            try
+            {
+                return std::stoi( _Input );
+            }
+            catch(...)
+            {
+                return 0.0;
+            }
+        }
+
         template<> inline int __from_string__<int>( std::string _Input )
         {
             try
             {
                 return std::stoi( _Input );
+            }
+            catch(...)
+            {
+                return 0.0;
+            }
+        }
+
+        template<> inline long __from_string__<long>( std::string _Input )
+        {
+            try
+            {
+                return std::stol( _Input );
             }
             catch(...)
             {
@@ -910,7 +936,7 @@ double elapsed( std::chrono::high_resolution_clock::time_point _Then, std::chron
             }
         }
 
-        template<> inline unsigned long __from_string__<unsigned long>( std::string _Input )
+        template<> inline unsigned short __from_string__<unsigned short>( std::string _Input )
         {
             try
             {
@@ -934,15 +960,15 @@ double elapsed( std::chrono::high_resolution_clock::time_point _Then, std::chron
             }
         }
 
-        template<> inline bool __from_string__<bool>( std::string _Input )
+        template<> inline unsigned long __from_string__<unsigned long>( std::string _Input )
         {
             try
             {
-                return _Input == "true" || _Input == "1" ? true : false;
+                return std::stoul( _Input );
             }
             catch(...)
             {
-                return false;
+                return 0.0;
             }
         }
 
@@ -955,7 +981,19 @@ double elapsed( std::chrono::high_resolution_clock::time_point _Then, std::chron
             catch(...)
             {
                 return 0.0;
-            }            
+            }
+        }
+
+        template<> inline bool __from_string__<bool>( std::string _Input )
+        {
+            try
+            {
+                return _Input == "true" || std::stoi( _Input ) ? true : false;
+            }
+            catch(...)
+            {
+                return false;
+            }
         }
 
         template<> inline std::string __from_string__< std::string >( std::string _Input )
@@ -992,12 +1030,32 @@ double elapsed( std::chrono::high_resolution_clock::time_point _Then, std::chron
             return std::to_string( _Input );
         }
 
+        template<> inline std::string __to_string__<short>( short _Input )
+        {
+            return std::to_string( _Input );
+        }
+
         template<> inline std::string __to_string__<int>( int _Input )
         {
             return std::to_string( _Input );
         }
 
+        template<> inline std::string __to_string__<long>( long _Input )
+        {
+            return std::to_string( _Input );
+        }
+
         template<> inline std::string __to_string__<long long>( long long _Input )
+        {
+            return std::to_string( _Input );
+        }
+
+        template<> inline std::string __to_string__<unsigned short>( unsigned short _Input )
+        {
+            return std::to_string( _Input );
+        }
+
+        template<> inline std::string __to_string__<unsigned int>( unsigned int _Input )
         {
             return std::to_string( _Input );
         }
@@ -1059,6 +1117,9 @@ double elapsed( std::chrono::high_resolution_clock::time_point _Then, std::chron
     };
 
 #endif
+
+#undef __TO_DEGREES_CONVERSION_MULTIPLYER__
+#undef __TO_RADIANS_CONVERSION_MULTIPLYER__
 
 /*! @} */
 

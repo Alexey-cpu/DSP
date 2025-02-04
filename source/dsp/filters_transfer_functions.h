@@ -153,27 +153,27 @@ public:
             return;
         }
 
-        cout << "Ws = \n";
+        std::cout << "Ws = \n";
         for( int i = 0 ; i < m_Ws.positions; i++ )
         {
             for( int j = 0 ; j < m_Ws.sections; j++ )
             {
-                cout << ((__type*)m_Ws.data[i])[j] << "\t";
+                std::cout << ((__type*)m_Ws.data[i])[j] << "\t";
             }
-            cout << "\n";
+            std::cout << "\n";
         }
-        cout << "Gain(Ws) = " << 1 << "\n\n";
+        std::cout << "Gain(Ws) = " << 1 << "\n\n";
 
-        cout << "Wz = \n";
+        std::cout << "Wz = \n";
         for( int i = 0 ; i < m_Wz.positions; i++ )
         {
             for( int j = 0 ; j < m_Wz.sections; j++ )
             {
-                cout << ((__type*)m_Wz.data[i])[j] << "\t";
+                std::cout << ((__type*)m_Wz.data[i])[j] << "\t";
             }
-            cout << "\n";
+            std::cout << "\n";
         }
-        cout << "Gain(Wz) = " << m_Gain << "\n\n";
+        std::cout << "Gain(Wz) = " << m_Gain << "\n\n";
 
     }
     #endif
